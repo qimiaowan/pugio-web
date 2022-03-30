@@ -1,13 +1,13 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.less';
-import App from './App';
+import { App as KhamsaApp } from 'khamsa';
 import reportWebVitals from './report-web-vitals';
+import { AppModule } from './app.module';
 
 ReactDOM.render(
-    <React.StrictMode>
-        <App />
-    </React.StrictMode>,
+    <KhamsaApp
+        module={AppModule}
+    />,
     document.getElementById('root'),
 );
 
