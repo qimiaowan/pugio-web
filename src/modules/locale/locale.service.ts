@@ -38,7 +38,8 @@ export class LocaleService {
                         .then((res) => res.json())
                         .then((localeTextMap) => {
                             setLocaleTextMap(merge(defaultLocaleTextMap, localeTextMap));
-                        });
+                        })
+                        .catch(() => setLocaleTextMap(defaultLocaleTextMap));
                 }
             }
         }, [locale, defaultLocaleTextMap]);
@@ -51,7 +52,7 @@ export class LocaleService {
         const [localeTextGetter, setLocaleTextGetter] = useState<Function>(() => noop);
 
         useEffect(() => {
-            const newLocaleTextGetter = (pathname: string, props?: any) => {
+            const newLocaleTextGetter = (pathname: string, props: any = {}) => {
                 const localeText = get(localeTextMap, pathname) || '';
 
                 if (!localeText || !isString(localeText)) {
