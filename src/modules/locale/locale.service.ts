@@ -15,18 +15,6 @@ import Mustache from 'mustache';
 export class LocaleService {
     private LocaleContext = createContext(null);
 
-    // public constructor() {
-    //     const LocaleConsumer: Consumer<{}> = ({ children }) => {
-    //         if (!isFunction(children)) {
-    //             throw new Error('\'children\' passed to Consumer must be a function');
-    //         }
-
-    //         // return children(this.LocaleContext.Provider);
-    //     };
-
-    //     this.LocaleContext.Consumer = LocaleConsumer;
-    // }
-
     public getContext() {
         return this.LocaleContext;
     }
