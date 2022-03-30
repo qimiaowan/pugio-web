@@ -51,7 +51,6 @@ export class LocaleService {
         const [localeTextGetter, setLocaleTextGetter] = useState<Function>(() => noop);
 
         useEffect(() => {
-            console.log('LENCONDA:', localeTextMap);
             const newLocaleTextGetter = (pathname: string, props?: any) => {
                 const localeText = get(localeTextMap, pathname) || '';
 
