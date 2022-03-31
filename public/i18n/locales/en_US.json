@@ -1,9 +1,14 @@
 {
     "app": {
-        "menu": {
+        "navbar": {
             "dashboard": "Dashboard",
             "clients": "Clients",
             "marketplace": "Marketplace"
+        },
+        "avatarDropdown": {
+            "settings": "Account Settings",
+            "signout": "Sign Out",
+            "create": "Create a New Account"
         }
     },
     "dashboardMenu": {
