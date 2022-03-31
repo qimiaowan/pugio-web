@@ -16,7 +16,7 @@
         "@types/react": "^17.0.43",
         "@types/react-dom": "^17.0.14",
         "immutable": "^4.0.0",
-        "khamsa": "^0.9.3",
+        "khamsa": "^0.9.4",
         "lodash": "^4.17.21",
         "mustache": "^4.2.0",
         "react": "^16.14.0",

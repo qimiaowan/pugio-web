@@ -1,9 +1,19 @@
 {
-  "short_name": "Pugio",
-  "name": "Pugio Workspaces",
-  "icons": [],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+    "short_name": "Pugio",
+    "name": "Pugio Workspaces",
+    "icons": [],
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#000000",
+    "background_color": "#ffffff",
+    "locales": [
+        {
+            "id": "en_US",
+            "title": "English (United States)"
+        },
+        {
+            "id": "zh_CN",
+            "title": "中文（中国大陆）"
+        }
+    ]
 }

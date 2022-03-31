@@ -9,11 +9,21 @@
     padding-top: @navbar-height;
 
     .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         width: 100%;
         height: @navbar-height;
+        padding: 0 @padding-horizontal-width;
         position: absolute;
         top: 0;
         background-color: @bg-widget-color;
         border-bottom: 1px solid @bg-divider-color;
+
+        .logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+        }
     }
 }

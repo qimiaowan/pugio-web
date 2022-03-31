@@ -1,14 +1,16 @@
 import ReactDOM from 'react-dom';
 import './index.less';
-import { App as KhamsaApp } from 'khamsa';
+import {
+    App as KhamsaApp,
+    router,
+} from 'khamsa';
 import reportWebVitals from './report-web-vitals';
 import { AppModule } from './app.module';
-import { HashRouter } from 'react-router-dom';
 
 ReactDOM.render(
     <KhamsaApp
         module={AppModule}
-        RouterComponent={HashRouter}
+        RouterComponent={router.HashRouter}
     />,
     document.getElementById('root'),
 );

@@ -1,4 +1,7 @@
-import { Global, Module } from 'khamsa';
+import {
+    Global,
+    Module,
+} from 'khamsa';
 import { BrandService } from './brand.service';
 
 @Global()
