@@ -3,10 +3,12 @@ import './index.less';
 import { App as KhamsaApp } from 'khamsa';
 import reportWebVitals from './report-web-vitals';
 import { AppModule } from './app.module';
+import { HashRouter } from 'react-router-dom';
 
 ReactDOM.render(
     <KhamsaApp
         module={AppModule}
+        RouterComponent={HashRouter}
     />,
     document.getElementById('root'),
 );
