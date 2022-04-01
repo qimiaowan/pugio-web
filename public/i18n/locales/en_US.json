@@ -5,9 +5,15 @@
             "marketplace": "Marketplace"
         },
         "avatarDropdown": {
-            "settings": "Account Settings",
-            "signout": "Sign Out",
-            "create": "Create a New Account"
+            "settings": "Account settings",
+            "signout": "Sign out",
+            "create": "Create a new account"
+        },
+        "clientsDropdown": {
+            "loadMore": "Load more",
+            "search": "Type to search",
+            "create": "Create a client",
+            "goto": "View all clients"
         }
     },
     "dashboardMenu": {

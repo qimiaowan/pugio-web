@@ -7,6 +7,7 @@ const LocaleModule = import('./modules/locale/locale.module').then(({ LocaleModu
 const BrandModule = import('./modules/brand/brand.module').then(({ BrandModule }) => BrandModule);
 const StoreModule = import('./modules/store/store.module').then(({ StoreModule }) => StoreModule);
 const ProfileModule = import('./modules/profile/profile.module').then(({ ProfileModule }) => ProfileModule);
+const ClientsModule = import('./modules/clients/clients.module').then(({ ClientsModule }) => ClientsModule);
 
 @Module({
     imports: [
@@ -16,6 +17,7 @@ const ProfileModule = import('./modules/profile/profile.module').then(({ Profile
         LocaleModule,
         StoreModule,
         ProfileModule,
+        ClientsModule,
     ],
     components: [
         AppComponent,

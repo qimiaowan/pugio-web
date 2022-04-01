@@ -12,6 +12,7 @@ import ThemeProvider from '@mui/material/styles/ThemeProvider';
 import { StyledEngineProvider } from '@mui/material/styles';
 import theme from '@lenconda/shuffle-mui-theme';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import { BrandService } from './modules/brand/brand.service';
 import {
     LocaleListItem,
@@ -20,6 +21,8 @@ import {
 import { LocaleMenuComponent } from './modules/locale/locale-menu.component';
 import { ProfileMenuComponent } from './modules/profile/profile-menu.component';
 import { ProfileMenuProps } from './modules/profile/profile.interface';
+import { NavLink } from 'react-router-dom';
+import { ClientsDropdownComponent } from './modules/clients/clients-dropdown.component';
 
 const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) => {
     const [locales, setLocales] = useState<LocaleListItem[]>([]);
@@ -31,6 +34,7 @@ const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) =>
 
     const LocaleMenu = declarations.get<FC<LocaleMenuProps>>(LocaleMenuComponent);
     const ProfileMenu = declarations.get<FC<ProfileMenuProps>>(ProfileMenuComponent);
+    const ClientsDropdown = declarations.get<FC>(ClientsDropdownComponent);
 
     const LocaleContext = localeService.getContext();
 
@@ -54,6 +58,8 @@ const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) =>
         <LocaleContext.Provider value={localeMap}>
             {
                 createElement(() => {
+                    const getLocaleText = localeService.useLocaleContext();
+
                     return (
                         <ThemeProvider theme={theme}>
                             <StyledEngineProvider injectFirst={true}>
@@ -65,6 +71,25 @@ const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) =>
                                                 component="img"
                                                 src={logo}
                                             />
+                                            <ClientsDropdown />
+                                            <NavLink
+                                                className="link"
+                                                to="/marketplace"
+                                            >
+                                                {
+                                                    ({ isActive }) => (
+                                                        <Button
+                                                            classes={
+                                                                isActive
+                                                                    ? {
+                                                                        root: 'active',
+                                                                    }
+                                                                    : {}
+                                                            }
+                                                        >{getLocaleText('app.navbar.marketplace')}</Button>
+                                                    )
+                                                }
+                                            </NavLink>
                                         </Box>
                                         <Box className="wrapper avatar-and-locales">
                                             <LocaleMenu
@@ -75,6 +100,7 @@ const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) =>
                                             <ProfileMenu />
                                         </Box>
                                     </Box>
+                                    <Box className=""></Box>
                                 </Box>
                             </StyledEngineProvider>
                         </ThemeProvider>
