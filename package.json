@@ -7,7 +7,7 @@
         "@emotion/styled": "^11.8.1",
         "@lenconda/shuffle-mui-theme": "^1.0.0",
         "@mui/icons-material": "^5.5.1",
-        "@mui/material": "^5.5.3",
+        "@mui/material": "^5.2.5",
         "@pugio/case-transformer": "^2.0.5",
         "@pugio/request": "^2.0.5",
         "@pugio/types": "^2.0.5",

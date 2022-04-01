@@ -13,13 +13,18 @@ import { StyledEngineProvider } from '@mui/material/styles';
 import theme from '@lenconda/shuffle-mui-theme';
 import Box from '@mui/material/Box';
 import { BrandService } from './modules/brand/brand.service';
+import { LocaleListItem, LocaleMenuProps } from './modules/locale/locale.interface';
+import { LocaleMenuComponent } from './modules/locale/locale-menu.component';
 
 const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) => {
-    // eslint-disable-next-line no-unused-vars
+    const [locales, setLocales] = useState<LocaleListItem[]>([]);
     const [locale, setLocale] = useState(localStorage.getItem('locale') || 'en_US');
+    const [logo, setLogo] = useState<string>('');
 
     const brandService = declarations.get<BrandService>(BrandService);
     const localeService = declarations.get<LocaleService>(LocaleService);
+    const LocaleMenu = declarations.get<FC<LocaleMenuProps>>(LocaleMenuComponent);
+
     const LocaleContext = localeService.getContext();
 
     const localeMap = localeService.useLocaleMap(locale);
@@ -27,6 +32,16 @@ const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) =>
     useEffect(() => {
         localStorage.setItem('locale', locale);
     }, [locale]);
+
+    useEffect(() => {
+        localeService.getLocales().then((locales) => setLocales(locales));
+    }, []);
+
+    useEffect(() => {
+        if (!logo) {
+            setLogo(brandService.getLogo());
+        }
+    }, [logo]);
 
     return (
         <LocaleContext.Provider value={localeMap}>
@@ -37,14 +52,19 @@ const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) =>
                             <StyledEngineProvider injectFirst={true}>
                                 <Box className="app-container">
                                     <Box className="navbar">
-                                        <Box>
+                                        <Box className="wrapper logo-and-nav">
                                             <Box
                                                 className="logo"
                                                 component="img"
-                                                src={brandService.getLogo()}
+                                                src={logo}
                                             />
                                         </Box>
-                                        <Box></Box>
+                                        <Box className="wrapper avatar-and-locales">
+                                            <LocaleMenu
+                                                locales={locales}
+                                                onLocaleChange={(localeItem) => setLocale(localeItem.id)}
+                                            />
+                                        </Box>
                                     </Box>
                                 </Box>
                             </StyledEngineProvider>

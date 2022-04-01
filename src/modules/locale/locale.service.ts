@@ -9,7 +9,9 @@ import isString from 'lodash/isString';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
 import noop from 'lodash/noop';
+import isArray from 'lodash/isArray';
 import Mustache from 'mustache';
+import { LocaleListItem } from './locale.interface';
 
 @Injectable()
 export class LocaleService {
@@ -70,5 +72,19 @@ export class LocaleService {
         }, [localeTextMap]);
 
         return localeTextGetter;
+    }
+
+    public async getLocales(): Promise<LocaleListItem[]> {
+        try {
+            const manifestInfo = await fetch('/manifest.json').then((res) => res.json());
+
+            if (!manifestInfo || !manifestInfo.locales || !isArray(manifestInfo.locales)) {
+                return [];
+            } else {
+                return get(manifestInfo, 'locales');
+            }
+        } catch (e) {
+            return [];
+        }
     }
 }
