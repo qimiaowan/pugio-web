@@ -6,14 +6,18 @@ import {
 } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-// import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { InjectedComponentProps } from 'khamsa';
 import { ProfileMenuProps } from './profile.interface';
 import { LocaleService } from '../locale/locale.service';
+import SettingsApplicationsTwoToneIcon from '@mui/icons-material/SettingsApplicationsTwoTone';
+import ExitToAppTwoToneIcon from '@mui/icons-material/ExitToAppTwoTone';
+import AddBoxTwoToneIcon from '@mui/icons-material/AddBoxTwoTone';
 import './profile-menu.component.less';
 
 const DEFAULT_PICTURE_URL = '/static/images/avatar_fallback.svg';
@@ -73,7 +77,19 @@ const LocaleMenu: FC<InjectedComponentProps<ProfileMenuProps>> = ({
                 }}
             >
                 <MenuItem>
+                    <ListItemIcon>
+                        <SettingsApplicationsTwoToneIcon />
+                    </ListItemIcon>
                     <ListItemText>{getLocaleText('app.avatarDropdown.settings')}</ListItemText>
+                </MenuItem>
+                <MenuItem>
+                    <ListItemIcon><ExitToAppTwoToneIcon /></ListItemIcon>
+                    <ListItemText>{getLocaleText('app.avatarDropdown.signout')}</ListItemText>
+                </MenuItem>
+                <Divider />
+                <MenuItem>
+                    <ListItemIcon><AddBoxTwoToneIcon /></ListItemIcon>
+                    <ListItemText>{getLocaleText('app.avatarDropdown.create')}</ListItemText>
                 </MenuItem>
             </Menu>
         </Box>
