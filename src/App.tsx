@@ -13,7 +13,10 @@ import { StyledEngineProvider } from '@mui/material/styles';
 import theme from '@lenconda/shuffle-mui-theme';
 import Box from '@mui/material/Box';
 import { BrandService } from './modules/brand/brand.service';
-import { LocaleListItem, LocaleMenuProps } from './modules/locale/locale.interface';
+import {
+    LocaleListItem,
+    LocaleMenuProps,
+} from './modules/locale/locale.interface';
 import { LocaleMenuComponent } from './modules/locale/locale-menu.component';
 
 const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) => {
@@ -62,6 +65,7 @@ const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) =>
                                         <Box className="wrapper avatar-and-locales">
                                             <LocaleMenu
                                                 locales={locales}
+                                                selectedLocaleId={locale}
                                                 onLocaleChange={(localeItem) => setLocale(localeItem.id)}
                                             />
                                         </Box>

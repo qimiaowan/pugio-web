@@ -4,15 +4,19 @@ import {
     MouseEvent,
 } from 'react';
 import noop from 'lodash/noop';
+import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import CheckIcon from '@mui/icons-material/Check';
 import LanguageTwoToneIcon from '@mui/icons-material/LanguageTwoTone';
 import { LocaleMenuProps } from './locale.interface';
 
 const LocaleMenu: FC<LocaleMenuProps> = ({
     locales = [],
+    selectedLocaleId = 'en_US',
     onLocaleChange = noop,
 }) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -29,7 +33,7 @@ const LocaleMenu: FC<LocaleMenuProps> = ({
     return (
         locales.length === 0
             ? null
-            : <div>
+            : <Box>
                 <IconButton
                     aria-haspopup="true"
                     aria-expanded={open ? 'true' : undefined}
@@ -55,13 +59,18 @@ const LocaleMenu: FC<LocaleMenuProps> = ({
                                         handleClose();
                                     }}
                                 >
+                                    {
+                                        selectedLocaleId === id && (
+                                            <ListItemIcon><CheckIcon /></ListItemIcon>
+                                        )
+                                    }
                                     <ListItemText>{title}</ListItemText>
                                 </MenuItem>
                             );
                         })
                     }
                 </Menu>
-            </div>
+            </Box>
     );
 };
 
