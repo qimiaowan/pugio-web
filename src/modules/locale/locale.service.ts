@@ -10,6 +10,7 @@ import get from 'lodash/get';
 import merge from 'lodash/merge';
 import noop from 'lodash/noop';
 import isArray from 'lodash/isArray';
+import cloneDeep from 'lodash/cloneDeep';
 import Mustache from 'mustache';
 import { LocaleListItem } from './locale.interface';
 
@@ -39,7 +40,7 @@ export class LocaleService {
                     fetch(`/i18n/locales/${locale}.json`)
                         .then((res) => res.json())
                         .then((localeTextMap) => {
-                            setLocaleTextMap(merge(defaultLocaleTextMap, localeTextMap));
+                            setLocaleTextMap(merge(cloneDeep(defaultLocaleTextMap), localeTextMap));
                         })
                         .catch(() => setLocaleTextMap(defaultLocaleTextMap));
                 }
