@@ -29,7 +29,11 @@
             display: flex;
             justify-content: flex-start;
             align-items: center;
-            padding: 0 @padding-horizontal-width;
+            padding: 0 calc(@padding-horizontal-width / 2);
+
+            & > * {
+                margin: 0 calc(@padding-horizontal-width / 2);
+            }
         }
     }
 }

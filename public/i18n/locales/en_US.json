@@ -1,7 +1,6 @@
 {
     "app": {
         "navbar": {
-            "dashboard": "Dashboard",
             "clients": "Clients",
             "marketplace": "Marketplace"
         },

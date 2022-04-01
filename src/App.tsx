@@ -18,6 +18,8 @@ import {
     LocaleMenuProps,
 } from './modules/locale/locale.interface';
 import { LocaleMenuComponent } from './modules/locale/locale-menu.component';
+import { ProfileMenuComponent } from './modules/profile/profile-menu.component';
+import { ProfileMenuProps } from './modules/profile/profile.interface';
 
 const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) => {
     const [locales, setLocales] = useState<LocaleListItem[]>([]);
@@ -26,7 +28,9 @@ const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) =>
 
     const brandService = declarations.get<BrandService>(BrandService);
     const localeService = declarations.get<LocaleService>(LocaleService);
+
     const LocaleMenu = declarations.get<FC<LocaleMenuProps>>(LocaleMenuComponent);
+    const ProfileMenu = declarations.get<FC<ProfileMenuProps>>(ProfileMenuComponent);
 
     const LocaleContext = localeService.getContext();
 
@@ -68,6 +72,7 @@ const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) =>
                                                 selectedLocaleId={locale}
                                                 onLocaleChange={(localeItem) => setLocale(localeItem.id)}
                                             />
+                                            <ProfileMenu />
                                         </Box>
                                     </Box>
                                 </Box>

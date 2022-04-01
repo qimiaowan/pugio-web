@@ -1,7 +1,18 @@
 {
     "app": {
-        "menu": {
-            "apps": "应用"
+        "navbar": {
+            "clients": "终端",
+            "marketplace": "市场"
+        },
+        "avatarDropdown": {
+            "settings": "账户设置",
+            "signout": "登出",
+            "create": "创建一个账户"
         }
+    },
+    "dashboardMenu": {
+        "apps": "应用",
+        "members": "人员",
+        "props": "属性"
     }
 }
