@@ -8,6 +8,12 @@
             "settings": "账户设置",
             "signout": "登出",
             "create": "创建一个账户"
+        },
+        "clientsDropdown": {
+            "loadMore": "加载更多",
+            "search": "输入以搜索",
+            "create": "建立一个终端",
+            "goto": "展示所有终端"
         }
     },
     "dashboardMenu": {

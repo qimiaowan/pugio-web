@@ -5,13 +5,13 @@
             "marketplace": "Marketplace"
         },
         "avatarDropdown": {
-            "settings": "Account settings",
-            "signout": "Sign out",
+            "settings": "Account Settings",
+            "signout": "Sign Out",
             "create": "Create a new account"
         },
         "clientsDropdown": {
             "loadMore": "Load more",
-            "search": "Type to search",
+            "search": "Type to Search",
             "create": "Create a client",
             "goto": "View all clients"
         }
