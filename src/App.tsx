@@ -21,8 +21,12 @@ import {
 import { LocaleMenuComponent } from './modules/locale/locale-menu.component';
 import { ProfileMenuComponent } from './modules/profile/profile-menu.component';
 import { ProfileMenuProps } from './modules/profile/profile.interface';
-import { NavLink } from 'react-router-dom';
+import {
+    NavLink,
+    Outlet,
+} from 'react-router-dom';
 import { ClientsDropdownComponent } from './modules/clients/clients-dropdown.component';
+import clsx from 'clsx';
 
 const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) => {
     const [locales, setLocales] = useState<LocaleListItem[]>([]);
@@ -72,20 +76,15 @@ const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) =>
                                                 src={logo}
                                             />
                                             <ClientsDropdown />
-                                            <NavLink
-                                                className="link"
-                                                to="/marketplace"
-                                            >
+                                            <NavLink to="/marketplace" className="navlink">
                                                 {
                                                     ({ isActive }) => (
                                                         <Button
-                                                            classes={
-                                                                isActive
-                                                                    ? {
-                                                                        root: 'active',
-                                                                    }
-                                                                    : {}
-                                                            }
+                                                            classes={{
+                                                                root: clsx('link', {
+                                                                    'active': isActive,
+                                                                }),
+                                                            }}
                                                         >{getLocaleText('app.navbar.marketplace')}</Button>
                                                     )
                                                 }
@@ -100,7 +99,9 @@ const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) =>
                                             <ProfileMenu />
                                         </Box>
                                     </Box>
-                                    <Box className=""></Box>
+                                    <Box className="content-layer">
+                                        <Outlet />
+                                    </Box>
                                 </Box>
                             </StyledEngineProvider>
                         </ThemeProvider>

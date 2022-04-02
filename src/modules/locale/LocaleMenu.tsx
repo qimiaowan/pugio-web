@@ -59,11 +59,11 @@ const LocaleMenu: FC<LocaleMenuProps> = ({
                                         handleClose();
                                     }}
                                 >
-                                    {
-                                        selectedLocaleId === id && (
-                                            <ListItemIcon><CheckIcon /></ListItemIcon>
-                                        )
-                                    }
+                                    <ListItemIcon>
+                                        {
+                                            selectedLocaleId === id && <CheckIcon />
+                                        }
+                                    </ListItemIcon>
                                     <ListItemText>{title}</ListItemText>
                                 </MenuItem>
                             );
