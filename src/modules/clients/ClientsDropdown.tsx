@@ -10,7 +10,6 @@ import Button from '@mui/material/Button';
 import { InjectedComponentProps } from 'khamsa';
 import { LocaleService } from '../locale/locale.service';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import './clients-dropdown.component.less';
 
 const ClientsDropdown: FC<InjectedComponentProps> = ({ declarations }) => {
     const localeService = declarations.get<LocaleService>(LocaleService);
@@ -29,7 +28,7 @@ const ClientsDropdown: FC<InjectedComponentProps> = ({ declarations }) => {
     return (
         <Box>
             <Button
-                classes={{ root: 'clients-dropdown' }}
+                classes={{ root: 'link' }}
                 variant="text"
                 endIcon={<KeyboardArrowDownIcon />}
                 onClick={handleClick}
