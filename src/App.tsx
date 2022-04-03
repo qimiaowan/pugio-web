@@ -6,7 +6,6 @@ import {
     useEffect,
     useState,
 } from 'react';
-import './App.less';
 import { LocaleService } from './modules/locale/locale.service';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
 import { StyledEngineProvider } from '@mui/material/styles';
@@ -27,6 +26,7 @@ import {
 } from 'react-router-dom';
 import { ClientsDropdownComponent } from './modules/clients/clients-dropdown.component';
 import clsx from 'clsx';
+import './app.component.less';
 
 const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) => {
     const [locales, setLocales] = useState<LocaleListItem[]>([]);

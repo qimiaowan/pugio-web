@@ -26,6 +26,12 @@ const ClientsModule = import('./modules/clients/clients.module').then(({ Clients
         {
             path: '',
             useComponentClass: AppComponent,
+            children: [
+                {
+                    path: 'clients',
+                    useModuleClass: ClientsModule,
+                },
+            ],
         },
     ],
 })
