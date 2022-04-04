@@ -6,10 +6,10 @@ import {
 import Box from '@mui/material/Box';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
+import Icon from '@mui/material/Icon';
 import Button from '@mui/material/Button';
 import { InjectedComponentProps } from 'khamsa';
 import { LocaleService } from '../locale/locale.service';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 const ClientsDropdown: FC<InjectedComponentProps> = ({ declarations }) => {
     const localeService = declarations.get<LocaleService>(LocaleService);
@@ -30,7 +30,7 @@ const ClientsDropdown: FC<InjectedComponentProps> = ({ declarations }) => {
             <Button
                 classes={{ root: 'link' }}
                 variant="text"
-                endIcon={<KeyboardArrowDownIcon />}
+                endIcon={<Icon className="icon-keyboard-arrow-down" style={{ fontSize: 13 }} />}
                 onClick={handleClick}
             >{getLocaleText('app.navbar.clients')}</Button>
             <Popover

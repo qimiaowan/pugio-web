@@ -5,13 +5,12 @@ import {
 } from 'react';
 import noop from 'lodash/noop';
 import Box from '@mui/material/Box';
+import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import CheckIcon from '@mui/icons-material/Check';
-import LanguageTwoToneIcon from '@mui/icons-material/LanguageTwoTone';
 import { LocaleMenuProps } from './locale.interface';
 
 const LocaleMenu: FC<LocaleMenuProps> = ({
@@ -38,7 +37,7 @@ const LocaleMenu: FC<LocaleMenuProps> = ({
                     aria-haspopup="true"
                     aria-expanded={open ? 'true' : undefined}
                     onClick={handleClick}
-                ><LanguageTwoToneIcon /></IconButton>
+                ><Icon className="icon-language" /></IconButton>
                 <Menu
                     anchorEl={anchorEl}
                     open={open}
@@ -61,7 +60,7 @@ const LocaleMenu: FC<LocaleMenuProps> = ({
                                 >
                                     <ListItemIcon>
                                         {
-                                            selectedLocaleId === id && <CheckIcon />
+                                            selectedLocaleId === id && <Icon className="icon-check" />
                                         }
                                     </ListItemIcon>
                                     <ListItemText>{title}</ListItemText>

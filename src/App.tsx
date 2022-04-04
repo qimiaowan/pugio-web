@@ -9,9 +9,12 @@ import {
 import { LocaleService } from './modules/locale/locale.service';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
 import { StyledEngineProvider } from '@mui/material/styles';
+import createTheme from '@mui/material/styles/createTheme';
 import theme from '@lenconda/shuffle-mui-theme';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Icon from '@mui/material/Icon';
+import IconButton from '@mui/material/IconButton';
 import { BrandService } from './modules/brand/brand.service';
 import {
     LocaleListItem,
@@ -27,6 +30,32 @@ import {
 import { ClientsDropdownComponent } from './modules/clients/clients-dropdown.component';
 import clsx from 'clsx';
 import './app.component.less';
+
+const pugioTheme = createTheme(theme, {
+    components: {
+        MuiIcon: {
+            defaultProps: {
+                baseClassName: 'pugio-icons',
+            },
+            styleOverrides: {
+                root: {
+                    width: 'initial',
+                    height: 'initial',
+                },
+            },
+        },
+        MuiListItemText: {
+            defaultProps: {
+                disableTypography: true,
+            },
+            styleOverrides: {
+                root: {
+                    fontSize: 13,
+                },
+            },
+        },
+    },
+});
 
 const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) => {
     const [locales, setLocales] = useState<LocaleListItem[]>([]);
@@ -65,7 +94,7 @@ const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) =>
                     const getLocaleText = localeService.useLocaleContext();
 
                     return (
-                        <ThemeProvider theme={theme}>
+                        <ThemeProvider theme={pugioTheme}>
                             <StyledEngineProvider injectFirst={true}>
                                 <Box className="app-container">
                                     <Box className="navbar">
@@ -91,6 +120,11 @@ const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) =>
                                             </NavLink>
                                         </Box>
                                         <Box className="wrapper avatar-and-locales">
+                                            <NavLink to="/settings" className="navlink">
+                                                <IconButton>
+                                                    <Icon className="icon-settings" />
+                                                </IconButton>
+                                            </NavLink>
                                             <LocaleMenu
                                                 locales={locales}
                                                 selectedLocaleId={locale}
