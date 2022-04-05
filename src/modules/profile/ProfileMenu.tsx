@@ -53,9 +53,8 @@ const LocaleMenu: FC<InjectedComponentProps<ProfileMenuProps>> = ({
             >
                 <Avatar
                     classes={{
-                        rounded: 'avatar',
+                        root: 'avatar',
                     }}
-                    variant="rounded"
                     src={avatarUrl}
                     imgProps={{
                         onError: () => {
@@ -84,7 +83,7 @@ const LocaleMenu: FC<InjectedComponentProps<ProfileMenuProps>> = ({
                 </MenuItem>
                 <Divider />
                 <MenuItem>
-                    <ListItemIcon><Icon className="icon-add" /></ListItemIcon>
+                    <ListItemIcon><Icon className="icon-account-add" /></ListItemIcon>
                     <ListItemText>{getLocaleText('app.avatarDropdown.create')}</ListItemText>
                 </MenuItem>
             </Menu>

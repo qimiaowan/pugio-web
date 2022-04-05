@@ -28,7 +28,6 @@ import {
     Outlet,
 } from 'react-router-dom';
 import { ClientsDropdownComponent } from './modules/clients/clients-dropdown.component';
-import clsx from 'clsx';
 import './app.component.less';
 
 const pugioTheme = createTheme(theme, {
@@ -107,15 +106,11 @@ const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) =>
                                             <ClientsDropdown />
                                             <NavLink to="/marketplace" className="navlink">
                                                 {
-                                                    ({ isActive }) => (
-                                                        <Button
-                                                            classes={{
-                                                                root: clsx('link', {
-                                                                    'active': isActive,
-                                                                }),
-                                                            }}
-                                                        >{getLocaleText('app.navbar.marketplace')}</Button>
-                                                    )
+                                                    <Button
+                                                        classes={{
+                                                            root: 'link',
+                                                        }}
+                                                    >{getLocaleText('app.navbar.marketplace')}</Button>
                                                 }
                                             </NavLink>
                                         </Box>

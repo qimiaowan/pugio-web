@@ -16,9 +16,9 @@
             "goto": "展示所有终端"
         }
     },
-    "dashboardMenu": {
-        "apps": "应用",
-        "members": "人员",
-        "props": "属性"
+    "clientsSidebarMenu": {
+        "workstation": "工作台",
+        "members": "成员",
+        "details": "详情"
     }
 }

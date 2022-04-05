@@ -1,0 +1,42 @@
+@import url('../../variables.less');
+
+.client-menu-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    text-decoration: none;
+    color: @text-nav-link-color;
+    padding: @padding-sidebar-menu-item;
+    border-radius: 5px;
+
+    .title {
+        font-size: 10px;
+        text-decoration: none;
+    }
+
+    .icon {
+        display: flex;
+        align-items: center;
+
+        .pugio-icons {
+            font-size: 18px;
+        }
+    }
+
+    &.full-width {
+        flex-direction: row;
+
+        .icon {
+            margin-right: 5px;
+        }
+    }
+
+    &.active {
+        background-color: fade(@grey, 20%);
+    }
+
+    &:hover {
+        background-color: fade(@grey, 10%);
+    }
+}

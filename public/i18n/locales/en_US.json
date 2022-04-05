@@ -16,9 +16,9 @@
             "goto": "View all clients"
         }
     },
-    "dashboardMenu": {
-        "apps": "Applications",
+    "clientsSidebarMenu": {
+        "workstation": "Workstation",
         "members": "Members",
-        "props": "Properties"
+        "details": "Details"
     }
 }
