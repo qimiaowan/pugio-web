@@ -1,11 +1,11 @@
 import ReactDOM from 'react-dom';
-import './index.less';
 import {
     App as KhamsaApp,
     router,
 } from 'khamsa';
-import reportWebVitals from './report-web-vitals';
-import { AppModule } from './app.module';
+import reportWebVitals from '@/report-web-vitals';
+import { AppModule } from '@/app.module';
+import '@/index.less';
 
 ReactDOM.render(
     <KhamsaApp

@@ -16,8 +16,10 @@
         box-sizing: border-box;
         padding: calc(@padding-vertical-width * 2) @padding-horizontal-width;
         padding-bottom: 0;
+        padding-right: 0;
         background-color: @bg-widget-color;
         border-right: 1px solid @bg-divider-color;
+        @scrollbar();
 
         .menu-container {
             box-sizing: border-box;
@@ -25,7 +27,8 @@
             flex-direction: column;
             flex-shrink: 1;
             flex-grow: 1;
-            overflow-y: scroll;
+            overflow-y: auto;
+            padding-right: calc(@padding-horizontal-width - 3px);
 
             .sidebar-link {
                 display: block;

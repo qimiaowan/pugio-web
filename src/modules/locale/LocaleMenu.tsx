@@ -3,7 +3,6 @@ import {
     useState,
     MouseEvent,
 } from 'react';
-import noop from 'lodash/noop';
 import Box from '@mui/material/Box';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
@@ -12,11 +11,12 @@ import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { LocaleMenuProps } from './locale.interface';
+import _ from 'lodash';
 
 const LocaleMenu: FC<LocaleMenuProps> = ({
     locales = [],
     selectedLocaleId = 'en_US',
-    onLocaleChange = noop,
+    onLocaleChange = _.noop,
 }) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);

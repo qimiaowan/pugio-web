@@ -1,7 +1,7 @@
 import { Injectable } from 'khamsa';
 import { UtilsService } from '../utils/utils.service';
-import isArray from 'lodash/isArray';
 import { RequestService as PugioRequest } from '@pugio/request';
+import _ from 'lodash';
 
 @Injectable()
 export class RequestService {
@@ -26,7 +26,7 @@ export class RequestService {
                         return this.utilsService.transformDTOToDAO(data);
                     },
                     ...(
-                        isArray(defaultRequestTransformers)
+                        _.isArray(defaultRequestTransformers)
                             ? defaultRequestTransformers
                             : [defaultRequestTransformers]
                     ),

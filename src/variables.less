@@ -9,3 +9,41 @@
 @text-nav-link-color: #6b6b6b;
 @text-nav-link-hover-color: #212121;
 @grey: #666;
+
+// mixins
+@scrollbar: {
+    ::-webkit-scrollbar {
+        height: 12px;
+        width: 12px;
+        overflow: visible;
+    }
+
+    ::-webkit-scrollbar-button {
+        height: 0;
+        width: 0;
+    }
+
+    ::-webkit-scrollbar-corner {
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #a6a6a6;
+    }
+
+    ::-webkit-scrollbar-thumb, ::-webkit-scrollbar-track {
+        background-clip: padding-box;
+        border: 3px solid transparent;
+        border-radius: 100px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background-color: #ededed;
+    }
+
+    ::-webkit-scrollbar-thumb, ::-webkit-scrollbar-track {
+        background-clip: padding-box;
+        border: 3px solid transparent;
+        border-radius: 100px;
+    }
+}

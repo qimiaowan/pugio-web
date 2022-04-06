@@ -6,7 +6,11 @@ import {
     useEffect,
     useState,
 } from 'react';
-import { LocaleService } from './modules/locale/locale.service';
+import {
+    NavLink,
+    Outlet,
+} from 'react-router-dom';
+import { LocaleService } from '@modules/locale/locale.service';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
 import { StyledEngineProvider } from '@mui/material/styles';
 import createTheme from '@mui/material/styles/createTheme';
@@ -15,20 +19,16 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
-import { BrandService } from './modules/brand/brand.service';
 import {
     LocaleListItem,
     LocaleMenuProps,
-} from './modules/locale/locale.interface';
-import { LocaleMenuComponent } from './modules/locale/locale-menu.component';
-import { ProfileMenuComponent } from './modules/profile/profile-menu.component';
-import { ProfileMenuProps } from './modules/profile/profile.interface';
-import {
-    NavLink,
-    Outlet,
-} from 'react-router-dom';
-import { ClientsDropdownComponent } from './modules/clients/clients-dropdown.component';
-import './app.component.less';
+} from '@modules/locale/locale.interface';
+import { BrandService } from '@modules/brand/brand.service';
+import { LocaleMenuComponent } from '@modules/locale/locale-menu.component';
+import { ProfileMenuComponent } from '@modules/profile/profile-menu.component';
+import { ProfileMenuProps } from '@modules/profile/profile.interface';
+import { ClientsDropdownComponent } from '@modules/clients/clients-dropdown.component';
+import '@/app.component.less';
 
 const pugioTheme = createTheme(theme, {
     components: {

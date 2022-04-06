@@ -5,12 +5,7 @@ import {
     useState,
 } from 'react';
 import { Injectable } from 'khamsa';
-import isString from 'lodash/isString';
-import get from 'lodash/get';
-import merge from 'lodash/merge';
-import noop from 'lodash/noop';
-import isArray from 'lodash/isArray';
-import cloneDeep from 'lodash/cloneDeep';
+import _ from 'lodash';
 import Mustache from 'mustache';
 import { LocaleListItem } from './locale.interface';
 
@@ -40,7 +35,7 @@ export class LocaleService {
                     fetch(`/i18n/locales/${locale}.json`)
                         .then((res) => res.json())
                         .then((localeTextMap) => {
-                            setLocaleTextMap(merge(cloneDeep(defaultLocaleTextMap), localeTextMap));
+                            setLocaleTextMap(_.merge(_.cloneDeep(defaultLocaleTextMap), localeTextMap));
                         })
                         .catch(() => setLocaleTextMap(defaultLocaleTextMap));
                 }
@@ -52,13 +47,13 @@ export class LocaleService {
 
     public useLocaleContext() {
         const localeTextMap = useContext(this.LocaleContext);
-        const [localeTextGetter, setLocaleTextGetter] = useState<Function>(() => noop);
+        const [localeTextGetter, setLocaleTextGetter] = useState<Function>(() => _.noop);
 
         useEffect(() => {
             const newLocaleTextGetter = (pathname: string, props: any = {}) => {
-                const localeText = get(localeTextMap, pathname) || '';
+                const localeText = _.get(localeTextMap, pathname) || '';
 
-                if (!localeText || !isString(localeText)) {
+                if (!localeText || !_.isString(localeText)) {
                     return '';
                 }
 
@@ -79,10 +74,10 @@ export class LocaleService {
         try {
             const manifestInfo = await fetch('/manifest.json').then((res) => res.json());
 
-            if (!manifestInfo || !manifestInfo.locales || !isArray(manifestInfo.locales)) {
+            if (!manifestInfo || !manifestInfo.locales || !_.isArray(manifestInfo.locales)) {
                 return [];
             } else {
-                return get(manifestInfo, 'locales');
+                return _.get(manifestInfo, 'locales');
             }
         } catch (e) {
             return [];
