@@ -13,6 +13,7 @@ import { ClientMenuItemComponent } from './client-menu-item.component';
 import { ClientMenuItemProps } from './client-menu-item.interface';
 import {
     NavLink,
+    Outlet,
     useParams,
 } from 'react-router-dom';
 import { LocaleService } from '../locale/locale.service';
@@ -37,7 +38,10 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
     };
 
     const handleExpandCollapseClick = () => {
-        localStorage.setItem(generateFullWidthMenuKey(params.client_id), JSON.stringify(!fullWidthMenu));
+        localStorage.setItem(
+            generateFullWidthMenuKey(params.client_id),
+            JSON.stringify(!fullWidthMenu),
+        );
         setFullWidthMenu(!fullWidthMenu);
     };
 
@@ -123,7 +127,7 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
                     </IconButton>
                 </Box>
             </Box>
-            <Box className="content-container"></Box>
+            <Box className="content-container"><Outlet /></Box>
         </Box>
     );
 };

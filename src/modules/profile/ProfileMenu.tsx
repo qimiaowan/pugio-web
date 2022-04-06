@@ -18,7 +18,7 @@ import { ProfileMenuProps } from './profile.interface';
 import { LocaleService } from '../locale/locale.service';
 import './profile-menu.component.less';
 
-const DEFAULT_PICTURE_URL = '/static/images/avatar_fallback.svg';
+const DEFAULT_PICTURE_URL = '/static/images/profile_avatar_fallback.svg';
 
 const LocaleMenu: FC<InjectedComponentProps<ProfileMenuProps>> = ({
     declarations,

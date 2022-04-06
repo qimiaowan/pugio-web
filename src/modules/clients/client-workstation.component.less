@@ -1,0 +1,39 @@
+@import url('@/variables.less');
+
+.client-workstation-page {
+    .header-container {
+        background-color: @bg-widget-color;
+
+        .controls {
+            border-bottom: 1px solid @bg-divider-color;
+            padding: @padding-vertical-width @padding-horizontal-width;
+        }
+
+        .tabs {
+            display: flex;
+
+            .tabs-wrapper {
+                flex-grow: 1;
+                flex-shrink: 1;
+
+                .simplebar-content {
+                    display: flex;
+                    align-items: stretch;
+                    flex-grow: 1;
+                    display: flex;
+                    align-items: stretch;
+                }
+            }
+
+            .add-button-wrapper {
+                width: 40px;
+                flex-grow: 0;
+                flex-shrink: 1;
+                border-bottom: 1px solid @bg-divider-color;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        }
+    }
+}

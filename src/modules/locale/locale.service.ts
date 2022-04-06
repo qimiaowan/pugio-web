@@ -45,13 +45,19 @@ export class LocaleService {
         return localeTextMap;
     }
 
-    public useLocaleContext() {
+    public useLocaleContext(basePathname = '') {
+        const basePathnameSegments = basePathname.split('.');
         const localeTextMap = useContext(this.LocaleContext);
         const [localeTextGetter, setLocaleTextGetter] = useState<Function>(() => _.noop);
 
         useEffect(() => {
             const newLocaleTextGetter = (pathname: string, props: any = {}) => {
-                const localeText = _.get(localeTextMap, pathname) || '';
+                const localeText = _.get(
+                    localeTextMap,
+                    basePathnameSegments.concat(
+                        pathname.split('.'),
+                    ).filter((segment) => !!segment).join('.'),
+                ) || '';
 
                 if (!localeText || !_.isString(localeText)) {
                     return '';

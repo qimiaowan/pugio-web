@@ -1,0 +1,60 @@
+@import url('@/variables.less');
+
+.tab {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-shrink: 1;
+    flex-grow: 0;
+    user-select: none;
+    padding: @padding-vertical-width @padding-horizontal-width;
+    border-bottom: 1px solid @bg-divider-color;
+    border-right: 1px solid @bg-divider-color;
+
+    &:last-child {
+        border-right: 0;
+    }
+
+    &:not(.placeholder) {
+        cursor: pointer;
+
+        &:hover {
+            background-color: darken(@bg-widget-color, 5%);
+        }
+    }
+
+    &.active {
+        border-bottom: 0;
+        background-color: white;
+    }
+
+    &.placeholder {
+        flex-grow: 1;
+    }
+
+    .content-wrapper {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        .avatar {
+            width: 15px;
+            height: 15px;
+            margin-right: 5px;
+        }
+
+        .text {
+            max-width: 120px;
+            font-size: 12px;
+            color: @text-nav-link-color;
+        }
+    }
+
+    .close-icon {
+        margin-left: 5px;
+
+        .pugio-icons {
+            font-size: 13px;
+        }
+    }
+}

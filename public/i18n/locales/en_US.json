@@ -20,5 +20,10 @@
         "workstation": "Workstation",
         "members": "Members",
         "details": "Details"
+    },
+    "pages": {
+        "client_workstation": {
+            "all_channels": "All Channels"
+        }
     }
 }

@@ -1,4 +1,4 @@
-@import url('../../variables.less');
+@import url('@/variables.less');
 
 .client-menu-item {
     display: flex;
@@ -34,6 +34,10 @@
 
     &.active {
         background-color: fade(@grey, 20%);
+
+        &:hover {
+            background-color: fade(@grey, 20%);
+        }
     }
 
     &:hover {
