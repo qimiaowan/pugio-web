@@ -1,6 +1,8 @@
 import {
     FC,
-    MouseEvent,
+    useCallback,
+    useEffect,
+    useRef,
     useState,
 } from 'react';
 import Box from '@mui/material/Box';
@@ -10,28 +12,40 @@ import Icon from '@mui/material/Icon';
 import Button from '@mui/material/Button';
 import { InjectedComponentProps } from 'khamsa';
 import { LocaleService } from '@modules/locale/locale.service';
+import { ClientsDropdownProps } from './clients-dropdown.interface';
+import _ from 'lodash';
 
-const ClientsDropdown: FC<InjectedComponentProps> = ({ declarations }) => {
+const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
+    declarations,
+    open = false,
+    onOpen = _.noop,
+    onClose = _.noop,
+}) => {
     const localeService = declarations.get<LocaleService>(LocaleService);
 
-    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
     const getLocaleText = localeService.useLocaleContext();
+    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement>(null);
 
-    const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
+    useEffect(() => {
+        if (open && buttonRef.current) {
+            setAnchorEl(buttonRef.current);
+        } else {
+            setAnchorEl(null);
+        }
+    }, [open, buttonRef]);
 
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+    const handleOpen = useCallback(onOpen, []);
+    const handleClose = useCallback(onClose, []);
 
     return (
         <Box>
             <Button
                 classes={{ root: 'link' }}
                 variant="text"
-                endIcon={<Icon className="icon-keyboard-arrow-down" style={{ fontSize: 13 }} />}
-                onClick={handleClick}
+                endIcon={<Icon className="dropdown-icon icon-keyboard-arrow-down" />}
+                ref={buttonRef}
+                onClick={handleOpen}
             >{getLocaleText('app.navbar.clients')}</Button>
             <Popover
                 open={Boolean(anchorEl)}

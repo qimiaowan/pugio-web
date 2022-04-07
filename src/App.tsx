@@ -29,6 +29,9 @@ import { ProfileMenuComponent } from '@modules/profile/profile-menu.component';
 import { ProfileMenuProps } from '@modules/profile/profile.interface';
 import { ClientsDropdownComponent } from '@modules/clients/clients-dropdown.component';
 import '@/app.component.less';
+import { StoreService } from '@modules/store/store.service';
+import { ClientsDropdownProps } from '@modules/clients/clients-dropdown.interface';
+import shallow from 'zustand/shallow';
 
 const pugioTheme = createTheme(theme, {
     components: {
@@ -63,14 +66,23 @@ const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) =>
 
     const brandService = declarations.get<BrandService>(BrandService);
     const localeService = declarations.get<LocaleService>(LocaleService);
-
+    const storeService = declarations.get<StoreService>(StoreService);
     const LocaleMenu = declarations.get<FC<LocaleMenuProps>>(LocaleMenuComponent);
     const ProfileMenu = declarations.get<FC<ProfileMenuProps>>(ProfileMenuComponent);
-    const ClientsDropdown = declarations.get<FC>(ClientsDropdownComponent);
+    const ClientsDropdown = declarations.get<FC<ClientsDropdownProps>>(ClientsDropdownComponent);
 
     const LocaleContext = localeService.getContext();
 
     const localeMap = localeService.useLocaleMap(locale);
+    const [
+        clientsDropdownOpen,
+        switchClientsDropdownVisibility,
+    ] = storeService.useStore(
+        (state) => {
+            return [state.clientsDropdownOpen, state.switchClientsDropdownVisibility];
+        },
+        shallow,
+    );
 
     useEffect(() => {
         localStorage.setItem('locale', locale);
@@ -103,7 +115,11 @@ const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) =>
                                                 component="img"
                                                 src={logo}
                                             />
-                                            <ClientsDropdown />
+                                            <ClientsDropdown
+                                                open={clientsDropdownOpen}
+                                                onOpen={() => switchClientsDropdownVisibility(true)}
+                                                onClose={() => switchClientsDropdownVisibility(false)}
+                                            />
                                             <NavLink to="/marketplace" className="navlink">
                                                 {
                                                     <Button

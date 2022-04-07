@@ -12,6 +12,7 @@ export class StoreService {
         return {
             clientTabs: Map({}),
             clientSidebarWidth: null,
+            clientsDropdownOpen: false,
 
             changeClientSidebarWidth: (width: number) => {
                 set(() => ({ clientSidebarWidth: width }));
@@ -52,6 +53,14 @@ export class StoreService {
                             clientId,
                             tabs.filter((tab) => tab.id !== tabId),
                         ),
+                    };
+                });
+            },
+
+            switchClientsDropdownVisibility: (open?: boolean) => {
+                set((state) => {
+                    return {
+                        clientsDropdownOpen: _.isBoolean(open) ? open : !state.clientsDropdownOpen,
                     };
                 });
             },

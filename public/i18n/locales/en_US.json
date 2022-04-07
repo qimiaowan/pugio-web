@@ -23,7 +23,9 @@
     },
     "pages": {
         "client_workstation": {
-            "all_channels": "All Channels"
+            "all_channels": "All Channels",
+            "create": "New",
+            "switch": "Switch"
         }
     }
 }

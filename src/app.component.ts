@@ -5,6 +5,7 @@ import { BrandService } from '@modules/brand/brand.service';
 import { LocaleMenuComponent } from '@modules/locale/locale-menu.component';
 import { ProfileMenuComponent } from '@modules/profile/profile-menu.component';
 import { ClientsDropdownComponent } from '@modules/clients/clients-dropdown.component';
+import { StoreService } from '@modules/store/store.service';
 
 @Component({
     component: lazy(() => import('./App')),
@@ -14,6 +15,7 @@ import { ClientsDropdownComponent } from '@modules/clients/clients-dropdown.comp
         LocaleMenuComponent,
         ProfileMenuComponent,
         ClientsDropdownComponent,
+        StoreService,
     ],
 })
 export class AppComponent {}
