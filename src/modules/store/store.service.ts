@@ -11,6 +11,11 @@ export class StoreService {
     public useStore = create<AppState>((set) => {
         return {
             clientTabs: Map({}),
+            clientSidebarWidth: null,
+
+            changeClientSidebarWidth: (width: number) => {
+                set(() => ({ clientSidebarWidth: width }));
+            },
 
             createTab: (clientId: string, appId: string, nodes: ReactNode) => {
                 const tabId = uuidv4();

@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 import Icon from '@mui/material/Icon';
 import Button from '@mui/material/Button';
 import { InjectedComponentProps } from 'khamsa';
-import { LocaleService } from '../locale/locale.service';
+import { LocaleService } from '@modules/locale/locale.service';
 
 const ClientsDropdown: FC<InjectedComponentProps> = ({ declarations }) => {
     const localeService = declarations.get<LocaleService>(LocaleService);

@@ -1,7 +1,6 @@
 import {
     FC,
     useEffect,
-    useRef,
     useState,
 } from 'react';
 import Box from '@mui/material/Box';
@@ -12,6 +11,7 @@ import { InjectedComponentProps } from 'khamsa';
 import { TabProps } from '@modules/tab/tab.interface';
 import { TabComponent } from '@modules/tab/tab.component';
 import { LocaleService } from '@modules/locale/locale.service';
+import { StoreService } from '@modules/store/store.service';
 import SimpleBar from 'simplebar-react';
 import _ from 'lodash';
 
@@ -20,21 +20,34 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
 }) => {
     const Tab = declarations.get<FC<TabProps>>(TabComponent);
     const localeService = declarations.get<LocaleService>(LocaleService);
+    const storeService = declarations.get<StoreService>(StoreService);
 
-    const headerContainerRef = useRef<HTMLDivElement>(null);
     const [headerWidth, setHeaderWidth] = useState<number>(null);
+    const [windowInnerWidth, setWindowInnerWidth] = useState<number>(window.innerWidth);
+    const sidebarWidth = storeService.useStore((state) => state.clientSidebarWidth);
     const getLocaleText = localeService.useLocaleContext('pages.client_workstation');
 
     useEffect(() => {
-        if (headerContainerRef.current) {
-            const initialWidth = headerContainerRef.current.clientWidth;
-            setHeaderWidth(initialWidth);
+        if (_.isNumber(sidebarWidth) && _.isNumber(windowInnerWidth)) {
+            setHeaderWidth(windowInnerWidth - sidebarWidth);
         }
-    }, [headerContainerRef]);
+    }, [sidebarWidth, windowInnerWidth]);
+
+    useEffect(() => {
+        const handler = () => {
+            setWindowInnerWidth(window.innerWidth);
+        };
+
+        window.addEventListener('resize', handler);
+
+        return () => {
+            window.removeEventListener('resize', handler);
+        };
+    }, []);
 
     return (
         <Box className="page client-workstation-page">
-            <Box className="header-container" ref={headerContainerRef}>
+            <Box className="header-container">
                 <Box className="controls"></Box>
                 <Box className="tabs" style={{ width: headerWidth }}>
                     {

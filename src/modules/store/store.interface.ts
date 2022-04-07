@@ -9,6 +9,8 @@ export interface ClientTab {
 
 export interface AppState {
     clientTabs: Map<string, ClientTab[]>;
+    clientSidebarWidth: number;
+    changeClientSidebarWidth: (width: number) => void;
     createTab: (clientId: string, appId: string, nodes: ReactNode) => string;
     destroyTab: (clientId: string, tabId: string) => void;
 }

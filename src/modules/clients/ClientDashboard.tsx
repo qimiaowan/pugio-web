@@ -2,6 +2,7 @@ import {
     FC,
     useCallback,
     useEffect,
+    useRef,
     useState,
 } from 'react';
 import Box from '@mui/material/Box';
@@ -16,7 +17,9 @@ import {
     Outlet,
     useParams,
 } from 'react-router-dom';
-import { LocaleService } from '../locale/locale.service';
+import { LocaleService } from '@modules/locale/locale.service';
+import { StoreService } from '@modules/store/store.service';
+import _ from 'lodash';
 
 interface MenuMetadataItem {
     to: string;
@@ -27,11 +30,14 @@ interface MenuMetadataItem {
 const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
     const ClientMenuItem = declarations.get<FC<ClientMenuItemProps>>(ClientMenuItemComponent);
     const localeService = declarations.get<LocaleService>(LocaleService);
+    const storeService = declarations.get<StoreService>(StoreService);
 
     const params = useParams();
+    const sidebarRef = useRef<HTMLDivElement>(null);
     const getLocaleText = localeService.useLocaleContext();
     const [fullWidthMenu, setFullWidthMenu] = useState<boolean>(false);
     const [menuMetadataItems, setMenuMetadataItems] = useState<MenuMetadataItem[]>([]);
+    const changeSidebarWidth = storeService.useStore((state) => state.changeClientSidebarWidth);
 
     const generateFullWidthMenuKey = (id: string) => {
         return `app.client.fullWidthMenu@${id}`;
@@ -56,6 +62,28 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
             );
         }
     }, [params]);
+
+    useEffect(() => {
+        const observer = new ResizeObserver((entries) => {
+            const [sidebarObservationData] = entries;
+
+            if (sidebarObservationData) {
+                const sidebarInlineSize = _.get(sidebarObservationData, 'borderBoxSize[0].inlineSize');
+
+                if (_.isNumber(sidebarInlineSize)) {
+                    changeSidebarWidth(sidebarInlineSize);
+                }
+            }
+        });
+
+        if (sidebarRef.current) {
+            observer.observe(sidebarRef.current);
+        }
+
+        return () => {
+            observer.unobserve(sidebarRef.current);
+        };
+    }, [sidebarRef]);
 
     const updateMenuMetadataItems = useCallback(() => {
         if (params.client_id) {
@@ -88,7 +116,7 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
 
     return (
         <Box className="client-dashboard-container">
-            <Box className="sidebar">
+            <Box className="sidebar" ref={sidebarRef}>
                 <Box className="menu-container">
                     {
                         menuMetadataItems.map((menuMetadataItem) => {

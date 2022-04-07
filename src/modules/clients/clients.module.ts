@@ -5,10 +5,12 @@ import { ClientWorkstationComponent } from './client-workstation.component';
 import { ClientsDropdownComponent } from './clients-dropdown.component';
 
 const TabModule = import('@modules/tab/tab.module').then(({ TabModule }) => TabModule);
+const StoreModule = import('@modules/store/store.module').then(({ StoreModule }) => StoreModule);
 
 @Module({
     imports: [
         TabModule,
+        StoreModule,
     ],
     components: [
         ClientsDropdownComponent,

@@ -15,7 +15,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { InjectedComponentProps } from 'khamsa';
 import { ProfileMenuProps } from './profile.interface';
-import { LocaleService } from '../locale/locale.service';
+import { LocaleService } from '@modules/locale/locale.service';
 import './profile-menu.component.less';
 
 const DEFAULT_PICTURE_URL = '/static/images/profile_avatar_fallback.svg';

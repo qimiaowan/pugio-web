@@ -1,5 +1,5 @@
 import { Injectable } from 'khamsa';
-import { UtilsService } from '../utils/utils.service';
+import { UtilsService } from '@modules/utils/utils.service';
 import { RequestService as PugioRequest } from '@pugio/request';
 import _ from 'lodash';
 
