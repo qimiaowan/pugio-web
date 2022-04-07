@@ -2,6 +2,7 @@ import { Module } from 'khamsa';
 import { AppComponent } from '@/app.component';
 import { RequestModule } from '@modules/request/request.module';
 import { UtilsModule } from '@modules/utils/utils.module';
+import { ContainerComponent } from './container.component';
 
 const LocaleModule = import('@modules/locale/locale.module').then(({ LocaleModule }) => LocaleModule);
 const BrandModule = import('@modules/brand/brand.module').then(({ BrandModule }) => BrandModule);
@@ -23,6 +24,7 @@ const TabModule = import('@modules/tab/tab.module').then(({ TabModule }) => TabM
     ],
     components: [
         AppComponent,
+        ContainerComponent,
     ],
     routes: [
         {
