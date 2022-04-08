@@ -2,6 +2,7 @@ import { Injectable } from 'khamsa';
 import { UtilsService } from '@modules/utils/utils.service';
 import { RequestService as PugioRequest } from '@pugio/request';
 import _ from 'lodash';
+import { ResponseGetInstanceOptions } from '@pugio/types';
 
 @Injectable()
 export class RequestService {
@@ -32,6 +33,18 @@ export class RequestService {
                     ),
                 ];
 
+                instance.interceptors.request.use((config) => {
+                    const token = localStorage.getItem('token') || sessionStorage.getItem('token') as string;
+
+                    if (token) {
+                        config.headers = {
+                            Authorization: `Bearer ${token}`,
+                        };
+                    }
+
+                    return config;
+                });
+
                 instance.interceptors.response.use((response) => {
                     const responseStatus = response.status;
                     const responseContent = response.data;
@@ -42,7 +55,10 @@ export class RequestService {
 
                     if (responseStatus >= 400) {
                         data.error = responseContent;
-                        // TODO error handlers
+
+                        if (responseStatus === 401) {
+                            window.location.href = this.utilsService.getLoginUrl();
+                        }
                     } else {
                         data.response = responseContent;
                     }
@@ -51,5 +67,9 @@ export class RequestService {
                 });
             },
         );
+    }
+
+    public getInstance(options: ResponseGetInstanceOptions = {}) {
+        return this.request.getInstance(options);
     }
 }
