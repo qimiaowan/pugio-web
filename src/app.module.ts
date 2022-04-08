@@ -2,7 +2,6 @@ import { Module } from 'khamsa';
 import { AppComponent } from '@/app.component';
 import { RequestModule } from '@modules/request/request.module';
 import { UtilsModule } from '@modules/utils/utils.module';
-import { ContainerComponent } from './container.component';
 
 const LocaleModule = import('@modules/locale/locale.module').then(({ LocaleModule }) => LocaleModule);
 const BrandModule = import('@modules/brand/brand.module').then(({ BrandModule }) => BrandModule);
@@ -10,6 +9,7 @@ const StoreModule = import('@modules/store/store.module').then(({ StoreModule })
 const ProfileModule = import('@modules/profile/profile.module').then(({ ProfileModule }) => ProfileModule);
 const ClientsModule = import('@modules/clients/clients.module').then(({ ClientsModule }) => ClientsModule);
 const TabModule = import('@modules/tab/tab.module').then(({ TabModule }) => TabModule);
+const ContainerModule = import('@modules/container/container.module').then(({ ContainerModule }) => ContainerModule);
 
 @Module({
     imports: [
@@ -21,10 +21,10 @@ const TabModule = import('@modules/tab/tab.module').then(({ TabModule }) => TabM
         ProfileModule,
         ClientsModule,
         TabModule,
+        ContainerModule,
     ],
     components: [
         AppComponent,
-        ContainerComponent,
     ],
     routes: [
         {

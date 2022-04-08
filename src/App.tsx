@@ -8,8 +8,8 @@ import {
 import { LocaleService } from '@modules/locale/locale.service';
 import { BrandService } from '@modules/brand/brand.service';
 import '@/app.component.less';
-import { ContainerComponent } from './container.component';
-import { ContainerProps } from './container.interface';
+import { ContainerComponent } from '@modules/container/container.component';
+import { ContainerProps } from '@modules/container/container.interface';
 
 const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) => {
     const [locale, setLocale] = useState(localStorage.getItem('locale') || 'en_US');

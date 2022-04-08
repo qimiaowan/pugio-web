@@ -6,7 +6,7 @@ import { LocaleMenuComponent } from '@modules/locale/locale-menu.component';
 import { ProfileMenuComponent } from '@modules/profile/profile-menu.component';
 import { ClientsDropdownComponent } from '@modules/clients/clients-dropdown.component';
 import { StoreService } from '@modules/store/store.service';
-import { ContainerComponent } from './container.component';
+import { ContainerComponent } from '@modules/container/container.component';
 
 @Component({
     component: lazy(() => import('./App')),

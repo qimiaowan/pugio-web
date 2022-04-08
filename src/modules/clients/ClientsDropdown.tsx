@@ -1,6 +1,5 @@
 import {
     FC,
-    useCallback,
     useEffect,
     useRef,
     useState,
@@ -35,9 +34,6 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
         }
     }, [open, buttonRef]);
 
-    const handleOpen = useCallback(onOpen, []);
-    const handleClose = useCallback(onClose, []);
-
     return (
         <Box>
             <Button
@@ -45,12 +41,12 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                 variant="text"
                 endIcon={<Icon className="dropdown-icon icon-keyboard-arrow-down" />}
                 ref={buttonRef}
-                onClick={handleOpen}
+                onClick={onOpen}
             >{getLocaleText('app.navbar.clients')}</Button>
             <Popover
                 open={Boolean(anchorEl)}
                 anchorEl={anchorEl}
-                onClose={handleClose}
+                onClose={onClose}
                 anchorOrigin={{
                     vertical: 'bottom',
                     horizontal: 'left',
