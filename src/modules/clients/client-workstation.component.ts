@@ -5,7 +5,7 @@ import { TabComponent } from '@modules/tab/tab.component';
 import { StoreService } from '@modules/store/store.service';
 
 @Component({
-    component: lazy(() => import('./ClientWorkstation')),
+    component: lazy(() => import('@modules/clients/ClientWorkstation')),
     declarations: [
         TabComponent,
         LocaleService,

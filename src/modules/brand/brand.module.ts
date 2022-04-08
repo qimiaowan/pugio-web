@@ -2,7 +2,7 @@ import {
     Global,
     Module,
 } from 'khamsa';
-import { BrandService } from './brand.service';
+import { BrandService } from '@modules/brand/brand.service';
 
 @Global()
 @Module({

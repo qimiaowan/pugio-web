@@ -1,7 +1,7 @@
 import {
     Module,
 } from 'khamsa';
-import { StoreService } from './store.service';
+import { StoreService } from '@modules/store/store.service';
 
 @Module({
     providers: [

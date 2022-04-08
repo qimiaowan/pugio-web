@@ -2,8 +2,8 @@ import {
     Global,
     Module,
 } from 'khamsa';
-import { LocaleMenuComponent } from './locale-menu.component';
-import { LocaleService } from './locale.service';
+import { LocaleMenuComponent } from '@modules/locale/locale-menu.component';
+import { LocaleService } from '@modules/locale/locale.service';
 
 @Global()
 @Module({

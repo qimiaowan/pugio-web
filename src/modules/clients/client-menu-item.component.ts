@@ -1,5 +1,5 @@
 import { Component } from 'khamsa';
-import ClientMenuItem from './ClientMenuItem';
+import ClientMenuItem from '@modules/clients/ClientMenuItem';
 
 @Component({
     component: ClientMenuItem,

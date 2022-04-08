@@ -1,8 +1,8 @@
 import { Module } from 'khamsa';
-import { ClientDashboardComponent } from './client-dashboard.component';
-import { ClientMenuItemComponent } from './client-menu-item.component';
-import { ClientWorkstationComponent } from './client-workstation.component';
-import { ClientsDropdownComponent } from './clients-dropdown.component';
+import { ClientDashboardComponent } from '@modules/clients/client-dashboard.component';
+import { ClientMenuItemComponent } from '@modules/clients/client-menu-item.component';
+import { ClientWorkstationComponent } from '@modules/clients/client-workstation.component';
+import { ClientsDropdownComponent } from '@modules/clients/clients-dropdown.component';
 
 const TabModule = import('@modules/tab/tab.module').then(({ TabModule }) => TabModule);
 const StoreModule = import('@modules/store/store.module').then(({ StoreModule }) => StoreModule);

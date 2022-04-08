@@ -7,7 +7,7 @@ import {
 import { Injectable } from 'khamsa';
 import _ from 'lodash';
 import Mustache from 'mustache';
-import { LocaleListItem } from './locale.interface';
+import { LocaleListItem } from '@modules/locale/locale.interface';
 
 @Injectable()
 export class LocaleService {

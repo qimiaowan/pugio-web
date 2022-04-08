@@ -1,6 +1,6 @@
 import { Component } from 'khamsa';
 import { LocaleService } from '@modules/locale/locale.service';
-import Tab from './Tab';
+import Tab from '@modules/tab/Tab';
 
 @Component({
     component: Tab,

@@ -1,5 +1,5 @@
 import { Component } from 'khamsa';
-import LocaleMenu from './LocaleMenu';
+import LocaleMenu from '@modules/locale/LocaleMenu';
 
 @Component({
     component: LocaleMenu,

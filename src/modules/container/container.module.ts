@@ -1,5 +1,5 @@
 import { Module } from 'khamsa';
-import { ContainerComponent } from './container.component';
+import { ContainerComponent } from '@modules/container/container.component';
 
 const LocaleModule = import('@modules/locale/locale.module').then(({ LocaleModule }) => LocaleModule);
 const BrandModule = import('@modules/brand/brand.module').then(({ BrandModule }) => BrandModule);

@@ -3,6 +3,7 @@ import {
     useState,
     MouseEvent,
     useEffect,
+    useCallback,
 } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -14,18 +15,20 @@ import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { InjectedComponentProps } from 'khamsa';
-import { ProfileMenuProps } from './profile.interface';
+import { Profile } from '@modules/profile/profile.interface';
 import { LocaleService } from '@modules/locale/locale.service';
-import './profile-menu.component.less';
+import { ProfileService } from '@modules/profile/profile.service';
+import '@modules/profile/profile-menu.component.less';
 
 const DEFAULT_PICTURE_URL = '/static/images/profile_avatar_fallback.svg';
 
-const LocaleMenu: FC<InjectedComponentProps<ProfileMenuProps>> = ({
+const LocaleMenu: FC<InjectedComponentProps> = ({
     declarations,
-    profile = {},
 }) => {
     const localeService = declarations.get<LocaleService>(LocaleService);
+    const profileService = declarations.get<ProfileService>(ProfileService);
 
+    const [userProfile, setUserProfile] = useState<Profile>(null);
     const [avatarUrl, setAvatarUrl] = useState<string>(DEFAULT_PICTURE_URL);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const getLocaleText = localeService.useLocaleContext();
@@ -41,8 +44,22 @@ const LocaleMenu: FC<InjectedComponentProps<ProfileMenuProps>> = ({
     };
 
     useEffect(() => {
-        setAvatarUrl(profile.picture || DEFAULT_PICTURE_URL);
-    }, [profile]);
+        if (userProfile) {
+            setAvatarUrl(userProfile.picture || DEFAULT_PICTURE_URL);
+        }
+    }, [userProfile]);
+
+    const getProfile = useCallback(() => {
+        if (!userProfile) {
+            profileService.getProfile().then((response) => {
+                setUserProfile(response.response);
+            });
+        }
+    }, [userProfile]);
+
+    useEffect(() => {
+        getProfile();
+    }, []);
 
     return (
         <Box className="profile-menu">

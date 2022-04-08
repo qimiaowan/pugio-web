@@ -1,6 +1,6 @@
 import { Component } from 'khamsa';
 import { LocaleService } from '@modules/locale/locale.service';
-import ClientsDropdown from './ClientsDropdown';
+import ClientsDropdown from '@modules/clients/ClientsDropdown';
 
 @Component({
     component: ClientsDropdown,

@@ -8,7 +8,7 @@ import { ClientsDropdownComponent } from '@modules/clients/clients-dropdown.comp
 import { StoreService } from '@modules/store/store.service';
 
 @Component({
-    component: lazy(() => import('./Container')),
+    component: lazy(() => import('@modules/container/Container')),
     declarations: [
         LocaleService,
         BrandService,

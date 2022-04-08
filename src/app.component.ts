@@ -9,7 +9,7 @@ import { StoreService } from '@modules/store/store.service';
 import { ContainerComponent } from '@modules/container/container.component';
 
 @Component({
-    component: lazy(() => import('./App')),
+    component: lazy(() => import('@/App')),
     declarations: [
         LocaleService,
         BrandService,

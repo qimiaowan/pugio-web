@@ -1,5 +1,5 @@
 import { Module } from 'khamsa';
-import { TabComponent } from './tab.component';
+import { TabComponent } from '@modules/tab/tab.component';
 
 @Module({
     components: [

@@ -25,7 +25,6 @@ import {
 import { BrandService } from '@modules/brand/brand.service';
 import { LocaleMenuComponent } from '@modules/locale/locale-menu.component';
 import { ProfileMenuComponent } from '@modules/profile/profile-menu.component';
-import { ProfileMenuProps } from '@modules/profile/profile.interface';
 import { ClientsDropdownComponent } from '@modules/clients/clients-dropdown.component';
 import '@/app.component.less';
 import { StoreService } from '@modules/store/store.service';
@@ -72,7 +71,7 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
     const localeService = declarations.get<LocaleService>(LocaleService);
     const storeService = declarations.get<StoreService>(StoreService);
     const LocaleMenu = declarations.get<FC<LocaleMenuProps>>(LocaleMenuComponent);
-    const ProfileMenu = declarations.get<FC<ProfileMenuProps>>(ProfileMenuComponent);
+    const ProfileMenu = declarations.get<FC>(ProfileMenuComponent);
     const ClientsDropdown = declarations.get<FC<ClientsDropdownProps>>(ClientsDropdownComponent);
 
     const getLocaleText = localeService.useLocaleContext();

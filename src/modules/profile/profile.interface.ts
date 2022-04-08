@@ -7,7 +7,3 @@ export interface Profile {
     middleName?: string;
     lastName?: string;
 }
-
-export interface ProfileMenuProps {
-    profile?: Partial<Profile>;
-}

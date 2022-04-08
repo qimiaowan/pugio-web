@@ -2,7 +2,7 @@ import {
     Global,
     Module,
 } from 'khamsa';
-import { UtilsService } from './utils.service';
+import { UtilsService } from '@modules/utils/utils.service';
 
 @Global()
 @Module({

@@ -2,7 +2,7 @@ import {
     Global,
     Module,
 } from 'khamsa';
-import { RequestService } from './request.service';
+import { RequestService } from '@modules/request/request.service';
 
 @Global()
 @Module({
