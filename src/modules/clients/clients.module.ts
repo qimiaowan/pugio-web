@@ -3,6 +3,7 @@ import { ClientDashboardComponent } from '@modules/clients/client-dashboard.comp
 import { ClientMenuItemComponent } from '@modules/clients/client-menu-item.component';
 import { ClientWorkstationComponent } from '@modules/clients/client-workstation.component';
 import { ClientsDropdownComponent } from '@modules/clients/clients-dropdown.component';
+import { ClientsService } from '@modules/clients/clients.service';
 
 const TabModule = import('@modules/tab/tab.module').then(({ TabModule }) => TabModule);
 const StoreModule = import('@modules/store/store.module').then(({ StoreModule }) => StoreModule);
@@ -11,6 +12,9 @@ const StoreModule = import('@modules/store/store.module').then(({ StoreModule })
     imports: [
         TabModule,
         StoreModule,
+    ],
+    providers: [
+        ClientsService,
     ],
     components: [
         ClientsDropdownComponent,
@@ -23,6 +27,7 @@ const StoreModule = import('@modules/store/store.module').then(({ StoreModule })
         ClientDashboardComponent,
         ClientMenuItemComponent,
         ClientWorkstationComponent,
+        ClientsService,
     ],
     routes: [
         {

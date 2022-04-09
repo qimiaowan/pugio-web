@@ -17,3 +17,13 @@ export interface RefreshTokenResponseData {
     refreshToken: string;
     expiresIn: number;
 }
+
+export interface PaginationResponse<T> {
+    response?: {
+        items: T[];
+        remains: number;
+        size: number;
+        lastCursor?: string;
+    };
+    error?: RequestError;
+}

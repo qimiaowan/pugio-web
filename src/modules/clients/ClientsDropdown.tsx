@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
     FC,
     useEffect,
@@ -6,13 +7,15 @@ import {
 } from 'react';
 import Box from '@mui/material/Box';
 import Popover from '@mui/material/Popover';
-import Typography from '@mui/material/Typography';
+// import Typography from '@mui/material/Typography';
 import Icon from '@mui/material/Icon';
 import Button from '@mui/material/Button';
 import { InjectedComponentProps } from 'khamsa';
 import { LocaleService } from '@modules/locale/locale.service';
-import { ClientsDropdownProps } from './clients-dropdown.interface';
+import { ClientsDropdownProps } from '@modules/clients/clients-dropdown.interface';
 import _ from 'lodash';
+import { useRequest } from 'ahooks';
+import { ClientsService } from '@modules/clients/clients.service';
 
 const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
     declarations,
@@ -21,10 +24,16 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
     onClose = _.noop,
 }) => {
     const localeService = declarations.get<LocaleService>(LocaleService);
+    const clientsService = declarations.get<ClientsService>(ClientsService);
 
     const buttonRef = useRef<HTMLButtonElement>(null);
     const getLocaleText = localeService.useLocaleContext();
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement>(null);
+    const {
+        run: runQueryClients,
+        data: queryClientsResponseData,
+        // loading: queryClientsLoading,
+    } = useRequest(clientsService.queryClients.bind(clientsService) as typeof clientsService.queryClients, { manual: true });
 
     useEffect(() => {
         if (open && buttonRef.current) {
@@ -33,6 +42,14 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
             setAnchorEl(null);
         }
     }, [open, buttonRef]);
+
+    useEffect(() => {
+        runQueryClients({});
+    }, []);
+
+    useEffect(() => {
+        console.log(queryClientsResponseData);
+    }, [queryClientsResponseData]);
 
     return (
         <Box>
@@ -52,7 +69,15 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                     horizontal: 'left',
                 }}
             >
-                <Typography sx={{ p: 2 }}>The content of the Popover.</Typography>
+                {
+                    _.isArray(_.get(queryClientsResponseData, 'response.items'))
+                        ? _.get(queryClientsResponseData, 'response.items').map((item) => {
+                            return (
+                                <p key={item.id}>{item.client.name}</p>
+                            );
+                        })
+                        : null
+                }
             </Popover>
         </Box>
     );
