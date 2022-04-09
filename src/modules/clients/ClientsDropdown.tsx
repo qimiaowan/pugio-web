@@ -4,7 +4,7 @@ import {
     useRef,
     useState,
 } from 'react';
-import Box from '@mui/material/Box';
+import Box, { BoxProps } from '@mui/material/Box';
 import Popover from '@mui/material/Popover';
 import Icon from '@mui/material/Icon';
 import Button from '@mui/material/Button';
@@ -12,7 +12,8 @@ import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import Typography, { TypographyProps } from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import { TypographyProps } from '@mui/material/Typography';
 import { InjectedComponentProps } from 'khamsa';
 import { LocaleService } from '@modules/locale/locale.service';
 import { ClientsDropdownProps } from '@modules/clients/clients-dropdown.interface';
@@ -27,6 +28,7 @@ import {
     useNavigate,
     useParams,
 } from 'react-router-dom';
+import { LoadingComponent } from '@modules/brand/loading.component';
 
 const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
     declarations,
@@ -43,6 +45,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
             maxWidth: 180,
         },
     };
+    const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
 
     const navigate = useNavigate();
     const { client_id: selectedClientId } = useParams();
@@ -108,66 +111,70 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                     horizontal: 'left',
                 }}
             >
-                <Box className="header-wrapper"></Box>
+                <Box className="header-wrapper">
+                    <TextField />
+                </Box>
                 <Divider />
                 {
                     clients.length === 0
                         // TODO empty
                         ? <></>
-                        : <>
-                            <SimpleBar autoHide={true} style={{ height: 360, width: 360 }}>
-                                {
-                                    clients.map((item) => {
-                                        return (
-                                            <ListItem
-                                                key={item.id}
-                                                onClick={() => handleSelectClient(item.client.id)}
-                                            >
-                                                <ListItemIcon>
-                                                    {
-                                                        selectedClientId === item.client.id && (
-                                                            <Icon className="icon-check" />
-                                                        )
-                                                    }
-                                                </ListItemIcon>
-                                                <ListItemIcon><Icon className="icon-channel" /></ListItemIcon>
-                                                <ListItemText
-                                                    disableTypography={false}
-                                                    primaryTypographyProps={typographyProps}
-                                                    secondaryTypographyProps={typographyProps}
-                                                >{item.client.name}</ListItemText>
-                                            </ListItem>
-                                        );
-                                    })
-                                }
-                                <Box className="load-more-wrapper">
-                                    <Button
-                                        variant="text"
-                                        classes={{ root: 'load-more-button' }}
-                                        disabled={queryClientsLoading || queryClientsLoadingMore || queryClientsResponseData?.remains === 0}
-                                        fullWidth={true}
-                                        onClick={queryMoreClients}
-                                    >
-                                        {
-                                            getLocaleText(
-                                                (queryClientsLoading || queryClientsLoadingMore)
-                                                    ? 'components.clientsDropdown.loading'
-                                                    : queryClientsResponseData?.remains === 0
-                                                        ? 'components.clientsDropdown.noMore'
-                                                        : 'components.clientsDropdown.loadMore',
-                                            )
-                                        }
-                                    </Button>
-                                </Box>
-                            </SimpleBar>
-                            <Divider />
-                        </>
+                        : <SimpleBar autoHide={true} style={{ height: 360, width: 360 }}>
+                            {
+                                clients.map((item) => {
+                                    return (
+                                        <ListItem
+                                            key={item.id}
+                                            onClick={() => handleSelectClient(item.client.id)}
+                                        >
+                                            <ListItemIcon>
+                                                {
+                                                    selectedClientId === item.client.id && (
+                                                        <Icon className="icon-check" />
+                                                    )
+                                                }
+                                            </ListItemIcon>
+                                            <ListItemIcon><Icon className="icon-channel" /></ListItemIcon>
+                                            <ListItemText
+                                                disableTypography={false}
+                                                primaryTypographyProps={typographyProps}
+                                                secondaryTypographyProps={typographyProps}
+                                            >{item.client.name}</ListItemText>
+                                        </ListItem>
+                                    );
+                                })
+                            }
+                            <Box className="load-more-wrapper">
+                                <Button
+                                    variant="text"
+                                    classes={{ root: 'load-more-button' }}
+                                    disabled={queryClientsLoading || queryClientsLoadingMore || queryClientsResponseData?.remains === 0}
+                                    fullWidth={true}
+                                    onClick={queryMoreClients}
+                                >
+                                    {
+                                        getLocaleText(
+                                            (queryClientsLoading || queryClientsLoadingMore)
+                                                ? 'components.clientsDropdown.loading'
+                                                : queryClientsResponseData?.remains === 0
+                                                    ? 'components.clientsDropdown.noMore'
+                                                    : 'components.clientsDropdown.loadMore',
+                                        )
+                                    }
+                                </Button>
+                            </Box>
+                        </SimpleBar>
                 }
                 {
-                    // TODO
-                    queryClientsLoading && <Typography>{getLocaleText('components.clientsDropdown.loading')}</Typography>
+                    queryClientsLoading && (
+                        <Box className="loading-wrapper">
+                            <Loading />
+                        </Box>
+                    )
                 }
+                <Divider />
                 <Box className="footer-wrapper">
+                    asdasdasdasd
                 </Box>
             </Popover>
         </Box>
