@@ -27,5 +27,12 @@
             "create": "New",
             "switch": "Switch"
         }
+    },
+    "components": {
+        "clientsDropdown": {
+            "noMore": "No More",
+            "loadMore": "Load More",
+            "loading": "Loading..."
+        }
     }
 }

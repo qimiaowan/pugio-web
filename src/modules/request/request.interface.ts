@@ -19,8 +19,8 @@ export interface RefreshTokenResponseData {
 }
 
 export interface PaginationInfo {
-    remains: number;
-    size: number;
+    remains?: number;
+    size?: number;
     lastCursor?: string;
 }
 

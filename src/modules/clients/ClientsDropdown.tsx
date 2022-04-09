@@ -8,11 +8,11 @@ import Box from '@mui/material/Box';
 import Popover from '@mui/material/Popover';
 import Icon from '@mui/material/Icon';
 import Button from '@mui/material/Button';
-import List from '@mui/material/List';
+import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import { TypographyProps } from '@mui/material/Typography';
+import Typography, { TypographyProps } from '@mui/material/Typography';
 import { InjectedComponentProps } from 'khamsa';
 import { LocaleService } from '@modules/locale/locale.service';
 import { ClientsDropdownProps } from '@modules/clients/clients-dropdown.interface';
@@ -21,9 +21,12 @@ import { useInfiniteScroll } from 'ahooks';
 import { ClientsService } from '@modules/clients/clients.service';
 import { InfiniteScrollHookData } from '@modules/request/request.interface';
 import { QueryClientsResponseData } from '@modules/clients/clients.interface';
-import { StoreService } from '@modules/store/store.service';
-import shallow from 'zustand/shallow';
+import SimpleBar from 'simplebar-react';
 import '@modules/clients/clients-dropdown.component.less';
+import {
+    useNavigate,
+    useParams,
+} from 'react-router-dom';
 
 const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
     declarations,
@@ -33,7 +36,6 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
 }) => {
     const localeService = declarations.get<LocaleService>(LocaleService);
     const clientsService = declarations.get<ClientsService>(ClientsService);
-    const storeService = declarations.get<StoreService>(StoreService);
     const typographyProps: TypographyProps = {
         noWrap: true,
         style: {
@@ -42,40 +44,34 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
         },
     };
 
+    const navigate = useNavigate();
+    const { client_id: selectedClientId } = useParams();
     const buttonRef = useRef<HTMLButtonElement>(null);
     const getLocaleText = localeService.useLocaleContext();
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement>(null);
+    const [clients, setClients] = useState<QueryClientsResponseData[]>([]);
     const {
         data: queryClientsResponseData,
-        // loadMore: queryMoreClients,
-        // loading: queryClientsLoading,
+        loadMore: queryMoreClients,
+        loading: queryClientsLoading,
+        loadingMore: queryClientsLoadingMore,
     } = useInfiniteScroll(
         async (data: InfiniteScrollHookData<QueryClientsResponseData>) => {
             const response = await clientsService.queryClients(_.omit(data, ['list']));
 
             return {
                 list: response?.response?.items || [],
-                ...(_.omit(_.get(response, 'response'), ['items']) || {}),
+                ...(_.omit(_.get(response, 'response'), ['items', 'lastCursor']) || {}),
+                lastCursor: Array.from(response?.response?.items || []).pop().id,
             };
         },
         {
             isNoMore: (data) => data && data.remains === 0,
         },
     );
-    const [selectedClientId, setSelectedClientId] = storeService.useStore(
-        (state) => {
-            const {
-                selectedClientId,
-                setSelectedClientId,
-            } = state;
-
-            return [selectedClientId, setSelectedClientId];
-        },
-        shallow,
-    );
 
     const handleSelectClient = (clientId: string) => {
-        setSelectedClientId(clientId);
+        navigate(`/clients/${clientId}/workstation`);
         onClose();
     };
 
@@ -86,6 +82,12 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
             setAnchorEl(null);
         }
     }, [open, buttonRef]);
+
+    useEffect(() => {
+        if (_.isArray(queryClientsResponseData?.list)) {
+            setClients(queryClientsResponseData.list);
+        }
+    }, [queryClientsResponseData]);
 
     return (
         <Box>
@@ -106,35 +108,67 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                     horizontal: 'left',
                 }}
             >
-                <List classes={{ root: 'list' }}>
-                    {
-                        _.isArray(_.get(queryClientsResponseData, 'list'))
-                            ? (_.get(queryClientsResponseData, 'list') as QueryClientsResponseData[]).map((item) => {
-                                return (
-                                    <ListItem
-                                        key={item.id}
-                                        classes={{ root: 'list-item' }}
-                                        onClick={() => handleSelectClient(item.client.id)}
+                <Box className="header-wrapper"></Box>
+                <Divider />
+                {
+                    clients.length === 0
+                        // TODO empty
+                        ? <></>
+                        : <>
+                            <SimpleBar autoHide={true} style={{ height: 360, width: 360 }}>
+                                {
+                                    clients.map((item) => {
+                                        return (
+                                            <ListItem
+                                                key={item.id}
+                                                onClick={() => handleSelectClient(item.client.id)}
+                                            >
+                                                <ListItemIcon>
+                                                    {
+                                                        selectedClientId === item.client.id && (
+                                                            <Icon className="icon-check" />
+                                                        )
+                                                    }
+                                                </ListItemIcon>
+                                                <ListItemIcon><Icon className="icon-channel" /></ListItemIcon>
+                                                <ListItemText
+                                                    disableTypography={false}
+                                                    primaryTypographyProps={typographyProps}
+                                                    secondaryTypographyProps={typographyProps}
+                                                >{item.client.name}</ListItemText>
+                                            </ListItem>
+                                        );
+                                    })
+                                }
+                                <Box className="load-more-wrapper">
+                                    <Button
+                                        variant="text"
+                                        classes={{ root: 'load-more-button' }}
+                                        disabled={queryClientsLoading || queryClientsLoadingMore || queryClientsResponseData?.remains === 0}
+                                        fullWidth={true}
+                                        onClick={queryMoreClients}
                                     >
-                                        <ListItemIcon><Icon className="icon-channel" /></ListItemIcon>
-                                        <ListItemText
-                                            disableTypography={false}
-                                            primaryTypographyProps={typographyProps}
-                                            secondaryTypographyProps={typographyProps}
-                                        >{item.client.name}</ListItemText>
-                                        <ListItemIcon style={{ justifyContent: 'flex-end' }}>
-                                            {
-                                                selectedClientId === item.client.id && (
-                                                    <Icon className="icon-check" />
-                                                )
-                                            }
-                                        </ListItemIcon>
-                                    </ListItem>
-                                );
-                            })
-                            : null
-                    }
-                </List>
+                                        {
+                                            getLocaleText(
+                                                (queryClientsLoading || queryClientsLoadingMore)
+                                                    ? 'components.clientsDropdown.loading'
+                                                    : queryClientsResponseData?.remains === 0
+                                                        ? 'components.clientsDropdown.noMore'
+                                                        : 'components.clientsDropdown.loadMore',
+                                            )
+                                        }
+                                    </Button>
+                                </Box>
+                            </SimpleBar>
+                            <Divider />
+                        </>
+                }
+                {
+                    // TODO
+                    queryClientsLoading && <Typography>{getLocaleText('components.clientsDropdown.loading')}</Typography>
+                }
+                <Box className="footer-wrapper">
+                </Box>
             </Popover>
         </Box>
     );

@@ -1,14 +1,23 @@
+@import url('@/variables.less');
+
 .clients-popover {
-    max-height: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
 
-    .list {
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
+    .load-more-wrapper {
+        box-sizing: border-box;
+        padding: 5px;
 
-        .list-item {
-            padding-right: 10px;
+        .load-more-button {
+            &:not(:hover), &:not(:active) {
+                background-color: transparent;
+            }
         }
+    }
+
+    .footer-wrapper {
+        min-width: 300px;
+        padding: 5px 10px;
     }
 }

@@ -8,7 +8,6 @@ export interface ClientTab {
 }
 
 export interface AppState {
-    selectedClientId: string;
     clientTabs: Map<string, ClientTab[]>;
     clientSidebarWidth: number;
     clientsDropdownOpen: boolean;
@@ -16,5 +15,4 @@ export interface AppState {
     createTab: (clientId: string, appId: string, nodes: ReactNode) => string;
     destroyTab: (clientId: string, tabId: string) => void;
     switchClientsDropdownVisibility: (open?: boolean) => void;
-    setSelectedClientId: (clientId: string) => void;
 }
