@@ -112,9 +112,21 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                 }}
             >
                 <Box className="header-wrapper">
-                    <TextField />
+                    <TextField
+                        classes={{
+                            root: 'search-text-field',
+                        }}
+                        InputProps={{
+                            classes: {
+                                input: 'search-text-field--input',
+                            },
+                        }}
+                    />
+                    <Button
+                        startIcon={<Icon className="icon-plus" fontSize="small" />}
+                        classes={{ root: 'create-button' }}
+                    >{getLocaleText('components.clientsDropdown.create')}</Button>
                 </Box>
-                <Divider />
                 {
                     clients.length === 0
                         // TODO empty
@@ -174,7 +186,12 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                 }
                 <Divider />
                 <Box className="footer-wrapper">
-                    asdasdasdasd
+                    <Button
+                        classes={{ root: 'link-button view-all-button' }}
+                        endIcon={<Icon className="icon icon-arrow-right" fontSize="small" />}
+                    >
+                        {getLocaleText('components.clientsDropdown.viewAll')}
+                    </Button>
                 </Box>
             </Popover>
         </Box>

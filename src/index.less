@@ -1,4 +1,5 @@
 @import url('//at.alicdn.com/t/font_3303084_dm6mgoxstsd.css');
+@import url('@/variables.less');
 
 html {
     height: 100%;
@@ -25,6 +26,15 @@ body {
 
 .dropdown-icon {
     font-size: 13px !important;
+}
+
+.link-button {
+    background-color: transparent;
+
+    &:hover, &:active {
+        background-color: transparent;
+        color: @text-link-color;
+    }
 }
 
 * {

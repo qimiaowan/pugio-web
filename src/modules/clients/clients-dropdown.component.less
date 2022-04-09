@@ -6,7 +6,27 @@
     align-items: stretch;
 
     .header-wrapper {
-        padding: 5px 10px;
+        padding: 15px 10px;
+        display: flex;
+        align-items: center;
+
+        .create-button {
+            margin-left: 5px;
+            padding: 5px 10px;
+
+            .pugio-icons {
+                font-size: 12px;
+            }
+        }
+
+        .search-text-field {
+            flex-grow: 1;
+            flex-shrink: 1;
+
+            .search-text-field--input {
+                padding: 5px 10px;
+            }
+        }
     }
 
     .load-more-wrapper {
@@ -31,5 +51,16 @@
     .footer-wrapper {
         min-width: 300px;
         padding: 5px 10px;
+
+        .view-all-button {
+            font-size: 12px;
+            padding: 3px;
+            line-height: 14px;
+
+            .icon {
+                font-size: 12px;
+                line-height: 14px;
+            }
+        }
     }
 }

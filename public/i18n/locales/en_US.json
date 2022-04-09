@@ -8,12 +8,6 @@
             "settings": "Account Settings",
             "signout": "Sign Out",
             "create": "Create a new account"
-        },
-        "clientsDropdown": {
-            "loadMore": "Load more",
-            "search": "Type to Search",
-            "create": "Create a client",
-            "goto": "View all clients"
         }
     },
     "clientsSidebarMenu": {
@@ -32,7 +26,9 @@
         "clientsDropdown": {
             "noMore": "No More",
             "loadMore": "Load More",
-            "loading": "Loading..."
+            "loading": "Loading...",
+            "viewAll": "View all clients",
+            "create": "Create Client"
         }
     }
 }
