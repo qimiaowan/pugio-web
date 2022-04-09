@@ -10,6 +10,7 @@ import { AppState } from '@modules/store/store.interface';
 export class StoreService {
     public useStore = create<AppState>((set) => {
         return {
+            selectedClientId: null,
             clientTabs: Map({}),
             clientSidebarWidth: null,
             clientsDropdownOpen: false,
@@ -63,6 +64,10 @@ export class StoreService {
                         clientsDropdownOpen: _.isBoolean(open) ? open : !state.clientsDropdownOpen,
                     };
                 });
+            },
+
+            setSelectedClientId: (clientId: string) => {
+                set((state) => ({ selectedClientId: clientId }));
             },
         };
     });

@@ -8,6 +8,7 @@ import {
     RefreshTokenResponseData,
     Response,
 } from '@modules/request/request.interface';
+import qs from 'qs';
 
 @Injectable()
 export class RequestService {
@@ -43,6 +44,17 @@ export class RequestService {
                     const token = localStorage.getItem('ACCESS_TOKEN') as string;
                     const refreshToken = localStorage.getItem('REFRESH_TOKEN') as string;
                     let expireDateTimestamp: number;
+
+                    if (config.url) {
+                        const [prefixedUrl, searchString] = config.url.split('?');
+
+                        if (searchString) {
+                            const queryObject = qs.parse(searchString);
+                            const standardizedQueryObject = this.utilsService.standardizeQuery(queryObject);
+                            const standardizedSearchString = qs.stringify(standardizedQueryObject);
+                            config.url = `${prefixedUrl}?${standardizedSearchString}`;
+                        }
+                    }
 
                     if (_.isString(localStorage.getItem('ACCESS_TOKEN_EXPIRE_DATE'))) {
                         try {

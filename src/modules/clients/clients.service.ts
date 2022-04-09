@@ -14,7 +14,9 @@ export class ClientsService {
 
     public async queryClients(options: QueryClientsRequestOptions): Promise<PaginationResponse<QueryClientsResponseData>> {
         const {
-            search = '',
+            search,
+            lastCursor,
+            size,
         } = options;
 
         return await this.requestService.getInstance()
@@ -22,11 +24,9 @@ export class ClientsService {
                 method: 'get',
                 url: '/client',
                 query: {
-                    ...(
-                        search
-                            ? { search }
-                            : {}
-                    ),
+                    search,
+                    lastCursor,
+                    size,
                 },
             });
     }

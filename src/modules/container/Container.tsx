@@ -56,6 +56,21 @@ const pugioTheme = createTheme(theme, {
                 },
             },
         },
+        MuiListItemIcon: {
+            styleOverrides: {
+                root: {
+                    minWidth: 24,
+                },
+            },
+        },
+        MuiListItem: {
+            styleOverrides: {
+                root: {
+                    userSelect: 'none',
+                    cursor: 'pointer',
+                },
+            },
+        },
     },
 });
 

@@ -18,12 +18,17 @@ export interface RefreshTokenResponseData {
     expiresIn: number;
 }
 
-export interface PaginationResponse<T> {
-    response?: {
-        items: T[];
-        remains: number;
-        size: number;
-        lastCursor?: string;
-    };
+export interface PaginationInfo {
+    remains: number;
+    size: number;
+    lastCursor?: string;
+}
+
+export interface PaginationResponse<T = any> {
+    response?: { items: T[]; } & PaginationInfo;
     error?: RequestError;
+}
+
+export interface InfiniteScrollHookData<D = any> extends PaginationInfo {
+    list: D[];
 }

@@ -9,6 +9,8 @@ export interface Client {
 
 export interface QueryClientsRequestOptions {
     search?: string;
+    lastCursor?: string;
+    size?: number;
 }
 
 export interface QueryClientsResponseData {
