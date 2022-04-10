@@ -91,7 +91,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
 
     useEffect(() => {
         if (_.isArray(queryClientsResponseData?.list)) {
-            setClients([]);
+            setClients(queryClientsResponseData.list);
         }
     }, [queryClientsResponseData]);
 
