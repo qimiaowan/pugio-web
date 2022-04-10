@@ -28,7 +28,11 @@
             "loadMore": "Load More",
             "loading": "Loading...",
             "viewAll": "View all clients",
-            "create": "Create Client"
+            "create": "Create Client",
+            "empty": {
+                "title": "No Clients",
+                "subTitle": "Clients will help you connect to your devices"
+            }
         }
     }
 }
