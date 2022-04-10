@@ -56,12 +56,12 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                     <Button
                         size="small"
                         classes={{ sizeSmall: 'control-button' }}
-                        startIcon={<Icon className="icon-plus icon" fontSize="small" />}
+                        startIcon={<Icon className="icon-plus" />}
                     >{getLocaleText('create')}</Button>
                     <Button
                         size="small"
                         classes={{ sizeSmall: 'control-button' }}
-                        startIcon={<Icon className="icon-switch icon" fontSize="small" />}
+                        startIcon={<Icon className="icon-switch" />}
                         onClick={() => switchClientsDropdownVisibility(true)}
                     >{getLocaleText('switch')}</Button>
                 </Box>

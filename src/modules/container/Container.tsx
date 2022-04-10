@@ -11,7 +11,10 @@ import {
 } from 'react-router-dom';
 import { LocaleService } from '@modules/locale/locale.service';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
-import { StyledEngineProvider } from '@mui/material/styles';
+import {
+    StyledEngineProvider,
+    ThemeOptions,
+} from '@mui/material/styles';
 import createTheme from '@mui/material/styles/createTheme';
 import theme from '@lenconda/shuffle-mui-theme';
 import Box from '@mui/material/Box';
@@ -43,6 +46,13 @@ const pugioTheme = createTheme(theme, {
                 root: {
                     width: 'initial',
                     height: 'initial',
+                    fontSize: 12,
+                },
+                fontSizeSmall: {
+                    fontSize: 6,
+                },
+                fontSizeLarge: {
+                    fontSize: 16,
                 },
             },
         },
@@ -71,8 +81,59 @@ const pugioTheme = createTheme(theme, {
                 },
             },
         },
+        MuiTextField: {
+            defaultProps: {
+                InputProps: {
+                    classes: {
+                        input: 'input',
+                    },
+                },
+            },
+        },
+        MuiButton: {
+            styleOverrides: {
+                sizeMedium: {
+                    fontSize: 12,
+                    lineHeight: '17px',
+                    paddingTop: 7,
+                    paddingRight: 10,
+                    paddingBottom: 7,
+                    paddingLeft: 10,
+                },
+                sizeSmall: {
+                    fontSize: 6,
+                    lineHeight: '6px',
+                    paddingTop: 7,
+                    paddingRight: 10,
+                    paddingBottom: 7,
+                    paddingLeft: 10,
+                },
+                sizeLarge: {
+                    fontSize: 14,
+                    paddingTop: 7,
+                    paddingRight: 10,
+                    paddingBottom: 7,
+                    paddingLeft: 10,
+                },
+                iconSizeMedium: {
+                    '.pugio-icons': {
+                        fontSize: 12,
+                    },
+                },
+                iconSizeSmall: {
+                    '.pugio-icons': {
+                        fontSize: 6,
+                    },
+                },
+                iconSizeLarge: {
+                    '.pugio-icons': {
+                        fontSize: 16,
+                    },
+                },
+            },
+        },
     },
-});
+} as ThemeOptions);
 
 const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> = ({
     declarations,

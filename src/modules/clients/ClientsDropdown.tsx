@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
     FC,
     useEffect,
@@ -14,7 +13,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import TextField from '@mui/material/TextField';
-import Typography, { TypographyProps } from '@mui/material/Typography';
+import { TypographyProps } from '@mui/material/Typography';
 import { InjectedComponentProps } from 'khamsa';
 import { LocaleService } from '@modules/locale/locale.service';
 import { ClientsDropdownProps } from '@modules/clients/clients-dropdown.interface';
@@ -92,7 +91,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
 
     useEffect(() => {
         if (_.isArray(queryClientsResponseData?.list)) {
-            setClients(queryClientsResponseData.list);
+            setClients([]);
         }
     }, [queryClientsResponseData]);
 
@@ -121,31 +120,28 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                             root: 'search-text-field',
                         }}
                         disabled={queryClientsLoading || queryClientsLoadingMore}
-                        InputProps={{
-                            classes: {
-                                input: 'small search-text-field--input',
-                            },
-                        }}
                     />
                     <Button
-                        startIcon={<Icon className="icon-plus" fontSize="small" />}
-                        classes={{ root: 'small create-button' }}
+                        startIcon={<Icon className="icon-plus" />}
+                        classes={{ root: 'create-button' }}
                     >{getLocaleText('components.clientsDropdown.create')}</Button>
                 </Box>
                 {
                     clients.length === 0
-                        ? <Empty
-                            title={getLocaleText('components.clientsDropdown.empty.title')}
-                            subTitle={getLocaleText('components.clientsDropdown.empty.subTitle')}
-                        >
-                            <Button
-                                classes={{ root: 'tiny' }}
-                                variant="contained"
-                                startIcon={<Icon className="icon-plus" />}
+                        ? queryClientsLoading
+                            ? null
+                            : <Empty
+                                title={getLocaleText('components.clientsDropdown.empty.title')}
+                                subTitle={getLocaleText('components.clientsDropdown.empty.subTitle')}
                             >
-                                {getLocaleText('components.clientsDropdown.create')}
-                            </Button>
-                        </Empty>
+                                <Button
+                                    variant="contained"
+                                    size="small"
+                                    startIcon={<Icon className="icon-plus" />}
+                                >
+                                    {getLocaleText('components.clientsDropdown.create')}
+                                </Button>
+                            </Empty>
                         : <SimpleBar autoHide={true} style={{ height: 360, width: 360 }}>
                             {
                                 clients.map((item) => {
