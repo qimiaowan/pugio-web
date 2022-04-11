@@ -18,7 +18,10 @@ import { InjectedComponentProps } from 'khamsa';
 import { LocaleService } from '@modules/locale/locale.service';
 import { ClientsDropdownProps } from '@modules/clients/clients-dropdown.interface';
 import _ from 'lodash';
-import { useInfiniteScroll } from 'ahooks';
+import {
+    useDebounce,
+    useInfiniteScroll,
+} from 'ahooks';
 import { ClientsService } from '@modules/clients/clients.service';
 import { InfiniteScrollHookData } from '@modules/request/request.interface';
 import { QueryClientsResponseData } from '@modules/clients/clients.interface';
@@ -51,9 +54,12 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
     const Empty = declarations.get<FC<EmptyProps>>(EmptyComponent);
 
     const navigate = useNavigate();
+    const [searchValue, setSearchValue] = useState<string>('');
+    const debouncedSearchValue = useDebounce(searchValue, { wait: 500 });
     const { client_id: selectedClientId } = useParams();
     const buttonRef = useRef<HTMLButtonElement>(null);
     const getLocaleText = localeService.useLocaleContext();
+    const getComponentLocaleText = localeService.useLocaleContext('components.clientsDropdown');
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement>(null);
     const [clients, setClients] = useState<QueryClientsResponseData[]>([]);
     const {
@@ -63,16 +69,27 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
         loadingMore: queryClientsLoadingMore,
     } = useInfiniteScroll(
         async (data: InfiniteScrollHookData<QueryClientsResponseData>) => {
-            const response = await clientsService.queryClients(_.omit(data, ['list']));
+            const response = await clientsService.queryClients(_.omit(
+                {
+                    ...data,
+                    search: debouncedSearchValue,
+                },
+                ['list'],
+            ));
 
             return {
                 list: response?.response?.items || [],
                 ...(_.omit(_.get(response, 'response'), ['items', 'lastCursor']) || {}),
-                lastCursor: Array.from(response?.response?.items || []).pop().id,
+                lastCursor: _.get(Array.from(response?.response?.items || []).pop(), 'id') || null,
             };
         },
         {
             isNoMore: (data) => data && data.remains === 0,
+            reloadDeps: [debouncedSearchValue],
+            onFinally: (data, error) => {
+                console.log('LENCONDA:', data);
+                console.log('LENCONDA:', error);
+            },
         },
     );
 
@@ -119,89 +136,94 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                         classes={{
                             root: 'search-text-field',
                         }}
+                        placeholder={getComponentLocaleText('searchPlaceholder')}
                         disabled={queryClientsLoading || queryClientsLoadingMore}
+                        value={searchValue}
+                        onChange={(event) => setSearchValue(event.target.value)}
                     />
                     <Button
                         startIcon={<Icon className="icon-plus" />}
                         classes={{ root: 'create-button' }}
-                    >{getLocaleText('components.clientsDropdown.create')}</Button>
+                        onClick={() => navigate('/client/create')}
+                    >{getComponentLocaleText('create')}</Button>
                 </Box>
                 {
-                    clients.length === 0
-                        ? queryClientsLoading
-                            ? null
-                            : <Empty
-                                title={getLocaleText('components.clientsDropdown.empty.title')}
-                                subTitle={getLocaleText('components.clientsDropdown.empty.subTitle')}
+                    queryClientsLoading
+                        ? <Box className="loading-wrapper">
+                            <Loading />
+                        </Box>
+                        : clients.length === 0
+                            ? <Empty
+                                title={getComponentLocaleText('empty.title')}
+                                subTitle={getComponentLocaleText('empty.subTitle')}
                             >
                                 <Button
                                     variant="contained"
                                     size="small"
                                     startIcon={<Icon className="icon-plus" />}
+                                    onClick={() => navigate('/client/create')}
                                 >
-                                    {getLocaleText('components.clientsDropdown.create')}
+                                    {getComponentLocaleText('create')}
                                 </Button>
                             </Empty>
-                        : <SimpleBar autoHide={true} style={{ height: 360, width: 360 }}>
-                            {
-                                clients.map((item) => {
-                                    return (
-                                        <ListItem
-                                            key={item.id}
-                                            onClick={() => handleSelectClient(item.client.id)}
-                                        >
-                                            <ListItemIcon>
+                            : <SimpleBar autoHide={true} style={{ height: 360, width: 360 }}>
+                                {
+                                    clients.map((item) => {
+                                        return (
+                                            <ListItem
+                                                key={item.id}
+                                                onClick={() => handleSelectClient(item.client.id)}
+                                            >
+                                                <ListItemIcon>
+                                                    {
+                                                        selectedClientId === item.client.id && (
+                                                            <Icon className="icon-check" />
+                                                        )
+                                                    }
+                                                </ListItemIcon>
+                                                <ListItemIcon><Icon className="icon-channel" /></ListItemIcon>
+                                                <ListItemText
+                                                    disableTypography={false}
+                                                    primaryTypographyProps={typographyProps}
+                                                    secondaryTypographyProps={typographyProps}
+                                                >{item.client.name}</ListItemText>
+                                            </ListItem>
+                                        );
+                                    })
+                                }
+                                {
+                                    !queryClientsLoading && (
+                                        <Box className="load-more-wrapper">
+                                            <Button
+                                                variant="text"
+                                                classes={{ root: 'load-more-button' }}
+                                                disabled={queryClientsLoadingMore || queryClientsResponseData?.remains === 0}
+                                                fullWidth={true}
+                                                onClick={queryMoreClients}
+                                            >
                                                 {
-                                                    selectedClientId === item.client.id && (
-                                                        <Icon className="icon-check" />
+                                                    getComponentLocaleText(
+                                                        queryClientsLoadingMore
+                                                            ? 'loading'
+                                                            : queryClientsResponseData?.remains === 0
+                                                                ? 'noMore'
+                                                                : 'loadMore',
                                                     )
                                                 }
-                                            </ListItemIcon>
-                                            <ListItemIcon><Icon className="icon-channel" /></ListItemIcon>
-                                            <ListItemText
-                                                disableTypography={false}
-                                                primaryTypographyProps={typographyProps}
-                                                secondaryTypographyProps={typographyProps}
-                                            >{item.client.name}</ListItemText>
-                                        </ListItem>
-                                    );
-                                })
-                            }
-                            <Box className="load-more-wrapper">
-                                <Button
-                                    variant="text"
-                                    classes={{ root: 'load-more-button' }}
-                                    disabled={queryClientsLoading || queryClientsLoadingMore || queryClientsResponseData?.remains === 0}
-                                    fullWidth={true}
-                                    onClick={queryMoreClients}
-                                >
-                                    {
-                                        getLocaleText(
-                                            (queryClientsLoading || queryClientsLoadingMore)
-                                                ? 'components.clientsDropdown.loading'
-                                                : queryClientsResponseData?.remains === 0
-                                                    ? 'components.clientsDropdown.noMore'
-                                                    : 'components.clientsDropdown.loadMore',
-                                        )
-                                    }
-                                </Button>
-                            </Box>
-                        </SimpleBar>
-                }
-                {
-                    queryClientsLoading && (
-                        <Box className="loading-wrapper">
-                            <Loading />
-                        </Box>
-                    )
+                                            </Button>
+                                        </Box>
+                                    )
+                                }
+                            </SimpleBar>
                 }
                 <Divider />
                 <Box className="footer-wrapper">
                     <Button
                         classes={{ root: 'link-button view-all-button' }}
                         endIcon={<Icon className="icon icon-arrow-right" fontSize="small" />}
+                        onClick={() => navigate('/client/list')}
                     >
-                        {getLocaleText('components.clientsDropdown.viewAll')}
+                        {getComponentLocaleText('viewAll')}
                     </Button>
                 </Box>
             </Popover>

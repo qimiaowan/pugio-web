@@ -32,7 +32,8 @@
             "empty": {
                 "title": "No Clients",
                 "subTitle": "Clients will help you connect to your devices"
-            }
+            },
+            "searchPlaceholder": "Type to search..."
         }
     }
 }

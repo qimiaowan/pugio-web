@@ -16,6 +16,7 @@ import { LocaleService } from '@modules/locale/locale.service';
 import { StoreService } from '@modules/store/store.service';
 import SimpleBar from 'simplebar-react';
 import _ from 'lodash';
+import { useNavigate } from 'react-router-dom';
 
 const ClientWorkstation: FC<InjectedComponentProps> = ({
     declarations,
@@ -24,6 +25,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const localeService = declarations.get<LocaleService>(LocaleService);
     const storeService = declarations.get<StoreService>(StoreService);
 
+    const navigate = useNavigate();
     const [headerWidth, setHeaderWidth] = useState<number>(null);
     const [windowInnerWidth, setWindowInnerWidth] = useState<number>(window.innerWidth);
     const sidebarWidth = storeService.useStore((state) => state.clientSidebarWidth);
@@ -57,6 +59,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                         size="small"
                         classes={{ sizeSmall: 'control-button' }}
                         startIcon={<Icon className="icon-plus" />}
+                        onClick={() => navigate('/client/create')}
                     >{getLocaleText('create')}</Button>
                     <Button
                         size="small"

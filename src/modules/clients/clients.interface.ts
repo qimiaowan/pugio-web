@@ -1,3 +1,5 @@
+import { TDateRange } from '@/app.interfaces';
+
 export interface Client {
     id: string;
     name: string;
@@ -11,6 +13,8 @@ export interface QueryClientsRequestOptions {
     search?: string;
     lastCursor?: string;
     size?: number;
+    roles?: string[];
+    createDateRange?: TDateRange;
 }
 
 export interface QueryClientsResponseData {

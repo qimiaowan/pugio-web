@@ -5,6 +5,7 @@ import {
     ORIGIN,
     clientId,
 } from '@/constants';
+import { TDateRange } from '@/app.interfaces';
 
 @Injectable()
 export class UtilsService extends CaseTransformerService {
@@ -47,5 +48,28 @@ export class UtilsService extends CaseTransformerService {
 
             return result;
         }, {});
+    }
+
+    public serializeDateRange(range: TDateRange): string {
+        if (!range || !_.isArray(range)) {
+            return '';
+        }
+
+        let startDate: Date;
+        let endDate: Date;
+
+        if (_.isDate(range[0])) {
+            startDate = range[0];
+        } else {
+            startDate = new Date(0);
+        }
+
+        if (_.isDate(range[1])) {
+            endDate = range[1];
+        } else {
+            endDate = new Date();
+        }
+
+        return [startDate.toISOString(), endDate.toISOString()].join('--');
     }
 }
