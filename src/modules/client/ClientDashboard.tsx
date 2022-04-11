@@ -168,7 +168,7 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
                         size="small"
                         classes={{ sizeSmall: 'control-button' }}
                         startIcon={<Icon className="icon-plus" />}
-                        onClick={() => navigate('/client/create')}
+                        onClick={() => navigate('/clients/create')}
                     >{getPageLocaleText('create')}</Button>
                     <Button
                         size="small"

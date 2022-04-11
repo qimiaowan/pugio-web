@@ -140,7 +140,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                     <Button
                         startIcon={<Icon className="icon-plus" />}
                         classes={{ root: 'create-button' }}
-                        onClick={() => navigate('/client/create')}
+                        onClick={() => navigate('/clients/create')}
                     >{getComponentLocaleText('create')}</Button>
                 </Box>
                 {
@@ -157,7 +157,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                                     variant="contained"
                                     size="small"
                                     startIcon={<Icon className="icon-plus" />}
-                                    onClick={() => navigate('/client/create')}
+                                    onClick={() => navigate('/clients/create')}
                                 >
                                     {getComponentLocaleText('create')}
                                 </Button>
