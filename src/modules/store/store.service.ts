@@ -13,6 +13,7 @@ export class StoreService {
             clientTabs: Map({}),
             clientSidebarWidth: null,
             clientsDropdownOpen: false,
+            pathnameReady: false,
 
             changeClientSidebarWidth: (width: number) => {
                 set(() => ({ clientSidebarWidth: width }));
@@ -63,6 +64,10 @@ export class StoreService {
                         clientsDropdownOpen: _.isBoolean(open) ? open : !state.clientsDropdownOpen,
                     };
                 });
+            },
+
+            setPathnameReady() {
+                set({ pathnameReady: true });
             },
         };
     });

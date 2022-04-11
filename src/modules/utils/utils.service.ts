@@ -6,6 +6,7 @@ import {
     clientId,
 } from '@/constants';
 import { TDateRange } from '@/app.interfaces';
+import { Location } from 'react-router-dom';
 
 @Injectable()
 export class UtilsService extends CaseTransformerService {
@@ -71,5 +72,19 @@ export class UtilsService extends CaseTransformerService {
         }
 
         return [startDate.toISOString(), endDate.toISOString()].join('--');
+    }
+
+    public serializeLocation(location: Location) {
+        if (!location) {
+            return '';
+        }
+
+        const {
+            pathname = '/',
+            hash = '',
+            search = '',
+        } = location;
+
+        return `${pathname}${search}${hash}`;
     }
 }

@@ -86,10 +86,6 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
         {
             isNoMore: (data) => data && data.remains === 0,
             reloadDeps: [debouncedSearchValue],
-            onFinally: (data, error) => {
-                console.log('LENCONDA:', data);
-                console.log('LENCONDA:', error);
-            },
         },
     );
 

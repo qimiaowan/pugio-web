@@ -11,8 +11,10 @@ export interface AppState {
     clientTabs: Map<string, ClientTab[]>;
     clientSidebarWidth: number;
     clientsDropdownOpen: boolean;
+    pathnameReady: boolean;
     changeClientSidebarWidth: (width: number) => void;
     createTab: (clientId: string, appId: string, nodes: ReactNode) => string;
     destroyTab: (clientId: string, tabId: string) => void;
     switchClientsDropdownVisibility: (open?: boolean) => void;
+    setPathnameReady: () => void;
 }
