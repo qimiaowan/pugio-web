@@ -1,6 +1,7 @@
 import { Injectable } from 'khamsa';
 import { CaseTransformerService } from '@pugio/case-transformer';
 import _ from 'lodash';
+import { ORIGIN } from '@/constants';
 
 @Injectable()
 export class UtilsService extends CaseTransformerService {
@@ -8,7 +9,7 @@ export class UtilsService extends CaseTransformerService {
         const stateData = {
             clientId: 'deef165b-9e97-4eda-ae4e-cfcc9480b1ea',
             vendor: {
-                origin: 'pugio.lenconda.top',
+                origin: ORIGIN,
                 checked_in_redirect_path: redirectPath,
             },
         };
