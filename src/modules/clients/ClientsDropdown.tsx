@@ -46,8 +46,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
     const typographyProps: TypographyProps = {
         noWrap: true,
         style: {
-            minWidth: 140,
-            maxWidth: 180,
+            width: 180,
         },
     };
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
@@ -182,7 +181,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                                                     disableTypography={false}
                                                     primaryTypographyProps={typographyProps}
                                                     secondaryTypographyProps={typographyProps}
-                                                >{item.client.name}</ListItemText>
+                                                >{item.client.name || item.client.id}</ListItemText>
                                             </ListItem>
                                         );
                                     })
