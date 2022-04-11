@@ -9,6 +9,7 @@ const {
 const addLessLoader = require('customize-cra-less-loader');
 const path = require('path');
 const WebpackBundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const DefinePlugin = require('webpack').DefinePlugin;
 
 module.exports = override(
     removeModuleScopePlugin(),
@@ -56,4 +57,13 @@ module.exports = override(
         '@': path.resolve(__dirname, 'src'),
         '@modules': path.resolve(__dirname, 'src/modules'),
     }),
+    (config) => {
+        config.plugins.push(
+            new DefinePlugin({
+                ORIGIN: config.mode === 'production' ? 'pugio.lenconda.top' : 'localhost',
+            }),
+        );
+
+        return config;
+    },
 );
