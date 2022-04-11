@@ -123,6 +123,7 @@ const pugioTheme = createTheme(theme, {
                 iconSizeSmall: {
                     '.pugio-icons': {
                         fontSize: 6,
+                        lineHeight: '10px',
                     },
                 },
                 iconSizeLarge: {

@@ -6,6 +6,8 @@ import {
     useState,
 } from 'react';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
 import './client-dashboard.component.less';
@@ -16,6 +18,7 @@ import {
     NavLink,
     Outlet,
     useParams,
+    useNavigate,
 } from 'react-router-dom';
 import { LocaleService } from '@modules/locale/locale.service';
 import { StoreService } from '@modules/store/store.service';
@@ -33,11 +36,14 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
     const storeService = declarations.get<StoreService>(StoreService);
 
     const params = useParams();
+    const navigate = useNavigate();
     const sidebarRef = useRef<HTMLDivElement>(null);
     const getLocaleText = localeService.useLocaleContext();
+    const getPageLocaleText = localeService.useLocaleContext('pages.client_workstation');
     const [fullWidthMenu, setFullWidthMenu] = useState<boolean>(false);
     const [menuMetadataItems, setMenuMetadataItems] = useState<MenuMetadataItem[]>([]);
     const changeSidebarWidth = storeService.useStore((state) => state.changeClientSidebarWidth);
+    const switchClientsDropdownVisibility = storeService.useStore((state) => state.switchClientsDropdownVisibility);
 
     const generateFullWidthMenuKey = (id: string) => {
         return `app.client.fullWidthMenu@${id}`;
@@ -155,7 +161,24 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
                     </IconButton>
                 </Box>
             </Box>
-            <Box className="content-container"><Outlet /></Box>
+            <Box className="content-container">
+                <Box className="controls">
+                    <Typography variant="subtitle2" className="client-name">Client Placeholder</Typography>
+                    <Button
+                        size="small"
+                        classes={{ sizeSmall: 'control-button' }}
+                        startIcon={<Icon className="icon-plus" />}
+                        onClick={() => navigate('/client/create')}
+                    >{getPageLocaleText('create')}</Button>
+                    <Button
+                        size="small"
+                        classes={{ sizeSmall: 'control-button' }}
+                        startIcon={<Icon className="icon-switch" />}
+                        onClick={() => switchClientsDropdownVisibility(true)}
+                    >{getPageLocaleText('switch')}</Button>
+                </Box>
+                <Outlet />
+            </Box>
         </Box>
     );
 };
