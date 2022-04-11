@@ -9,6 +9,7 @@ const {
 } = require('customize-cra');
 const addLessLoader = require('customize-cra-less-loader');
 const path = require('path');
+const fs = require('fs');
 const WebpackBundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const DefinePlugin = require('webpack').DefinePlugin;
 
@@ -41,6 +42,11 @@ module.exports = {
                         '^/endpoints': '/endpoints',
                     },
                 },
+            },
+            https: {
+                cert: fs.readFileSync(path.resolve(__dirname, './pugio.cert.pem')),
+                key: fs.readFileSync(path.resolve(__dirname, './pugio.key.pem')),
+                ca: fs.readFileSync(path.resolve(__dirname, './root.pem')),
             },
         };
     }),
