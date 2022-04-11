@@ -10,10 +10,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
-import './client-dashboard.component.less';
 import { InjectedComponentProps } from 'khamsa';
-import { ClientMenuItemComponent } from './client-menu-item.component';
-import { ClientMenuItemProps } from './client-menu-item.interface';
 import {
     NavLink,
     Outlet,
@@ -22,7 +19,10 @@ import {
 } from 'react-router-dom';
 import { LocaleService } from '@modules/locale/locale.service';
 import { StoreService } from '@modules/store/store.service';
+import { ClientMenuItemComponent } from '@modules/client/client-menu-item.component';
+import { ClientMenuItemProps } from '@modules/client/client-menu-item.interface';
 import _ from 'lodash';
+import '@modules/client/client-dashboard.component.less';
 
 interface MenuMetadataItem {
     to: string;
@@ -98,17 +98,17 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
                 [
                     {
                         icon: 'icon-apps',
-                        to: `/clients/${clientId}/workstation`,
+                        to: `/client/${clientId}/workstation`,
                         titleSlotId: 'clientsSidebarMenu.workstation',
                     },
                     {
                         icon: 'icon-users',
-                        to: `/clients/${clientId}/members`,
+                        to: `/client/${clientId}/members`,
                         titleSlotId: 'clientsSidebarMenu.members',
                     },
                     {
                         icon: 'icon-info',
-                        to: `/clients/${clientId}/details`,
+                        to: `/client/${clientId}/details`,
                         titleSlotId: 'clientsSidebarMenu.details',
                     },
                 ],

@@ -1,11 +1,11 @@
 import {
     FC,
 } from 'react';
-import { ClientMenuItemProps } from './client-menu-item.interface';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import clsx from 'clsx';
-import './client-menu-item.component.less';
+import { ClientMenuItemProps } from '@modules/client/client-menu-item.interface';
+import '@modules/client/client-menu-item.component.less';
 
 const ClientMenuItem: FC<ClientMenuItemProps> = ({
     title,

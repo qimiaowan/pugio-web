@@ -90,7 +90,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
     );
 
     const handleSelectClient = (clientId: string) => {
-        navigate(`/clients/${clientId}/workstation`);
+        navigate(`/client/${clientId}/workstation`);
         onClose();
     };
 
@@ -217,7 +217,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                     <Button
                         classes={{ root: 'link-button view-all-button' }}
                         endIcon={<Icon className="icon icon-arrow-right" fontSize="small" />}
-                        onClick={() => navigate('/client/list')}
+                        onClick={() => navigate('/clients')}
                     >
                         {getComponentLocaleText('viewAll')}
                     </Button>

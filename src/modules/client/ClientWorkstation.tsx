@@ -6,7 +6,6 @@ import {
 import Box from '@mui/material/Box';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
-import './client-workstation.component.less';
 import { InjectedComponentProps } from 'khamsa';
 import { TabProps } from '@modules/tab/tab.interface';
 import { TabComponent } from '@modules/tab/tab.component';
@@ -14,6 +13,7 @@ import { LocaleService } from '@modules/locale/locale.service';
 import { StoreService } from '@modules/store/store.service';
 import SimpleBar from 'simplebar-react';
 import _ from 'lodash';
+import '@modules/client/client-workstation.component.less';
 
 const ClientWorkstation: FC<InjectedComponentProps> = ({
     declarations,
