@@ -4,7 +4,7 @@ import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { InjectedComponentProps } from 'khamsa';
-import { TabProps } from './tab.interface';
+import { TabProps } from '@modules/tab/tab.interface';
 import clsx from 'clsx';
 import './tab.component.less';
 

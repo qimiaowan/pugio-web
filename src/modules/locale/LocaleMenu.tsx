@@ -10,7 +10,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { LocaleMenuProps } from './locale.interface';
+import { LocaleMenuProps } from '@modules/locale/locale.interface';
 import _ from 'lodash';
 
 const LocaleMenu: FC<LocaleMenuProps> = ({
