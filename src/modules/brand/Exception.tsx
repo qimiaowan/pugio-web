@@ -1,12 +1,12 @@
 import { FC } from 'react';
 import Box from '@mui/material/Box';
-import emptyImage from '@modules/brand/empty.svg';
 import clsx from 'clsx';
-import '@modules/brand/empty.component.less';
-import { EmptyProps } from '@modules/brand/empty.interface';
+import '@modules/brand/exception.component.less';
+import { ExceptionProps } from '@modules/brand/exception.interface';
 import Typography from '@mui/material/Typography';
 
-const Empty: FC<EmptyProps> = ({
+const Exception: FC<ExceptionProps> = ({
+    imageSrc = '',
     title = '',
     subTitle = '',
     ...props
@@ -14,9 +14,13 @@ const Empty: FC<EmptyProps> = ({
     return (
         <Box
             {...props}
-            className={clsx('empty', props.className || '')}
+            className={clsx('exception', props.className || '')}
         >
-            <Box component="img" src={emptyImage} />
+            {
+                imageSrc && (
+                    <Box component="img" src={imageSrc} />
+                )
+            }
             {
                 title && (
                     <Typography classes={{ root: 'title' }} variant="subtitle2">{title}</Typography>
@@ -32,4 +36,4 @@ const Empty: FC<EmptyProps> = ({
     );
 };
 
-export default Empty;
+export default Exception;

@@ -15,10 +15,13 @@ export interface ChannelMetadata {
 }
 
 export interface ChannelTab {
-    id: string;
-    appId: string;
-    nodes: ReactNode;
+    tabId: string;
+    channelId: string;
+    url: string;
     metadata: ChannelMetadata;
+    nodes?: ReactNode;
+    loading?: boolean;
+    errored?: boolean;
 }
 
 export interface AppState {
@@ -27,7 +30,7 @@ export interface AppState {
     clientsDropdownOpen: boolean;
     pathnameReady: boolean;
     changeClientSidebarWidth: (width: number) => void;
-    createTab: (clientId: string, appId: string, nodes: ReactNode, metadata: ChannelMetadata) => string;
+    createTab: (clientId: string, data: Omit<ChannelTab, 'tabId'>) => string;
     destroyTab: (clientId: string, tabId: string) => void;
     switchClientsDropdownVisibility: (open?: boolean) => void;
     setPathnameReady: () => void;

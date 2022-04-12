@@ -3,8 +3,8 @@ import {
     Module,
 } from 'khamsa';
 import { BrandService } from '@modules/brand/brand.service';
-import { LoadingComponent } from '@/modules/brand/loading.component';
-import { EmptyComponent } from '@/modules/brand/empty.component';
+import { LoadingComponent } from '@modules/brand/loading.component';
+import { ExceptionComponent } from '@modules/brand/exception.component';
 
 @Global()
 @Module({
@@ -13,12 +13,12 @@ import { EmptyComponent } from '@/modules/brand/empty.component';
     ],
     components: [
         LoadingComponent,
-        EmptyComponent,
+        ExceptionComponent,
     ],
     exports: [
         BrandService,
         LoadingComponent,
-        EmptyComponent,
+        ExceptionComponent,
     ],
 })
 export class BrandModule {}

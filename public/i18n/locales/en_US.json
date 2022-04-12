@@ -34,6 +34,12 @@
                 "subTitle": "Clients will help you connect to your devices"
             },
             "searchPlaceholder": "Type to search..."
+        },
+        "channelPanel": {
+            "error": {
+                "title": "Failed to load channel {{channelId}}",
+                "subTitle": "Please check your network or the channel's configuration"
+            }
         }
     }
 }

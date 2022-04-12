@@ -32,8 +32,8 @@ import {
     useParams,
 } from 'react-router-dom';
 import { LoadingComponent } from '@modules/brand/loading.component';
-import { EmptyProps } from '@modules/brand/empty.interface';
-import { EmptyComponent } from '@modules/brand/empty.component';
+import { ExceptionProps } from '@modules/brand/exception.interface';
+import { ExceptionComponent } from '@modules/brand/exception.component';
 
 const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
     declarations,
@@ -50,7 +50,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
         },
     };
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
-    const Empty = declarations.get<FC<EmptyProps>>(EmptyComponent);
+    const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
 
     const navigate = useNavigate();
     const [searchValue, setSearchValue] = useState<string>('');
@@ -148,7 +148,8 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                             <Loading />
                         </Box>
                         : clients.length === 0
-                            ? <Empty
+                            ? <Exception
+                                imageSrc="/static/images/empty.svg"
                                 title={getComponentLocaleText('empty.title')}
                                 subTitle={getComponentLocaleText('empty.subTitle')}
                             >
@@ -160,8 +161,8 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                                 >
                                     {getComponentLocaleText('create')}
                                 </Button>
-                            </Empty>
-                            : <SimpleBar autoHide={true} style={{ height: 360, width: 360 }}>
+                            </Exception>
+                            : <SimpleBar autoHide={true} style={{ height: 360, width: '100%' }}>
                                 {
                                     clients.map((item) => {
                                         return (

@@ -1,12 +1,11 @@
 import { Injectable } from 'khamsa';
 import create from 'zustand';
 import { Map } from 'immutable';
-import { ReactNode } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import {
     AppState,
-    ChannelMetadata,
+    ChannelTab,
 } from '@modules/store/store.interface';
 
 @Injectable()
@@ -22,18 +21,13 @@ export class StoreService {
                 set(() => ({ clientSidebarWidth: width }));
             },
 
-            createTab: (clientId: string, appId: string, nodes: ReactNode, metadata: ChannelMetadata) => {
+            createTab: (clientId: string, data: Omit<ChannelTab, 'tabId'>) => {
                 const tabId = uuidv4();
 
                 set((state) => {
                     const tabs = state.channelTabs.get(clientId) || [];
 
-                    tabs.push({
-                        id: tabId,
-                        appId,
-                        nodes,
-                        metadata,
-                    });
+                    tabs.push({ tabId, ...data });
 
                     return {
                         channelTabs: state.channelTabs.set(clientId, tabs),
@@ -56,7 +50,7 @@ export class StoreService {
                     return {
                         channelTabs: state.channelTabs.set(
                             clientId,
-                            tabs.filter((tab) => tab.id !== tabId),
+                            tabs.filter((tab) => tab.tabId !== tabId),
                         ),
                     };
                 });

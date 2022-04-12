@@ -11,6 +11,7 @@ const ClientModule = import('@modules/client/client.module').then(({ ClientModul
 const ClientsModule = import('@modules/clients/clients.module').then(({ ClientsModule }) => ClientsModule);
 const TabModule = import('@modules/tab/tab.module').then(({ TabModule }) => TabModule);
 const ContainerModule = import('@modules/container/container.module').then(({ ContainerModule }) => ContainerModule);
+const ChannelModule = import('@modules/channel/channel.module').then(({ ChannelModule }) => ChannelModule);
 
 @Module({
     imports: [
@@ -24,6 +25,7 @@ const ContainerModule = import('@modules/container/container.module').then(({ Co
         ClientsModule,
         TabModule,
         ContainerModule,
+        ChannelModule,
     ],
     components: [
         AppComponent,
