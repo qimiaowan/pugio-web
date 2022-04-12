@@ -16,8 +16,11 @@ export class StoreService {
             clientSidebarWidth: null,
             clientsDropdownOpen: false,
             pathnameReady: false,
+            appNavbarHeight: 48,
+            controlsWrapperHeight: 0,
+            tabsWrapperHeight: 0,
 
-            changeClientSidebarWidth: (width: number) => {
+            setClientSidebarWidth: (width: number) => {
                 set(() => ({ clientSidebarWidth: width }));
             },
 
@@ -64,8 +67,16 @@ export class StoreService {
                 });
             },
 
-            setPathnameReady() {
+            setPathnameReady: () => {
                 set({ pathnameReady: true });
+            },
+
+            setControlsWrapperHeight: (height: number) => {
+                set({ controlsWrapperHeight: height });
+            },
+
+            setTabsWrapperHeight: (height: number) => {
+                set({ tabsWrapperHeight: height });
             },
         };
     });

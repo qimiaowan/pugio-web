@@ -38,11 +38,13 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
     const params = useParams();
     const navigate = useNavigate();
     const sidebarRef = useRef<HTMLDivElement>(null);
+    const controlsWrapperRef = useRef<HTMLDivElement>(null);
     const getLocaleText = localeService.useLocaleContext();
     const getPageLocaleText = localeService.useLocaleContext('pages.client_workstation');
     const [fullWidthMenu, setFullWidthMenu] = useState<boolean>(false);
     const [menuMetadataItems, setMenuMetadataItems] = useState<MenuMetadataItem[]>([]);
-    const changeSidebarWidth = storeService.useStore((state) => state.changeClientSidebarWidth);
+    const setSidebarWidth = storeService.useStore((state) => state.setClientSidebarWidth);
+    const setControlsWrapperHeight = storeService.useStore((state) => state.setControlsWrapperHeight);
     const switchClientsDropdownVisibility = storeService.useStore((state) => state.switchClientsDropdownVisibility);
 
     const generateFullWidthMenuKey = (id: string) => {
@@ -71,13 +73,13 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
 
     useEffect(() => {
         const observer = new ResizeObserver((entries) => {
-            const [sidebarObservationData] = entries;
+            const [observationData] = entries;
 
-            if (sidebarObservationData) {
-                const sidebarInlineSize = _.get(sidebarObservationData, 'borderBoxSize[0].inlineSize');
+            if (observationData) {
+                const sidebarInlineSize = _.get(observationData, 'borderBoxSize[0].inlineSize');
 
                 if (_.isNumber(sidebarInlineSize)) {
-                    changeSidebarWidth(sidebarInlineSize);
+                    setSidebarWidth(sidebarInlineSize);
                 }
             }
         });
@@ -90,6 +92,28 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
             observer.unobserve(sidebarRef.current);
         };
     }, [sidebarRef]);
+
+    useEffect(() => {
+        const observer = new ResizeObserver((entries) => {
+            const [observationData] = entries;
+
+            if (observationData) {
+                const blockSize = _.get(observationData, 'borderBoxSize[0].blockSize');
+
+                if (_.isNumber(blockSize)) {
+                    setControlsWrapperHeight(blockSize);
+                }
+            }
+        });
+
+        if (controlsWrapperRef.current) {
+            observer.observe(controlsWrapperRef.current);
+        }
+
+        return () => {
+            observer.unobserve(controlsWrapperRef.current);
+        };
+    }, [controlsWrapperRef]);
 
     const updateMenuMetadataItems = useCallback(() => {
         if (params.client_id) {
@@ -162,7 +186,7 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
                 </Box>
             </Box>
             <Box className="content-container">
-                <Box className="controls">
+                <Box className="controls" ref={controlsWrapperRef}>
                     <Typography variant="subtitle2" className="client-name">Client Placeholder</Typography>
                     <Button
                         size="small"

@@ -29,12 +29,12 @@ import { BrandService } from '@modules/brand/brand.service';
 import { LocaleMenuComponent } from '@modules/locale/locale-menu.component';
 import { ProfileMenuComponent } from '@modules/profile/profile-menu.component';
 import { ClientsDropdownComponent } from '@modules/clients/clients-dropdown.component';
-import '@/app.component.less';
 import { StoreService } from '@modules/store/store.service';
 import { ClientsDropdownProps } from '@modules/clients/clients-dropdown.interface';
 import shallow from 'zustand/shallow';
-import { ContainerProps } from './container.interface';
+import { ContainerProps } from '@modules/container/container.interface';
 import _ from 'lodash';
+import '@modules/container/container.component.less';
 
 const pugioTheme = createTheme(theme, {
     components: {
@@ -140,10 +140,6 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
     declarations,
     onLocaleChange = _.noop,
 }) => {
-    const [locales, setLocales] = useState<LocaleListItem[]>([]);
-    const [locale, setLocale] = useState(localStorage.getItem('locale') || 'en_US');
-    const [logo, setLogo] = useState<string>('');
-
     const brandService = declarations.get<BrandService>(BrandService);
     const localeService = declarations.get<LocaleService>(LocaleService);
     const storeService = declarations.get<StoreService>(StoreService);
@@ -151,8 +147,10 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
     const ProfileMenu = declarations.get<FC>(ProfileMenuComponent);
     const ClientsDropdown = declarations.get<FC<ClientsDropdownProps>>(ClientsDropdownComponent);
 
+    const [locales, setLocales] = useState<LocaleListItem[]>([]);
+    const [locale, setLocale] = useState(localStorage.getItem('locale') || 'en_US');
+    const [logo, setLogo] = useState<string>('');
     const getLocaleText = localeService.useLocaleContext();
-
     const [
         clientsDropdownOpen,
         switchClientsDropdownVisibility,
@@ -162,6 +160,7 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
         },
         shallow,
     );
+    const appNavbarHeight = storeService.useStore((state) => state.appNavbarHeight);
 
     useEffect(() => {
         localStorage.setItem('locale', locale);
@@ -181,8 +180,8 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
     return (
         <ThemeProvider theme={pugioTheme}>
             <StyledEngineProvider injectFirst={true}>
-                <Box className="app-container">
-                    <Box className="navbar">
+                <Box className="app-container" style={{ paddingTop: appNavbarHeight }}>
+                    <Box className="navbar" style={{ height: appNavbarHeight }}>
                         <Box className="wrapper logo-and-nav">
                             <Box
                                 className="logo"

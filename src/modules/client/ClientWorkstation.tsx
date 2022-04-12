@@ -1,6 +1,7 @@
 import {
     FC,
     useEffect,
+    useRef,
     useState,
 } from 'react';
 import Box from '@mui/material/Box';
@@ -11,8 +12,9 @@ import { TabProps } from '@modules/tab/tab.interface';
 import { TabComponent } from '@modules/tab/tab.component';
 import { LocaleService } from '@modules/locale/locale.service';
 import { StoreService } from '@modules/store/store.service';
-import SimpleBar from 'simplebar-react';
 import _ from 'lodash';
+import shallow from 'zustand/shallow';
+import SimpleBar from 'simplebar-react';
 import '@modules/client/client-workstation.component.less';
 
 const ClientWorkstation: FC<InjectedComponentProps> = ({
@@ -22,9 +24,32 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const localeService = declarations.get<LocaleService>(LocaleService);
     const storeService = declarations.get<StoreService>(StoreService);
 
+    const tabsWrapperRef = useRef<HTMLDivElement>(null);
     const [headerWidth, setHeaderWidth] = useState<number>(null);
+    const [panelHeight, setPanelHeight] = useState<number>(null);
     const [windowInnerWidth, setWindowInnerWidth] = useState<number>(window.innerWidth);
-    const sidebarWidth = storeService.useStore((state) => state.clientSidebarWidth);
+    const [windowInnerHeight, setWindowInnerHeight] = useState<number>(window.innerHeight);
+    const {
+        sidebarWidth,
+        appNavbarHeight,
+        controlsWrapperHeight,
+        tabsWrapperHeight,
+    } = storeService.useStore((state) => {
+        const {
+            appNavbarHeight,
+            controlsWrapperHeight,
+            tabsWrapperHeight,
+            clientSidebarWidth: sidebarWidth,
+        } = state;
+
+        return {
+            appNavbarHeight,
+            controlsWrapperHeight,
+            tabsWrapperHeight,
+            sidebarWidth,
+        };
+    }, shallow);
+    const setTabsWrapperHeight = storeService.useStore((state) => state.setTabsWrapperHeight);
     const getLocaleText = localeService.useLocaleContext('pages.client_workstation');
 
     useEffect(() => {
@@ -36,6 +61,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     useEffect(() => {
         const handler = () => {
             setWindowInnerWidth(window.innerWidth);
+            setWindowInnerHeight(window.innerHeight);
         };
 
         window.addEventListener('resize', handler);
@@ -45,10 +71,43 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
         };
     }, []);
 
+    useEffect(() => {
+        const observer = new ResizeObserver((entries) => {
+            const [observationData] = entries;
+
+            if (observationData) {
+                const blockSize = _.get(observationData, 'borderBoxSize[0].blockSize');
+
+                if (_.isNumber(blockSize)) {
+                    setTabsWrapperHeight(blockSize);
+                }
+            }
+        });
+
+        if (tabsWrapperRef.current) {
+            observer.observe(tabsWrapperRef.current);
+        }
+
+        return () => {
+            observer.unobserve(tabsWrapperRef.current);
+        };
+    }, [tabsWrapperRef]);
+
+    useEffect(() => {
+        if (appNavbarHeight && controlsWrapperHeight && tabsWrapperHeight && windowInnerHeight) {
+            setPanelHeight(windowInnerHeight - appNavbarHeight - controlsWrapperHeight - tabsWrapperHeight);
+        }
+    }, [
+        appNavbarHeight,
+        controlsWrapperHeight,
+        tabsWrapperHeight,
+        windowInnerHeight,
+    ]);
+
     return (
         <Box className="page client-workstation-page">
             <Box className="header-container">
-                <Box className="tabs" style={{ width: headerWidth }}>
+                <Box className="tabs" style={{ width: headerWidth }} ref={tabsWrapperRef}>
                     {
                         _.isNumber(headerWidth) && (
                             <SimpleBar
@@ -65,7 +124,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                             </SimpleBar>
                         )
                     }
-                    <Box className="add-button-wrapper">
+                    <Box className="buttons-wrapper">
                         <IconButton>
                             <Icon className="icon-plus" />
                         </IconButton>
@@ -75,6 +134,14 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                     </Box>
                 </Box>
             </Box>
+            <SimpleBar
+                style={{
+                    width: '100%',
+                    height: panelHeight,
+                }}
+            >
+                {/* TODO panel content */}
+            </SimpleBar>
         </Box>
     );
 };

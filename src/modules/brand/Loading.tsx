@@ -42,7 +42,6 @@ const Loading: FC<BoxProps> = ({
                         begin="0.3"/>
                 </circle>
             </svg>
-
         </Box>
     );
 };

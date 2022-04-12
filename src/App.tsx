@@ -7,7 +7,6 @@ import {
 } from 'react';
 import { LocaleService } from '@modules/locale/locale.service';
 import { BrandService } from '@modules/brand/brand.service';
-import '@/app.component.less';
 import { ContainerComponent } from '@modules/container/container.component';
 import { ContainerProps } from '@modules/container/container.interface';
 import {

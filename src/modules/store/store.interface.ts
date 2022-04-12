@@ -29,9 +29,14 @@ export interface AppState {
     clientSidebarWidth: number;
     clientsDropdownOpen: boolean;
     pathnameReady: boolean;
-    changeClientSidebarWidth: (width: number) => void;
+    appNavbarHeight: number;
+    controlsWrapperHeight: number;
+    tabsWrapperHeight: number;
+    setClientSidebarWidth: (width: number) => void;
     createTab: (clientId: string, data: Omit<ChannelTab, 'tabId'>) => string;
     destroyTab: (clientId: string, tabId: string) => void;
     switchClientsDropdownVisibility: (open?: boolean) => void;
     setPathnameReady: () => void;
+    setControlsWrapperHeight: (height: number) => void;
+    setTabsWrapperHeight: (height: number) => void;
 }
