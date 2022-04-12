@@ -1,5 +1,8 @@
 import { ReactNode } from 'react';
-import { Map } from 'immutable';
+import {
+    Map,
+    Set,
+} from 'immutable';
 import {
     Client,
     QueryClientsResponseData,
@@ -24,8 +27,10 @@ export interface ChannelTab {
     errored?: boolean;
 }
 
+export type TabData = Omit<ChannelTab, 'tabId'>;
+
 export interface AppState {
-    channelTabs: Map<string, ChannelTab[]>;
+    channelTabs: Map<string, Set<ChannelTab>>;
     clientSidebarWidth: number;
     clientsDropdownOpen: boolean;
     pathnameReady: boolean;
@@ -33,7 +38,8 @@ export interface AppState {
     controlsWrapperHeight: number;
     tabsWrapperHeight: number;
     setClientSidebarWidth: (width: number) => void;
-    createTab: (clientId: string, data: Omit<ChannelTab, 'tabId'>) => string;
+    createTab: (clientId: string, data: TabData) => string;
+    updateTab: (clientId: string, tabId: string, updates: Partial<TabData>) => void;
     destroyTab: (clientId: string, tabId: string) => void;
     switchClientsDropdownVisibility: (open?: boolean) => void;
     setPathnameReady: () => void;
