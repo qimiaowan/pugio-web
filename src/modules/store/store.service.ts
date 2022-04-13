@@ -39,15 +39,13 @@ export class StoreService {
 
                     if (!state.channelTabs.get(clientId)) {
                         const tabs = Set<ChannelTab>();
-                        tabs.add(channelTabData);
                         return {
-                            channelTabs: state.channelTabs.set(clientId, tabs),
+                            channelTabs: state.channelTabs.set(clientId, tabs.add(channelTabData)),
                         };
                     } else {
                         const tabs = Set(state.channelTabs.get(clientId).toArray() || []);
-                        tabs.add(channelTabData);
                         return {
-                            channelTabs: state.channelTabs.set(clientId, tabs),
+                            channelTabs: state.channelTabs.set(clientId, tabs.add(channelTabData)),
                         };
                     }
                 });

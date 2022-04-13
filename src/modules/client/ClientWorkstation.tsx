@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars */
 import {
+    createElement,
     FC,
     useEffect,
     useRef,
@@ -50,7 +52,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const [tabs, setTabs] = useState<ChannelTab[]>([]);
     const [windowInnerWidth, setWindowInnerWidth] = useState<number>(window.innerWidth);
     const [windowInnerHeight, setWindowInnerHeight] = useState<number>(window.innerHeight);
-    const [startupTabSelected, setStartupTabSelected] = useState<boolean>(false);
+    const [startupTabSelected, setStartupTabSelected] = useState<boolean>(true);
     const {
         sidebarWidth,
         appNavbarHeight,
@@ -58,6 +60,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
         tabsWrapperHeight,
         setSelectedTab,
         updateTab,
+        createTab,
     } = storeService.useStore((state) => {
         const {
             appNavbarHeight,
@@ -66,6 +69,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             clientSidebarWidth: sidebarWidth,
             setSelectedTab,
             updateTab,
+            createTab,
         } = state;
 
         return {
@@ -75,6 +79,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             sidebarWidth,
             setSelectedTab,
             updateTab,
+            createTab,
         };
     }, shallow);
     const setTabsWrapperHeight = storeService.useStore((state) => state.setTabsWrapperHeight);
@@ -83,7 +88,10 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const getLocaleText = localeService.useLocaleContext('pages.client_workstation');
 
     const handleCreateTab = () => {
-        // TODO
+        const tabId = createTab(clientId, {
+            // TODO
+            channelId: 'pugio.web-terminal',
+        });
     };
 
     const handleLoadChannel = (channelId: string, clientId: string, tabId: string) => {
@@ -223,8 +231,8 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
 
     useEffect(() => {
         if (clientId && clientTabsMap) {
-            const currentClientTabs = clientTabsMap.get(clientId) || Set<ChannelTab>([]);
-            setTabs(currentClientTabs.toArray());
+            const currentClientTabs = (clientTabsMap.get(clientId) || Set<ChannelTab>([])).toArray();
+            setTabs(currentClientTabs);
         }
     }, [clientId, clientTabsMap]);
 
@@ -252,26 +260,22 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                     active={startupTabSelected}
                                 />
                                 {
-                                    tabs.map((tab) => {
+                                    _.isArray(tabs) && tabs.map((tab, index) => {
                                         const {
                                             tabId,
                                             data,
                                             loading,
                                         } = tab;
 
-                                        const {
-                                            name,
-                                            avatar,
-                                        } = data;
-
-                                        return (
-                                            <Tab
-                                                key={tabId}
-                                                loading={loading}
-                                                title={name}
-                                                avatar={avatar || '/static/images/channel_avatar_fallback.svg'}
-                                                active={selectedTabMap.get(clientId) === tabId}
-                                            />
+                                        return createElement(
+                                            Tab,
+                                            {
+                                                key: index,
+                                                loading,
+                                                title: data?.name,
+                                                avatar: data?.avatar || '/static/images/channel_avatar_fallback.svg',
+                                                active: selectedTabMap.get(clientId) === tabId,
+                                            },
                                         );
                                     })
                                 }

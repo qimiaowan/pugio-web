@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { FC } from 'react';
 import Box, { BoxProps } from '@mui/material/Box';
 import Icon from '@mui/material/Icon';
@@ -17,6 +18,7 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
     avatar = '/static/images/channel_avatar_fallback.svg',
     loading = false,
     declarations,
+    ...props
 }) => {
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
 
@@ -27,6 +29,7 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
                 active,
                 placeholder,
             })}
+            {...props}
         >
             {
                 loading
