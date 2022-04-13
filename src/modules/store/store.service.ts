@@ -11,11 +11,13 @@ import {
     ChannelTab,
     TabData,
 } from '@modules/store/store.interface';
+import { Profile } from '@modules/profile/profile.interface';
 
 @Injectable()
 export class StoreService {
     public useStore = create<AppState>((set) => {
         return {
+            userProfile: null,
             channelTabs: Map<string, Set<ChannelTab>>({}),
             clientSidebarWidth: null,
             clientsDropdownOpen: false,
@@ -23,6 +25,7 @@ export class StoreService {
             appNavbarHeight: 48,
             controlsWrapperHeight: 0,
             tabsWrapperHeight: 0,
+            selectedTabMap: Map<string, string | '@@startup'>({}),
 
             setClientSidebarWidth: (width: number) => {
                 set(() => ({ clientSidebarWidth: width }));
@@ -117,6 +120,18 @@ export class StoreService {
 
             setTabsWrapperHeight: (height: number) => {
                 set({ tabsWrapperHeight: height });
+            },
+
+            setSelectedTab: (clientId: string, tabId: string) => {
+                set((state) => {
+                    return {
+                        selectedTabMap: state.selectedTabMap.set(clientId, tabId),
+                    };
+                });
+            },
+
+            setUserProfile: (profile: Profile) => {
+                set({ userProfile: profile });
             },
         };
     });

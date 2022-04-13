@@ -19,6 +19,8 @@ import { ProfileService } from '@modules/profile/profile.service';
 import '@modules/profile/profile-menu.component.less';
 import { useRequest } from 'ahooks';
 import { LoadingComponent } from '@modules/brand/loading.component';
+import { StoreService } from '@modules/store/store.service';
+import shallow from 'zustand/shallow';
 
 const DEFAULT_PICTURE_URL = '/static/images/profile_avatar_fallback.svg';
 
@@ -26,6 +28,7 @@ const LocaleMenu: FC<InjectedComponentProps> = ({
     declarations,
 }) => {
     const localeService = declarations.get<LocaleService>(LocaleService);
+    const storeService = declarations.get<StoreService>(StoreService);
     const profileService = declarations.get<ProfileService>(ProfileService);
 
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
@@ -34,11 +37,25 @@ const LocaleMenu: FC<InjectedComponentProps> = ({
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const getLocaleText = localeService.useLocaleContext();
     const {
-        data: userProfile,
+        data: userProfileResponseData,
         loading: getProfileLoading,
     } = useRequest(
         profileService.getProfile.bind(profileService) as typeof profileService.getProfile,
     );
+    const {
+        userProfile,
+        setUserProfile,
+    } = storeService.useStore((state) => {
+        const {
+            userProfile,
+            setUserProfile,
+        } = state;
+
+        return {
+            userProfile,
+            setUserProfile,
+        };
+    }, shallow);
 
     const open = Boolean(anchorEl);
 
@@ -51,8 +68,14 @@ const LocaleMenu: FC<InjectedComponentProps> = ({
     };
 
     useEffect(() => {
-        if (userProfile?.response) {
-            setAvatarUrl(userProfile.response.picture || DEFAULT_PICTURE_URL);
+        if (userProfileResponseData?.response) {
+            setUserProfile(userProfileResponseData.response);
+        }
+    }, [userProfileResponseData]);
+
+    useEffect(() => {
+        if (userProfile) {
+            setAvatarUrl(userProfile.picture || DEFAULT_PICTURE_URL);
         }
     }, [userProfile]);
 

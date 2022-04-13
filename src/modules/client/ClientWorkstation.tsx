@@ -10,36 +10,47 @@ import IconButton from '@mui/material/IconButton';
 import { InjectedComponentProps } from 'khamsa';
 import { TabProps } from '@modules/tab/tab.interface';
 import { TabComponent } from '@modules/tab/tab.component';
+import { ChannelPanelComponent } from '@modules/channel/channel-panel.component';
+import { ChannelPanelProps } from '@modules/channel/channel.interface';
 import { LocaleService } from '@modules/locale/locale.service';
 import { StoreService } from '@modules/store/store.service';
 import _ from 'lodash';
 import shallow from 'zustand/shallow';
 import SimpleBar from 'simplebar-react';
+import { ChannelTab } from '@modules/store/store.interface';
+import { useParams } from 'react-router-dom';
+import { Set } from 'immutable';
 import '@modules/client/client-workstation.component.less';
 
 const ClientWorkstation: FC<InjectedComponentProps> = ({
     declarations,
 }) => {
     const Tab = declarations.get<FC<TabProps>>(TabComponent);
+    const ChannelPanel = declarations.get<FC<ChannelPanelProps>>(ChannelPanelComponent);
     const localeService = declarations.get<LocaleService>(LocaleService);
     const storeService = declarations.get<StoreService>(StoreService);
 
+    const { client_id: clientId } = useParams();
     const tabsWrapperRef = useRef<HTMLDivElement>(null);
     const [headerWidth, setHeaderWidth] = useState<number>(null);
     const [panelHeight, setPanelHeight] = useState<number>(null);
+    const [tabs, setTabs] = useState<ChannelTab[]>([]);
     const [windowInnerWidth, setWindowInnerWidth] = useState<number>(window.innerWidth);
     const [windowInnerHeight, setWindowInnerHeight] = useState<number>(window.innerHeight);
+    const [startupTabSelected, setStartupTabSelected] = useState<boolean>(false);
     const {
         sidebarWidth,
         appNavbarHeight,
         controlsWrapperHeight,
         tabsWrapperHeight,
+        setSelectedTab,
     } = storeService.useStore((state) => {
         const {
             appNavbarHeight,
             controlsWrapperHeight,
             tabsWrapperHeight,
             clientSidebarWidth: sidebarWidth,
+            setSelectedTab,
         } = state;
 
         return {
@@ -47,10 +58,15 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             controlsWrapperHeight,
             tabsWrapperHeight,
             sidebarWidth,
+            setSelectedTab,
         };
     }, shallow);
     const setTabsWrapperHeight = storeService.useStore((state) => state.setTabsWrapperHeight);
+    const clientTabsMap = storeService.useStore((state) => state.channelTabs);
+    const selectedTabMap = storeService.useStore((state) => state.selectedTabMap);
     const getLocaleText = localeService.useLocaleContext('pages.client_workstation');
+
+    const handleCreateTab = () => {};
 
     useEffect(() => {
         if (_.isNumber(sidebarWidth) && _.isNumber(windowInnerWidth)) {
@@ -104,6 +120,19 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
         windowInnerHeight,
     ]);
 
+    useEffect(() => {
+        if (clientId && clientTabsMap) {
+            const currentClientTabs = clientTabsMap.get(clientId) || Set<ChannelTab>([]);
+            setTabs(currentClientTabs.toArray());
+        }
+    }, [clientId, clientTabsMap]);
+
+    useEffect(() => {
+        if (selectedTabMap) {
+            setStartupTabSelected(selectedTabMap.get(clientId) === '@@startup' || !selectedTabMap.get(clientId));
+        }
+    }, [selectedTabMap]);
+
     return (
         <Box className="page client-workstation-page">
             <Box className="header-container">
@@ -119,13 +148,40 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                     closable={false}
                                     avatar="/static/images/all_channels.svg"
                                     title={getLocaleText('all_channels')}
+                                    active={startupTabSelected}
                                 />
+                                {
+                                    tabs.map((tab) => {
+                                        const {
+                                            tabId,
+                                            data,
+                                        } = tab;
+
+                                        const {
+                                            name,
+                                            avatar,
+                                        } = data;
+
+                                        return (
+                                            <Tab
+                                                key={tabId}
+                                                title={name}
+                                                avatar={avatar || '/static/images/channel_avatar_fallback.svg'}
+                                                active={selectedTabMap.get(clientId) === tabId}
+                                            />
+                                        );
+                                    })
+                                }
                                 <Tab placeholder={true} />
                             </SimpleBar>
                         )
                     }
                     <Box className="buttons-wrapper">
-                        <IconButton>
+                        <IconButton
+                            onClick={() => {
+                                setSelectedTab(clientId, '@@startup');
+                            }}
+                        >
                             <Icon className="icon-plus" />
                         </IconButton>
                         <IconButton>
@@ -140,7 +196,20 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                     height: panelHeight,
                 }}
             >
-                {/* TODO panel content */}
+                <ChannelPanel
+                    startupTab={startupTabSelected}
+                    tabId={selectedTabMap.get(clientId)}
+                    {
+                        ...(clientTabsMap.get(clientId) || Set<ChannelTab>([]))
+                            .find((channelTab) => channelTab.tabId === selectedTabMap.get(clientId))
+                    }
+                >
+                    {
+                        startupTabSelected
+                            ? <><button onClick={handleCreateTab}>test</button></>
+                            : null
+                    }
+                </ChannelPanel>
             </SimpleBar>
         </Box>
     );

@@ -15,8 +15,7 @@ import _ from 'lodash';
 import '@modules/channel/channel-panel.component.less';
 
 const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
-    url,
-    channelId,
+    data,
     metadata,
     children,
     declarations,
@@ -37,16 +36,16 @@ const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
     const getLocaleText = localeService.useLocaleContext('components.channelPanel');
 
     useEffect(() => {
-        if (!startupTab && url && channelId) {
+        if (!startupTab && data?.bundleUrl && data?.id) {
             if (!nodes) {
                 onLoadBundleStart();
                 utilsService
-                    .loadChannelBundle(url, channelId)
+                    .loadChannelBundle(data.bundleUrl, data.id)
                     .then((bundleComponent) => onLoadBundleEnd(bundleComponent))
                     .catch((e) => onLoadBundleEnd(null, e));
             }
         }
-    }, [startupTab, url, channelId, nodes]);
+    }, [startupTab, data, nodes]);
 
     return (
         <Box
@@ -61,7 +60,7 @@ const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
                         : (errored || !nodes)
                             ? <Exception
                                 imageSrc="/static/images/error.svg"
-                                title={getLocaleText('error.title', { channelId })}
+                                title={getLocaleText('error.title', { channelId: data?.id })}
                                 subTitle={getLocaleText('error.subTitle')}
                             />
                             : nodes

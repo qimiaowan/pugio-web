@@ -151,12 +151,25 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
     const [locale, setLocale] = useState(localStorage.getItem('locale') || 'en_US');
     const [logo, setLogo] = useState<string>('');
     const getLocaleText = localeService.useLocaleContext();
-    const [
+    const {
         clientsDropdownOpen,
+        selectedTabMap,
+        setSelectedTab,
         switchClientsDropdownVisibility,
-    ] = storeService.useStore(
+    } = storeService.useStore(
         (state) => {
-            return [state.clientsDropdownOpen, state.switchClientsDropdownVisibility];
+            const {
+                clientsDropdownOpen,
+                selectedTabMap,
+                switchClientsDropdownVisibility,
+                setSelectedTab,
+            } = state;
+            return {
+                clientsDropdownOpen,
+                selectedTabMap,
+                switchClientsDropdownVisibility,
+                setSelectedTab,
+            };
         },
         shallow,
     );
@@ -192,6 +205,11 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
                                 open={clientsDropdownOpen}
                                 onOpen={() => switchClientsDropdownVisibility(true)}
                                 onClose={() => switchClientsDropdownVisibility(false)}
+                                onClientChange={(clientId) => {
+                                    if (!selectedTabMap.get(clientId)) {
+                                        setSelectedTab(clientId, '@@startup');
+                                    }
+                                }}
                             />
                             <NavLink to="/marketplace" className="navlink">
                                 {

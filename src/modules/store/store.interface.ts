@@ -9,6 +9,7 @@ import {
 } from '@modules/clients/clients.interface';
 import { Profile } from '@modules/profile/profile.interface';
 import { Location } from 'react-router-dom';
+import { Channel } from '@modules/channel/channel.interface';
 
 export interface ChannelMetadata {
     client: Client;
@@ -20,8 +21,8 @@ export interface ChannelMetadata {
 export interface ChannelTab {
     tabId: string;
     channelId: string;
-    url: string;
     metadata: ChannelMetadata;
+    data?: Channel;
     nodes?: ReactNode;
     loading?: boolean;
     errored?: boolean;
@@ -30,6 +31,7 @@ export interface ChannelTab {
 export type TabData = Omit<ChannelTab, 'tabId'>;
 
 export interface AppState {
+    userProfile: Profile;
     channelTabs: Map<string, Set<ChannelTab>>;
     clientSidebarWidth: number;
     clientsDropdownOpen: boolean;
@@ -37,6 +39,7 @@ export interface AppState {
     appNavbarHeight: number;
     controlsWrapperHeight: number;
     tabsWrapperHeight: number;
+    selectedTabMap: Map<string, string | '@@startup'>;
     setClientSidebarWidth: (width: number) => void;
     createTab: (clientId: string, data: TabData) => string;
     updateTab: (clientId: string, tabId: string, updates: Partial<TabData>) => void;
@@ -45,4 +48,6 @@ export interface AppState {
     setPathnameReady: () => void;
     setControlsWrapperHeight: (height: number) => void;
     setTabsWrapperHeight: (height: number) => void;
+    setSelectedTab: (clientId: string, tabId: string) => void;
+    setUserProfile: (profile: Profile) => void;
 }

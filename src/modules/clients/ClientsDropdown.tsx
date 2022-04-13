@@ -40,6 +40,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
     open = false,
     onOpen = _.noop,
     onClose = _.noop,
+    onClientChange = _.noop,
 }) => {
     const localeService = declarations.get<LocaleService>(LocaleService);
     const clientsService = declarations.get<ClientsService>(ClientsService);
@@ -90,6 +91,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
 
     const handleSelectClient = (clientId: string) => {
         navigate(`/client/${clientId}/workstation`);
+        onClientChange(clientId);
         onClose();
     };
 
