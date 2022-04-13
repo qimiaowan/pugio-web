@@ -20,6 +20,12 @@ export interface ChannelMetadata {
 
 export interface LoadedChannelProps {
     metadata: ChannelMetadata;
+    width: number;
+    height: number;
+    // TODO
+    /**
+     * onLoad?: (lifecycles) => void;
+     */
 }
 
 export interface ChannelTab {
@@ -29,6 +35,10 @@ export interface ChannelTab {
     nodes?: ReactNode;
     loading?: boolean;
     errored?: boolean;
+    // TODO
+    /**
+     * lifecycles?: Lifecycle;
+     */
 }
 
 export type TabData = Omit<ChannelTab, 'tabId'>;

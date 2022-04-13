@@ -69,14 +69,16 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const selectedTabMap = storeService.useStore((state) => state.selectedTabMap);
     const getLocaleText = localeService.useLocaleContext('pages.client_workstation');
 
-    const handleCreateTab = () => {};
+    const handleCreateTab = () => {
+        // TODO
+    };
 
     const handleLoadChannel = (channelId: string, clientId: string, tabId: string) => {
         updateTab(clientId, tabId, {
             loading: true,
         });
+        // TODO
         /**
-         * TODO
          * 1. Promise.all([getChannelInfo, getRelation])
          * 2. => data, metadata
          * 3. utilsService.loadChannelBundle => React.FC
