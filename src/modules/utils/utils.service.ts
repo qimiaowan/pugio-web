@@ -8,7 +8,7 @@ import {
 import { TDateRange } from '@/app.interfaces';
 import { Location } from 'react-router-dom';
 import { FC } from 'react';
-import { ChannelMetadata } from '@modules/store/store.interface';
+import { LoadedChannelProps } from '@modules/store/store.interface';
 
 @Injectable()
 export class UtilsService extends CaseTransformerService {
@@ -90,7 +90,7 @@ export class UtilsService extends CaseTransformerService {
         return `${pathname}${search}${hash}`;
     }
 
-    public async loadChannelBundle(url: string, channelId: string): Promise<FC<ChannelMetadata>> {
+    public async loadChannelBundle(url: string, channelId: string): Promise<FC<LoadedChannelProps>> {
         const amdRequire = window.require as Function;
 
         return new Promise((resolve, reject) => {

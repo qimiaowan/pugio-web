@@ -4,4 +4,5 @@ export interface TabProps {
     avatar?: string;
     active?: boolean;
     placeholder?: boolean;
+    loading?: boolean;
 }

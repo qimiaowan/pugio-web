@@ -72,7 +72,12 @@ export class StoreService {
                                 if (clientItem.tabId === tabId) {
                                     return {
                                         ...clientItem,
-                                        ..._.pick(updates, ['nodes', 'loading', 'errored']),
+                                        ..._.pick(updates, [
+                                            'nodes',
+                                            'loading',
+                                            'errored',
+                                            'data',
+                                        ]),
                                     };
                                 }
 

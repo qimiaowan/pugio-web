@@ -18,10 +18,13 @@ export interface ChannelMetadata {
     location: Location;
 }
 
+export interface LoadedChannelProps {
+    metadata: ChannelMetadata;
+}
+
 export interface ChannelTab {
     tabId: string;
     channelId: string;
-    metadata: ChannelMetadata;
     data?: Channel;
     nodes?: ReactNode;
     loading?: boolean;

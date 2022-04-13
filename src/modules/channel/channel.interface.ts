@@ -1,12 +1,10 @@
 import { ChannelTab } from '@modules/store/store.interface';
 import { BoxProps } from '@mui/material/Box';
-import { FC } from 'react';
 import { Profile } from '@modules/profile/profile.interface';
 
 export interface ChannelPanelProps extends BoxProps, ChannelTab {
     startupTab?: boolean;
-    onLoadBundleStart?: () => void;
-    onLoadBundleEnd?: (bundle?: FC<ChannelPanelProps>, error?: Error) => void;
+    channelLoader?: (channelId: string) => void;
 }
 
 export interface Channel {
@@ -23,3 +21,9 @@ export interface Channel {
     updatedAt: string;
     description?: string;
 }
+
+export interface GetChannelInfoRequestOptions {
+    channelId: string;
+}
+
+export type GetChannelInfoResponseData = Channel;

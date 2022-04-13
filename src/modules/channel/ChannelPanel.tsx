@@ -6,7 +6,6 @@ import { InjectedComponentProps } from 'khamsa';
 import clsx from 'clsx';
 import Box, { BoxProps } from '@mui/material/Box';
 import { ChannelPanelProps } from '@modules/channel/channel.interface';
-import { UtilsService } from '@modules/utils/utils.service';
 import { LoadingComponent } from '@modules/brand/loading.component';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { ExceptionProps } from '@modules/brand/exception.interface';
@@ -15,8 +14,7 @@ import _ from 'lodash';
 import '@modules/channel/channel-panel.component.less';
 
 const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
-    data,
-    metadata,
+    channelId,
     children,
     declarations,
     nodes = null,
@@ -24,11 +22,9 @@ const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
     loading = false,
     errored = false,
     className = '',
-    onLoadBundleStart = _.noop,
-    onLoadBundleEnd = _.noop,
+    channelLoader: loadChannel = _.noop,
     ...props
 }) => {
-    const utilsService = declarations.get<UtilsService>(UtilsService);
     const localeService = declarations.get<LocaleService>(LocaleService);
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
     const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
@@ -36,16 +32,10 @@ const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
     const getLocaleText = localeService.useLocaleContext('components.channelPanel');
 
     useEffect(() => {
-        if (!startupTab && data?.bundleUrl && data?.id) {
-            if (!nodes) {
-                onLoadBundleStart();
-                utilsService
-                    .loadChannelBundle(data.bundleUrl, data.id)
-                    .then((bundleComponent) => onLoadBundleEnd(bundleComponent))
-                    .catch((e) => onLoadBundleEnd(null, e));
-            }
+        if (!startupTab && !nodes) {
+            loadChannel(channelId);
         }
-    }, [startupTab, data, nodes]);
+    }, [startupTab, nodes]);
 
     return (
         <Box
@@ -60,7 +50,7 @@ const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
                         : (errored || !nodes)
                             ? <Exception
                                 imageSrc="/static/images/error.svg"
-                                title={getLocaleText('error.title', { channelId: data?.id })}
+                                title={getLocaleText('error.title', { channelId })}
                                 subTitle={getLocaleText('error.subTitle')}
                             />
                             : nodes

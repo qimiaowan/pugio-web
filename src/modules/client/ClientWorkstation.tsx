@@ -44,6 +44,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
         controlsWrapperHeight,
         tabsWrapperHeight,
         setSelectedTab,
+        updateTab,
     } = storeService.useStore((state) => {
         const {
             appNavbarHeight,
@@ -51,6 +52,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             tabsWrapperHeight,
             clientSidebarWidth: sidebarWidth,
             setSelectedTab,
+            updateTab,
         } = state;
 
         return {
@@ -59,6 +61,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             tabsWrapperHeight,
             sidebarWidth,
             setSelectedTab,
+            updateTab,
         };
     }, shallow);
     const setTabsWrapperHeight = storeService.useStore((state) => state.setTabsWrapperHeight);
@@ -67,6 +70,19 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const getLocaleText = localeService.useLocaleContext('pages.client_workstation');
 
     const handleCreateTab = () => {};
+
+    const handleLoadChannel = (channelId: string, clientId: string, tabId: string) => {
+        updateTab(clientId, tabId, {
+            loading: true,
+        });
+        /**
+         * TODO
+         * 1. Promise.all([getChannelInfo, getRelation])
+         * 2. => data, metadata
+         * 3. utilsService.loadChannelBundle => React.FC
+         * 4. updateTab with nodes, loading and data
+         */
+    };
 
     useEffect(() => {
         if (_.isNumber(sidebarWidth) && _.isNumber(windowInnerWidth)) {
@@ -155,6 +171,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                         const {
                                             tabId,
                                             data,
+                                            loading,
                                         } = tab;
 
                                         const {
@@ -165,6 +182,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                         return (
                                             <Tab
                                                 key={tabId}
+                                                loading={loading}
                                                 title={name}
                                                 avatar={avatar || '/static/images/channel_avatar_fallback.svg'}
                                                 active={selectedTabMap.get(clientId) === tabId}
@@ -203,6 +221,9 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                         ...(clientTabsMap.get(clientId) || Set<ChannelTab>([]))
                             .find((channelTab) => channelTab.tabId === selectedTabMap.get(clientId))
                     }
+                    channelLoader={(channelId) => {
+                        handleLoadChannel(channelId, clientId, selectedTabMap.get(clientId));
+                    }}
                 >
                     {
                         startupTabSelected
