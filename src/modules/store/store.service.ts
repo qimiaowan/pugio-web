@@ -77,6 +77,7 @@ export class StoreService {
                                             'loading',
                                             'errored',
                                             'data',
+                                            'lifecycle',
                                         ]),
                                     };
                                 }

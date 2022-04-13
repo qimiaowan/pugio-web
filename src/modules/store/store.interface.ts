@@ -18,14 +18,17 @@ export interface ChannelMetadata {
     location: Location;
 }
 
+export interface Lifecycle {
+    onFocus?: () => void;
+    onBlur?: () => void;
+    onBeforeDestroy?: () => void;
+}
+
 export interface LoadedChannelProps {
     metadata: ChannelMetadata;
     width: number;
     height: number;
-    // TODO
-    /**
-     * onLoad?: (lifecycles) => void;
-     */
+    onLoad?: (lifecycle: Lifecycle) => void;
 }
 
 export interface ChannelTab {
@@ -35,10 +38,7 @@ export interface ChannelTab {
     nodes?: ReactNode;
     loading?: boolean;
     errored?: boolean;
-    // TODO
-    /**
-     * lifecycles?: Lifecycle;
-     */
+    lifecycle?: Lifecycle;
 }
 
 export type TabData = Omit<ChannelTab, 'tabId'>;
