@@ -21,7 +21,7 @@ export interface ChannelMetadata {
 export interface Lifecycle {
     onFocus?: () => void;
     onBlur?: () => void;
-    onBeforeDestroy?: () => void;
+    onBeforeDestroy?: () => boolean;
 }
 
 export interface LoadedChannelProps {

@@ -17,8 +17,17 @@ import { StoreService } from '@modules/store/store.service';
 import _ from 'lodash';
 import shallow from 'zustand/shallow';
 import SimpleBar from 'simplebar-react';
-import { ChannelTab } from '@modules/store/store.interface';
-import { useParams } from 'react-router-dom';
+import {
+    ChannelTab,
+    ChannelMetadata,
+} from '@modules/store/store.interface';
+import { ClientService } from '@modules/client/client.service';
+import { ChannelService } from '@modules/channel/channel.service';
+import { UtilsService } from '@modules/utils/utils.service';
+import {
+    useParams,
+    useLocation,
+} from 'react-router-dom';
 import { Set } from 'immutable';
 import '@modules/client/client-workstation.component.less';
 
@@ -29,8 +38,12 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const ChannelPanel = declarations.get<FC<ChannelPanelProps>>(ChannelPanelComponent);
     const localeService = declarations.get<LocaleService>(LocaleService);
     const storeService = declarations.get<StoreService>(StoreService);
+    const clientService = declarations.get<ClientService>(ClientService);
+    const channelService = declarations.get<ChannelService>(ChannelService);
+    const utilsService = declarations.get<UtilsService>(UtilsService);
 
     const { client_id: clientId } = useParams();
+    const location = useLocation();
     const tabsWrapperRef = useRef<HTMLDivElement>(null);
     const [headerWidth, setHeaderWidth] = useState<number>(null);
     const [panelHeight, setPanelHeight] = useState<number>(null);
@@ -77,13 +90,83 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
         updateTab(clientId, tabId, {
             loading: true,
         });
-        // TODO
-        /**
-         * 1. Promise.all([getChannelInfo, getRelation])
-         * 2. => data, metadata
-         * 3. utilsService.loadChannelBundle => React.FC
-         * 4. updateTab with nodes, loading and data
-         */
+
+        Promise
+            .all([
+                channelService.getChannelInfo({ channelId }),
+                clientService.getUserClientRelation({ clientId }),
+            ])
+            .then(([channelInfoResponse, getRelationResponse]) => {
+                const data = channelInfoResponse.response;
+                const relation = _.omit(getRelationResponse.response, ['user', 'client']);
+                const user = getRelationResponse?.response.user;
+                const client = getRelationResponse?.response.client;
+
+                if (!(data && relation && user && client)) {
+                    return Promise.reject(new Error());
+                } else {
+                    return {
+                        data,
+                        relation,
+                        user,
+                        client,
+                        location,
+                    };
+                }
+            })
+            .then((result) => {
+                const {
+                    data,
+                    relation,
+                    user,
+                    client,
+                    location,
+                } = result;
+
+                const metadata = {
+                    relation,
+                    user,
+                    client,
+                    location,
+                } as ChannelMetadata;
+
+                return new Promise<Partial<ChannelTab>>((resolve, reject) => {
+                    const {
+                        bundleUrl: url,
+                        id: channelId,
+                    } = data;
+                    utilsService.loadChannelBundle(url, channelId)
+                        .then((ChannelEntry) => {
+                            if (typeof ChannelEntry === 'function') {
+                                resolve({
+                                    data,
+                                    nodes: (
+                                        <ChannelEntry
+                                            width={headerWidth}
+                                            height={panelHeight}
+                                            metadata={metadata}
+                                        />
+                                    ),
+                                });
+                            } else {
+                                reject(new Error());
+                            }
+                        });
+                });
+            })
+            .then((result) => {
+                updateTab(clientId, tabId, result);
+            })
+            .catch(() => {
+                updateTab(clientId, tabId, {
+                    errored: true,
+                });
+            })
+            .finally(() => {
+                updateTab(clientId, tabId, {
+                    loading: false,
+                });
+            });
     };
 
     useEffect(() => {

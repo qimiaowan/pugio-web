@@ -4,6 +4,9 @@ import { LocaleService } from '@modules/locale/locale.service';
 import { TabComponent } from '@modules/tab/tab.component';
 import { StoreService } from '@modules/store/store.service';
 import { ChannelPanelComponent } from '@modules/channel/channel-panel.component';
+import { ClientService } from '@modules/client/client.service';
+import { ChannelService } from '@modules/channel/channel.service';
+import { UtilsService } from '@modules/utils/utils.service';
 
 @Component({
     component: lazy(() => import('@modules/client/ClientWorkstation')),
@@ -12,6 +15,9 @@ import { ChannelPanelComponent } from '@modules/channel/channel-panel.component'
         ChannelPanelComponent,
         LocaleService,
         StoreService,
+        ClientService,
+        ChannelService,
+        UtilsService,
     ],
 })
 export class ClientWorkstationComponent {}
