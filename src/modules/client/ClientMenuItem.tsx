@@ -21,7 +21,7 @@ const ClientMenuItem: FC<ClientMenuItemProps> = ({
             })}
         >
             <Box className="icon">{icon}</Box>
-            <Typography classes={{ root: 'title' }}>{title}</Typography>
+            <Typography classes={{ root: 'title' }} noWrap={true}>{title}</Typography>
         </Box>
     );
 };
