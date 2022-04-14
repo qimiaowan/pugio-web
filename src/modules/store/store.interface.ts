@@ -28,7 +28,7 @@ export interface LoadedChannelProps {
     metadata: ChannelMetadata;
     width: number;
     height: number;
-    onLoad?: (lifecycle: Lifecycle) => void;
+    onChannelLoad?: (lifecycle: Lifecycle) => void;
 }
 
 export interface ChannelTab {

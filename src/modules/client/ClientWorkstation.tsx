@@ -148,12 +148,18 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                             if (typeof ChannelEntry === 'function') {
                                 resolve({
                                     data,
-                                    nodes: (
-                                        <ChannelEntry
-                                            width={headerWidth}
-                                            height={panelHeight}
-                                            metadata={metadata}
-                                        />
+                                    nodes: createElement(
+                                        ChannelEntry,
+                                        {
+                                            width: headerWidth,
+                                            height: panelHeight,
+                                            metadata: metadata,
+                                            onChannelLoad: (lifecycle) => {
+                                                updateTab(clientId, tabId, {
+                                                    lifecycle,
+                                                });
+                                            },
+                                        },
                                     ),
                                 });
                             } else {
@@ -257,6 +263,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                 style={{ maxWidth: headerWidth - 60 }}
                             >
                                 <Tab
+                                    startup={true}
                                     closable={false}
                                     avatar="/static/images/all_channels.svg"
                                     title={getLocaleText('all_channels')}
@@ -269,6 +276,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                             tabId,
                                             data,
                                             loading,
+                                            errored,
                                         } = tab;
 
                                         return createElement(
@@ -276,6 +284,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                             {
                                                 key: index,
                                                 loading,
+                                                errored,
                                                 title: data?.name,
                                                 avatar: data?.avatar || '/static/images/channel_avatar_fallback.svg',
                                                 active: selectedTabMap.get(clientId) === tabId,
@@ -307,6 +316,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                     width: '100%',
                     height: panelHeight,
                 }}
+                className="panel-wrapper"
             >
                 <ChannelPanel
                     startupTab={startupTabSelected}
@@ -321,7 +331,9 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                 >
                     {
                         startupTabSelected
-                            ? <><button onClick={handleCreateTab}>test</button></>
+                            ? <>
+                                <button onClick={handleCreateTab}>test</button>
+                            </>
                             : null
                     }
                 </ChannelPanel>

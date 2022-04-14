@@ -7,4 +7,6 @@ export interface TabProps extends BoxProps {
     active?: boolean;
     slotElement?: boolean;
     loading?: boolean;
+    errored?: boolean;
+    startup?: boolean;
 }

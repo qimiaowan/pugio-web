@@ -40,6 +40,9 @@
                 "title": "Failed to load channel {{channelId}}",
                 "subTitle": "Please check your network or the channel's configuration"
             }
+        },
+        "tab": {
+            "errored": "Error"
         }
     }
 }

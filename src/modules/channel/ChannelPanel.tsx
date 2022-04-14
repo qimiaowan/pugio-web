@@ -32,15 +32,22 @@ const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
     const getLocaleText = localeService.useLocaleContext('components.channelPanel');
 
     useEffect(() => {
-        if (!startupTab && !nodes) {
+        if (!startupTab && !nodes && !errored) {
             loadChannel(channelId);
         }
-    }, [startupTab, nodes]);
+    }, [startupTab, nodes, errored]);
 
     return (
         <Box
             {...props}
-            className={clsx('channel-panel', className)}
+            className={clsx(
+                'channel-panel',
+                {
+                    errored,
+                    'loading-wrapper': loading,
+                },
+                className,
+            )}
         >
             {
                 startupTab
