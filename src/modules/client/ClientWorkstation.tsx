@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
     createElement,
     FC,
@@ -92,6 +91,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             // TODO
             channelId: 'pugio.web-terminal',
         });
+        console.log(tabId);
     };
 
     const handleLoadChannel = (channelId: string, clientId: string, tabId: string) => {
@@ -238,7 +238,10 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
 
     useEffect(() => {
         if (selectedTabMap) {
-            setStartupTabSelected(selectedTabMap.get(clientId) === '@@startup' || !selectedTabMap.get(clientId));
+            setStartupTabSelected(
+                selectedTabMap.get(clientId) === '@@startup' ||
+                !selectedTabMap.get(clientId),
+            );
         }
     }, [selectedTabMap]);
 

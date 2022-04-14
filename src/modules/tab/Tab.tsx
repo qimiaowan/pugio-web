@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { FC } from 'react';
 import Box, { BoxProps } from '@mui/material/Box';
 import Icon from '@mui/material/Icon';
