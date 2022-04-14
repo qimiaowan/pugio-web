@@ -1,8 +1,9 @@
 @import url('@/variables.less');
 
 .tab {
+    box-sizing: border-box;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     flex-shrink: 1;
     flex-grow: 0;
@@ -10,6 +11,9 @@
     padding: @padding-vertical-width @padding-horizontal-width;
     border-bottom: 1px solid @bg-divider-color;
     border-right: 1px solid @bg-divider-color;
+    height: 45px;
+    overflow-y: hidden;
+    width: 150px;
 
     &:last-child {
         border-right: 0;
@@ -26,6 +30,11 @@
     &.active {
         border-bottom: 0;
         background-color: white;
+
+        &:hover {
+            background-color: white;
+            cursor: default;
+        }
     }
 
     &.placeholder {

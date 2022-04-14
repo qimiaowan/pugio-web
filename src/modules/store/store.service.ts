@@ -35,7 +35,11 @@ export class StoreService {
                 const tabId = uuidv4();
 
                 set((state) => {
-                    const channelTabData: ChannelTab = { tabId, ...data };
+                    const channelTabData: ChannelTab = {
+                        tabId,
+                        ...data,
+                        loading: true,
+                    };
 
                     if (!state.channelTabs.get(clientId)) {
                         const tabs = Set<ChannelTab>();

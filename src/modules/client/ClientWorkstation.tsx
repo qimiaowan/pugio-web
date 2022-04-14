@@ -258,6 +258,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                     avatar="/static/images/all_channels.svg"
                                     title={getLocaleText('all_channels')}
                                     active={startupTabSelected}
+                                    onClick={() => setSelectedTab(clientId, '@@startup')}
                                 />
                                 {
                                     _.isArray(tabs) && tabs.map((tab, index) => {
@@ -275,11 +276,12 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                 title: data?.name,
                                                 avatar: data?.avatar || '/static/images/channel_avatar_fallback.svg',
                                                 active: selectedTabMap.get(clientId) === tabId,
+                                                onClick: () => setSelectedTab(clientId, tabId),
                                             },
                                         );
                                     })
                                 }
-                                <Tab placeholder={true} />
+                                <Tab slotElement={true} />
                             </SimpleBar>
                         )
                     }

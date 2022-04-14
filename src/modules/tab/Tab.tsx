@@ -13,7 +13,7 @@ import '@modules/tab/tab.component.less';
 const Tab: FC<InjectedComponentProps<TabProps>> = ({
     title,
     closable = true,
-    placeholder = false,
+    slotElement = false,
     active = false,
     avatar = '/static/images/channel_avatar_fallback.svg',
     loading = false,
@@ -27,14 +27,14 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
             title={title}
             className={clsx('tab', {
                 active,
-                placeholder,
+                placeholder: slotElement,
             })}
             {...props}
         >
             {
                 loading
-                    ? <Loading />
-                    : placeholder
+                    ? <Loading style={{ width: 36 }} />
+                    : slotElement
                         ? null
                         : (
                             <>
