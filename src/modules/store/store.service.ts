@@ -111,8 +111,8 @@ export class StoreService {
                             clientId,
                             state.channelTabs
                                 ?.get(clientId)
-                                ?.find((tab, index) => index ==)
-                                ?.id,
+                                ?.last()
+                                ?.tabId || '@@startup',
                         ),
                     };
                 });
