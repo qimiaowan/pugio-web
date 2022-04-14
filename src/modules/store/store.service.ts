@@ -102,17 +102,16 @@ export class StoreService {
                         };
                     }
 
+                    const newTabs = tabs.filter((tab) => tab.tabId !== tabId);
+
                     return {
                         channelTabs: state.channelTabs.set(
                             clientId,
-                            tabs.filter((tab) => tab.tabId !== tabId),
+                            newTabs,
                         ),
                         selectedTabMap: state.selectedTabMap.set(
                             clientId,
-                            state.channelTabs
-                                ?.get(clientId)
-                                ?.last()
-                                ?.tabId || '@@startup',
+                            newTabs?.last()?.tabId || '@@startup',
                         ),
                     };
                 });

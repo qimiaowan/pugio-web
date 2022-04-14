@@ -64,7 +64,10 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
                     <IconButton
                         classes={{ root: 'close-icon' }}
                         size="small"
-                        onClick={onClose}
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            onClose();
+                        }}
                     >
                         <Icon className="icon-close" />
                     </IconButton>

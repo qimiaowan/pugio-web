@@ -89,12 +89,11 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const selectedTabMap = storeService.useStore((state) => state.selectedTabMap);
     const getLocaleText = localeService.useLocaleContext('pages.client_workstation');
 
-    const handleCreateTab = () => {
+    const handleCreateTab = (clientId: string, channelId: string) => {
         const tabId = createTab(clientId, {
-            // TODO
-            channelId: 'pugio.web-terminal',
+            channelId,
         });
-        console.log(tabId);
+        setSelectedTab(clientId, tabId);
     };
 
     const handleLoadChannel = (channelId: string, clientId: string, tabId: string) => {
@@ -168,7 +167,8 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                             } else {
                                 reject(new Error());
                             }
-                        });
+                        })
+                        .catch((e) => reject(e));
                 });
             })
             .then((result) => {
@@ -298,7 +298,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                         typeof lifecycle.onBeforeDestroy === 'function' &&
                                                         !lifecycle.onBeforeDestroy()
                                                     ) {
-                                                        console.log(111);
                                                         return;
                                                     }
 
@@ -347,7 +346,9 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                     {
                         startupTabSelected
                             ? <>
-                                <button onClick={handleCreateTab}>test</button>
+                                <button
+                                    onClick={() => handleCreateTab(clientId, 'pugio.pipelines')}
+                                >test</button>
                             </>
                             : null
                     }
