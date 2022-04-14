@@ -60,6 +60,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
         setSelectedTab,
         updateTab,
         createTab,
+        destroyTab,
     } = storeService.useStore((state) => {
         const {
             appNavbarHeight,
@@ -69,6 +70,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             setSelectedTab,
             updateTab,
             createTab,
+            destroyTab,
         } = state;
 
         return {
@@ -79,6 +81,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             setSelectedTab,
             updateTab,
             createTab,
+            destroyTab,
         };
     }, shallow);
     const setTabsWrapperHeight = storeService.useStore((state) => state.setTabsWrapperHeight);
@@ -277,6 +280,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                             data,
                                             loading,
                                             errored,
+                                            lifecycle = {},
                                         } = tab;
 
                                         return createElement(
@@ -289,6 +293,17 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                 avatar: data?.avatar || '/static/images/channel_avatar_fallback.svg',
                                                 active: selectedTabMap.get(clientId) === tabId,
                                                 onClick: () => setSelectedTab(clientId, tabId),
+                                                onClose: () => {
+                                                    if (
+                                                        typeof lifecycle.onBeforeDestroy === 'function' &&
+                                                        !lifecycle.onBeforeDestroy()
+                                                    ) {
+                                                        console.log(111);
+                                                        return;
+                                                    }
+
+                                                    destroyTab(clientId, tabId);
+                                                },
                                             },
                                         );
                                     })

@@ -95,9 +95,10 @@ export class StoreService {
                 set((state) => {
                     const tabs = state.channelTabs.get(clientId);
 
-                    if (!_.isArray(tabs)) {
+                    if (!tabs) {
                         return {
                             channelTabs: state.channelTabs,
+                            selectedTabMap: state.selectedTabMap,
                         };
                     }
 
@@ -105,6 +106,13 @@ export class StoreService {
                         channelTabs: state.channelTabs.set(
                             clientId,
                             tabs.filter((tab) => tab.tabId !== tabId),
+                        ),
+                        selectedTabMap: state.selectedTabMap.set(
+                            clientId,
+                            state.channelTabs
+                                ?.get(clientId)
+                                ?.find((tab, index) => index ==)
+                                ?.id,
                         ),
                     };
                 });

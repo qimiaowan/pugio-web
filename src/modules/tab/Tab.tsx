@@ -8,6 +8,7 @@ import { TabProps } from '@modules/tab/tab.interface';
 import { LoadingComponent } from '@modules/brand/loading.component';
 import { LocaleService } from '@modules/locale/locale.service';
 import clsx from 'clsx';
+import _ from 'lodash';
 import '@modules/tab/tab.component.less';
 
 const Tab: FC<InjectedComponentProps<TabProps>> = ({
@@ -20,6 +21,7 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
     declarations,
     errored = false,
     startup = false,
+    onClose = _.noop,
     ...props
 }) => {
     const localeService = declarations.get<LocaleService>(LocaleService);
@@ -59,7 +61,11 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
             }
             {
                 (closable && !slotElement) && (
-                    <IconButton classes={{ root: 'close-icon' }} size="small">
+                    <IconButton
+                        classes={{ root: 'close-icon' }}
+                        size="small"
+                        onClick={onClose}
+                    >
                         <Icon className="icon-close" />
                     </IconButton>
                 )
