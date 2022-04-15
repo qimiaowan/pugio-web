@@ -3,8 +3,8 @@ import {
     FC,
     useEffect,
     useRef,
-    useReducer,
     useState,
+    useCallback,
 } from 'react';
 import Box from '@mui/material/Box';
 import Icon from '@mui/material/Icon';
@@ -46,12 +46,11 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
 
     const { client_id: clientId } = useParams();
     const location = useLocation();
-    const [, forceUpdate] = useReducer((x) => x + 1, 0);
     const [tabTitleChangeCount, setTabTitleChangeCount] = useState<number>(0);
     const [buttonsWrapperSticked, setButtonsWrapperSticked] = useState<boolean>(false);
     const [buttonsWrapperWidth] = useState<number>(70);
     const tabsWrapperRef = useRef<HTMLDivElement>(null);
-    const tabsCursorRef = useRef<HTMLDivElement>(null);
+    const placeholderRef = useRef<HTMLDivElement>(null);
     const [headerWidth, setHeaderWidth] = useState<number>(null);
     const [panelHeight, setPanelHeight] = useState<number>(null);
     const [tabs, setTabs] = useState<ChannelTab[]>([]);
@@ -100,6 +99,15 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     }, shallow);
     // const getLocaleText = localeService.useLocaleContext('pages.client_workstation');
     const [selectedTabId, setSelectedTabId] = useState<string>(null);
+    const forceSetSticked = useCallback((state) => setButtonsWrapperSticked(state), [
+        placeholderRef,
+        selectedTabId,
+        clientId,
+        clientTabsMap,
+        buttonsWrapperWidth,
+        headerWidth,
+        tabTitleChangeCount,
+    ]);
 
     const handleCreateTab = (clientId: string) => {
         const tabId = createTab(clientId);
@@ -283,25 +291,17 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     }, [selectedTabMap, clientId]);
 
     useEffect(() => {
-        if (tabsCursorRef.current) {
-            const offsetLeft = tabsCursorRef.current.offsetLeft;
-            const rightMarginPosition = offsetLeft + buttonsWrapperWidth;
-
-            if (rightMarginPosition > headerWidth) {
-                setButtonsWrapperSticked(true);
-                forceUpdate();
-            }
-
-            if (offsetLeft <= headerWidth) {
-                setButtonsWrapperSticked(false);
-            }
+        if (placeholderRef.current) {
+            const width = placeholderRef.current.clientWidth;
+            console.log(width);
+            setTimeout(() => forceSetSticked(width === 0), 0);
         }
     }, [
+        placeholderRef,
         selectedTabId,
         clientId,
         clientTabsMap,
         buttonsWrapperWidth,
-        tabsCursorRef,
         headerWidth,
         tabTitleChangeCount,
     ]);
@@ -364,18 +364,16 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                 );
                                             })
                                         }
-                                        <Box className="tabs-cursor" ref={tabsCursorRef} />
                                         {
                                             !buttonsWrapperSticked && (
-                                                <>
-                                                    <Box
-                                                        className="buttons-wrapper floating"
-                                                        style={{ width: buttonsWrapperWidth }}
-                                                    >{tabsControlButtons}</Box>
-                                                    <Box className="buttons-wrapper placeholder" />
-                                                </>
+                                                <Box
+                                                    className="buttons-wrapper floating"
+                                                    style={{ width: buttonsWrapperWidth }}
+                                                >{tabsControlButtons}</Box>
                                             )
                                         }
+                                        <Box className="buttons-wrapper placeholder" ref={placeholderRef} />
+
                                     </SimpleBar>
                                 )
                             }
