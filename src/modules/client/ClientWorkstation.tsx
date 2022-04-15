@@ -45,7 +45,10 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
 
     const { client_id: clientId } = useParams();
     const location = useLocation();
+    const [buttonsWrapperSticked, setButtonsWrapperSticked] = useState<boolean>(false);
+    const [buttonsWrapperWidth] = useState<number>(60);
     const tabsWrapperRef = useRef<HTMLDivElement>(null);
+    const tabsCursorRef = useRef<HTMLDivElement>(null);
     const [headerWidth, setHeaderWidth] = useState<number>(null);
     const [panelHeight, setPanelHeight] = useState<number>(null);
     const [tabs, setTabs] = useState<ChannelTab[]>([]);
@@ -93,8 +96,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
         };
     }, shallow);
     // const getLocaleText = localeService.useLocaleContext('pages.client_workstation');
-    const floatingTabsControlWrapperRef = useRef<HTMLDivElement>(null);
-    // const fixedTabsControlWrapperRef = useRef<HTMLDivElement>(null);
     const [selectedTabId, setSelectedTabId] = useState<string>(null);
 
     const handleCreateTab = (clientId: string) => {
@@ -250,7 +251,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
         }
 
         return () => {
-            observer.unobserve(tabsWrapperRef.current);
+            observer.disconnect();
         };
     }, [tabsWrapperRef]);
 
@@ -279,12 +280,18 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     }, [selectedTabMap, clientId]);
 
     useEffect(() => {
-
+        if (tabsCursorRef.current) {
+            const offsetLeft = tabsCursorRef.current.offsetLeft;
+            const rightMarginPosition = offsetLeft + buttonsWrapperWidth;
+            setButtonsWrapperSticked(rightMarginPosition > headerWidth);
+        }
     }, [
         selectedTabId,
         clientId,
         clientTabsMap,
-        floatingTabsControlWrapperRef.current,
+        buttonsWrapperWidth,
+        tabsCursorRef,
+        headerWidth,
     ]);
 
     return (
@@ -298,7 +305,9 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                     <SimpleBar
                                         className="tabs-wrapper"
                                         autoHide={true}
-                                        style={{ maxWidth: headerWidth }}
+                                        style={{
+                                            maxWidth: headerWidth - (buttonsWrapperSticked ? buttonsWrapperWidth : 0),
+                                        }}
                                     >
                                         {
                                             _.isArray(tabs) && tabs.map((tab, index) => {
@@ -342,24 +351,29 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                 );
                                             })
                                         }
+                                        <Box className="tabs-cursor" ref={tabsCursorRef} />
                                         {
-                                            createElement(
-                                                Tab,
-                                                {
-                                                    ref: floatingTabsControlWrapperRef,
-                                                    slotElement: true,
-                                                    className: 'floating-buttons-wrapper',
-                                                },
-                                                tabsControlButtons,
+                                            !buttonsWrapperSticked && (
+                                                <>
+                                                    <Box
+                                                        className="buttons-wrapper floating"
+                                                        style={{ width: buttonsWrapperWidth }}
+                                                    >{tabsControlButtons}</Box>
+                                                    <Box className="buttons-wrapper placeholder" />
+                                                </>
                                             )
                                         }
                                     </SimpleBar>
                                 )
                             }
-                            {/* <Box
-                                className="buttons-wrapper"
-                                ref={fixedTabsControlWrapperRef}
-                            >{tabsControlButtons}</Box> */}
+                            {
+                                buttonsWrapperSticked && (
+                                    <Box
+                                        className="buttons-wrapper"
+                                        style={{ width: buttonsWrapperWidth }}
+                                    >{tabsControlButtons}</Box>
+                                )
+                            }
                         </Box>
                     </Box>
                 )

@@ -89,7 +89,7 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
         }
 
         return () => {
-            observer.unobserve(sidebarRef.current);
+            observer.disconnect();
         };
     }, [sidebarRef]);
 
@@ -111,7 +111,7 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
         }
 
         return () => {
-            observer.unobserve(controlsWrapperRef.current);
+            observer.disconnect();
         };
     }, [controlsWrapperRef]);
 
@@ -124,6 +124,11 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
                         icon: 'icon-apps',
                         to: `/client/${clientId}/workstation`,
                         titleSlotId: 'clientsSidebarMenu.workstation',
+                    },
+                    {
+                        icon: 'icon-channel',
+                        to: `/client/${clientId}/channels`,
+                        titleSlotId: 'clientsSidebarMenu.channels',
                     },
                     {
                         icon: 'icon-users',
