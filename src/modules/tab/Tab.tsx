@@ -24,6 +24,9 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
     declarations,
     errored = false,
     startup = false,
+    children,
+    className,
+    channelId,
     onClose = _.noop,
     onDataLoad = _.noop,
     ...props
@@ -34,8 +37,10 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
     const getLocaleText = localeService.useLocaleContext('components.tab');
 
     useEffect(() => {
-        onDataLoad();
-    }, []);
+        if (channelId) {
+            onDataLoad(channelId);
+        }
+    }, [channelId]);
 
     return (
         <Box
@@ -46,14 +51,14 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
                 startup,
                 loading,
                 placeholder: slotElement,
-            })}
+            }, className)}
             {...props}
         >
             {
                 loading
                     ? <Loading style={{ width: 36 }} />
                     : slotElement
-                        ? null
+                        ? children
                         : (
                             <Box className="content-wrapper">
                                 <Box className="avatar" component="img" src={avatar} />

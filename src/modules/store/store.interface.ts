@@ -33,7 +33,7 @@ export interface LoadedChannelProps {
 
 export interface ChannelTab {
     tabId: string;
-    channelId: string;
+    channelId?: string;
     data?: Channel;
     nodes?: ReactNode;
     loading?: boolean;
@@ -52,9 +52,9 @@ export interface AppState {
     appNavbarHeight: number;
     controlsWrapperHeight: number;
     tabsWrapperHeight: number;
-    selectedTabMap: Map<string, string | '@@startup'>;
+    selectedTabMap: Map<string, string>;
     setClientSidebarWidth: (width: number) => void;
-    createTab: (clientId: string, data: TabData) => string;
+    createTab: (clientId: string, data?: TabData) => string;
     updateTab: (clientId: string, tabId: string, updates: Partial<TabData>) => void;
     destroyTab: (clientId: string, tabId: string) => void;
     switchClientsDropdownVisibility: (open?: boolean) => void;

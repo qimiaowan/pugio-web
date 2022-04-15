@@ -25,13 +25,13 @@ export class StoreService {
             appNavbarHeight: 48,
             controlsWrapperHeight: 0,
             tabsWrapperHeight: 0,
-            selectedTabMap: Map<string, string | '@@startup'>({}),
+            selectedTabMap: Map<string, string>({}),
 
             setClientSidebarWidth: (width: number) => {
                 set(() => ({ clientSidebarWidth: width }));
             },
 
-            createTab: (clientId: string, data: TabData) => {
+            createTab: (clientId: string, data: TabData = {}) => {
                 const tabId = uuidv4();
 
                 set((state) => {
@@ -80,6 +80,7 @@ export class StoreService {
                                             'errored',
                                             'data',
                                             'lifecycle',
+                                            'channelId',
                                         ]),
                                     };
                                 }
@@ -111,7 +112,7 @@ export class StoreService {
                         ),
                         selectedTabMap: state.selectedTabMap.set(
                             clientId,
-                            newTabs?.last()?.tabId || '@@startup',
+                            newTabs?.last()?.tabId || null,
                         ),
                     };
                 });
