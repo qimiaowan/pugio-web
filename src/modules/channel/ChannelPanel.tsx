@@ -1,7 +1,4 @@
-import {
-    FC,
-    useEffect,
-} from 'react';
+import { FC } from 'react';
 import { InjectedComponentProps } from 'khamsa';
 import clsx from 'clsx';
 import Box, { BoxProps } from '@mui/material/Box';
@@ -10,7 +7,6 @@ import { LoadingComponent } from '@modules/brand/loading.component';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { ExceptionProps } from '@modules/brand/exception.interface';
 import { LocaleService } from '@modules/locale/locale.service';
-import _ from 'lodash';
 import '@modules/channel/channel-panel.component.less';
 
 const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
@@ -22,7 +18,6 @@ const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
     loading = false,
     errored = false,
     className = '',
-    channelLoader: loadChannel = _.noop,
     ...props
 }) => {
     const localeService = declarations.get<LocaleService>(LocaleService);
@@ -30,12 +25,6 @@ const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
     const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
 
     const getLocaleText = localeService.useLocaleContext('components.channelPanel');
-
-    useEffect(() => {
-        if (!startupTab && !nodes && !errored) {
-            loadChannel(channelId);
-        }
-    }, [startupTab, nodes, errored]);
 
     return (
         <Box

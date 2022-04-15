@@ -4,7 +4,6 @@ import { Profile } from '@modules/profile/profile.interface';
 
 export interface ChannelPanelProps extends BoxProps, ChannelTab {
     startupTab?: boolean;
-    channelLoader?: (channelId: string) => void;
 }
 
 export interface Channel {

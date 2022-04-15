@@ -277,6 +277,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                     _.isArray(tabs) && tabs.map((tab, index) => {
                                         const {
                                             tabId,
+                                            channelId,
                                             data,
                                             loading,
                                             errored,
@@ -293,6 +294,9 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                 avatar: data?.avatar || '/static/images/channel_avatar_fallback.svg',
                                                 active: selectedTabMap.get(clientId) === tabId,
                                                 onClick: () => setSelectedTab(clientId, tabId),
+                                                onDataLoad: () => {
+                                                    handleLoadChannel(channelId, clientId, tabId);
+                                                },
                                                 onClose: () => {
                                                     if (
                                                         typeof lifecycle.onBeforeDestroy === 'function' &&
@@ -339,9 +343,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                         ...(clientTabsMap.get(clientId) || Set<ChannelTab>([]))
                             .find((channelTab) => channelTab.tabId === selectedTabMap.get(clientId))
                     }
-                    channelLoader={(channelId) => {
-                        handleLoadChannel(channelId, clientId, selectedTabMap.get(clientId));
-                    }}
                 >
                     {
                         startupTabSelected

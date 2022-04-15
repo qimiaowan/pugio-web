@@ -10,4 +10,5 @@ export interface TabProps extends BoxProps {
     errored?: boolean;
     startup?: boolean;
     onClose?: () => void;
+    onDataLoad?: () => void;
 }

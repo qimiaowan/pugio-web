@@ -1,4 +1,7 @@
-import { FC } from 'react';
+import {
+    FC,
+    useEffect,
+} from 'react';
 import Box, { BoxProps } from '@mui/material/Box';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
@@ -22,12 +25,17 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
     errored = false,
     startup = false,
     onClose = _.noop,
+    onDataLoad = _.noop,
     ...props
 }) => {
     const localeService = declarations.get<LocaleService>(LocaleService);
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
 
     const getLocaleText = localeService.useLocaleContext('components.tab');
+
+    useEffect(() => {
+        onDataLoad();
+    }, []);
 
     return (
         <Box
