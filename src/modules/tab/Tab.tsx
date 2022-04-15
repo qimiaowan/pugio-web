@@ -1,6 +1,7 @@
 import {
     FC,
     useEffect,
+    useRef,
     useState,
 } from 'react';
 import Box, { BoxProps } from '@mui/material/Box';
@@ -31,6 +32,7 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
     onClose = _.noop,
     onDataLoad = _.noop,
     onTitleChange = _.noop,
+    onSelected = _.noop,
     ...props
 }) => {
     const localeService = declarations.get<LocaleService>(LocaleService);
@@ -38,6 +40,7 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
 
     const getLocaleText = localeService.useLocaleContext('components.tab');
     const [tabTitle, setTabTitle] = useState<string>('');
+    const tabRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (channelId) {
@@ -57,6 +60,14 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
         onTitleChange(title);
     }, [title]);
 
+    useEffect(() => {
+        if (active && tabRef.current) {
+            const offsetLeft = tabRef.current.offsetLeft;
+            const clientWidth = tabRef.current.clientWidth;
+            onSelected(offsetLeft, clientWidth);
+        }
+    }, [active, tabRef]);
+
     return (
         <Box
             title={title}
@@ -67,6 +78,7 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
                 loading,
                 placeholder: slotElement,
             }, className)}
+            ref={tabRef}
             {...props}
         >
             {

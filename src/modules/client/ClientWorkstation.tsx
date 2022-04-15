@@ -51,6 +51,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const [buttonsWrapperWidth] = useState<number>(70);
     const tabsWrapperRef = useRef<HTMLDivElement>(null);
     const placeholderRef = useRef<HTMLDivElement>(null);
+    const tabsScrollRef = useRef<SimpleBar>(null);
     const [headerWidth, setHeaderWidth] = useState<number>(null);
     const [panelHeight, setPanelHeight] = useState<number>(null);
     const [tabs, setTabs] = useState<ChannelTab[]>([]);
@@ -293,7 +294,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     useEffect(() => {
         if (placeholderRef.current) {
             const width = placeholderRef.current.clientWidth;
-            console.log(width);
             setTimeout(() => forceSetSticked(width === 0), 0);
         }
     }, [
@@ -305,6 +305,12 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
         headerWidth,
         tabTitleChangeCount,
     ]);
+
+    const scrollTabs = useCallback((offset: number) => {
+        if (tabsScrollRef.current) {
+            tabsScrollRef.current.getScrollElement().scrollLeft = offset;
+        }
+    }, [tabsScrollRef]);
 
     return (
         <Box className="page client-workstation-page">
@@ -320,6 +326,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                         style={{
                                             maxWidth: headerWidth - (buttonsWrapperSticked ? buttonsWrapperWidth : 0),
                                         }}
+                                        ref={tabsScrollRef}
                                     >
                                         {
                                             _.isArray(tabs) && tabs.map((tab, index) => {
@@ -360,6 +367,9 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                             destroyTab(clientId, tabId);
                                                         },
                                                         onTitleChange: () => setTabTitleChangeCount(tabTitleChangeCount + 1),
+                                                        onSelected: (offsetLeft, clientWidth) => {
+                                                            console.log(offsetLeft, clientWidth);
+                                                        },
                                                     },
                                                 );
                                             })
@@ -421,6 +431,12 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                         testHandleSelectChannel(clientId, selectedTabId, 'pugio.pipelines');
                                     }}
                                 >test select channel</button>
+                                <button
+                                    onClick={() => {
+                                        const offset = Math.random() * 100;
+                                        scrollTabs(offset);
+                                    }}
+                                >scroll</button>
                             </Box>
                         </ChannelPanel>
                     </SimpleBar>

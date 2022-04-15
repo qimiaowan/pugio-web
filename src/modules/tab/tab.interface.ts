@@ -13,4 +13,5 @@ export interface TabProps extends BoxProps {
     onClose?: () => void;
     onDataLoad?: (channelId: string) => void;
     onTitleChange?: (title: string) => void;
+    onSelected?: (offsetLeft: number, clientWidth: number) => void;
 }
