@@ -38,7 +38,7 @@ export class StoreService {
                     const channelTabData: ChannelTab = {
                         tabId,
                         ...data,
-                        loading: true,
+                        loading: false,
                     };
 
                     if (!state.channelTabs.get(clientId)) {

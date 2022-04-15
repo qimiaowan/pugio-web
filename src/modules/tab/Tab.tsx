@@ -1,6 +1,7 @@
 import {
     FC,
     useEffect,
+    useState,
 } from 'react';
 import Box, { BoxProps } from '@mui/material/Box';
 import Icon from '@mui/material/Icon';
@@ -29,18 +30,32 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
     channelId,
     onClose = _.noop,
     onDataLoad = _.noop,
+    onTitleChange = _.noop,
     ...props
 }) => {
     const localeService = declarations.get<LocaleService>(LocaleService);
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
 
     const getLocaleText = localeService.useLocaleContext('components.tab');
+    const [tabTitle, setTabTitle] = useState<string>('');
 
     useEffect(() => {
         if (channelId) {
             onDataLoad(channelId);
         }
     }, [channelId]);
+
+    useEffect(() => {
+        if (title && channelId) {
+            setTabTitle(title);
+        } else {
+            setTabTitle(getLocaleText('newInstance'));
+        }
+    }, [getLocaleText, title, channelId]);
+
+    useEffect(() => {
+        onTitleChange(title);
+    }, [title]);
 
     return (
         <Box
@@ -66,7 +81,7 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
                                     {
                                         errored
                                             ? getLocaleText('errored')
-                                            : title
+                                            : tabTitle
                                     }
                                 </Typography>
                             </Box>

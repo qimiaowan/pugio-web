@@ -3,6 +3,7 @@ import {
     FC,
     useEffect,
     useRef,
+    useReducer,
     useState,
 } from 'react';
 import Box from '@mui/material/Box';
@@ -45,8 +46,10 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
 
     const { client_id: clientId } = useParams();
     const location = useLocation();
+    const [, forceUpdate] = useReducer((x) => x + 1, 0);
+    const [tabTitleChangeCount, setTabTitleChangeCount] = useState<number>(0);
     const [buttonsWrapperSticked, setButtonsWrapperSticked] = useState<boolean>(false);
-    const [buttonsWrapperWidth] = useState<number>(60);
+    const [buttonsWrapperWidth] = useState<number>(70);
     const tabsWrapperRef = useRef<HTMLDivElement>(null);
     const tabsCursorRef = useRef<HTMLDivElement>(null);
     const [headerWidth, setHeaderWidth] = useState<number>(null);
@@ -283,7 +286,15 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
         if (tabsCursorRef.current) {
             const offsetLeft = tabsCursorRef.current.offsetLeft;
             const rightMarginPosition = offsetLeft + buttonsWrapperWidth;
-            setButtonsWrapperSticked(rightMarginPosition > headerWidth);
+
+            if (rightMarginPosition > headerWidth) {
+                setButtonsWrapperSticked(true);
+                forceUpdate();
+            }
+
+            if (offsetLeft <= headerWidth) {
+                setButtonsWrapperSticked(false);
+            }
         }
     }, [
         selectedTabId,
@@ -292,6 +303,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
         buttonsWrapperWidth,
         tabsCursorRef,
         headerWidth,
+        tabTitleChangeCount,
     ]);
 
     return (
@@ -347,6 +359,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
 
                                                             destroyTab(clientId, tabId);
                                                         },
+                                                        onTitleChange: () => setTabTitleChangeCount(tabTitleChangeCount + 1),
                                                     },
                                                 );
                                             })
@@ -404,11 +417,13 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                     .find((channelTab) => channelTab.tabId === selectedTabId)
                             }
                         >
-                            <button
-                                onClick={() => {
-                                    testHandleSelectChannel(clientId, selectedTabId, 'pugio.pipelines');
-                                }}
-                            >test select channel</button>
+                            <Box className="channel-not-selected">
+                                <button
+                                    onClick={() => {
+                                        testHandleSelectChannel(clientId, selectedTabId, 'pugio.pipelines');
+                                    }}
+                                >test select channel</button>
+                            </Box>
                         </ChannelPanel>
                     </SimpleBar>
             }

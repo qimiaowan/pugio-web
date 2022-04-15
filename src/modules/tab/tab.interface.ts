@@ -12,4 +12,5 @@ export interface TabProps extends BoxProps {
     startup?: boolean;
     onClose?: () => void;
     onDataLoad?: (channelId: string) => void;
+    onTitleChange?: (title: string) => void;
 }

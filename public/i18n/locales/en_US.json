@@ -43,7 +43,8 @@
             }
         },
         "tab": {
-            "errored": "Error"
+            "errored": "Error",
+            "newInstance": "New Channel Instance"
         }
     }
 }
