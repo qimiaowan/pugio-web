@@ -368,7 +368,8 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                         },
                                                         onTitleChange: () => setTabTitleChangeCount(tabTitleChangeCount + 1),
                                                         onSelected: (offsetLeft, clientWidth) => {
-                                                            console.log(offsetLeft, clientWidth);
+                                                            const scrollOffset = offsetLeft - (headerWidth - clientWidth) / 2;
+                                                            scrollTabs(scrollOffset <= 0 ? 0 : scrollOffset);
                                                         },
                                                     },
                                                 );
@@ -431,12 +432,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                         testHandleSelectChannel(clientId, selectedTabId, 'pugio.pipelines');
                                     }}
                                 >test select channel</button>
-                                <button
-                                    onClick={() => {
-                                        const offset = Math.random() * 100;
-                                        scrollTabs(offset);
-                                    }}
-                                >scroll</button>
                             </Box>
                         </ChannelPanel>
                     </SimpleBar>
