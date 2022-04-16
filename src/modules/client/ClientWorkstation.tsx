@@ -100,6 +100,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     }, shallow);
     // const getLocaleText = localeService.useLocaleContext('pages.client_workstation');
     const [selectedTabId, setSelectedTabId] = useState<string>(null);
+    const [selectedTabMetadata, setSelectedTabMetadata] = useState<string[]>([]);
     const forceSetSticked = useCallback((state) => setButtonsWrapperSticked(state), [
         placeholderRef,
         selectedTabId,
@@ -112,7 +113,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
 
     const handleCreateTab = (clientId: string) => {
         const tabId = createTab(clientId);
-        setSelectedTab(clientId, tabId);
+        setSelectedTab(clientId, `${tabId}:scroll`);
     };
 
     const testHandleSelectChannel = (clientId: string, tabId: string, channelId: string) => {
@@ -287,7 +288,17 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
 
     useEffect(() => {
         if (selectedTabMap && clientId) {
-            setSelectedTabId(selectedTabMap.get(clientId));
+            const selectedTabLiteral = selectedTabMap.get(clientId);
+
+            if (_.isString(selectedTabLiteral)) {
+                const {
+                    tabId,
+                    metadata,
+                } = utilsService.parseSelectedTabId(selectedTabLiteral);
+
+                setSelectedTabId(tabId);
+                setSelectedTabMetadata(metadata);
+            }
         }
     }, [selectedTabMap, clientId]);
 
@@ -350,6 +361,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                         title: data?.name,
                                                         avatar: data?.avatar || '/static/images/channel_avatar_fallback.svg',
                                                         active: selectedTabId === tabId,
+                                                        metadata: selectedTabMetadata,
                                                         onClick: () => setSelectedTab(clientId, tabId),
                                                         onDataLoad: (channelId) => {
                                                             if (!nodes) {
@@ -367,7 +379,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                             destroyTab(clientId, tabId);
                                                         },
                                                         onTitleChange: () => setTabTitleChangeCount(tabTitleChangeCount + 1),
-                                                        onSelected: (offsetLeft, clientWidth) => {
+                                                        onSelectedScroll: (offsetLeft, clientWidth) => {
                                                             const scrollOffset = offsetLeft - (headerWidth - clientWidth) / 2;
                                                             scrollTabs(scrollOffset <= 0 ? 0 : scrollOffset);
                                                         },
@@ -384,7 +396,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                             )
                                         }
                                         <Box className="buttons-wrapper placeholder" ref={placeholderRef} />
-
                                     </SimpleBar>
                                 )
                             }

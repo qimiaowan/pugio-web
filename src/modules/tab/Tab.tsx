@@ -29,10 +29,11 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
     children,
     className,
     channelId,
+    metadata,
     onClose = _.noop,
     onDataLoad = _.noop,
     onTitleChange = _.noop,
-    onSelected = _.noop,
+    onSelectedScroll = _.noop,
     ...props
 }) => {
     const localeService = declarations.get<LocaleService>(LocaleService);
@@ -61,12 +62,12 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
     }, [title]);
 
     useEffect(() => {
-        if (active && tabRef.current) {
+        if (active && tabRef.current && metadata.indexOf('scroll') !== -1) {
             const offsetLeft = tabRef.current.offsetLeft;
             const clientWidth = tabRef.current.clientWidth;
-            onSelected(offsetLeft, clientWidth);
+            onSelectedScroll(offsetLeft, clientWidth);
         }
-    }, [active, tabRef]);
+    }, [metadata, active, tabRef]);
 
     return (
         <Box
