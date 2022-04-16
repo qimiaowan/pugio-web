@@ -298,6 +298,9 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
 
                 setSelectedTabId(tabId);
                 setSelectedTabMetadata(metadata);
+            } else {
+                setSelectedTabId(null);
+                setSelectedTabMetadata([]);
             }
         }
     }, [selectedTabMap, clientId]);
@@ -319,7 +322,21 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
 
     const scrollTabs = useCallback((offset: number) => {
         if (tabsScrollRef.current) {
-            tabsScrollRef.current.getScrollElement().scrollLeft = offset;
+            const scrollElement = tabsScrollRef.current.getScrollElement();
+
+            if (scrollElement) {
+                scrollElement.scrollLeft = offset;
+
+                const wheelEventHandler = (event: WheelEvent) => {
+                    scrollElement.scrollTo(scrollElement.scrollLeft + event.deltaX || event.deltaY, 0);
+                };
+
+                scrollElement.addEventListener('wheel', wheelEventHandler);
+
+                return () => {
+                    scrollElement.removeEventListener('wheel', wheelEventHandler);
+                };
+            }
         }
     }, [tabsScrollRef]);
 
@@ -442,7 +459,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                     onClick={() => {
                                         testHandleSelectChannel(clientId, selectedTabId, 'pugio.pipelines');
                                     }}
-                                >test select channel</button>
+                                >test select channel {selectedTabId}</button>
                             </Box>
                         </ChannelPanel>
                     </SimpleBar>

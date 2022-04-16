@@ -12,6 +12,7 @@ import {
     TabData,
 } from '@modules/store/store.interface';
 import { Profile } from '@modules/profile/profile.interface';
+import { UtilsService } from '@modules/utils/utils.service';
 
 @Injectable()
 export class StoreService {
@@ -92,7 +93,9 @@ export class StoreService {
                 });
             },
 
-            destroyTab: (clientId: string, tabId: string) => {
+            destroyTab: (clientId: string, tabIdLiteral: string) => {
+                const { tabId } = this.utilsService.parseSelectedTabId(tabIdLiteral);
+
                 set((state) => {
                     const tabs = state.channelTabs.get(clientId);
 
@@ -151,4 +154,8 @@ export class StoreService {
             },
         };
     });
+
+    public constructor(
+        private readonly utilsService: UtilsService,
+    ) {}
 }
