@@ -328,7 +328,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                 scrollElement.scrollLeft = offset;
 
                 const wheelEventHandler = (event: WheelEvent) => {
-                    scrollElement.scrollTo(scrollElement.scrollLeft + event.deltaX || event.deltaY, 0);
+                    scrollElement.scrollTo(scrollElement.scrollLeft + event.deltaX + event.deltaY, 0);
                 };
 
                 scrollElement.addEventListener('wheel', wheelEventHandler);
