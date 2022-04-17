@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import {
     Map,
-    Set,
+    List,
 } from 'immutable';
 import {
     Client,
@@ -45,7 +45,7 @@ export type TabData = Omit<ChannelTab, 'tabId'>;
 
 export interface AppState {
     userProfile: Profile;
-    channelTabs: Map<string, Set<ChannelTab>>;
+    channelTabs: Map<string, List<ChannelTab>>;
     clientSidebarWidth: number;
     clientsDropdownOpen: boolean;
     pathnameReady: boolean;

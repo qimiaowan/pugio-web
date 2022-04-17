@@ -30,7 +30,7 @@ import {
     useParams,
     useLocation,
 } from 'react-router-dom';
-import { Set } from 'immutable';
+import { List } from 'immutable';
 import { useDebounce } from 'ahooks';
 import '@modules/client/client-workstation.component.less';
 
@@ -290,7 +290,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
 
     useEffect(() => {
         if (clientId && clientTabsMap) {
-            const currentClientTabs = (clientTabsMap.get(clientId) || Set<ChannelTab>([])).toArray();
+            const currentClientTabs = (clientTabsMap.get(clientId) || List<ChannelTab>([])).toArray();
             setTabs(currentClientTabs);
         }
     }, [clientId, clientTabsMap]);
@@ -500,7 +500,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                         <ChannelPanel
                             tabId={selectedTabId}
                             channelTab={
-                                (clientTabsMap.get(clientId) || Set<ChannelTab>([]))
+                                (clientTabsMap.get(clientId) || List<ChannelTab>([]))
                                     .find((channelTab) => channelTab.tabId === selectedTabId)
                             }
                         >

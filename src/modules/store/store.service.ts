@@ -2,7 +2,7 @@ import { Injectable } from 'khamsa';
 import create from 'zustand';
 import {
     Map,
-    Set,
+    List,
 } from 'immutable';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
@@ -19,7 +19,7 @@ export class StoreService {
     public useStore = create<AppState>((set) => {
         return {
             userProfile: null,
-            channelTabs: Map<string, Set<ChannelTab>>({}),
+            channelTabs: Map<string, List<ChannelTab>>({}),
             clientSidebarWidth: null,
             clientsDropdownOpen: false,
             pathnameReady: false,
@@ -43,18 +43,17 @@ export class StoreService {
                         loading: false,
                     };
 
-                    if (!state.channelTabs.get(clientId)) {
-                        const tabs = Set<ChannelTab>().add(channelTabData);
-                        return {
-                            channelTabs: state.channelTabs.set(clientId, tabs),
-                        };
-                    } else {
-                        const tabs = state.channelTabs.get(clientId).add(channelTabData);
+                    let tabs: List<ChannelTab>;
 
-                        return {
-                            channelTabs: state.channelTabs.set(clientId, tabs),
-                        };
+                    if (!state.channelTabs.get(clientId)) {
+                        tabs = List<ChannelTab>().push(channelTabData);
+                    } else {
+                        tabs = state.channelTabs.get(clientId).push(channelTabData);
                     }
+
+                    return {
+                        channelTabs: state.channelTabs.set(clientId, tabs),
+                    };
                 });
 
                 return tabId;
