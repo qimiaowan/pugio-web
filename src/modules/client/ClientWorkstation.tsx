@@ -320,13 +320,10 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
         tabTitleChangeCount,
     ]);
 
-    const scrollTabs = useCallback((offset: number) => {
+    useEffect(() => {
         if (tabsScrollRef.current) {
             const scrollElement = tabsScrollRef.current.getScrollElement();
-
             if (scrollElement) {
-                scrollElement.scrollLeft = offset;
-
                 const wheelEventHandler = (event: WheelEvent) => {
                     scrollElement.scrollTo(scrollElement.scrollLeft + event.deltaX + event.deltaY, 0);
                 };
@@ -338,7 +335,34 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                 };
             }
         }
-    }, [tabsScrollRef]);
+    }, [tabsScrollRef.current]);
+
+    useEffect(() => {
+        if (tabsScrollRef.current) {
+            const scrollElement = tabsScrollRef.current.getScrollElement();
+            if (scrollElement) {
+                const scrollEventHandler = () => {
+                    console.log(scrollElement.scrollLeft);
+                };
+
+                scrollElement.addEventListener('scroll', scrollEventHandler);
+
+                return () => {
+                    scrollElement.removeEventListener('scroll', scrollEventHandler);
+                };
+            }
+        }
+    }, [tabsScrollRef.current]);
+
+    const scrollTabs = useCallback((offset: number) => {
+        if (tabsScrollRef.current) {
+            const scrollElement = tabsScrollRef.current.getScrollElement();
+
+            if (scrollElement) {
+                scrollElement.scrollLeft = offset;
+            }
+        }
+    }, [tabsScrollRef.current]);
 
     return (
         <Box className="page client-workstation-page">
