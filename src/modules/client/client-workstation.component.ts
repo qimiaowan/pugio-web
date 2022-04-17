@@ -7,6 +7,7 @@ import { ChannelPanelComponent } from '@modules/channel/channel-panel.component'
 import { ClientService } from '@modules/client/client.service';
 import { ChannelService } from '@modules/channel/channel.service';
 import { UtilsService } from '@modules/utils/utils.service';
+import { ExceptionComponent } from '@modules/brand/exception.component';
 
 @Component({
     component: lazy(() => import('@modules/client/ClientWorkstation')),
@@ -18,6 +19,7 @@ import { UtilsService } from '@modules/utils/utils.service';
         ClientService,
         ChannelService,
         UtilsService,
+        ExceptionComponent,
     ],
 })
 export class ClientWorkstationComponent {}

@@ -9,12 +9,13 @@ import {
 import Box from '@mui/material/Box';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
 import { InjectedComponentProps } from 'khamsa';
 import { TabProps } from '@modules/tab/tab.interface';
 import { TabComponent } from '@modules/tab/tab.component';
 import { ChannelPanelComponent } from '@modules/channel/channel-panel.component';
 import { ChannelPanelProps } from '@modules/channel/channel.interface';
-// import { LocaleService } from '@modules/locale/locale.service';
+import { LocaleService } from '@modules/locale/locale.service';
 import { StoreService } from '@modules/store/store.service';
 import _ from 'lodash';
 import shallow from 'zustand/shallow';
@@ -33,17 +34,20 @@ import {
 import { List } from 'immutable';
 import { useDebounce } from 'ahooks';
 import '@modules/client/client-workstation.component.less';
+import { ExceptionProps } from '@modules/brand/exception.interface';
+import { ExceptionComponent } from '@modules/brand/exception.component';
 
 const ClientWorkstation: FC<InjectedComponentProps> = ({
     declarations,
 }) => {
     const Tab = declarations.get<FC<TabProps>>(TabComponent);
     const ChannelPanel = declarations.get<FC<ChannelPanelProps>>(ChannelPanelComponent);
-    // const localeService = declarations.get<LocaleService>(LocaleService);
+    const localeService = declarations.get<LocaleService>(LocaleService);
     const storeService = declarations.get<StoreService>(StoreService);
     const clientService = declarations.get<ClientService>(ClientService);
     const channelService = declarations.get<ChannelService>(ChannelService);
     const utilsService = declarations.get<UtilsService>(UtilsService);
+    const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
 
     const { client_id: clientId } = useParams();
     const location = useLocation();
@@ -107,7 +111,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             updateTabsScrollOffset,
         };
     }, shallow);
-    // const getLocaleText = localeService.useLocaleContext('pages.client_workstation');
+    const getLocaleText = localeService.useLocaleContext('pages.client_workstation');
     const [selectedTabId, setSelectedTabId] = useState<string>(null);
     const [selectedTabMetadata, setSelectedTabMetadata] = useState<string[]>([]);
     const forceSetSticked = useCallback((state) => setButtonsWrapperSticked(state), [
@@ -484,11 +488,18 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                         className="empty-tabs"
                         style={{ width: headerWidth, height: panelHeight }}
                     >
-                        <button
-                            onClick={() => {
-                                handleCreateTab(clientId);
-                            }}
-                        >test create tab</button>
+                        <Exception
+                            imageSrc="/static/images/welcome.svg"
+                            title={getLocaleText('welcome.title')}
+                            subTitle={getLocaleText('welcome.subTitle')}
+                            className="welcome"
+                        >
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                startIcon={<Icon className="icon-plus" />}
+                            >Create a Tab</Button>
+                        </Exception>
                     </Box>
                     : <SimpleBar
                         style={{
