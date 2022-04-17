@@ -12,6 +12,7 @@
     },
     "clientsSidebarMenu": {
         "workstation": "Workstation",
+        "channels": "Channels",
         "members": "Members",
         "details": "Details"
     },
@@ -19,7 +20,11 @@
         "client_workstation": {
             "all_channels": "All Channels",
             "create": "New",
-            "switch": "Switch"
+            "switch": "Switch",
+            "welcome": {
+                "title": "Welcome to Pugio",
+                "subTitle": "There is no tabs created, you can click the button below to create a new tab to run a channel"
+            }
         }
     },
     "components": {
@@ -42,7 +47,8 @@
             }
         },
         "tab": {
-            "errored": "Error"
+            "errored": "Error",
+            "newInstance": "New Channel Instance"
         }
     }
 }

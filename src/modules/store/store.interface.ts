@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import {
     Map,
-    Set,
+    List,
 } from 'immutable';
 import {
     Client,
@@ -33,7 +33,7 @@ export interface LoadedChannelProps {
 
 export interface ChannelTab {
     tabId: string;
-    channelId: string;
+    channelId?: string;
     data?: Channel;
     nodes?: ReactNode;
     loading?: boolean;
@@ -45,16 +45,17 @@ export type TabData = Omit<ChannelTab, 'tabId'>;
 
 export interface AppState {
     userProfile: Profile;
-    channelTabs: Map<string, Set<ChannelTab>>;
+    channelTabs: Map<string, List<ChannelTab>>;
     clientSidebarWidth: number;
     clientsDropdownOpen: boolean;
     pathnameReady: boolean;
     appNavbarHeight: number;
     controlsWrapperHeight: number;
     tabsWrapperHeight: number;
-    selectedTabMap: Map<string, string | '@@startup'>;
+    selectedTabMap: Map<string, string>;
+    tabsScrollMap: Map<string, number>;
     setClientSidebarWidth: (width: number) => void;
-    createTab: (clientId: string, data: TabData) => string;
+    createTab: (clientId: string, data?: TabData) => string;
     updateTab: (clientId: string, tabId: string, updates: Partial<TabData>) => void;
     destroyTab: (clientId: string, tabId: string) => void;
     switchClientsDropdownVisibility: (open?: boolean) => void;
@@ -63,4 +64,5 @@ export interface AppState {
     setTabsWrapperHeight: (height: number) => void;
     setSelectedTab: (clientId: string, tabId: string) => void;
     setUserProfile: (profile: Profile) => void;
+    updateTabsScrollOffset: (clientId: string, offset: number) => void;
 }

@@ -2,8 +2,9 @@ import { ChannelTab } from '@modules/store/store.interface';
 import { BoxProps } from '@mui/material/Box';
 import { Profile } from '@modules/profile/profile.interface';
 
-export interface ChannelPanelProps extends BoxProps, ChannelTab {
-    startupTab?: boolean;
+export interface ChannelPanelProps extends BoxProps {
+    tabId: string;
+    channelTab?: Omit<ChannelTab, 'tabId'>;
 }
 
 export interface Channel {

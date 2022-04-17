@@ -1,6 +1,8 @@
 import {
     FC,
     useEffect,
+    useRef,
+    useState,
 } from 'react';
 import Box, { BoxProps } from '@mui/material/Box';
 import Icon from '@mui/material/Icon';
@@ -24,18 +26,48 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
     declarations,
     errored = false,
     startup = false,
+    children,
+    className,
+    channelId,
+    metadata,
     onClose = _.noop,
     onDataLoad = _.noop,
+    onTitleChange = _.noop,
+    onSelectedScroll = _.noop,
     ...props
 }) => {
     const localeService = declarations.get<LocaleService>(LocaleService);
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
 
     const getLocaleText = localeService.useLocaleContext('components.tab');
+    const [tabTitle, setTabTitle] = useState<string>('');
+    const tabRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        onDataLoad();
-    }, []);
+        if (channelId) {
+            onDataLoad(channelId);
+        }
+    }, [channelId]);
+
+    useEffect(() => {
+        if (title && channelId) {
+            setTabTitle(title);
+        } else {
+            setTabTitle(getLocaleText('newInstance'));
+        }
+    }, [getLocaleText, title, channelId]);
+
+    useEffect(() => {
+        onTitleChange(title);
+    }, [title]);
+
+    useEffect(() => {
+        if (active && tabRef.current && metadata.indexOf('scroll') !== -1) {
+            const offsetLeft = tabRef.current.offsetLeft;
+            const clientWidth = tabRef.current.clientWidth;
+            onSelectedScroll(offsetLeft, clientWidth);
+        }
+    }, [metadata, active, tabRef]);
 
     return (
         <Box
@@ -46,14 +78,15 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
                 startup,
                 loading,
                 placeholder: slotElement,
-            })}
+            }, className)}
+            ref={tabRef}
             {...props}
         >
             {
                 loading
                     ? <Loading style={{ width: 36 }} />
                     : slotElement
-                        ? null
+                        ? children
                         : (
                             <Box className="content-wrapper">
                                 <Box className="avatar" component="img" src={avatar} />
@@ -61,7 +94,7 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
                                     {
                                         errored
                                             ? getLocaleText('errored')
-                                            : title
+                                            : tabTitle
                                     }
                                 </Typography>
                             </Box>

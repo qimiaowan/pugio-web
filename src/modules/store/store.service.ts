@@ -2,7 +2,7 @@ import { Injectable } from 'khamsa';
 import create from 'zustand';
 import {
     Map,
-    Set,
+    List,
 } from 'immutable';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
@@ -12,46 +12,48 @@ import {
     TabData,
 } from '@modules/store/store.interface';
 import { Profile } from '@modules/profile/profile.interface';
+import { UtilsService } from '@modules/utils/utils.service';
 
 @Injectable()
 export class StoreService {
     public useStore = create<AppState>((set) => {
         return {
             userProfile: null,
-            channelTabs: Map<string, Set<ChannelTab>>({}),
+            channelTabs: Map<string, List<ChannelTab>>({}),
             clientSidebarWidth: null,
             clientsDropdownOpen: false,
             pathnameReady: false,
             appNavbarHeight: 48,
             controlsWrapperHeight: 0,
             tabsWrapperHeight: 0,
-            selectedTabMap: Map<string, string | '@@startup'>({}),
+            selectedTabMap: Map<string, string>({}),
+            tabsScrollMap: Map<string, number>({}),
 
             setClientSidebarWidth: (width: number) => {
                 set(() => ({ clientSidebarWidth: width }));
             },
 
-            createTab: (clientId: string, data: TabData) => {
+            createTab: (clientId: string, data: TabData = {}) => {
                 const tabId = uuidv4();
 
                 set((state) => {
                     const channelTabData: ChannelTab = {
                         tabId,
                         ...data,
-                        loading: true,
+                        loading: false,
                     };
 
+                    let tabs: List<ChannelTab>;
+
                     if (!state.channelTabs.get(clientId)) {
-                        const tabs = Set<ChannelTab>();
-                        return {
-                            channelTabs: state.channelTabs.set(clientId, tabs.add(channelTabData)),
-                        };
+                        tabs = List<ChannelTab>().push(channelTabData);
                     } else {
-                        const tabs = Set(state.channelTabs.get(clientId).toArray() || []);
-                        return {
-                            channelTabs: state.channelTabs.set(clientId, tabs.add(channelTabData)),
-                        };
+                        tabs = state.channelTabs.get(clientId).push(channelTabData);
                     }
+
+                    return {
+                        channelTabs: state.channelTabs.set(clientId, tabs),
+                    };
                 });
 
                 return tabId;
@@ -80,6 +82,7 @@ export class StoreService {
                                             'errored',
                                             'data',
                                             'lifecycle',
+                                            'channelId',
                                         ]),
                                     };
                                 }
@@ -91,7 +94,9 @@ export class StoreService {
                 });
             },
 
-            destroyTab: (clientId: string, tabId: string) => {
+            destroyTab: (clientId: string, tabIdLiteral: string) => {
+                const { tabId } = this.utilsService.parseSelectedTabId(tabIdLiteral);
+
                 set((state) => {
                     const tabs = state.channelTabs.get(clientId);
 
@@ -111,7 +116,7 @@ export class StoreService {
                         ),
                         selectedTabMap: state.selectedTabMap.set(
                             clientId,
-                            newTabs?.last()?.tabId || '@@startup',
+                            newTabs?.last()?.tabId || null,
                         ),
                     };
                 });
@@ -148,6 +153,22 @@ export class StoreService {
             setUserProfile: (profile: Profile) => {
                 set({ userProfile: profile });
             },
+
+            updateTabsScrollOffset: (clientId: string, offset: number) => {
+                if (!_.isNumber(offset) || !clientId) {
+                    return;
+                }
+
+                set((state) => {
+                    return {
+                        tabsScrollMap: state.tabsScrollMap.set(clientId, offset),
+                    };
+                });
+            },
         };
     });
+
+    public constructor(
+        private readonly utilsService: UtilsService,
+    ) {}
 }

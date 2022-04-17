@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1132px" height="1132px" viewBox="0 0 1132 1132" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="编组">
+            <g id="logo" opacity="0.317012242" fill="#3D6072" fill-rule="nonzero">
+                <rect id="矩形" fill-opacity="0.2" x="0" y="0" width="1132" height="1132" rx="50"></rect>
+                <path d="M354.712,519.96 C371.096,536.344 371.096,560.92 354.712,577.304 L209.304,722.712 C192.92,739.096 168.344,739.096 151.96,722.712 L123.288,694.04 C106.904,677.656 106.904,653.08 123.288,636.696 L268.696,491.288 C285.08,474.904 309.656,474.904 326.04,491.288 L354.712,519.96 L354.712,519.96 Z" id="svg_1" opacity="0.3" transform="translate(239.000000, 607.000000) rotate(45.000000) translate(-239.000000, -607.000000) "></path>
+                <path d="M879.176,247 C991.816,359.64 991.816,539.864 879.176,652.504 L647.752,883.928 L445,681.176 L879.176,247 Z" id="svg_2" transform="translate(704.328000, 565.464000) rotate(45.000000) translate(-704.328000, -565.464000) "></path>
+            </g>
+            <rect id="矩形" fill="#FFFFFF" style="mix-blend-mode: color;" x="0" y="0" width="1132" height="1132"></rect>
+        </g>
+    </g>
+</svg>

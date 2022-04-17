@@ -10,16 +10,19 @@ import { LocaleService } from '@modules/locale/locale.service';
 import '@modules/channel/channel-panel.component.less';
 
 const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
-    channelId,
     children,
     declarations,
-    nodes = null,
-    startupTab = false,
-    loading = false,
-    errored = false,
     className = '',
+    channelTab = {},
     ...props
 }) => {
+    const {
+        errored,
+        loading,
+        channelId,
+        nodes,
+    } = channelTab;
+
     const localeService = declarations.get<LocaleService>(LocaleService);
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
     const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
@@ -39,7 +42,7 @@ const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
             )}
         >
             {
-                startupTab
+                !channelId
                     ? children
                     : loading
                         ? <Loading />

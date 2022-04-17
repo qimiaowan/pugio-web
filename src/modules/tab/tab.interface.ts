@@ -1,6 +1,7 @@
 import { BoxProps } from '@mui/material/Box';
 
 export interface TabProps extends BoxProps {
+    channelId?: string;
     title?: string;
     closable?: boolean;
     avatar?: string;
@@ -9,6 +10,9 @@ export interface TabProps extends BoxProps {
     loading?: boolean;
     errored?: boolean;
     startup?: boolean;
+    metadata?: string[];
     onClose?: () => void;
-    onDataLoad?: () => void;
+    onDataLoad?: (channelId: string) => void;
+    onTitleChange?: (title: string) => void;
+    onSelectedScroll?: (offsetLeft: number, clientWidth: number) => void;
 }

@@ -107,4 +107,19 @@ export class UtilsService extends CaseTransformerService {
             }
         });
     }
+
+    public parseSelectedTabId(literal: string) {
+        if (!literal || typeof literal !== 'string') {
+            return null;
+        }
+
+        const [tabId, metadataLiteral] = literal.split(':');
+
+        return {
+            tabId,
+            metadata: metadataLiteral
+                ? metadataLiteral.split(/,\s+/g)
+                : [],
+        };
+    }
 }
