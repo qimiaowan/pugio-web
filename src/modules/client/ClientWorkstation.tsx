@@ -498,6 +498,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                 variant="contained"
                                 color="primary"
                                 startIcon={<Icon className="icon-plus" />}
+                                onClick={() => handleCreateTab(clientId)}
                             >Create a Tab</Button>
                         </Exception>
                     </Box>

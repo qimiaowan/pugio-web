@@ -4,7 +4,6 @@ const {
     addBabelPlugins,
     addWebpackAlias,
     addWebpackExternals,
-    addWebpackPlugin,
     overrideDevServer,
 } = require('customize-cra');
 const addLessLoader = require('customize-cra-less-loader');
@@ -80,28 +79,50 @@ module.exports = {
                 },
             },
         }),
-        addWebpackPlugin(new WebpackBundleAnalyzerPlugin({
-            analyzerMode: 'server',
-            analyzerHost: '0.0.0.0',
-            analyzerPort: '8888',
-            reportFilename: path.resolve(__dirname, './report/report.html'),
-            openAnalyzer: false,
-            generateStatsFile: false,
-            statsFilename: path.resolve(__dirname, './report/stats.json'),
-            statsOptions: null,
-            excludeAssets: null,
-            logLevel: 'info',
-        })),
+        (config) => {
+            if (config.mode === 'development') {
+                config.plugins.push(new WebpackBundleAnalyzerPlugin({
+                    analyzerMode: 'server',
+                    analyzerHost: '0.0.0.0',
+                    analyzerPort: '8888',
+                    reportFilename: path.resolve(__dirname, './report/report.html'),
+                    openAnalyzer: false,
+                    generateStatsFile: false,
+                    statsFilename: path.resolve(__dirname, './report/stats.json'),
+                    statsOptions: null,
+                    excludeAssets: null,
+                    logLevel: 'info',
+                }));
+            }
+
+            return config;
+        },
         addWebpackAlias({
             '@': path.resolve(__dirname, 'src'),
             '@modules': path.resolve(__dirname, 'src/modules'),
+            '@builtin:web-terminal': path.resolve(__dirname, 'src/builtin/web-terminal'),
         }),
         (config) => {
             config.plugins.push(
                 new DefinePlugin({
-                    ORIGIN: JSON.stringify(config.mode === 'production' ? 'pugio.lenconda.top' : process.env.PUGIO_ORIGIN || 'localhost:3000'),
+                    ORIGIN: JSON.stringify(
+                        config.mode === 'production'
+                            ? 'pugio.lenconda.top'
+                            : process.env.PUGIO_ORIGIN || 'localhost:3000',
+                    ),
                 }),
             );
+            return config;
+        },
+        (config) => {
+            config.entry = [
+                config.entry,
+                path.resolve(__dirname, 'src/builtin/web-terminal/index.tsx'),
+            ];
+            // config.entry = {
+            //     app: config.entry,
+            //     'pugio.web-terminal': path.resolve(__dirname, 'src/builtin/web-terminal/index.tsx'),
+            // };
             return config;
         },
     ),

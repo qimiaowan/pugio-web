@@ -27,7 +27,8 @@
         "jsx": "react-jsx",
         "paths": {
             "@/*": ["./src/*"],
-            "@modules/*": ["./src/modules/*"]
+            "@modules/*": ["./src/modules/*"],
+            "@builtin:web-terminal/*": ["./src/builtin/web-terminal/*"]
         },
         "baseUrl": "."
     },
