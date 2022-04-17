@@ -53,6 +53,7 @@ export interface AppState {
     controlsWrapperHeight: number;
     tabsWrapperHeight: number;
     selectedTabMap: Map<string, string>;
+    tabsScrollMap: Map<string, number>;
     setClientSidebarWidth: (width: number) => void;
     createTab: (clientId: string, data?: TabData) => string;
     updateTab: (clientId: string, tabId: string, updates: Partial<TabData>) => void;
@@ -63,4 +64,5 @@ export interface AppState {
     setTabsWrapperHeight: (height: number) => void;
     setSelectedTab: (clientId: string, tabId: string) => void;
     setUserProfile: (profile: Profile) => void;
+    updateTabsScrollOffset: (clientId: string, offset: number) => void;
 }

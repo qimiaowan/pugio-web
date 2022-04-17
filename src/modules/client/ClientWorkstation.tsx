@@ -31,6 +31,7 @@ import {
     useLocation,
 } from 'react-router-dom';
 import { Set } from 'immutable';
+import { useDebounce } from 'ahooks';
 import '@modules/client/client-workstation.component.less';
 
 const ClientWorkstation: FC<InjectedComponentProps> = ({
@@ -46,6 +47,8 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
 
     const { client_id: clientId } = useParams();
     const location = useLocation();
+    const [tabsScrollOffset, setTabsScrollOffset] = useState<number>(null);
+    const debouncedTabsScrollOffset = useDebounce(tabsScrollOffset, { wait: 300 });
     const [tabTitleChangeCount, setTabTitleChangeCount] = useState<number>(0);
     const [buttonsWrapperSticked, setButtonsWrapperSticked] = useState<boolean>(false);
     const [buttonsWrapperWidth] = useState<number>(70);
@@ -64,11 +67,13 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
         tabsWrapperHeight,
         clientTabsMap,
         selectedTabMap,
+        tabsScrollMap,
         setSelectedTab,
         updateTab,
         createTab,
         destroyTab,
         setTabsWrapperHeight,
+        updateTabsScrollOffset,
     } = storeService.useStore((state) => {
         const {
             appNavbarHeight,
@@ -77,11 +82,13 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             clientSidebarWidth: sidebarWidth,
             channelTabs: clientTabsMap,
             selectedTabMap,
+            tabsScrollMap,
             setSelectedTab,
             updateTab,
             createTab,
             destroyTab,
             setTabsWrapperHeight,
+            updateTabsScrollOffset,
         } = state;
 
         return {
@@ -91,11 +98,13 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             sidebarWidth,
             clientTabsMap,
             selectedTabMap,
+            tabsScrollMap,
             setSelectedTab,
             updateTab,
             createTab,
             destroyTab,
             setTabsWrapperHeight,
+            updateTabsScrollOffset,
         };
     }, shallow);
     // const getLocaleText = localeService.useLocaleContext('pages.client_workstation');
@@ -342,7 +351,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             const scrollElement = tabsScrollRef.current.getScrollElement();
             if (scrollElement) {
                 const scrollEventHandler = () => {
-                    console.log(scrollElement.scrollLeft);
+                    setTabsScrollOffset(scrollElement.scrollLeft);
                 };
 
                 scrollElement.addEventListener('scroll', scrollEventHandler);
@@ -353,6 +362,23 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             }
         }
     }, [tabsScrollRef.current]);
+
+    useEffect(() => {
+        if (tabsScrollRef.current) {
+            const scrollElement = tabsScrollRef.current.getScrollElement();
+
+            if (scrollElement) {
+                const tabsInitialScrollOffset = tabsScrollMap.get(clientId) || 0;
+                scrollElement.scrollLeft = tabsInitialScrollOffset;
+            }
+        }
+    }, [tabsScrollRef.current]);
+
+    useEffect(() => {
+        if (_.isNumber(debouncedTabsScrollOffset)) {
+            updateTabsScrollOffset(clientId, debouncedTabsScrollOffset);
+        }
+    }, [debouncedTabsScrollOffset]);
 
     const scrollTabs = useCallback((offset: number) => {
         if (tabsScrollRef.current) {

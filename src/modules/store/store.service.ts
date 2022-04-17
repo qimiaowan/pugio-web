@@ -27,6 +27,7 @@ export class StoreService {
             controlsWrapperHeight: 0,
             tabsWrapperHeight: 0,
             selectedTabMap: Map<string, string>({}),
+            tabsScrollMap: Map<string, number>({}),
 
             setClientSidebarWidth: (width: number) => {
                 set(() => ({ clientSidebarWidth: width }));
@@ -43,14 +44,15 @@ export class StoreService {
                     };
 
                     if (!state.channelTabs.get(clientId)) {
-                        const tabs = Set<ChannelTab>();
+                        const tabs = Set<ChannelTab>().add(channelTabData);
                         return {
-                            channelTabs: state.channelTabs.set(clientId, tabs.add(channelTabData)),
+                            channelTabs: state.channelTabs.set(clientId, tabs),
                         };
                     } else {
-                        const tabs = Set(state.channelTabs.get(clientId).toArray() || []);
+                        const tabs = state.channelTabs.get(clientId).add(channelTabData);
+
                         return {
-                            channelTabs: state.channelTabs.set(clientId, tabs.add(channelTabData)),
+                            channelTabs: state.channelTabs.set(clientId, tabs),
                         };
                     }
                 });
@@ -151,6 +153,18 @@ export class StoreService {
 
             setUserProfile: (profile: Profile) => {
                 set({ userProfile: profile });
+            },
+
+            updateTabsScrollOffset: (clientId: string, offset: number) => {
+                if (!_.isNumber(offset) || !clientId) {
+                    return;
+                }
+
+                set((state) => {
+                    return {
+                        tabsScrollMap: state.tabsScrollMap.set(clientId, offset),
+                    };
+                });
             },
         };
     });
