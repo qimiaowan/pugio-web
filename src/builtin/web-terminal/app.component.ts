@@ -1,11 +1,7 @@
 import { Component } from 'khamsa';
-import App from '@builtin:web-terminal/App';
-import { ContextService } from '@builtin:web-terminal/modules/context/context.service';
+import { lazy } from 'react';
 
 @Component({
-    component: App,
-    declarations: [
-        ContextService,
-    ],
+    component: lazy(() => import('@builtin:web-terminal/App')),
 })
 export class AppComponent {}

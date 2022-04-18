@@ -1,23 +1,37 @@
 import {
     FC,
-    useContext,
+    useState,
 } from 'react';
 import Box from '@mui/material/Box';
 import { InjectedComponentProps } from 'khamsa';
-import { Context as OuterContext } from '@builtin:web-terminal/context';
-import { ContextService } from '@builtin:web-terminal/modules/context/context.service';
+import { Context } from '@builtin:web-terminal/context';
+import { LoadedChannelProps } from '@modules/store/store.interface';
 
-const App: FC<InjectedComponentProps> = ({
-    declarations,
-}) => {
-    const contextService = declarations.get<ContextService>(ContextService);
+const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
+    const {
+        metadata,
+        width,
+        height,
+        basename,
+    } = props;
 
-    const channelConfig = useContext(OuterContext);
+    const [count, setCount] = useState<number>(0);
 
     return (
-        <contextService.Context.Provider value={channelConfig}>
-            <Box></Box>
-        </contextService.Context.Provider>
+        <Context.Provider
+            value={{
+                metadata,
+                width,
+                height,
+                basename,
+            }}
+        >
+            <Box>
+                <h2>It works!</h2>
+                <p>{count}</p>
+                <button onClick={() => setCount(count + 1)}>TEST</button>
+            </Box>
+        </Context.Provider>
     );
 };
 

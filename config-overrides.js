@@ -114,16 +114,5 @@ module.exports = {
             );
             return config;
         },
-        (config) => {
-            config.entry = [
-                config.entry,
-                path.resolve(__dirname, 'src/builtin/web-terminal/index.tsx'),
-            ];
-            // config.entry = {
-            //     app: config.entry,
-            //     'pugio.web-terminal': path.resolve(__dirname, 'src/builtin/web-terminal/index.tsx'),
-            // };
-            return config;
-        },
     ),
 };

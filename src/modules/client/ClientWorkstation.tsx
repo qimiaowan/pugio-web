@@ -23,6 +23,7 @@ import SimpleBar from 'simplebar-react';
 import {
     ChannelTab,
     ChannelMetadata,
+    LoadedChannelProps,
 } from '@modules/store/store.interface';
 import { ClientService } from '@modules/client/client.service';
 import { ChannelService } from '@modules/channel/channel.service';
@@ -36,6 +37,7 @@ import { useDebounce } from 'ahooks';
 import '@modules/client/client-workstation.component.less';
 import { ExceptionProps } from '@modules/brand/exception.interface';
 import { ExceptionComponent } from '@modules/brand/exception.component';
+import { AppComponent as WebTerminalAppComponent } from '@builtin:web-terminal/app.component';
 
 const ClientWorkstation: FC<InjectedComponentProps> = ({
     declarations,
@@ -48,6 +50,10 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const channelService = declarations.get<ChannelService>(ChannelService);
     const utilsService = declarations.get<UtilsService>(UtilsService);
     const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
+
+    const internalChannelMap = {
+        'pugio.web-terminal': WebTerminalAppComponent,
+    };
 
     const { client_id: clientId } = useParams();
     const location = useLocation();
@@ -87,6 +93,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             channelTabs: clientTabsMap,
             selectedTabMap,
             tabsScrollMap,
+
             setSelectedTab,
             updateTab,
             createTab,
@@ -103,6 +110,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             clientTabsMap,
             selectedTabMap,
             tabsScrollMap,
+
             setSelectedTab,
             updateTab,
             createTab,
@@ -181,31 +189,34 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                         bundleUrl: url,
                         id: channelId,
                     } = data;
-                    utilsService.loadChannelBundle(url, channelId)
-                        .then((ChannelEntry) => {
-                            if (typeof ChannelEntry === 'function') {
-                                resolve({
-                                    data,
-                                    nodes: createElement(
-                                        ChannelEntry,
-                                        {
-                                            width: headerWidth,
-                                            height: panelHeight,
-                                            metadata: metadata,
-                                            basename: `/client/${clientId}/workstation/__channel__`,
-                                            onChannelLoad: (lifecycle) => {
-                                                updateTab(clientId, tabId, {
-                                                    lifecycle,
-                                                });
-                                            },
+
+                    const channelEntryPromise = url === '<internal>'
+                        ? Promise.resolve(declarations.get<FC<LoadedChannelProps>>(internalChannelMap[channelId]))
+                        : utilsService.loadChannelBundle(url, channelId);
+
+                    channelEntryPromise.then((ChannelEntry) => {
+                        if (typeof ChannelEntry === 'function') {
+                            resolve({
+                                data,
+                                nodes: createElement(
+                                    ChannelEntry,
+                                    {
+                                        width: headerWidth,
+                                        height: panelHeight,
+                                        metadata: metadata,
+                                        basename: `/client/${clientId}/workstation/__channel__`,
+                                        onChannelLoad: (lifecycle) => {
+                                            updateTab(clientId, tabId, {
+                                                lifecycle,
+                                            });
                                         },
-                                    ),
-                                });
-                            } else {
-                                reject(new Error());
-                            }
-                        })
-                        .catch((e) => reject(e));
+                                    },
+                                ),
+                            });
+                        } else {
+                            reject(new Error());
+                        }
+                    }).catch((e) => reject(e));
                 });
             })
             .then((result) => {
@@ -521,7 +532,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                             <Box className="channel-not-selected">
                                 <button
                                     onClick={() => {
-                                        testHandleSelectChannel(clientId, selectedTabId, 'pugio.pipelines');
+                                        testHandleSelectChannel(clientId, selectedTabId, 'pugio.web-terminal');
                                     }}
                                 >test select channel {selectedTabId}</button>
                             </Box>
