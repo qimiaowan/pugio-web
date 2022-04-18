@@ -38,6 +38,7 @@ import '@modules/client/client-workstation.component.less';
 import { ExceptionProps } from '@modules/brand/exception.interface';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { AppComponent as WebTerminalAppComponent } from '@builtin:web-terminal/app.component';
+import { KeepAlive } from 'react-activation';
 
 const ClientWorkstation: FC<InjectedComponentProps> = ({
     declarations,
@@ -199,15 +200,21 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                             resolve({
                                 data,
                                 nodes: (
-                                    <ChannelEntry
-                                        width={headerWidth}
-                                        height={panelHeight}
-                                        metadata={metadata}
-                                        basename={`/client/${clientId}/workstation`}
-                                        onChannelLoad={(lifecycle) => {
-                                            updateTab(clientId, tabId, { lifecycle });
-                                        }}
-                                    />
+                                    <KeepAlive
+                                        id={tabId}
+                                        name={tabId}
+                                        when={() => [true, false]}
+                                    >
+                                        <ChannelEntry
+                                            width={headerWidth}
+                                            height={panelHeight}
+                                            metadata={metadata}
+                                            basename={`/client/${clientId}/workstation`}
+                                            onChannelLoad={(lifecycle) => {
+                                                updateTab(clientId, tabId, { lifecycle });
+                                            }}
+                                        />
+                                    </KeepAlive>
                                 ),
                             });
                         } else {

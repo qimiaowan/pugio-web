@@ -7,7 +7,7 @@ import { LoadingComponent } from '@modules/brand/loading.component';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { ExceptionProps } from '@modules/brand/exception.interface';
 import { LocaleService } from '@modules/locale/locale.service';
-import KeepAlive, { AliveScope } from 'react-activation';
+import { AliveScope } from 'react-activation';
 import '@modules/channel/channel-panel.component.less';
 
 const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
@@ -55,7 +55,7 @@ const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
                                     title={getLocaleText('error.title', { channelId })}
                                     subTitle={getLocaleText('error.subTitle')}
                                 />
-                                : <KeepAlive id={tabId}>{nodes}</KeepAlive>
+                                : nodes
                 }
             </AliveScope>
         </Box>
