@@ -15,6 +15,7 @@ const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
     declarations,
     className = '',
     channelTab = {},
+    tabId,
     ...props
 }) => {
     const {
@@ -54,7 +55,7 @@ const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
                                     title={getLocaleText('error.title', { channelId })}
                                     subTitle={getLocaleText('error.subTitle')}
                                 />
-                                : <KeepAlive>{nodes}</KeepAlive>
+                                : <KeepAlive id={tabId}>{nodes}</KeepAlive>
                 }
             </AliveScope>
         </Box>

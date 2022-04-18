@@ -26,7 +26,11 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                 basename,
             }}
         >
-            <Box>
+            <Box
+                style={{
+                    width,
+                }}
+            >
                 <h2>It works!</h2>
                 <p>{count}</p>
                 <button onClick={() => setCount(count + 1)}>TEST</button>
