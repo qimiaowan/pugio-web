@@ -198,22 +198,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                         if (typeof ChannelEntry === 'function') {
                             resolve({
                                 data,
-                                // nodes: createElement(
-                                //     ChannelEntry,
-                                //     {
-                                //         width: headerWidth,
-                                //         height: panelHeight,
-                                //         metadata,
-                                //         basename: `/client/${clientId}/workstation`,
-                                //         onChannelLoad: (lifecycle) => {
-                                //             updateTab(clientId, tabId, {
-                                //                 lifecycle,
-                                //             });
-                                //         },
-                                //     },
-                                // ),
                                 nodes: (
-                                    // <KeepAlive key={tabId} name={tabId}>
                                     <ChannelEntry
                                         width={headerWidth}
                                         height={panelHeight}
@@ -223,7 +208,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                             updateTab(clientId, tabId, { lifecycle });
                                         }}
                                     />
-                                    // </KeepAlive>
                                 ),
                             });
                         } else {
