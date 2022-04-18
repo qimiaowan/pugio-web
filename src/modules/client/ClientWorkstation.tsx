@@ -159,7 +159,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                         relation,
                         user,
                         client,
-                        location,
                     };
                 }
             })
@@ -169,14 +168,12 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                     relation,
                     user,
                     client,
-                    location,
                 } = result;
 
                 const metadata = {
                     relation,
                     user,
                     client,
-                    location,
                 } as ChannelMetadata;
 
                 return new Promise<Partial<ChannelTab>>((resolve, reject) => {
@@ -195,6 +192,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                             width: headerWidth,
                                             height: panelHeight,
                                             metadata: metadata,
+                                            basename: `/client/${clientId}/workstation/__channel__`,
                                             onChannelLoad: (lifecycle) => {
                                                 updateTab(clientId, tabId, {
                                                     lifecycle,
@@ -393,6 +391,10 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             }
         }
     }, [tabsScrollRef.current]);
+
+    useEffect(() => {
+        // TODO set location to each ChannelTab
+    }, [location, selectedTabId]);
 
     return (
         <Box className="page client-workstation-page">

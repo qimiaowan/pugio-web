@@ -8,14 +8,12 @@ import {
     QueryClientsResponseData,
 } from '@modules/clients/clients.interface';
 import { Profile } from '@modules/profile/profile.interface';
-import { Location } from 'react-router-dom';
 import { Channel } from '@modules/channel/channel.interface';
 
 export interface ChannelMetadata {
     client: Client;
     relation: Omit<QueryClientsResponseData, 'client'>;
     user: Profile;
-    location: Location;
 }
 
 export interface Lifecycle {
@@ -24,10 +22,14 @@ export interface Lifecycle {
     onBeforeDestroy?: () => boolean;
 }
 
-export interface LoadedChannelProps {
+export interface ChannelConfig {
     metadata: ChannelMetadata;
     width: number;
     height: number;
+    basename: string;
+}
+
+export interface LoadedChannelProps extends ChannelConfig {
     onChannelLoad?: (lifecycle: Lifecycle) => void;
 }
 

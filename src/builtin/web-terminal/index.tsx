@@ -3,17 +3,22 @@ import {
     router,
 } from 'khamsa';
 import { AppModule } from '@builtin:web-terminal/app.module';
-import { ChannelMetadata } from '@modules/store/store.interface';
+import { LoadedChannelProps } from '@modules/store/store.interface';
 import { HashRouterProps } from 'react-router-dom';
+import { Context } from '@builtin:web-terminal/context';
 
-export default (props: ChannelMetadata) => {
+export default (props: LoadedChannelProps) => {
+    const {
+        basename,
+    } = props;
+
     return (
-        <KhamsaApp
-            module={AppModule}
-            routerProps={{
-                basename: `${props.location.pathname}/__channel__/pugio.web-terminal`,
-            } as HashRouterProps}
-            RouterComponent={router.HashRouter}
-        />
+        <Context.Provider value={props}>
+            <KhamsaApp
+                module={AppModule}
+                routerProps={{ basename } as HashRouterProps}
+                RouterComponent={router.HashRouter}
+            />
+        </Context.Provider>
     );
 };
