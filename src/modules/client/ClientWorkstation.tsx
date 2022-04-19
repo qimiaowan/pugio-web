@@ -28,10 +28,7 @@ import {
 import { ClientService } from '@modules/client/client.service';
 import { ChannelService } from '@modules/channel/channel.service';
 import { UtilsService } from '@modules/utils/utils.service';
-import {
-    useParams,
-    useLocation,
-} from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { List } from 'immutable';
 import { useDebounce } from 'ahooks';
 import '@modules/client/client-workstation.component.less';
@@ -56,7 +53,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     };
 
     const { client_id: clientId } = useParams();
-    const location = useLocation();
     const [tabsScrollOffset, setTabsScrollOffset] = useState<number>(null);
     const debouncedTabsScrollOffset = useDebounce(tabsScrollOffset, { wait: 300 });
     const [tabTitleChangeCount, setTabTitleChangeCount] = useState<number>(0);
@@ -399,10 +395,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             }
         }
     }, [tabsScrollRef.current]);
-
-    useEffect(() => {
-        // TODO set location to each ChannelTab
-    }, [location, selectedTabId]);
 
     return (
         <Box className="page client-workstation-page">

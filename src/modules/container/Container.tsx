@@ -185,56 +185,54 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
         }
     }, [logo]);
 
-    return (
-        createElement(
-            ThemeProvider,
-            {
-                theme: pugioTheme,
-            },
-            <StyledEngineProvider injectFirst={true}>
-                <Box className="app-container" style={{ paddingTop: appNavbarHeight }}>
-                    <Box className="navbar" style={{ height: appNavbarHeight }}>
-                        <Box className="wrapper logo-and-nav">
-                            <Box
-                                className="logo"
-                                component="img"
-                                src={logo}
-                            />
-                            <ClientsDropdown
-                                open={clientsDropdownOpen}
-                                onOpen={() => switchClientsDropdownVisibility(true)}
-                                onClose={() => switchClientsDropdownVisibility(false)}
-                            />
-                            <NavLink to="/marketplace" className="navlink">
-                                {
-                                    <Button
-                                        classes={{
-                                            root: 'link',
-                                        }}
-                                    >{getLocaleText('app.navbar.marketplace')}</Button>
-                                }
-                            </NavLink>
-                        </Box>
-                        <Box className="wrapper avatar-and-locales">
-                            <NavLink to="/settings" className="navlink">
-                                <IconButton>
-                                    <Icon className="icon-settings" />
-                                </IconButton>
-                            </NavLink>
-                            <LocaleMenu
-                                locales={locales}
-                                selectedLocaleId={locale}
-                                onLocaleChange={(localeItem) => setLocale(localeItem.id)}
-                            />
-                            <ProfileMenu />
-                        </Box>
+    return createElement(
+        ThemeProvider,
+        {
+            theme: pugioTheme,
+        },
+        <StyledEngineProvider injectFirst={true}>
+            <Box className="app-container" style={{ paddingTop: appNavbarHeight }}>
+                <Box className="navbar" style={{ height: appNavbarHeight }}>
+                    <Box className="wrapper logo-and-nav">
+                        <Box
+                            className="logo"
+                            component="img"
+                            src={logo}
+                        />
+                        <ClientsDropdown
+                            open={clientsDropdownOpen}
+                            onOpen={() => switchClientsDropdownVisibility(true)}
+                            onClose={() => switchClientsDropdownVisibility(false)}
+                        />
+                        <NavLink to="/marketplace" className="navlink">
+                            {
+                                <Button
+                                    classes={{
+                                        root: 'link',
+                                    }}
+                                >{getLocaleText('app.navbar.marketplace')}</Button>
+                            }
+                        </NavLink>
                     </Box>
-                    <Box className="content-layer">
-                        <Outlet />
+                    <Box className="wrapper avatar-and-locales">
+                        <NavLink to="/settings" className="navlink">
+                            <IconButton>
+                                <Icon className="icon-settings" />
+                            </IconButton>
+                        </NavLink>
+                        <LocaleMenu
+                            locales={locales}
+                            selectedLocaleId={locale}
+                            onLocaleChange={(localeItem) => setLocale(localeItem.id)}
+                        />
+                        <ProfileMenu />
                     </Box>
                 </Box>
-            </StyledEngineProvider>,
-        )
+                <Box className="content-layer">
+                    <Outlet />
+                </Box>
+            </Box>
+        </StyledEngineProvider>,
     );
 };
 
