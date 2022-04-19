@@ -30,9 +30,12 @@ export interface GetChannelInfoRequestOptions {
 
 export type GetChannelInfoResponseData = Channel;
 
-export interface QueryClientChannelsRequestOptions extends PaginationRequestOptions {
-    clientId: string;
+export interface QueryClientChannelsRequestData extends PaginationRequestOptions {
     builtIn?: number;
+}
+
+export interface QueryClientChannelsRequestOptions extends QueryClientChannelsRequestData {
+    clientId: string;
 }
 
 export interface QueryClientChannelResponseDataItem extends BaseResponseData {

@@ -6,12 +6,10 @@ import {
 import { InjectedComponentProps } from 'khamsa';
 import { ChannelListProps } from '@modules/client/channel-list.interface';
 import { ChannelService } from '@modules/channel/channel.service';
-import {
-    useDebounce,
-    useInfiniteScroll,
-} from 'ahooks';
+import { useDebounce } from 'ahooks';
 import { InfiniteScrollHookData } from '@modules/request/request.interface';
 import { QueryClientChannelResponseDataItem } from '@modules/channel/channel.interface';
+import { UtilsService } from '@modules/utils/utils.service';
 import _ from 'lodash';
 
 const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
@@ -19,6 +17,7 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
     clientId,
 }) => {
     const channelService = declarations.get<ChannelService>(ChannelService);
+    const utilsService = declarations.get<UtilsService>(UtilsService);
 
     const [searchValue, setSearchValue] = useState<string>('');
     const debouncedSearchValue = useDebounce(searchValue, { wait: 500 });
@@ -28,9 +27,9 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
         loadMore: queryMoreClientChannels,
         loading: queryClientChannelsLoading,
         loadingMore: queryClientChannelsLoadingMore,
-    } = useInfiniteScroll(
-        async (data: InfiniteScrollHookData<QueryClientChannelResponseDataItem>) => {
-            const response = await channelService.queryClientChannels(_.omit(
+    } = utilsService.useLoadMore<QueryClientChannelResponseDataItem>(
+        (data: InfiniteScrollHookData<QueryClientChannelResponseDataItem>) => {
+            return channelService.queryClientChannels(_.omit(
                 {
                     clientId,
                     ...data,
@@ -38,15 +37,8 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                 },
                 ['list'],
             ));
-
-            return {
-                list: response?.response?.items || [],
-                ...(_.omit(_.get(response, 'response'), ['items', 'lastCursor']) || {}),
-                lastCursor: _.get(Array.from(response?.response?.items || []).pop(), 'id') || null,
-            };
         },
         {
-            isNoMore: (data) => data && data.remains === 0,
             reloadDeps: [debouncedSearchValue],
         },
     );
