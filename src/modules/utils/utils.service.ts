@@ -5,10 +5,16 @@ import {
     ORIGIN,
     clientId,
 } from '@/constants';
-import { TDateRange } from '@modules/request/request.interface';
+import {
+    InfiniteScrollHookData,
+    PaginationResponseData,
+    TDateRange,
+} from '@modules/request/request.interface';
 import { Location } from 'react-router-dom';
 import { FC } from 'react';
 import { LoadedChannelProps } from '@modules/store/store.interface';
+import { useInfiniteScroll } from 'ahooks';
+import { InfiniteScrollOptions } from 'ahooks/lib/useInfiniteScroll/types';
 
 @Injectable()
 export class UtilsService extends CaseTransformerService {
@@ -121,5 +127,27 @@ export class UtilsService extends CaseTransformerService {
                 ? metadataLiteral.split(/,\s+/g)
                 : [],
         };
+    }
+
+    public useLoadMore<DataType = any>(
+        service: (data: InfiniteScrollHookData<DataType>) => Promise<PaginationResponseData<DataType>>,
+        options: InfiniteScrollOptions<InfiniteScrollHookData<DataType>>,
+    ) {
+        return useInfiniteScroll(
+            async (data) => {
+                const response = await service(data);
+                return {
+                    list: response?.response?.items || [],
+                    ...(_.omit(_.get(response, 'response'), ['items', 'lastCursor']) || {}),
+                    lastCursor: _.get(Array.from(response?.response?.items || []).pop(), 'id') || null,
+                };
+            },
+            _.merge(
+                {
+                    isNoMore: (data) => data?.remains === 0,
+                } as InfiniteScrollOptions<InfiniteScrollHookData<DataType>>,
+                options,
+            ),
+        );
     }
 }

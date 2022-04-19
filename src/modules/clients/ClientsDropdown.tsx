@@ -18,12 +18,8 @@ import { InjectedComponentProps } from 'khamsa';
 import { LocaleService } from '@modules/locale/locale.service';
 import { ClientsDropdownProps } from '@modules/clients/clients-dropdown.interface';
 import _ from 'lodash';
-import {
-    useDebounce,
-    useInfiniteScroll,
-} from 'ahooks';
+import { useDebounce } from 'ahooks';
 import { ClientsService } from '@modules/clients/clients.service';
-import { InfiniteScrollHookData } from '@modules/request/request.interface';
 import { QueryClientsResponseData } from '@modules/clients/clients.interface';
 import SimpleBar from 'simplebar-react';
 import '@modules/clients/clients-dropdown.component.less';
@@ -34,6 +30,7 @@ import {
 import { LoadingComponent } from '@modules/brand/loading.component';
 import { ExceptionProps } from '@modules/brand/exception.interface';
 import { ExceptionComponent } from '@modules/brand/exception.component';
+import { UtilsService } from '@modules/utils/utils.service';
 
 const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
     declarations,
@@ -42,14 +39,16 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
     onClose = _.noop,
     onClientChange = _.noop,
 }) => {
-    const localeService = declarations.get<LocaleService>(LocaleService);
-    const clientsService = declarations.get<ClientsService>(ClientsService);
     const typographyProps: TypographyProps = {
         noWrap: true,
         style: {
             width: 180,
         },
     };
+
+    const localeService = declarations.get<LocaleService>(LocaleService);
+    const clientsService = declarations.get<ClientsService>(ClientsService);
+    const utilsService = declarations.get<UtilsService>(UtilsService);
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
     const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
 
@@ -67,24 +66,15 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
         loadMore: queryMoreClients,
         loading: queryClientsLoading,
         loadingMore: queryClientsLoadingMore,
-    } = useInfiniteScroll(
-        async (data: InfiniteScrollHookData<QueryClientsResponseData>) => {
-            const response = await clientsService.queryClients(_.omit(
-                {
-                    ...data,
-                    search: debouncedSearchValue,
-                },
-                ['items'],
-            ));
-
-            return {
-                list: response?.response?.items || [],
-                ...(_.omit(_.get(response, 'response'), ['items', 'lastCursor']) || {}),
-                lastCursor: _.get(Array.from(response?.response?.items || []).pop(), 'id') || null,
-            };
-        },
+    } = utilsService.useLoadMore<QueryClientsResponseData>(
+        (data) => clientsService.queryClients(_.omit(
+            {
+                ...data,
+                search: debouncedSearchValue,
+            },
+            ['items'],
+        )),
         {
-            isNoMore: (data) => data && data.remains === 0,
             reloadDeps: [debouncedSearchValue],
         },
     );
