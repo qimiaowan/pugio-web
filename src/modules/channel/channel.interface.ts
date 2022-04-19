@@ -1,13 +1,17 @@
 import { ChannelTab } from '@modules/store/store.interface';
 import { BoxProps } from '@mui/material/Box';
 import { Profile } from '@modules/profile/profile.interface';
+import {
+    BaseResponseData,
+    PaginationRequestOptions,
+} from '@modules/request/request.interface';
 
 export interface ChannelPanelProps extends BoxProps {
     tabId: string;
     channelTab?: Omit<ChannelTab, 'tabId'>;
 }
 
-export interface Channel {
+export interface Channel extends BaseResponseData {
     id: string;
     name: string;
     packageName: string;
@@ -17,8 +21,6 @@ export interface Channel {
     apiPrefix: string;
     status: number;
     creator: Profile;
-    createdAt: string;
-    updatedAt: string;
     description?: string;
 }
 
@@ -27,3 +29,15 @@ export interface GetChannelInfoRequestOptions {
 }
 
 export type GetChannelInfoResponseData = Channel;
+
+export interface QueryClientChannelsRequestOptions extends PaginationRequestOptions {
+    clientId: string;
+    builtIn?: number;
+}
+
+export interface QueryClientChannelResponseDataItem extends BaseResponseData {
+    id: string;
+    channel: Channel & {
+        creator: Profile;
+    };
+}

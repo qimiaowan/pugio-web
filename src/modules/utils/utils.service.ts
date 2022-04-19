@@ -5,7 +5,7 @@ import {
     ORIGIN,
     clientId,
 } from '@/constants';
-import { TDateRange } from '@/app.interfaces';
+import { TDateRange } from '@modules/request/request.interface';
 import { Location } from 'react-router-dom';
 import { FC } from 'react';
 import { LoadedChannelProps } from '@modules/store/store.interface';

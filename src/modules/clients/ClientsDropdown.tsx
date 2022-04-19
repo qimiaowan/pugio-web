@@ -74,7 +74,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                     ...data,
                     search: debouncedSearchValue,
                 },
-                ['list'],
+                ['items'],
             ));
 
             return {

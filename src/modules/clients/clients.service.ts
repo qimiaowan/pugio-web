@@ -4,7 +4,7 @@ import {
     QueryClientsRequestOptions,
     QueryClientsResponseData,
 } from '@modules/clients/clients.interface';
-import { PaginationResponse } from '@modules/request/request.interface';
+import { PaginationResponseData } from '@modules/request/request.interface';
 import { UtilsService } from '@modules/utils/utils.service';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class ClientsService {
         private readonly utilsService: UtilsService,
     ) {}
 
-    public async queryClients(options: QueryClientsRequestOptions): Promise<PaginationResponse<QueryClientsResponseData>> {
+    public async queryClients(options: QueryClientsRequestOptions): Promise<PaginationResponseData<QueryClientsResponseData>> {
         const {
             search,
             lastCursor,

@@ -1,26 +1,21 @@
-import { TDateRange } from '@/app.interfaces';
+import {
+    BaseResponseData,
+    PaginationRequestOptions,
+} from '@modules/request/request.interface';
 
-export interface Client {
+export interface Client extends BaseResponseData {
     id: string;
     name: string;
     description: string;
     verified: boolean;
-    updatedAt: string;
-    createdAt: string;
 }
 
-export interface QueryClientsRequestOptions {
-    search?: string;
-    lastCursor?: string;
-    size?: number;
+export interface QueryClientsRequestOptions extends PaginationRequestOptions {
     roles?: string[];
-    createDateRange?: TDateRange;
 }
 
-export interface QueryClientsResponseData {
+export interface QueryClientsResponseData extends BaseResponseData {
     id: string;
     roleType: number;
     client: Client;
-    createdAt: string;
-    updatedAt: string;
 }
