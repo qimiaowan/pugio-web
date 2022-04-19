@@ -7,7 +7,7 @@ import { LoadingComponent } from '@modules/brand/loading.component';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { ExceptionProps } from '@modules/brand/exception.interface';
 import { LocaleService } from '@modules/locale/locale.service';
-import { AliveScope } from 'react-activation';
+import { KeepAlive } from 'react-activation';
 import '@modules/channel/channel-panel.component.less';
 
 const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
@@ -43,21 +43,23 @@ const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
                 className,
             )}
         >
-            <AliveScope>
-                {
-                    !channelId
-                        ? children
-                        : loading
-                            ? <Loading />
-                            : (errored || !nodes)
-                                ? <Exception
-                                    imageSrc="/static/images/error.svg"
-                                    title={getLocaleText('error.title', { channelId })}
-                                    subTitle={getLocaleText('error.subTitle')}
-                                />
-                                : nodes
-                }
-            </AliveScope>
+            {
+                !channelId
+                    ? children
+                    : loading
+                        ? <Loading />
+                        : (errored || !nodes)
+                            ? <Exception
+                                imageSrc="/static/images/error.svg"
+                                title={getLocaleText('error.title', { channelId })}
+                                subTitle={getLocaleText('error.subTitle')}
+                            />
+                            : <KeepAlive
+                                id={tabId}
+                                name={tabId}
+                                when={() => [true, false]}
+                            >{nodes}</KeepAlive>
+            }
         </Box>
     );
 };
