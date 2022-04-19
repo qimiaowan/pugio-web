@@ -1,5 +1,6 @@
 import { Module } from 'khamsa';
 import { ContainerComponent } from '@modules/container/container.component';
+import { ListenerComponent } from '@modules/container/listener.component';
 
 const LocaleModule = import('@modules/locale/locale.module').then(({ LocaleModule }) => LocaleModule);
 const BrandModule = import('@modules/brand/brand.module').then(({ BrandModule }) => BrandModule);
@@ -17,9 +18,11 @@ const ClientsModule = import('@modules/clients/clients.module').then(({ ClientsM
     ],
     components: [
         ContainerComponent,
+        ListenerComponent,
     ],
     exports: [
         ContainerComponent,
+        ListenerComponent,
     ],
 })
 export class ContainerModule {}
