@@ -1,5 +1,6 @@
 import { InjectedComponentProps } from 'khamsa';
 import {
+    createElement,
     FC,
     PropsWithChildren,
     useEffect,
@@ -185,7 +186,11 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
     }, [logo]);
 
     return (
-        <ThemeProvider theme={pugioTheme}>
+        createElement(
+            ThemeProvider,
+            {
+                theme: pugioTheme,
+            },
             <StyledEngineProvider injectFirst={true}>
                 <Box className="app-container" style={{ paddingTop: appNavbarHeight }}>
                     <Box className="navbar" style={{ height: appNavbarHeight }}>
@@ -228,8 +233,8 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
                         <Outlet />
                     </Box>
                 </Box>
-            </StyledEngineProvider>
-        </ThemeProvider>
+            </StyledEngineProvider>,
+        )
     );
 };
 

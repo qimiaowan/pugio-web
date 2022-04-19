@@ -32,7 +32,7 @@ const ChannelModule = import('@modules/channel/channel.module').then(({ ChannelM
     ],
     routes: [
         {
-            path: '',
+            path: '/',
             useComponentClass: AppComponent,
             children: [
                 {

@@ -15,6 +15,7 @@ import {
 } from 'react-router-dom';
 import { UtilsService } from '@modules/utils/utils.service';
 import { StoreService } from '@modules/store/store.service';
+import { AliveScope } from 'react-activation';
 import shallow from 'zustand/shallow';
 
 const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) => {
@@ -70,9 +71,11 @@ const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) =>
     }, [pathnameReady]);
 
     return (
-        <LocaleContext.Provider value={localeMap}>
-            <Container onLocaleChange={(locale) => setLocale(locale)} />
-        </LocaleContext.Provider>
+        <AliveScope>
+            <LocaleContext.Provider value={localeMap}>
+                <Container onLocaleChange={(locale) => setLocale(locale)} />
+            </LocaleContext.Provider>
+        </AliveScope>
     );
 };
 

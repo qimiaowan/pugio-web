@@ -24,7 +24,7 @@ import shallow from 'zustand/shallow';
 
 const DEFAULT_PICTURE_URL = '/static/images/profile_avatar_fallback.svg';
 
-const LocaleMenu: FC<InjectedComponentProps> = ({
+const ProfileMenu: FC<InjectedComponentProps> = ({
     declarations,
 }) => {
     const localeService = declarations.get<LocaleService>(LocaleService);
@@ -128,4 +128,4 @@ const LocaleMenu: FC<InjectedComponentProps> = ({
     );
 };
 
-export default LocaleMenu;
+export default ProfileMenu;

@@ -38,7 +38,6 @@ import '@modules/client/client-workstation.component.less';
 import { ExceptionProps } from '@modules/brand/exception.interface';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { AppComponent as WebTerminalAppComponent } from '@builtin:web-terminal/app.component';
-import { AliveScope } from 'react-activation';
 
 const ClientWorkstation: FC<InjectedComponentProps> = ({
     declarations,
@@ -436,7 +435,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                 return createElement(
                                                     Tab,
                                                     {
-                                                        key: index,
+                                                        key: tabId,
                                                         loading,
                                                         errored,
                                                         channelId,
@@ -493,52 +492,50 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                     </Box>
                 )
             }
-            <AliveScope>
-                {
-                    !selectedTabId
-                        ? <Box
-                            className="empty-tabs"
-                            style={{ width: headerWidth, height: panelHeight }}
+            {
+                !selectedTabId
+                    ? <Box
+                        className="empty-tabs"
+                        style={{ width: headerWidth, height: panelHeight }}
+                    >
+                        <Exception
+                            imageSrc="/static/images/welcome.svg"
+                            title={getLocaleText('welcome.title')}
+                            subTitle={getLocaleText('welcome.subTitle')}
+                            className="welcome"
                         >
-                            <Exception
-                                imageSrc="/static/images/welcome.svg"
-                                title={getLocaleText('welcome.title')}
-                                subTitle={getLocaleText('welcome.subTitle')}
-                                className="welcome"
-                            >
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    startIcon={<Icon className="icon-plus" />}
-                                    onClick={() => handleCreateTab(clientId)}
-                                >Create a Tab</Button>
-                            </Exception>
-                        </Box>
-                        : <SimpleBar
-                            style={{
-                                width: '100%',
-                                height: panelHeight,
-                            }}
-                            className="panel-wrapper"
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                startIcon={<Icon className="icon-plus" />}
+                                onClick={() => handleCreateTab(clientId)}
+                            >Create a Tab</Button>
+                        </Exception>
+                    </Box>
+                    : <SimpleBar
+                        style={{
+                            width: '100%',
+                            height: panelHeight,
+                        }}
+                        className="panel-wrapper"
+                    >
+                        <ChannelPanel
+                            tabId={selectedTabId}
+                            channelTab={
+                                (clientTabsMap.get(clientId) || List<ChannelTab>([]))
+                                    .find((channelTab) => channelTab.tabId === selectedTabId)
+                            }
                         >
-                            <ChannelPanel
-                                tabId={selectedTabId}
-                                channelTab={
-                                    (clientTabsMap.get(clientId) || List<ChannelTab>([]))
-                                        .find((channelTab) => channelTab.tabId === selectedTabId)
-                                }
-                            >
-                                <Box className="channel-not-selected">
-                                    <button
-                                        onClick={() => {
-                                            testHandleSelectChannel(clientId, selectedTabId, 'pugio.web-terminal');
-                                        }}
-                                    >test select channel {selectedTabId}</button>
-                                </Box>
-                            </ChannelPanel>
-                        </SimpleBar>
-                }
-            </AliveScope>
+                            <Box className="channel-not-selected">
+                                <button
+                                    onClick={() => {
+                                        testHandleSelectChannel(clientId, selectedTabId, 'pugio.web-terminal');
+                                    }}
+                                >test select channel {selectedTabId}</button>
+                            </Box>
+                        </ChannelPanel>
+                    </SimpleBar>
+            }
         </Box>
     );
 };

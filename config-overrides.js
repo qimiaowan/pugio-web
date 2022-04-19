@@ -43,9 +43,9 @@ module.exports = {
                 },
             },
             https: {
-                cert: fs.readFileSync(path.resolve(__dirname, './pugio.cert.pem')),
-                key: fs.readFileSync(path.resolve(__dirname, './pugio.key.pem')),
-                ca: fs.readFileSync(path.resolve(__dirname, './root.pem')),
+                cert: fs.readFileSync(path.resolve(__dirname, './ca/pugio.cert.pem')),
+                key: fs.readFileSync(path.resolve(__dirname, './ca/pugio.key.pem')),
+                ca: fs.readFileSync(path.resolve(__dirname, './ca/root.pem')),
             },
         };
     }),
