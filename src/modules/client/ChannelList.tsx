@@ -66,19 +66,19 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                 {
                     clientId,
                     ...data,
+                    ...(tabs[selectedTabIndex].query || {}),
                     search: debouncedSearchValue,
                 },
                 ['list'],
             ));
         },
         {
-            reloadDeps: [debouncedSearchValue],
+            reloadDeps: [
+                debouncedSearchValue,
+                selectedTabIndex,
+            ],
         },
     );
-
-    useEffect(() => {
-        console.log(queryClientChannelsResponseData);
-    }, [queryClientChannelsResponseData]);
 
     useEffect(() => {
         if (headerRef.current) {
@@ -132,6 +132,21 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                                 height: height - headerHeight,
                             }}
                         >
+                            <Box className="channels-list-wrapper">
+                                {
+                                    new Array(200).fill(null).map((value, index) => {
+                                        return (
+                                            <Box
+                                                key={index}
+                                                className="test"
+                                                style={{
+                                                    width: utilsService.calculateItemWidth(width, 120),
+                                                }}
+                                            ></Box>
+                                        );
+                                    })
+                                }
+                            </Box>
                         </SimpleBar>
             }
         </Box>

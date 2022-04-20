@@ -150,4 +150,22 @@ export class UtilsService extends CaseTransformerService {
             ),
         );
     }
+
+    public calculateItemWidth(baselineWidth: number, width: number) {
+        if (!baselineWidth || !width) {
+            return 0;
+        }
+
+        const remainder = baselineWidth % width;
+
+        if (remainder === 0) {
+            return width;
+        }
+
+        const count = Math.ceil(baselineWidth / width);
+
+        console.log(baselineWidth / count);
+
+        return baselineWidth / count;
+    }
 }
