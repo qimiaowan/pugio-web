@@ -164,8 +164,6 @@ export class UtilsService extends CaseTransformerService {
 
         const count = Math.ceil(baselineWidth / width);
 
-        console.log(baselineWidth / count);
-
         return baselineWidth / count;
     }
 }
