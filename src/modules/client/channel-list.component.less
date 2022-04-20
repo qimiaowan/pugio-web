@@ -66,3 +66,38 @@
         align-items: center;
     }
 }
+
+.channel-list-item {
+    height: 120px;
+    cursor: pointer;
+    display: inline-block;
+    user-select: none;
+
+    .action-wrapper {
+        height: 30px;
+        padding-right: 5px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+
+        & > button {
+            transform: translateY(5px);
+        }
+    }
+
+    .content-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        & > img {
+            width: 30%;
+        }
+
+        .text {
+            color: darken(@text-nav-link-color, 20%);
+            margin-top: 10px;
+        }
+    }
+}
