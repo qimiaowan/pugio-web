@@ -528,7 +528,11 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                             }
                         >
                             <Box className="channel-not-selected">
-                                <ChannelList clientId={clientId} />
+                                <ChannelList
+                                    clientId={clientId}
+                                    width={headerWidth}
+                                    height={panelHeight}
+                                />
                             </Box>
                         </ChannelPanel>
                     </SimpleBar>

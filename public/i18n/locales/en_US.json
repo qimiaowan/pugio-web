@@ -55,7 +55,8 @@
                 "builtIn": "Built-in",
                 "thirdParties": "Third Parties"
             },
-            "create": "Create Channel"
+            "create": "Create Channel",
+            "searchPlaceholder": "Type to search..."
         }
     }
 }
