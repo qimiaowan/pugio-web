@@ -35,6 +35,8 @@ import '@modules/client/client-workstation.component.less';
 import { ExceptionProps } from '@modules/brand/exception.interface';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { AppComponent as WebTerminalAppComponent } from '@builtin:web-terminal/app.component';
+import { ChannelListComponent } from '@modules/client/channel-list.component';
+import { ChannelListProps } from '@modules/client/channel-list.interface';
 
 const ClientWorkstation: FC<InjectedComponentProps> = ({
     declarations,
@@ -47,6 +49,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const channelService = declarations.get<ChannelService>(ChannelService);
     const utilsService = declarations.get<UtilsService>(UtilsService);
     const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
+    const ChannelList = declarations.get<FC<ChannelListProps>>(ChannelListComponent);
 
     const internalChannelMap = {
         'pugio.web-terminal': WebTerminalAppComponent,
@@ -58,6 +61,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const [tabTitleChangeCount, setTabTitleChangeCount] = useState<number>(0);
     const [buttonsWrapperSticked, setButtonsWrapperSticked] = useState<boolean>(false);
     const [buttonsWrapperWidth] = useState<number>(70);
+    const [placeholderWidth, setPlaceholderWidth] = useState<number>(0);
     const tabsWrapperRef = useRef<HTMLDivElement>(null);
     const placeholderRef = useRef<HTMLDivElement>(null);
     const tabsScrollRef = useRef<SimpleBar>(null);
@@ -118,26 +122,18 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const getLocaleText = localeService.useLocaleContext('pages.client_workstation');
     const [selectedTabId, setSelectedTabId] = useState<string>(null);
     const [selectedTabMetadata, setSelectedTabMetadata] = useState<string[]>([]);
-    const forceSetSticked = useCallback((state) => setButtonsWrapperSticked(state), [
-        placeholderRef,
-        selectedTabId,
-        clientId,
-        clientTabsMap,
-        buttonsWrapperWidth,
-        headerWidth,
-        tabTitleChangeCount,
-    ]);
 
     const handleCreateTab = (clientId: string) => {
         const tabId = createTab(clientId);
         setSelectedTab(clientId, `${tabId}:scroll`);
     };
 
-    const testHandleSelectChannel = (clientId: string, tabId: string, channelId: string) => {
-        updateTab(clientId, tabId, {
-            channelId,
-        });
-    };
+    // TODO
+    // const testHandleSelectChannel = (clientId: string, tabId: string, channelId: string) => {
+    //     updateTab(clientId, tabId, {
+    //         channelId,
+    //     });
+    // };
 
     const handleLoadChannel = (channelId: string, clientId: string, tabId: string) => {
         updateTab(clientId, tabId, {
@@ -284,6 +280,30 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     }, [tabsWrapperRef]);
 
     useEffect(() => {
+        const observer = new ResizeObserver((entries) => {
+            const [observationData] = entries;
+
+            if (observationData) {
+                const inlineSize = _.get(observationData, 'borderBoxSize[0].inlineSize');
+
+                if (_.isNumber(inlineSize)) {
+                    setPlaceholderWidth(inlineSize);
+                }
+            }
+        });
+
+        if (placeholderRef.current) {
+            observer.observe(placeholderRef.current);
+        } else {
+            setPlaceholderWidth(0);
+        }
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [placeholderRef.current]);
+
+    useEffect(() => {
         if (appNavbarHeight && controlsWrapperHeight && windowInnerHeight) {
             setPanelHeight(windowInnerHeight - appNavbarHeight - controlsWrapperHeight - tabsWrapperHeight);
         }
@@ -321,19 +341,8 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     }, [selectedTabMap, clientId]);
 
     useEffect(() => {
-        if (placeholderRef.current) {
-            const width = placeholderRef.current.clientWidth;
-            setTimeout(() => forceSetSticked(width === 0), 0);
-        }
-    }, [
-        placeholderRef,
-        selectedTabId,
-        clientId,
-        clientTabsMap,
-        buttonsWrapperWidth,
-        headerWidth,
-        tabTitleChangeCount,
-    ]);
+        setButtonsWrapperSticked(placeholderWidth === 0);
+    }, [placeholderWidth]);
 
     useEffect(() => {
         if (tabsScrollRef.current) {
@@ -519,11 +528,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                             }
                         >
                             <Box className="channel-not-selected">
-                                <button
-                                    onClick={() => {
-                                        testHandleSelectChannel(clientId, selectedTabId, 'pugio.web-terminal');
-                                    }}
-                                >test select channel {selectedTabId}</button>
+                                <ChannelList clientId={clientId} />
                             </Box>
                         </ChannelPanel>
                     </SimpleBar>

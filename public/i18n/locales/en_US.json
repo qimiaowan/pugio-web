@@ -49,6 +49,13 @@
         "tab": {
             "errored": "Error",
             "newInstance": "New Channel Instance"
+        },
+        "channelList": {
+            "tabs": {
+                "builtIn": "Built-in",
+                "thirdParties": "Third Parties"
+            },
+            "create": "Create Channel"
         }
     }
 }

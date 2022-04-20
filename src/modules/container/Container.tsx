@@ -91,6 +91,13 @@ const pugioTheme = createTheme(theme, {
                 },
             },
         },
+        MuiInputBase: {
+            styleOverrides: {
+                root: {
+                    height: '100%',
+                },
+            },
+        },
         MuiButton: {
             styleOverrides: {
                 sizeMedium: {
