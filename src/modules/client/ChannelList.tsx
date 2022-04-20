@@ -133,19 +133,7 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                             }}
                         >
                             <Box className="channels-list-wrapper">
-                                {
-                                    new Array(200).fill(null).map((value, index) => {
-                                        return (
-                                            <Box
-                                                key={index}
-                                                className="test"
-                                                style={{
-                                                    width: utilsService.calculateItemWidth(width, 120),
-                                                }}
-                                            ></Box>
-                                        );
-                                    })
-                                }
+                                {/* TODO */}
                             </Box>
                         </SimpleBar>
             }
