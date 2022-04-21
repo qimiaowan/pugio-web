@@ -47,3 +47,18 @@ export interface PaginationRequestOptions {
 export interface InfiniteScrollHookData<D = any> extends PaginationInfo {
     list: D[];
 }
+
+export interface ChannelRequestData<T = any> {
+    scope: string;
+    data?: T;
+}
+
+export interface ChannelResponseData<T = any> {
+    id: string;
+    errored: boolean;
+    data: T;
+}
+
+export interface ChannelRequestOptions {
+    clientId: string;
+}
