@@ -33,6 +33,7 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
     data = {},
     style,
     builtIn = false,
+    width,
     onClick,
     // onDelete = _.noop,
 }) => {
@@ -60,6 +61,7 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
             style={{
                 backgroundColor: bgColor,
                 ...style,
+                width,
             }}
             onMouseEnter={() => {
                 setOpacity(1);
@@ -82,6 +84,9 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
                 <IconButton
                     onMouseDown={(event) => event.stopPropagation()}
                     onMouseUp={(event) => event.stopPropagation()}
+                    onClick={(event) => {
+                        event.stopPropagation();
+                    }}
                 >
                     <Icon className="icon icon-info" />
                 </IconButton>
@@ -100,6 +105,10 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
             <Box className="content-wrapper">
                 <Box
                     component="img"
+                    style={{
+                        width: width * 0.3,
+                        height: width * 0.3,
+                    }}
                     src={avatar || '/static/images/channel_avatar_fallback.svg'}
                 />
                 <Typography classes={{ root: 'text' }} variant="subtitle2">{name}</Typography>
@@ -228,9 +237,7 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                                                 key={item.id}
                                                 builtIn={selectedTabIndex === 0}
                                                 data={item.channel}
-                                                style={{
-                                                    width: utilsService.calculateItemWidth(width, 120),
-                                                }}
+                                                width={utilsService.calculateItemWidth(width, 120)}
                                                 onClick={() => {
                                                     onSelectChannel(item.channel.id);
                                                 }}

@@ -11,6 +11,7 @@ export interface ChannelListProps {
 
 export interface ChannelListItemProps extends BoxProps {
     data: Channel;
+    width: number;
     builtIn?: boolean;
     onDelete?: (data: Channel) => void;
 }
