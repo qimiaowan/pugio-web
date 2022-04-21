@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
     FC,
     useEffect,
@@ -31,13 +30,14 @@ import '@modules/client/channel-list.component.less';
 import { LoadingComponent } from '@modules/brand/loading.component';
 
 const ChannelListItem: FC<ChannelListItemProps> = ({
-    data,
+    data = {},
     style,
-    onDelete = _.noop,
+    builtIn = false,
+    onClick,
+    // onDelete = _.noop,
 }) => {
     const {
         name,
-        description,
         avatar,
     } = data;
 
@@ -47,11 +47,11 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
     };
 
     const [opacity, setOpacity] = useState<number>(0);
-    const [bgColor, setBgColor] = useState<string>('#fff');
+    const [bgColor, setBgColor] = useState<string>('transparent');
     const [mouseStay, setMouseStay] = useState<boolean>(false);
 
     useEffect(() => {
-        setBgColor(mouseStay ? '#f9f9f9' : '#fff');
+        setBgColor(mouseStay ? '#f9f9f9' : 'transparent');
     }, [mouseStay]);
 
     return (
@@ -75,15 +75,27 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
             onMouseUp={() => {
                 setBgColor('#f9f9f9');
             }}
+            onClick={onClick}
         >
+
             <Box className="action-wrapper" style={{ opacity }}>
                 <IconButton
-                    onClick={handleAction}
                     onMouseDown={(event) => event.stopPropagation()}
                     onMouseUp={(event) => event.stopPropagation()}
                 >
-                    <Icon className="icon icon-more-horizontal" />
+                    <Icon className="icon icon-info" />
                 </IconButton>
+                {
+                    !builtIn && (
+                        <IconButton
+                            onClick={handleAction}
+                            onMouseDown={(event) => event.stopPropagation()}
+                            onMouseUp={(event) => event.stopPropagation()}
+                        >
+                            <Icon className="icon icon-delete" />
+                        </IconButton>
+                    )
+                }
             </Box>
             <Box className="content-wrapper">
                 <Box
@@ -101,6 +113,7 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
     clientId,
     width,
     height,
+    onSelectChannel = _.noop,
 }) => {
     const tabs = [
         {
@@ -213,14 +226,36 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                                         return (
                                             <ChannelListItem
                                                 key={item.id}
+                                                builtIn={selectedTabIndex === 0}
                                                 data={item.channel}
                                                 style={{
                                                     width: utilsService.calculateItemWidth(width, 120),
+                                                }}
+                                                onClick={() => {
+                                                    onSelectChannel(item.channel.id);
                                                 }}
                                             />
                                         );
                                     })
                                 }
+                                <Box className="load-more-wrapper">
+                                    <Box>
+                                        <Button
+                                            variant="text"
+                                            classes={{ root: 'load-more-button' }}
+                                            disabled={queryClientChannelsLoadingMore || queryClientChannelsResponseData?.remains === 0}
+                                            onClick={queryMoreClientChannels}
+                                        >
+                                            {
+                                                queryClientChannelsLoadingMore
+                                                    ? getLocaleText('loading')
+                                                    : queryClientChannelsResponseData?.remains === 0
+                                                        ? getLocaleText('noMore')
+                                                        : getLocaleText('loadMore')
+                                            }
+                                        </Button>
+                                    </Box>
+                                </Box>
                             </Box>
                         </SimpleBar>
             }

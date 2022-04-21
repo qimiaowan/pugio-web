@@ -56,6 +56,21 @@
             flex-grow: 1;
             flex-shrink: 0;
             width: 100%;
+
+            .load-more-wrapper {
+                padding: @padding-vertical-width @padding-horizontal-width;
+                width: 100%;
+                display: block;
+                user-select: none;
+
+                & > div {
+                    width: 100%;
+                    height: 100;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+            }
         }
     }
 

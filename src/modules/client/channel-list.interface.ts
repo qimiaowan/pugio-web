@@ -2,6 +2,7 @@ import { Channel } from '@modules/channel/channel.interface';
 import { BoxProps } from '@mui/material/Box';
 
 export interface ChannelListProps {
+    tabId: string;
     clientId: string;
     width: number;
     height: number;
@@ -10,5 +11,6 @@ export interface ChannelListProps {
 
 export interface ChannelListItemProps extends BoxProps {
     data: Channel;
+    builtIn?: boolean;
     onDelete?: (data: Channel) => void;
 }

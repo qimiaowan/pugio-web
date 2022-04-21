@@ -56,7 +56,10 @@
                 "thirdParties": "Third Parties"
             },
             "create": "Create Channel",
-            "searchPlaceholder": "Type to search..."
+            "searchPlaceholder": "Type to search...",
+            "loadMore": "Load More",
+            "loading": "Loading...",
+            "noMore": "No More"
         }
     }
 }

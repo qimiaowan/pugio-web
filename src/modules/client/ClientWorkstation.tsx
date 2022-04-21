@@ -128,12 +128,11 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
         setSelectedTab(clientId, `${tabId}:scroll`);
     };
 
-    // TODO
-    // const testHandleSelectChannel = (clientId: string, tabId: string, channelId: string) => {
-    //     updateTab(clientId, tabId, {
-    //         channelId,
-    //     });
-    // };
+    const handleSelectChannel = (clientId: string, tabId: string, channelId: string) => {
+        updateTab(clientId, tabId, {
+            channelId,
+        });
+    };
 
     const handleLoadChannel = (channelId: string, clientId: string, tabId: string) => {
         updateTab(clientId, tabId, {
@@ -529,9 +528,13 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                         >
                             <Box className="channel-not-selected">
                                 <ChannelList
+                                    tabId={selectedTabId}
                                     clientId={clientId}
                                     width={headerWidth}
                                     height={panelHeight}
+                                    onSelectChannel={(channelId) => {
+                                        handleSelectChannel(clientId, selectedTabId, channelId);
+                                    }}
                                 />
                             </Box>
                         </ChannelPanel>
