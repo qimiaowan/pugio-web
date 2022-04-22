@@ -12,6 +12,8 @@ import io, { Socket } from 'socket.io-client';
 import { Terminal } from '@pugio/xterm';
 import _ from 'lodash';
 import { AppService } from '@builtin:web-terminal/app.service';
+import { useAsyncEffect } from 'use-async-effect';
+import { FitAddon } from 'xterm-addon-fit';
 
 const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     const {
@@ -30,43 +32,45 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     const [terminalId, setTerminalId] = useState<string>(null);
     const [client, setClient] = useState<Socket>(null);
 
-    useEffect(() => {
+    useAsyncEffect(async () => {
         if (terminalRef.current && terminalId && client) {
             const terminal = new Terminal();
-
-            terminal.initialize([]);
+            const xtermFitAddon = new FitAddon();
+            terminal.loadAddon(xtermFitAddon);
 
             client.on(`terminal:${terminalId}:data`, (data) => {
                 if (data?.content) {
-                    terminal.sequenceWrite(data, (rawData) => {
-                        return window.atob(rawData as string);
+                    terminal.sequenceWrite(data, (rawData: string) => {
+                        return decodeURI(window.atob(rawData));
                     });
                 }
             });
 
-            client.on(`terminal:${terminalId}:close`, (data) => {
+            client.on(`terminal:${terminalId}:close`, () => {
                 terminal.dispose();
             });
 
             terminal.open(terminalRef.current);
+            xtermFitAddon.fit();
 
             const listener = terminal.onSequenceData(async (data) => {
                 const { sequence, content } = data as any;
+                console.log(content);
                 await appService.sendData({
                     clientId,
                     terminalId,
                     sequence,
-                    terminalData: content,
+                    terminalData: encodeURI(content),
                 });
             });
 
-            appService.connect({
+            const connectionResponse = await appService.connect({
                 clientId,
                 terminalId,
-            }).then((response) => {
-                // const content = response?.response?.data?.content || [];
-                // terminal.initialize(content, (rawData) => window.atob(rawData as string));
             });
+
+            const initialContent = connectionResponse?.response?.data?.content || [];
+            terminal.initialize(initialContent);
 
             return () => {
                 listener.dispose();
