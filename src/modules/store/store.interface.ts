@@ -29,8 +29,14 @@ export interface ChannelConfig {
     basename: string;
 }
 
+export interface TabFunctionMap {
+    closeTab: () => void;
+    createNewTab: (focus?: boolean, channelId?: string) => void;
+}
+
 export interface LoadedChannelProps extends ChannelConfig {
-    onChannelLoad?: (lifecycle: Lifecycle) => void;
+    tab: TabFunctionMap,
+    setup: (lifecycle?: Lifecycle, channelId?: string) => void;
 }
 
 export interface ChannelTab {

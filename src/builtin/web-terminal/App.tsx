@@ -22,6 +22,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
         height,
         basename,
         declarations,
+        setup,
     } = props;
 
     const clientId = _.get(metadata, 'client.id');
@@ -55,7 +56,6 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
 
             const listener = terminal.onSequenceData(async (data) => {
                 const { sequence, content } = data as any;
-                console.log(content);
                 await appService.sendData({
                     clientId,
                     terminalId,
@@ -90,6 +90,10 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
         const client = io('/client');
         client.emit('join', clientId);
         setClient(client);
+    }, []);
+
+    useEffect(() => {
+        setup();
     }, []);
 
     return (

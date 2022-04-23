@@ -46,19 +46,21 @@ const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
             {
                 !channelId
                     ? children
-                    : loading
-                        ? <Loading />
-                        : (errored || !nodes)
-                            ? <Exception
-                                imageSrc="/static/images/error.svg"
-                                title={getLocaleText('error.title', { channelId })}
-                                subTitle={getLocaleText('error.subTitle')}
-                            />
-                            : <KeepAlive
-                                id={tabId}
-                                name={tabId}
-                                when={() => [true, false]}
-                            >{nodes}</KeepAlive>
+                    : nodes
+                        ? <KeepAlive
+                            id={tabId}
+                            name={tabId}
+                            when={() => [true, false]}
+                        >{nodes}</KeepAlive>
+                        : loading
+                            ? <Loading />
+                            : errored
+                                ? <Exception
+                                    imageSrc="/static/images/error.svg"
+                                    title={getLocaleText('error.title', { channelId })}
+                                    subTitle={getLocaleText('error.subTitle')}
+                                />
+                                : null
             }
         </Box>
     );

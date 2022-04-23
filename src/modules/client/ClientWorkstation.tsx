@@ -24,6 +24,7 @@ import {
     ChannelTab,
     ChannelMetadata,
     LoadedChannelProps,
+    TabData,
 } from '@modules/store/store.interface';
 import { ClientService } from '@modules/client/client.service';
 import { ChannelService } from '@modules/channel/channel.service';
@@ -123,8 +124,8 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const [selectedTabId, setSelectedTabId] = useState<string>(null);
     const [selectedTabMetadata, setSelectedTabMetadata] = useState<string[]>([]);
 
-    const handleCreateTab = (clientId: string) => {
-        const tabId = createTab(clientId);
+    const handleCreateTab = (clientId: string, data: TabData = {}) => {
+        const tabId = createTab(clientId, data);
         setSelectedTab(clientId, `${tabId}:scroll`);
     };
 
@@ -195,8 +196,21 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                         height={panelHeight}
                                         metadata={metadata}
                                         basename={`/client/${clientId}/workstation`}
-                                        onChannelLoad={(lifecycle) => {
-                                            updateTab(clientId, tabId, { lifecycle });
+                                        setup={(lifecycle = {}) => {
+                                            updateTab(clientId, tabId, {
+                                                lifecycle,
+                                                loading: false,
+                                            });
+                                        }}
+                                        tab={{
+                                            closeTab: () => destroyTab(clientId, tabId),
+                                            createNewTab: (focus, channelId) => {
+                                                if (focus) {
+                                                    handleCreateTab(clientId, { channelId });
+                                                } else {
+                                                    createTab(clientId, { channelId });
+                                                }
+                                            },
                                         }}
                                     />
                                 ),
@@ -213,10 +227,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             .catch(() => {
                 updateTab(clientId, tabId, {
                     errored: true,
-                });
-            })
-            .finally(() => {
-                updateTab(clientId, tabId, {
                     loading: false,
                 });
             });
