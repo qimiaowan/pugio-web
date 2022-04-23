@@ -32,12 +32,12 @@ import { UtilsService } from '@modules/utils/utils.service';
 import { useParams } from 'react-router-dom';
 import { List } from 'immutable';
 import { useDebounce } from 'ahooks';
-import '@modules/client/client-workstation.component.less';
 import { ExceptionProps } from '@modules/brand/exception.interface';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { AppComponent as WebTerminalAppComponent } from '@builtin:web-terminal/app.component';
 import { ChannelListComponent } from '@modules/client/channel-list.component';
 import { ChannelListProps } from '@modules/client/channel-list.interface';
+import '@modules/client/client-workstation.component.less';
 
 const ClientWorkstation: FC<InjectedComponentProps> = ({
     declarations,

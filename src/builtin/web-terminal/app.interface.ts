@@ -41,3 +41,9 @@ export interface ResizeRequestOptions extends ChannelRequestOptions {
 
 export type ResizeResponseData = SendDataResponseData;
 
+export interface SendConsumeConfirmRequestOptions extends ChannelRequestOptions {
+    terminalId: string;
+    sequence: number;
+}
+
+export type SendConsumeConfirmResponseData = SendDataResponseData;

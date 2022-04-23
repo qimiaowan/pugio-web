@@ -41,9 +41,19 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
 
             client.on(`terminal:${terminalId}:data`, (data) => {
                 if (data?.content) {
-                    terminal.sequenceWrite(data, (rawData: string) => {
-                        return decodeURI(window.atob(rawData));
-                    });
+                    terminal.sequenceWrite(
+                        data,
+                        (rawData: string) => {
+                            return decodeURI(window.atob(rawData));
+                        },
+                        () => {
+                            appService.sendConsumeConfirm({
+                                clientId,
+                                terminalId,
+                                sequence: data?.sequence,
+                            });
+                        },
+                    );
                 }
             });
 

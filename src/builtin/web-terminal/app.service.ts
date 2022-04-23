@@ -11,6 +11,8 @@ import {
     CloseConnectionResponseData,
     ResizeRequestOptions,
     ResizeResponseData,
+    SendConsumeConfirmRequestOptions,
+    SendConsumeConfirmResponseData,
 } from '@builtin:web-terminal/app.interface';
 import {
     Response,
@@ -86,6 +88,30 @@ export class AppService {
                         id: terminalId,
                         sequence,
                         data: window.btoa(terminalData),
+                    },
+                },
+            });
+    }
+
+    public async sendConsumeConfirm(
+        options: SendConsumeConfirmRequestOptions,
+    ): Promise<Response<ChannelResponseData<SendConsumeConfirmResponseData>>> {
+        const {
+            clientId,
+            terminalId,
+            sequence,
+        } = options;
+
+        return this.requestService.getInstance()
+            .request({
+                url: `/client/${clientId}/channel_request`,
+                method: 'post',
+                data: {
+                    scope: 'pugio.web-terminal',
+                    data: {
+                        type: 'consumeConfirm',
+                        id: terminalId,
+                        sequence,
                     },
                 },
             });
