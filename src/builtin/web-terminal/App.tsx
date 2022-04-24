@@ -5,7 +5,7 @@ import {
     useRef,
     useState,
 } from 'react';
-import Box from '@mui/material/Box';
+import Box, { BoxProps } from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
@@ -22,7 +22,9 @@ import { LocaleService } from '@modules/locale/locale.service';
 import '@builtin:web-terminal/app.component.less';
 import { useRequest } from 'ahooks';
 import { HeaderControlItem } from '@builtin:web-terminal/app.interface';
+import { LoadingComponent } from '@modules/brand/loading.component';
 import SimpleBar from 'simplebar-react';
+import clsx from 'clsx';
 
 const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     const {
@@ -39,6 +41,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
 
     const appService = declarations.get<AppService>(AppService);
     const localeService = declarations.get<LocaleService>(LocaleService);
+    const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
 
     const terminalRef = useRef<HTMLDivElement>(null);
     const [terminalId, setTerminalId] = useState<string>(null);
@@ -54,7 +57,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
             manual: true,
         },
     );
-    const [disposeTerminal, setDisposeTerminal] = useState<Function>(null);
+    const [terminal, setTerminal] = useState<Terminal<Record<string, any>>>(null);
     const [headerControlItems, setHeaderControlItems] = useState<HeaderControlItem[]>([]);
 
     useAsyncEffect(async () => {
@@ -94,6 +97,8 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
             terminal.open(terminalRef.current);
             xtermFitAddon.fit();
 
+            setTerminal(terminal);
+
             const listener = terminal.onSequenceData(async (data) => {
                 const { sequence, content } = data as any;
                 await appService.sendData({
@@ -103,8 +108,6 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                     terminalData: encodeURI(content),
                 });
             });
-
-            setDisposeTerminal(listener.dispose);
 
             const connectionResponse = await appService.connect({
                 clientId,
@@ -148,32 +151,34 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     }, [terminalId]);
 
     useEffect(() => {
-        setHeaderControlItems([
-            {
-                button: {
-                    title: getLocaleText('reconnect'),
-                    icon: 'icon-refresh',
+        if (terminal && terminalId) {
+            setHeaderControlItems([
+                {
+                    button: {
+                        title: getLocaleText('reconnect'),
+                        icon: 'icon-refresh',
+                    },
                 },
-            },
-            {
-                button: {
-                    icon: 'icon-clipboard',
-                    title: getLocaleText('clipboard'),
+                {
+                    button: {
+                        icon: 'icon-clipboard',
+                        title: getLocaleText('clipboard'),
+                    },
                 },
-            },
-            {
-                divider: true,
-            },
-            {
-                button: {
-                    icon: 'icon-stop',
-                    title: getLocaleText('close'),
+                {
+                    divider: true,
                 },
-            },
-        ]);
+                {
+                    button: {
+                        icon: 'icon-stop',
+                        title: getLocaleText('close'),
+                    },
+                },
+            ]);
+        }
     }, [
         terminalId,
-        disposeTerminal,
+        terminal,
         client,
         getLocaleText,
     ]);
@@ -187,7 +192,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                 basename,
             }}
         >
-            <Box className="container">
+            <Box className={clsx('container', { loading })}>
                 <SimpleBar style={{ width }} className="controls-wrapper">
                     {
                         headerControlItems.map((item, index) => {
@@ -226,6 +231,13 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                     }
                 </SimpleBar>
                 <Box style={{ width }} className="terminal-wrapper" ref={terminalRef} />
+                {
+                    loading && (
+                        <Box className="loading-wrapper">
+                            <Loading />
+                        </Box>
+                    )
+                }
             </Box>
         </Context.Provider>
     );
