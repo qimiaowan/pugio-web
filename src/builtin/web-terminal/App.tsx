@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
     FC,
     useCallback,
@@ -53,6 +54,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     const [headerControlItems, setHeaderControlItems] = useState<HeaderControlItem[]>([]);
     const [closeConnection, setCloseConnection] = useState<Function>(() => _.noop);
     const [cleanConnection, setCleanConnection] = useState<Function>(() => _.noop);
+    const [clipboardAvailable, setClipboardAvailable] = useState<boolean>(_.isFunction(navigator?.clipboard?.read));
 
     const handleCloseConnection = useCallback((clientId: string, terminalId: string) => {
         if (terminal) {
@@ -193,7 +195,10 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                     button: {
                         icon: 'icon-clipboard',
                         props: {
-                            disabled: loading || closeConnectionLoading || cleanConnectionLoading,
+                            disabled: loading ||
+                                closeConnectionLoading ||
+                                cleanConnectionLoading ||
+                                clipboardAvailable,
                             title: getLocaleText('clipboard'),
                         },
                     },
@@ -221,7 +226,14 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
         loading,
         closeConnectionLoading,
         cleanConnectionLoading,
+        clipboardAvailable,
     ]);
+
+    useEffect(() => {
+        navigator.clipboard.read().then((data) => {
+            console.log(data);
+        });
+    }, []);
 
     return (
         <Context.Provider
