@@ -1,11 +1,10 @@
-import { MouseEventHandler } from 'react';
 import { ChannelRequestOptions } from '@modules/request/request.interface';
+import { ButtonProps } from '@mui/material/Button';
 
 export interface HeaderControlItem {
     button?: {
-        title: string;
         icon: string;
-        clickHandler?: (event: MouseEventHandler<HTMLButtonElement>) => void;
+        props?: ButtonProps;
     };
     divider?: boolean;
 }

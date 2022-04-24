@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import {
     FC,
+    useCallback,
     useEffect,
     useRef,
     useState,
@@ -48,17 +49,21 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     const [client, setClient] = useState<Socket>(null);
     const getLocaleText = localeService.useLocaleContext('builtin.webTerminal');
     const [loading, setLoading] = useState<boolean>(false);
-    const {
-        loading: closeConnectionLoading,
-        run: closeConnection,
-    } = useRequest(
-        appService.closeConnection as typeof appService.closeConnection,
-        {
-            manual: true,
-        },
-    );
+    const [closeConnectionLoading, setCloseConnectionLoading] = useState<boolean>(false);
     const [terminal, setTerminal] = useState<Terminal<Record<string, any>>>(null);
     const [headerControlItems, setHeaderControlItems] = useState<HeaderControlItem[]>([]);
+    const [cleanConnection, setCleanConnection] = useState<Function>(() => _.noop);
+
+    const handleCloseConnection = useCallback((clientId: string, terminalId: string) => {
+        if (terminal) {
+            setCloseConnectionLoading(true);
+            appService.closeConnection({ clientId, terminalId }).then((response) => {
+                if (response?.response?.data?.accepted) {
+                    cleanConnection();
+                }
+            }).finally(() => setCloseConnectionLoading(false));
+        }
+    }, [terminal, cleanConnection]);
 
     useAsyncEffect(async () => {
         if (terminalRef.current && terminalId && client) {
@@ -85,11 +90,13 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
             };
 
             const clientCloseHandler = () => {
-                tab.closeTab();
                 terminal.dispose();
                 client.off(`terminal:${terminalId}:data`, clientDataHandler);
                 client.off(`terminal:${terminalId}:close`, clientCloseHandler);
+                tab.closeTab();
             };
+
+            setCleanConnection(() => clientCloseHandler);
 
             client.on(`terminal:${terminalId}:data`, clientDataHandler);
             client.on(`terminal:${terminalId}:close`, clientCloseHandler);
@@ -155,14 +162,20 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
             setHeaderControlItems([
                 {
                     button: {
-                        title: getLocaleText('reconnect'),
                         icon: 'icon-refresh',
+                        props: {
+                            disabled: loading || closeConnectionLoading,
+                            title: getLocaleText('reconnect'),
+                        },
                     },
                 },
                 {
                     button: {
                         icon: 'icon-clipboard',
-                        title: getLocaleText('clipboard'),
+                        props: {
+                            disabled: loading || closeConnectionLoading,
+                            title: getLocaleText('clipboard'),
+                        },
                     },
                 },
                 {
@@ -171,7 +184,11 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                 {
                     button: {
                         icon: 'icon-stop',
-                        title: getLocaleText('close'),
+                        props: {
+                            disabled: loading || closeConnectionLoading,
+                            title: getLocaleText('close'),
+                            onClick: () => handleCloseConnection(clientId, terminalId),
+                        },
                     },
                 },
             ]);
@@ -181,6 +198,8 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
         terminal,
         client,
         getLocaleText,
+        loading,
+        closeConnectionLoading,
     ]);
 
     return (
@@ -203,13 +222,12 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
 
                             if (button) {
                                 const {
-                                    title,
                                     icon,
-                                    clickHandler = _.noop,
+                                    props = {},
                                 } = button;
 
                                 return (
-                                    <IconButton key={index} title={title} onClick={clickHandler} >
+                                    <IconButton key={index} {...props} >
                                         <Icon className={icon} />
                                     </IconButton>
                                 );
