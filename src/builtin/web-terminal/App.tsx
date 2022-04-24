@@ -38,6 +38,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     } = props;
 
     const clientId = _.get(metadata, 'client.id');
+    const clipboardAvailable = _.isFunction(navigator?.clipboard?.read);
 
     const appService = declarations.get<AppService>(AppService);
     const localeService = declarations.get<LocaleService>(LocaleService);
@@ -54,7 +55,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     const [headerControlItems, setHeaderControlItems] = useState<HeaderControlItem[]>([]);
     const [closeConnection, setCloseConnection] = useState<Function>(() => _.noop);
     const [cleanConnection, setCleanConnection] = useState<Function>(() => _.noop);
-    const [clipboardAvailable, setClipboardAvailable] = useState<boolean>(_.isFunction(navigator?.clipboard?.read));
+    const [clipboardText, setClipboardText] = useState<string>('');
 
     const handleCloseConnection = useCallback((clientId: string, terminalId: string) => {
         if (terminal) {
@@ -198,8 +199,14 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                             disabled: loading ||
                                 closeConnectionLoading ||
                                 cleanConnectionLoading ||
-                                clipboardAvailable,
+                                !clipboardAvailable ||
+                                !clipboardText,
                             title: getLocaleText('clipboard'),
+                            onClick: () => {
+                                if (clipboardText) {
+                                    terminal.pushSequenceData(clipboardText);
+                                }
+                            },
                         },
                     },
                 },
@@ -227,11 +234,12 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
         closeConnectionLoading,
         cleanConnectionLoading,
         clipboardAvailable,
+        clipboardText,
     ]);
 
     useEffect(() => {
-        navigator.clipboard.read().then((data) => {
-            console.log(data);
+        navigator.clipboard.readText().then((data) => {
+            setClipboardText(data);
         });
     }, []);
 
