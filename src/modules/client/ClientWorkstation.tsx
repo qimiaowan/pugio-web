@@ -60,8 +60,11 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
         'pugio.web-terminal': WebTerminalAppComponent,
     };
     const theme = brandService.getTheme();
+    const LocaleContext = localeService.getContext();
 
     const { client_id: clientId } = useParams();
+    const locale = localeService.useContextLocale();
+    const localeMap = localeService.useLocaleMap(locale);
     const [tabsScrollOffset, setTabsScrollOffset] = useState<number>(null);
     const debouncedTabsScrollOffset = useDebounce(tabsScrollOffset, { wait: 300 });
     const [tabTitleChangeCount, setTabTitleChangeCount] = useState<number>(0);
@@ -199,28 +202,35 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                     ThemeProvider,
                                     { theme },
                                     <StyledEngineProvider injectFirst={true}>
-                                        <ChannelEntry
-                                            width={headerWidth}
-                                            height={panelHeight}
-                                            metadata={metadata}
-                                            basename={`/client/${clientId}/workstation`}
-                                            setup={(lifecycle = {}) => {
-                                                updateTab(clientId, tabId, {
-                                                    lifecycle,
-                                                    loading: false,
-                                                });
+                                        <LocaleContext.Provider
+                                            value={{
+                                                locale,
+                                                localeTextMap: localeMap,
                                             }}
-                                            tab={{
-                                                closeTab: () => destroyTab(clientId, tabId),
-                                                createNewTab: (focus, channelId) => {
-                                                    if (focus) {
-                                                        handleCreateTab(clientId, { channelId });
-                                                    } else {
-                                                        createTab(clientId, { channelId });
-                                                    }
-                                                },
-                                            }}
-                                        />
+                                        >
+                                            <ChannelEntry
+                                                width={headerWidth}
+                                                height={panelHeight}
+                                                metadata={metadata}
+                                                basename={`/client/${clientId}/workstation`}
+                                                setup={(lifecycle = {}) => {
+                                                    updateTab(clientId, tabId, {
+                                                        lifecycle,
+                                                        loading: false,
+                                                    });
+                                                }}
+                                                tab={{
+                                                    closeTab: () => destroyTab(clientId, tabId),
+                                                    createNewTab: (focus, channelId) => {
+                                                        if (focus) {
+                                                            handleCreateTab(clientId, { channelId });
+                                                        } else {
+                                                            createTab(clientId, { channelId });
+                                                        }
+                                                    },
+                                                }}
+                                            />
+                                        </LocaleContext.Provider>
                                     </StyledEngineProvider>,
                                 ),
                             });

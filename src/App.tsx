@@ -38,7 +38,12 @@ const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) =>
     return (
         <>
             <AliveScope>
-                <LocaleContext.Provider value={localeMap}>
+                <LocaleContext.Provider
+                    value={{
+                        locale,
+                        localeTextMap: localeMap,
+                    }}
+                >
                     <Container onLocaleChange={(locale) => setLocale(locale)} />
                 </LocaleContext.Provider>
             </AliveScope>

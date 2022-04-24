@@ -7,14 +7,22 @@ import {
 import { Injectable } from 'khamsa';
 import _ from 'lodash';
 import Mustache from 'mustache';
-import { LocaleListItem } from '@modules/locale/locale.interface';
+import {
+    LocaleListItem,
+    LocaleContextProps,
+} from '@modules/locale/locale.interface';
 
 @Injectable()
 export class LocaleService {
-    private LocaleContext = createContext(null);
+    private LocaleContext = createContext<LocaleContextProps>(null);
 
     public getContext() {
         return this.LocaleContext;
+    }
+
+    public useContextLocale() {
+        const { locale } = useContext(this.LocaleContext);
+        return locale;
     }
 
     public useLocaleMap(locale = 'en_US') {
@@ -47,7 +55,7 @@ export class LocaleService {
 
     public useLocaleContext(basePathname = '') {
         const basePathnameSegments = basePathname.split('.');
-        const localeTextMap = useContext(this.LocaleContext);
+        const { localeTextMap } = useContext(this.LocaleContext);
         const [localeTextGetter, setLocaleTextGetter] = useState<Function>(() => _.noop);
 
         useEffect(() => {

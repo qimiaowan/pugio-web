@@ -8,3 +8,8 @@ export interface LocaleMenuProps {
     selectedLocaleId?: string;
     onLocaleChange?: (localeItem: LocaleListItem) => void;
 }
+
+export interface LocaleContextProps {
+    localeTextMap: Record<string, any>;
+    locale: string;
+}

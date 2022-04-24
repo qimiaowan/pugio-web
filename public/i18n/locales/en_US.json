@@ -61,5 +61,12 @@
             "loading": "Loading...",
             "noMore": "No More"
         }
+    },
+    "builtin": {
+        "webTerminal": {
+            "reconnect": "Reconnect",
+            "clipboard": "Clipboard",
+            "close": "Close Connection"
+        }
     }
 }

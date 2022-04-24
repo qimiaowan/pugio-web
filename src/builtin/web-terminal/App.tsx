@@ -17,6 +17,7 @@ import _ from 'lodash';
 import { AppService } from '@builtin:web-terminal/app.service';
 import { useAsyncEffect } from 'use-async-effect';
 import { FitAddon } from 'xterm-addon-fit';
+import { LocaleService } from '@modules/locale/locale.service';
 import '@builtin:web-terminal/app.component.less';
 
 const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
@@ -33,10 +34,12 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     const clientId = _.get(metadata, 'client.id');
 
     const appService = declarations.get<AppService>(AppService);
+    const localeService = declarations.get<LocaleService>(LocaleService);
 
     const terminalRef = useRef<HTMLDivElement>(null);
     const [terminalId, setTerminalId] = useState<string>(null);
     const [client, setClient] = useState<Socket>(null);
+    const getLocaleText = localeService.useLocaleContext('builtin.webTerminal');
 
     useAsyncEffect(async () => {
         if (terminalRef.current && terminalId && client) {
@@ -137,10 +140,10 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
         >
             <Box className="container">
                 <Box className="controls-wrapper">
-                    <IconButton>
+                    <IconButton title={getLocaleText('reconnect')}>
                         <Icon className="icon-refresh" />
                     </IconButton>
-                    <IconButton>
+                    <IconButton title={getLocaleText('clipboard')}>
                         <Icon className="icon-clipboard" />
                     </IconButton>
                     <Divider
@@ -150,7 +153,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                             root: 'divider',
                         }}
                     />
-                    <IconButton>
+                    <IconButton title={getLocaleText('close')}>
                         <Icon className="icon-stop" />
                     </IconButton>
                 </Box>
