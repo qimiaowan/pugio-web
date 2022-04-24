@@ -8,23 +8,29 @@
     align-items: stretch;
 
     .controls-wrapper {
-        box-sizing: border-box;
-        display: flex;
-        padding: @padding-vertical-width @padding-horizontal-width;
+        padding: 0 @padding-horizontal-width;
 
-        .divider {
-            margin: 0 calc(@padding-horizontal-width / 2);
-        }
+        .simplebar-content {
+            box-sizing: border-box;
+            height: 50px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
 
-        & > button {
-            margin: 0 calc(@padding-horizontal-width / 2);
-
-            &:first-child {
-                margin-left: 0;
+            .divider {
+                margin: 0 calc(@padding-horizontal-width / 2);
             }
 
-            &:last-child {
-                margin-right: 0;
+            & > button {
+                margin: 0 calc(@padding-horizontal-width / 2);
+
+                &:first-child {
+                    margin-left: 0;
+                }
+
+                &:last-child {
+                    margin-right: 0;
+                }
             }
         }
     }

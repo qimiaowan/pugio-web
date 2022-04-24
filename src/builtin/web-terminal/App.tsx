@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
     FC,
     useEffect,
@@ -19,6 +20,9 @@ import { useAsyncEffect } from 'use-async-effect';
 import { FitAddon } from 'xterm-addon-fit';
 import { LocaleService } from '@modules/locale/locale.service';
 import '@builtin:web-terminal/app.component.less';
+import { useRequest } from 'ahooks';
+import { HeaderControlItem } from '@builtin:web-terminal/app.interface';
+import SimpleBar from 'simplebar-react';
 
 const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     const {
@@ -40,6 +44,18 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     const [terminalId, setTerminalId] = useState<string>(null);
     const [client, setClient] = useState<Socket>(null);
     const getLocaleText = localeService.useLocaleContext('builtin.webTerminal');
+    const [loading, setLoading] = useState<boolean>(false);
+    const {
+        loading: closeConnectionLoading,
+        run: closeConnection,
+    } = useRequest(
+        appService.closeConnection as typeof appService.closeConnection,
+        {
+            manual: true,
+        },
+    );
+    const [disposeTerminal, setDisposeTerminal] = useState<Function>(null);
+    const [headerControlItems, setHeaderControlItems] = useState<HeaderControlItem[]>([]);
 
     useAsyncEffect(async () => {
         if (terminalRef.current && terminalId && client) {
@@ -88,6 +104,8 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                 });
             });
 
+            setDisposeTerminal(listener.dispose);
+
             const connectionResponse = await appService.connect({
                 clientId,
                 terminalId,
@@ -129,6 +147,37 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
         }
     }, [terminalId]);
 
+    useEffect(() => {
+        setHeaderControlItems([
+            {
+                button: {
+                    title: getLocaleText('reconnect'),
+                    icon: 'icon-refresh',
+                },
+            },
+            {
+                button: {
+                    icon: 'icon-clipboard',
+                    title: getLocaleText('clipboard'),
+                },
+            },
+            {
+                divider: true,
+            },
+            {
+                button: {
+                    icon: 'icon-stop',
+                    title: getLocaleText('close'),
+                },
+            },
+        ]);
+    }, [
+        terminalId,
+        disposeTerminal,
+        client,
+        getLocaleText,
+    ]);
+
     return (
         <Context.Provider
             value={{
@@ -139,24 +188,43 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
             }}
         >
             <Box className="container">
-                <Box className="controls-wrapper">
-                    <IconButton title={getLocaleText('reconnect')}>
-                        <Icon className="icon-refresh" />
-                    </IconButton>
-                    <IconButton title={getLocaleText('clipboard')}>
-                        <Icon className="icon-clipboard" />
-                    </IconButton>
-                    <Divider
-                        variant="fullWidth"
-                        orientation="vertical"
-                        classes={{
-                            root: 'divider',
-                        }}
-                    />
-                    <IconButton title={getLocaleText('close')}>
-                        <Icon className="icon-stop" />
-                    </IconButton>
-                </Box>
+                <SimpleBar style={{ width }} className="controls-wrapper">
+                    {
+                        headerControlItems.map((item, index) => {
+                            const {
+                                button,
+                                divider,
+                            } = item;
+
+                            if (button) {
+                                const {
+                                    title,
+                                    icon,
+                                    clickHandler = _.noop,
+                                } = button;
+
+                                return (
+                                    <IconButton key={index} title={title} onClick={clickHandler} >
+                                        <Icon className={icon} />
+                                    </IconButton>
+                                );
+                            } else if (divider) {
+                                return (
+                                    <Divider
+                                        key={index}
+                                        variant="fullWidth"
+                                        orientation="vertical"
+                                        classes={{
+                                            root: 'divider',
+                                        }}
+                                    />
+                                );
+                            } else {
+                                return null;
+                            }
+                        })
+                    }
+                </SimpleBar>
                 <Box style={{ width }} className="terminal-wrapper" ref={terminalRef} />
             </Box>
         </Context.Provider>

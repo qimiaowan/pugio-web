@@ -1,4 +1,14 @@
+import { MouseEventHandler } from 'react';
 import { ChannelRequestOptions } from '@modules/request/request.interface';
+
+export interface HeaderControlItem {
+    button?: {
+        title: string;
+        icon: string;
+        clickHandler?: (event: MouseEventHandler<HTMLButtonElement>) => void;
+    };
+    divider?: boolean;
+}
 
 export type MakeHandshakeRequestOptions = ChannelRequestOptions;
 
