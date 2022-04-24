@@ -5,6 +5,9 @@ import {
     useState,
 } from 'react';
 import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import Icon from '@mui/material/Icon';
+import IconButton from '@mui/material/IconButton';
 import { InjectedComponentProps } from 'khamsa';
 import { Context } from '@builtin:web-terminal/context';
 import { LoadedChannelProps } from '@modules/store/store.interface';
@@ -14,6 +17,7 @@ import _ from 'lodash';
 import { AppService } from '@builtin:web-terminal/app.service';
 import { useAsyncEffect } from 'use-async-effect';
 import { FitAddon } from 'xterm-addon-fit';
+import '@builtin:web-terminal/app.component.less';
 
 const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     const {
@@ -131,13 +135,27 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                 basename,
             }}
         >
-            <Box
-                style={{
-                    width,
-                    height,
-                }}
-                ref={terminalRef}
-            />
+            <Box className="container">
+                <Box className="controls-wrapper">
+                    <IconButton>
+                        <Icon className="icon-refresh" />
+                    </IconButton>
+                    <IconButton>
+                        <Icon className="icon-clipboard" />
+                    </IconButton>
+                    <Divider
+                        variant="fullWidth"
+                        orientation="vertical"
+                        classes={{
+                            root: 'divider',
+                        }}
+                    />
+                    <IconButton>
+                        <Icon className="icon-stop" />
+                    </IconButton>
+                </Box>
+                <Box style={{ width }} className="terminal-wrapper" ref={terminalRef} />
+            </Box>
         </Context.Provider>
     );
 };

@@ -17,6 +17,8 @@ import { ChannelPanelComponent } from '@modules/channel/channel-panel.component'
 import { ChannelPanelProps } from '@modules/channel/channel.interface';
 import { LocaleService } from '@modules/locale/locale.service';
 import { StoreService } from '@modules/store/store.service';
+import ThemeProvider from '@mui/material/styles/ThemeProvider';
+import { StyledEngineProvider } from '@mui/material/styles';
 import _ from 'lodash';
 import shallow from 'zustand/shallow';
 import SimpleBar from 'simplebar-react';
@@ -38,6 +40,7 @@ import { AppComponent as WebTerminalAppComponent } from '@builtin:web-terminal/a
 import { ChannelListComponent } from '@modules/client/channel-list.component';
 import { ChannelListProps } from '@modules/client/channel-list.interface';
 import '@modules/client/client-workstation.component.less';
+import { BrandService } from '@modules/brand/brand.service';
 
 const ClientWorkstation: FC<InjectedComponentProps> = ({
     declarations,
@@ -49,12 +52,14 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const clientService = declarations.get<ClientService>(ClientService);
     const channelService = declarations.get<ChannelService>(ChannelService);
     const utilsService = declarations.get<UtilsService>(UtilsService);
+    const brandService = declarations.get<BrandService>(BrandService);
     const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
     const ChannelList = declarations.get<FC<ChannelListProps>>(ChannelListComponent);
 
     const internalChannelMap = {
         'pugio.web-terminal': WebTerminalAppComponent,
     };
+    const theme = brandService.getTheme();
 
     const { client_id: clientId } = useParams();
     const [tabsScrollOffset, setTabsScrollOffset] = useState<number>(null);
@@ -190,29 +195,33 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                         if (typeof ChannelEntry === 'function') {
                             resolve({
                                 data,
-                                nodes: (
-                                    <ChannelEntry
-                                        width={headerWidth}
-                                        height={panelHeight}
-                                        metadata={metadata}
-                                        basename={`/client/${clientId}/workstation`}
-                                        setup={(lifecycle = {}) => {
-                                            updateTab(clientId, tabId, {
-                                                lifecycle,
-                                                loading: false,
-                                            });
-                                        }}
-                                        tab={{
-                                            closeTab: () => destroyTab(clientId, tabId),
-                                            createNewTab: (focus, channelId) => {
-                                                if (focus) {
-                                                    handleCreateTab(clientId, { channelId });
-                                                } else {
-                                                    createTab(clientId, { channelId });
-                                                }
-                                            },
-                                        }}
-                                    />
+                                nodes: createElement(
+                                    ThemeProvider,
+                                    { theme },
+                                    <StyledEngineProvider injectFirst={true}>
+                                        <ChannelEntry
+                                            width={headerWidth}
+                                            height={panelHeight}
+                                            metadata={metadata}
+                                            basename={`/client/${clientId}/workstation`}
+                                            setup={(lifecycle = {}) => {
+                                                updateTab(clientId, tabId, {
+                                                    lifecycle,
+                                                    loading: false,
+                                                });
+                                            }}
+                                            tab={{
+                                                closeTab: () => destroyTab(clientId, tabId),
+                                                createNewTab: (focus, channelId) => {
+                                                    if (focus) {
+                                                        handleCreateTab(clientId, { channelId });
+                                                    } else {
+                                                        createTab(clientId, { channelId });
+                                                    }
+                                                },
+                                            }}
+                                        />
+                                    </StyledEngineProvider>,
                                 ),
                             });
                         } else {

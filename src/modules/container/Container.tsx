@@ -12,12 +12,7 @@ import {
 } from 'react-router-dom';
 import { LocaleService } from '@modules/locale/locale.service';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
-import {
-    StyledEngineProvider,
-    ThemeOptions,
-} from '@mui/material/styles';
-import createTheme from '@mui/material/styles/createTheme';
-import theme from '@lenconda/shuffle-mui-theme';
+import { StyledEngineProvider } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Icon from '@mui/material/Icon';
@@ -37,113 +32,6 @@ import { ContainerProps } from '@modules/container/container.interface';
 import _ from 'lodash';
 import '@modules/container/container.component.less';
 
-const pugioTheme = createTheme(theme, {
-    components: {
-        MuiIcon: {
-            defaultProps: {
-                baseClassName: 'pugio-icons',
-            },
-            styleOverrides: {
-                root: {
-                    width: 'initial',
-                    height: 'initial',
-                    fontSize: 12,
-                },
-                fontSizeSmall: {
-                    fontSize: 6,
-                },
-                fontSizeLarge: {
-                    fontSize: 16,
-                },
-            },
-        },
-        MuiListItemText: {
-            defaultProps: {
-                disableTypography: true,
-            },
-            styleOverrides: {
-                root: {
-                    fontSize: 13,
-                },
-            },
-        },
-        MuiListItemIcon: {
-            styleOverrides: {
-                root: {
-                    minWidth: 24,
-                },
-            },
-        },
-        MuiListItem: {
-            styleOverrides: {
-                root: {
-                    userSelect: 'none',
-                    cursor: 'pointer',
-                },
-            },
-        },
-        MuiTextField: {
-            defaultProps: {
-                InputProps: {
-                    classes: {
-                        input: 'input',
-                    },
-                },
-            },
-        },
-        MuiInputBase: {
-            styleOverrides: {
-                root: {
-                    height: '100%',
-                },
-            },
-        },
-        MuiButton: {
-            styleOverrides: {
-                sizeMedium: {
-                    fontSize: 12,
-                    lineHeight: '17px',
-                    paddingTop: 7,
-                    paddingRight: 10,
-                    paddingBottom: 7,
-                    paddingLeft: 10,
-                },
-                sizeSmall: {
-                    fontSize: 6,
-                    lineHeight: '6px',
-                    paddingTop: 7,
-                    paddingRight: 10,
-                    paddingBottom: 7,
-                    paddingLeft: 10,
-                },
-                sizeLarge: {
-                    fontSize: 14,
-                    paddingTop: 7,
-                    paddingRight: 10,
-                    paddingBottom: 7,
-                    paddingLeft: 10,
-                },
-                iconSizeMedium: {
-                    '.pugio-icons': {
-                        fontSize: 12,
-                    },
-                },
-                iconSizeSmall: {
-                    '.pugio-icons': {
-                        fontSize: 6,
-                        lineHeight: '10px',
-                    },
-                },
-                iconSizeLarge: {
-                    '.pugio-icons': {
-                        fontSize: 16,
-                    },
-                },
-            },
-        },
-    },
-} as ThemeOptions);
-
 const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> = ({
     declarations,
     onLocaleChange = _.noop,
@@ -154,6 +42,8 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
     const LocaleMenu = declarations.get<FC<LocaleMenuProps>>(LocaleMenuComponent);
     const ProfileMenu = declarations.get<FC>(ProfileMenuComponent);
     const ClientsDropdown = declarations.get<FC<ClientsDropdownProps>>(ClientsDropdownComponent);
+
+    const theme = brandService.getTheme();
 
     const [locales, setLocales] = useState<LocaleListItem[]>([]);
     const [locale, setLocale] = useState(localStorage.getItem('locale') || 'en_US');
@@ -194,9 +84,7 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
 
     return createElement(
         ThemeProvider,
-        {
-            theme: pugioTheme,
-        },
+        { theme },
         <StyledEngineProvider injectFirst={true}>
             <Box className="app-container" style={{ paddingTop: appNavbarHeight }}>
                 <Box className="navbar" style={{ height: appNavbarHeight }}>

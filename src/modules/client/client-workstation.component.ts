@@ -10,6 +10,7 @@ import { UtilsService } from '@modules/utils/utils.service';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { AppComponent as WebTerminalAppComponent } from '@builtin:web-terminal/app.component';
 import { ChannelListComponent } from '@modules/client/channel-list.component';
+import { BrandService } from '@modules/brand/brand.service';
 
 @Component({
     component: lazy(() => import('@modules/client/ClientWorkstation')),
@@ -24,6 +25,7 @@ import { ChannelListComponent } from '@modules/client/channel-list.component';
         ExceptionComponent,
         WebTerminalAppComponent,
         ChannelListComponent,
+        BrandService,
     ],
 })
 export class ClientWorkstationComponent {}
