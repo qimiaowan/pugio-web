@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
     FC,
     useCallback,
@@ -146,6 +145,8 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
             const initialContent = connectionResponse?.response?.data?.content || [];
             terminal.initialize(initialContent);
 
+            setLoading(false);
+
             return () => {
                 listener.dispose();
                 handleCleanClientListeners();
@@ -155,6 +156,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
 
     useEffect(() => {
         if (!terminalId) {
+            setLoading(true);
             appService.makeHandshake({ clientId }).then((response) => {
                 setTerminalId(response?.response?.data?.id);
             });
