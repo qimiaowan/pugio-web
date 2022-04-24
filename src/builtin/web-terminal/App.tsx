@@ -22,6 +22,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
         height,
         basename,
         declarations,
+        tab,
         setup,
     } = props;
 
@@ -39,7 +40,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
             const xtermFitAddon = new FitAddon();
             terminal.loadAddon(xtermFitAddon);
 
-            client.on(`terminal:${terminalId}:data`, (data) => {
+            const clientDataHandler = (data) => {
                 if (data?.content) {
                     terminal.sequenceWrite(
                         data,
@@ -55,11 +56,17 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                         },
                     );
                 }
-            });
+            };
 
-            client.on(`terminal:${terminalId}:close`, () => {
+            const clientCloseHandler = () => {
+                tab.closeTab();
                 terminal.dispose();
-            });
+                client.off(`terminal:${terminalId}:data`, clientDataHandler);
+                client.off(`terminal:${terminalId}:close`, clientCloseHandler);
+            };
+
+            client.on(`terminal:${terminalId}:data`, clientDataHandler);
+            client.on(`terminal:${terminalId}:close`, clientCloseHandler);
 
             terminal.open(terminalRef.current);
             xtermFitAddon.fit();
@@ -84,6 +91,8 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
 
             return () => {
                 listener.dispose();
+                client.off(`terminal:${terminalId}:data`, clientDataHandler);
+                client.off(`terminal:${terminalId}:close`, clientCloseHandler);
             };
         }
     }, [terminalRef.current, client, terminalId]);
@@ -103,8 +112,15 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     }, []);
 
     useEffect(() => {
-        setup();
-    }, []);
+        if (terminalId) {
+            setup({
+                onBeforeDestroy: () => {
+                    appService.closeConnection({ clientId, terminalId });
+                    return true;
+                },
+            });
+        }
+    }, [terminalId]);
 
     return (
         <Context.Provider
