@@ -21,7 +21,6 @@ import { useAsyncEffect } from 'use-async-effect';
 import { FitAddon } from 'xterm-addon-fit';
 import { LocaleService } from '@modules/locale/locale.service';
 import '@builtin:web-terminal/app.component.less';
-import { useRequest } from 'ahooks';
 import { HeaderControlItem } from '@builtin:web-terminal/app.interface';
 import { LoadingComponent } from '@modules/brand/loading.component';
 import SimpleBar from 'simplebar-react';
@@ -50,8 +49,10 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     const getLocaleText = localeService.useLocaleContext('builtin.webTerminal');
     const [loading, setLoading] = useState<boolean>(false);
     const [closeConnectionLoading, setCloseConnectionLoading] = useState<boolean>(false);
+    const [cleanConnectionLoading, setCleanConnectionLoading] = useState<boolean>(false);
     const [terminal, setTerminal] = useState<Terminal<Record<string, any>>>(null);
     const [headerControlItems, setHeaderControlItems] = useState<HeaderControlItem[]>([]);
+    const [closeConnection, setCloseConnection] = useState<Function>(() => _.noop);
     const [cleanConnection, setCleanConnection] = useState<Function>(() => _.noop);
 
     const handleCloseConnection = useCallback((clientId: string, terminalId: string) => {
@@ -59,10 +60,22 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
             setCloseConnectionLoading(true);
             appService.closeConnection({ clientId, terminalId }).then((response) => {
                 if (response?.response?.data?.accepted) {
-                    cleanConnection();
+                    closeConnection();
                 }
             }).finally(() => setCloseConnectionLoading(false));
         }
+    }, [terminal, closeConnection]);
+
+    const handleReconnect = useCallback((clientId: string, terminalId: string) => {
+        setCleanConnectionLoading(true);
+        appService.closeConnection({ clientId, terminalId })
+            .catch(() => {})
+            .finally(() => {
+                cleanConnection();
+                setTerminal(null);
+                setTerminalId(null);
+                setCleanConnectionLoading(false);
+            });
     }, [terminal, cleanConnection]);
 
     useAsyncEffect(async () => {
@@ -96,7 +109,16 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                 tab.closeTab();
             };
 
-            setCleanConnection(() => clientCloseHandler);
+            const handleCleanClientListeners = () => {
+                client.off(`terminal:${terminalId}:data`, clientDataHandler);
+                client.off(`terminal:${terminalId}:close`, clientCloseHandler);
+            };
+
+            setCloseConnection(() => clientCloseHandler);
+            setCleanConnection(() => () => {
+                terminal.dispose();
+                handleCleanClientListeners();
+            });
 
             client.on(`terminal:${terminalId}:data`, clientDataHandler);
             client.on(`terminal:${terminalId}:close`, clientCloseHandler);
@@ -126,8 +148,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
 
             return () => {
                 listener.dispose();
-                client.off(`terminal:${terminalId}:data`, clientDataHandler);
-                client.off(`terminal:${terminalId}:close`, clientCloseHandler);
+                handleCleanClientListeners();
             };
         }
     }, [terminalRef.current, client, terminalId]);
@@ -136,6 +157,13 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
         if (!terminalId) {
             appService.makeHandshake({ clientId }).then((response) => {
                 setTerminalId(response?.response?.data?.id);
+            });
+        } else {
+            setup({
+                onBeforeDestroy: () => {
+                    appService.closeConnection({ clientId, terminalId });
+                    return true;
+                },
             });
         }
     }, [terminalId]);
@@ -147,25 +175,15 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     }, []);
 
     useEffect(() => {
-        if (terminalId) {
-            setup({
-                onBeforeDestroy: () => {
-                    appService.closeConnection({ clientId, terminalId });
-                    return true;
-                },
-            });
-        }
-    }, [terminalId]);
-
-    useEffect(() => {
         if (terminal && terminalId) {
             setHeaderControlItems([
                 {
                     button: {
                         icon: 'icon-refresh',
                         props: {
-                            disabled: loading || closeConnectionLoading,
+                            disabled: loading || closeConnectionLoading || cleanConnectionLoading,
                             title: getLocaleText('reconnect'),
+                            onClick: () => handleReconnect(clientId, terminalId),
                         },
                     },
                 },
@@ -173,7 +191,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                     button: {
                         icon: 'icon-clipboard',
                         props: {
-                            disabled: loading || closeConnectionLoading,
+                            disabled: loading || closeConnectionLoading || cleanConnectionLoading,
                             title: getLocaleText('clipboard'),
                         },
                     },
@@ -185,7 +203,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                     button: {
                         icon: 'icon-stop',
                         props: {
-                            disabled: loading || closeConnectionLoading,
+                            disabled: loading || closeConnectionLoading || cleanConnectionLoading,
                             title: getLocaleText('close'),
                             onClick: () => handleCloseConnection(clientId, terminalId),
                         },
@@ -200,6 +218,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
         getLocaleText,
         loading,
         closeConnectionLoading,
+        cleanConnectionLoading,
     ]);
 
     return (
