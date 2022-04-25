@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
     createElement,
     FC,
@@ -33,7 +34,10 @@ import { ChannelService } from '@modules/channel/channel.service';
 import { UtilsService } from '@modules/utils/utils.service';
 import { useParams } from 'react-router-dom';
 import { List } from 'immutable';
-import { useDebounce } from 'ahooks';
+import {
+    useDebounce,
+    useRequest,
+} from 'ahooks';
 import { ExceptionProps } from '@modules/brand/exception.interface';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { AppComponent as WebTerminalAppComponent } from '@builtin:web-terminal/app.component';
@@ -131,6 +135,12 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const getLocaleText = localeService.useLocaleContext('pages.client_workstation');
     const [selectedTabId, setSelectedTabId] = useState<string>(null);
     const [selectedTabMetadata, setSelectedTabMetadata] = useState<string[]>([]);
+    const {
+        loading: getClientInformationLoading,
+        data: getClientInformationResponseData,
+    } = useRequest(
+        clientService.getClientInformation.bind(clientService) as typeof clientService.getClientInformation,
+    );
 
     const handleCreateTab = (clientId: string, data: TabData = {}) => {
         const tabId = createTab(clientId, data);

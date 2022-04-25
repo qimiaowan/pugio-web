@@ -2,6 +2,8 @@ import { Injectable } from 'khamsa';
 import { RequestService } from '@modules/request/request.service';
 import { Response } from '@modules/request/request.interface';
 import {
+    GetClientInformationRequestOptions,
+    GetClientInformationResponseData,
     UserClientRelationRequestOptions,
     UserClientRelationResponseData,
 } from '@modules/client/client.interface';
@@ -22,6 +24,18 @@ export class ClientService {
                 method: 'get',
                 url: '/client/relation',
                 query: { clientId },
+            });
+    }
+
+    public async getClientInformation(
+        options: GetClientInformationRequestOptions,
+    ): Promise<Response<GetClientInformationResponseData>> {
+        const { clientId } = options;
+
+        return await this.requestService.getInstance()
+            .request({
+                method: 'get',
+                url: `/client/${clientId}`,
             });
     }
 }
