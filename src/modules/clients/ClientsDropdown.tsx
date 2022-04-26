@@ -169,7 +169,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                                                         )
                                                     }
                                                 </ListItemIcon>
-                                                <ListItemIcon><Icon className="icon-channel" /></ListItemIcon>
+                                                <ListItemIcon><Icon className="icon-server" /></ListItemIcon>
                                                 <ListItemText
                                                     disableTypography={false}
                                                     primaryTypographyProps={typographyProps}

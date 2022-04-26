@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
     FC,
     useCallback,
@@ -21,7 +22,9 @@ import { LocaleService } from '@modules/locale/locale.service';
 import { StoreService } from '@modules/store/store.service';
 import { ClientMenuItemComponent } from '@modules/client/client-menu-item.component';
 import { ClientMenuItemProps } from '@modules/client/client-menu-item.interface';
+import { ClientService } from '@modules/client/client.service';
 import _ from 'lodash';
+import { useRequest } from 'ahooks';
 import '@modules/client/client-dashboard.component.less';
 
 interface MenuMetadataItem {
@@ -34,8 +37,9 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
     const ClientMenuItem = declarations.get<FC<ClientMenuItemProps>>(ClientMenuItemComponent);
     const localeService = declarations.get<LocaleService>(LocaleService);
     const storeService = declarations.get<StoreService>(StoreService);
+    const clientService = declarations.get<ClientService>(ClientService);
 
-    const params = useParams();
+    const { client_id: clientId } = useParams();
     const navigate = useNavigate();
     const sidebarRef = useRef<HTMLDivElement>(null);
     const controlsWrapperRef = useRef<HTMLDivElement>(null);
@@ -46,6 +50,18 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
     const setSidebarWidth = storeService.useStore((state) => state.setClientSidebarWidth);
     const setControlsWrapperHeight = storeService.useStore((state) => state.setControlsWrapperHeight);
     const switchClientsDropdownVisibility = storeService.useStore((state) => state.switchClientsDropdownVisibility);
+    const {
+        loading: getClientInformationLoading,
+        data: getClientInformationResponseData,
+    } = useRequest(
+        () => {
+            const getClientInformation = clientService.getClientInformation.bind(clientService) as typeof clientService.getClientInformation;
+            return getClientInformation({ clientId });
+        },
+        {
+            refreshDeps: [clientId],
+        },
+    );
 
     const generateFullWidthMenuKey = (id: string) => {
         return `app.client.fullWidthMenu@${id}`;
@@ -53,23 +69,23 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
 
     const handleExpandCollapseClick = () => {
         localStorage.setItem(
-            generateFullWidthMenuKey(params.client_id),
+            generateFullWidthMenuKey(clientId),
             JSON.stringify(!fullWidthMenu),
         );
         setFullWidthMenu(!fullWidthMenu);
     };
 
     useEffect(() => {
-        if (params?.client_id) {
+        if (clientId) {
             setFullWidthMenu(
                 JSON.parse(
                     localStorage.getItem(
-                        generateFullWidthMenuKey(params.client_id),
+                        generateFullWidthMenuKey(clientId),
                     ) || 'false',
                 ),
             );
         }
-    }, [params]);
+    }, [clientId]);
 
     useEffect(() => {
         const observer = new ResizeObserver((entries) => {
@@ -116,8 +132,7 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
     }, [controlsWrapperRef]);
 
     const updateMenuMetadataItems = useCallback(() => {
-        if (params.client_id) {
-            const clientId = params.client_id;
+        if (clientId) {
             setMenuMetadataItems(
                 [
                     {
@@ -143,7 +158,7 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
                 ],
             );
         }
-    }, [params.client_id]);
+    }, [clientId]);
 
     useEffect(() => {
         updateMenuMetadataItems();
@@ -192,7 +207,19 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
             </Box>
             <Box className="content-container">
                 <Box className="controls" ref={controlsWrapperRef}>
-                    <Typography variant="subtitle2" className="client-name">Client Placeholder</Typography>
+                    {
+                        getClientInformationResponseData?.response && (
+                            <>
+                                <Icon className="icon-server" />
+                                <Typography
+                                    variant="subtitle2"
+                                    className="client-name"
+                                    noWrap={true}
+                                    title={getClientInformationResponseData?.response?.name || null}
+                                >{getClientInformationResponseData?.response?.name || null}</Typography>
+                            </>
+                        )
+                    }
                     <Button
                         size="small"
                         classes={{ sizeSmall: 'control-button' }}
