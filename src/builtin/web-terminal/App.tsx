@@ -108,6 +108,11 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                 client.off(`terminal:${terminalId}:data`, clientDataHandler);
                 client.off(`terminal:${terminalId}:close`, clientCloseHandler);
                 tab.closeTab();
+
+                if (client) {
+                    client.disconnect();
+                    client.close();
+                }
             };
 
             const handleCleanClientListeners = () => {
@@ -165,12 +170,13 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
         } else {
             setup({
                 onBeforeDestroy: () => {
+                    closeConnection();
                     appService.closeConnection({ clientId, terminalId });
                     return true;
                 },
             });
         }
-    }, [terminalId]);
+    }, [terminalId, closeConnection]);
 
     useEffect(() => {
         const client = io('/client');
