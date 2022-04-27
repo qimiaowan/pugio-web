@@ -18,15 +18,25 @@ const Listener: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations 
 
     const location = useLocation();
     const navigate = useNavigate();
-    const [
+    const {
         pathnameReady,
         setPathnameReady,
-    ] = storeService.useStore((state) => {
+        setWindowInnerHeight,
+        setWindowInnerWidth,
+    } = storeService.useStore((state) => {
         const {
             pathnameReady,
             setPathnameReady,
+            setWindowInnerHeight,
+            setWindowInnerWidth,
         } = state;
-        return [pathnameReady, setPathnameReady];
+
+        return {
+            pathnameReady,
+            setPathnameReady,
+            setWindowInnerHeight,
+            setWindowInnerWidth,
+        };
     }, shallow);
 
     useEffect(() => {
@@ -44,6 +54,19 @@ const Listener: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations 
 
         setPathnameReady();
     }, [pathnameReady]);
+
+    useEffect(() => {
+        const handler = () => {
+            setWindowInnerWidth(window.innerWidth);
+            setWindowInnerHeight(window.innerHeight);
+        };
+
+        window.addEventListener('resize', handler);
+
+        return () => {
+            window.removeEventListener('resize', handler);
+        };
+    }, []);
 
     return (<></>);
 };

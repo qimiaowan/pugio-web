@@ -77,8 +77,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const [headerWidth, setHeaderWidth] = useState<number>(null);
     const [panelHeight, setPanelHeight] = useState<number>(null);
     const [tabs, setTabs] = useState<ChannelTab[]>([]);
-    const [windowInnerWidth, setWindowInnerWidth] = useState<number>(window.innerWidth);
-    const [windowInnerHeight, setWindowInnerHeight] = useState<number>(window.innerHeight);
     const {
         sidebarWidth,
         appNavbarHeight,
@@ -87,6 +85,8 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
         clientTabsMap,
         selectedTabMap,
         tabsScrollMap,
+        windowInnerHeight,
+        windowInnerWidth,
         setSelectedTab,
         updateTab,
         createTab,
@@ -102,7 +102,8 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             channelTabs: clientTabsMap,
             selectedTabMap,
             tabsScrollMap,
-
+            windowInnerHeight,
+            windowInnerWidth,
             setSelectedTab,
             updateTab,
             createTab,
@@ -119,7 +120,8 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             clientTabsMap,
             selectedTabMap,
             tabsScrollMap,
-
+            windowInnerHeight,
+            windowInnerWidth,
             setSelectedTab,
             updateTab,
             createTab,
@@ -271,19 +273,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             setHeaderWidth(windowInnerWidth - sidebarWidth);
         }
     }, [sidebarWidth, windowInnerWidth]);
-
-    useEffect(() => {
-        const handler = () => {
-            setWindowInnerWidth(window.innerWidth);
-            setWindowInnerHeight(window.innerHeight);
-        };
-
-        window.addEventListener('resize', handler);
-
-        return () => {
-            window.removeEventListener('resize', handler);
-        };
-    }, []);
 
     useEffect(() => {
         const observer = new ResizeObserver((entries) => {

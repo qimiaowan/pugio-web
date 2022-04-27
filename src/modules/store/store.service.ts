@@ -28,6 +28,8 @@ export class StoreService {
             tabsWrapperHeight: 0,
             selectedTabMap: Map<string, string>({}),
             tabsScrollMap: Map<string, number>({}),
+            windowInnerHeight: window.innerHeight,
+            windowInnerWidth: window.innerWidth,
 
             setClientSidebarWidth: (width: number) => {
                 set(() => ({ clientSidebarWidth: width }));
@@ -163,6 +165,26 @@ export class StoreService {
                     return {
                         tabsScrollMap: state.tabsScrollMap.set(clientId, offset),
                     };
+                });
+            },
+
+            setWindowInnerHeight: (height: number) => {
+                if (!_.isNumber(height)) {
+                    return;
+                }
+
+                set({
+                    windowInnerHeight: height,
+                });
+            },
+
+            setWindowInnerWidth: (width: number) => {
+                if (!_.isNumber(width)) {
+                    return;
+                }
+
+                set({
+                    windowInnerWidth: width,
                 });
             },
         };
