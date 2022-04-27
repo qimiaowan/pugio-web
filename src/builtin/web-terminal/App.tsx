@@ -183,23 +183,17 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     }, [terminalId, closeConnection]);
 
     useEffect(() => {
-        appService
-            .ensureSingleScopedKey({ scopeId: 'socket' })
-            .then((response) => {
-                const token = response?.response?.keyId;
-
-                const socket = io('/client', {
-                    transportOptions: {
-                        polling: {
-                            extraHeaders: {
-                                Authorization: 'AK ' + token, // 'Bearer h93t4293t49jt34j9rferek...'
-                            },
-                        },
+        const socket = io('/client', {
+            transportOptions: {
+                polling: {
+                    extraHeaders: {
+                        Authorization: 'Bearer ' + localStorage.getItem('ACCESS_TOKEN'),
                     },
-                });
-                socket.emit('join', clientId);
-                setSocket(socket);
-            });
+                },
+            },
+        });
+        socket.emit('join', clientId);
+        setSocket(socket);
     }, []);
 
     useEffect(() => {
