@@ -45,7 +45,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
 
     const terminalRef = useRef<HTMLDivElement>(null);
     const [terminalId, setTerminalId] = useState<string>(null);
-    const [client, setClient] = useState<Socket>(null);
+    const [socket, setSocket] = useState<Socket>(null);
     const getLocaleText = localeService.useLocaleContext('builtin.webTerminal');
     const [loading, setLoading] = useState<boolean>(false);
     const [closeConnectionLoading, setCloseConnectionLoading] = useState<boolean>(false);
@@ -80,7 +80,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     }, [terminal, cleanConnection]);
 
     useAsyncEffect(async () => {
-        if (terminalRef.current && terminalId && client) {
+        if (terminalRef.current && terminalId && socket) {
             const terminal = new Terminal();
             const xtermFitAddon = new FitAddon();
             terminal.loadAddon(xtermFitAddon);
@@ -105,19 +105,19 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
 
             const clientCloseHandler = () => {
                 terminal.dispose();
-                client.off(`terminal:${terminalId}:data`, clientDataHandler);
-                client.off(`terminal:${terminalId}:close`, clientCloseHandler);
+                socket.off(`terminal:${terminalId}:data`, clientDataHandler);
+                socket.off(`terminal:${terminalId}:close`, clientCloseHandler);
                 tab.closeTab();
 
-                if (client) {
-                    client.disconnect();
-                    client.close();
+                if (socket) {
+                    socket.disconnect();
+                    socket.close();
                 }
             };
 
             const handleCleanClientListeners = () => {
-                client.off(`terminal:${terminalId}:data`, clientDataHandler);
-                client.off(`terminal:${terminalId}:close`, clientCloseHandler);
+                socket.off(`terminal:${terminalId}:data`, clientDataHandler);
+                socket.off(`terminal:${terminalId}:close`, clientCloseHandler);
             };
 
             setCloseConnection(() => clientCloseHandler);
@@ -126,8 +126,8 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                 handleCleanClientListeners();
             });
 
-            client.on(`terminal:${terminalId}:data`, clientDataHandler);
-            client.on(`terminal:${terminalId}:close`, clientCloseHandler);
+            socket.on(`terminal:${terminalId}:data`, clientDataHandler);
+            socket.on(`terminal:${terminalId}:close`, clientCloseHandler);
 
             terminal.open(terminalRef.current);
             xtermFitAddon.fit();
@@ -159,7 +159,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                 handleCleanClientListeners();
             };
         }
-    }, [terminalRef.current, client, terminalId]);
+    }, [terminalRef.current, socket, terminalId]);
 
     useEffect(() => {
         if (!terminalId) {
@@ -179,9 +179,23 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     }, [terminalId, closeConnection]);
 
     useEffect(() => {
-        const client = io('/client');
-        client.emit('join', clientId);
-        setClient(client);
+        appService
+            .ensureSingleScopedKey({ scopeId: 'socket' })
+            .then((response) => {
+                const token = response?.response?.keyId;
+
+                const socket = io('/client', {
+                    transportOptions: {
+                        polling: {
+                            extraHeaders: {
+                                Authorization: 'AK ' + token, // 'Bearer h93t4293t49jt34j9rferek...'
+                            },
+                        },
+                    },
+                });
+                socket.emit('join', clientId);
+                setSocket(socket);
+            });
     }, []);
 
     useEffect(() => {
@@ -233,7 +247,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     }, [
         terminalId,
         terminal,
-        client,
+        socket,
         getLocaleText,
         loading,
         closeConnectionLoading,

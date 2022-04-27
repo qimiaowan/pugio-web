@@ -13,6 +13,8 @@ import {
     ResizeResponseData,
     SendConsumeConfirmRequestOptions,
     SendConsumeConfirmResponseData,
+    EnsureSingleScopedKeyRequestOptions,
+    EnsureSingleScopedKeyResponseData,
 } from '@builtin:web-terminal/app.interface';
 import {
     Response,
@@ -162,6 +164,18 @@ export class AppService {
                         cols,
                     },
                 },
+            });
+    }
+
+    public async ensureSingleScopedKey(
+        options: EnsureSingleScopedKeyRequestOptions,
+    ): Promise<Response<EnsureSingleScopedKeyResponseData>> {
+        const { scopeId } = options;
+
+        return await this.requestService.getInstance()
+            .request({
+                method: 'post',
+                url: `/keys/ensure/${scopeId}`,
             });
     }
 }

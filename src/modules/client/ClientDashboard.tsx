@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
     FC,
     useCallback,
@@ -51,7 +50,6 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
     const setControlsWrapperHeight = storeService.useStore((state) => state.setControlsWrapperHeight);
     const switchClientsDropdownVisibility = storeService.useStore((state) => state.switchClientsDropdownVisibility);
     const {
-        loading: getClientInformationLoading,
         data: getClientInformationResponseData,
     } = useRequest(
         () => {
@@ -141,14 +139,14 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
                         titleSlotId: 'clientsSidebarMenu.workstation',
                     },
                     {
-                        icon: 'icon-channel',
-                        to: `/client/${clientId}/channels`,
-                        titleSlotId: 'clientsSidebarMenu.channels',
-                    },
-                    {
                         icon: 'icon-users',
                         to: `/client/${clientId}/members`,
                         titleSlotId: 'clientsSidebarMenu.members',
+                    },
+                    {
+                        icon: 'icon-status',
+                        to: `/client/${clientId}/status`,
+                        titleSlotId: 'clientsSidebarMenu.status',
                     },
                     {
                         icon: 'icon-info',

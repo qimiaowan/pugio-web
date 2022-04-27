@@ -56,3 +56,15 @@ export interface SendConsumeConfirmRequestOptions extends ChannelRequestOptions 
 }
 
 export type SendConsumeConfirmResponseData = SendDataResponseData;
+
+export interface APIKey {
+    id: string;
+    keyId: string;
+    scopes: string;
+}
+
+export interface EnsureSingleScopedKeyRequestOptions {
+    scopeId: string;
+}
+
+export type EnsureSingleScopedKeyResponseData = APIKey;

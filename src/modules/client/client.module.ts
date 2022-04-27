@@ -7,7 +7,7 @@ import { ChannelListComponent } from '@modules/client/channel-list.component';
 
 const TabModule = import('@modules/tab/tab.module').then(({ TabModule }) => TabModule);
 const StoreModule = import('@modules/store/store.module').then(({ StoreModule }) => StoreModule);
-const ChannelModule = import('@modules//channel/channel.module').then(({ ChannelModule }) => ChannelModule);
+const ChannelModule = import('@modules/channel/channel.module').then(({ ChannelModule }) => ChannelModule);
 
 @Module({
     imports: [

@@ -12,7 +12,7 @@
     },
     "clientsSidebarMenu": {
         "workstation": "Workstation",
-        "channels": "Channels",
+        "status": "Status",
         "members": "Members",
         "details": "Details"
     },
