@@ -46,9 +46,26 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
     const getPageLocaleText = localeService.useLocaleContext('pages.client_workstation');
     const [fullWidthMenu, setFullWidthMenu] = useState<boolean>(false);
     const [menuMetadataItems, setMenuMetadataItems] = useState<MenuMetadataItem[]>([]);
-    const setSidebarWidth = storeService.useStore((state) => state.setClientSidebarWidth);
-    const setControlsWrapperHeight = storeService.useStore((state) => state.setControlsWrapperHeight);
-    const switchClientsDropdownVisibility = storeService.useStore((state) => state.switchClientsDropdownVisibility);
+    const {
+        setSidebarWidth,
+        setControlsWrapperHeight,
+        switchClientsDropdownVisibility,
+        changeSelectedClientId,
+    } = storeService.useStore((state) => {
+        const {
+            setClientSidebarWidth,
+            setControlsWrapperHeight,
+            switchClientsDropdownVisibility,
+            changeSelectedClientId,
+        } = state;
+
+        return {
+            setSidebarWidth: setClientSidebarWidth,
+            setControlsWrapperHeight,
+            switchClientsDropdownVisibility,
+            changeSelectedClientId,
+        };
+    });
     const {
         data: getClientInformationResponseData,
     } = useRequest(
@@ -83,6 +100,9 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
                 ),
             );
         }
+
+        changeSelectedClientId(clientId || '');
+        localStorage.setItem('app.selectedClientId', clientId || '');
     }, [clientId]);
 
     useEffect(() => {

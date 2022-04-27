@@ -20,12 +20,14 @@ const Listener: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations 
     const navigate = useNavigate();
     const {
         pathnameReady,
+        selectedClientId,
         setPathnameReady,
         setWindowInnerHeight,
         setWindowInnerWidth,
     } = storeService.useStore((state) => {
         const {
             pathnameReady,
+            selectedClientId,
             setPathnameReady,
             setWindowInnerHeight,
             setWindowInnerWidth,
@@ -33,6 +35,7 @@ const Listener: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations 
 
         return {
             pathnameReady,
+            selectedClientId,
             setPathnameReady,
             setWindowInnerHeight,
             setWindowInnerWidth,
@@ -50,6 +53,16 @@ const Listener: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations 
 
         if (pathname && !pathnameReady) {
             navigate(pathname);
+        }
+
+        if (!pathnameReady) {
+            if (pathname) {
+                navigate(pathname);
+            } else if (selectedClientId) {
+                navigate(`/client/${selectedClientId}`);
+            } else {
+                navigate('/clients/list');
+            }
         }
 
         setPathnameReady();

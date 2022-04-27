@@ -30,6 +30,7 @@ export class StoreService {
             tabsScrollMap: Map<string, number>({}),
             windowInnerHeight: window.innerHeight,
             windowInnerWidth: window.innerWidth,
+            selectedClientId: localStorage.getItem('app.selectedClientId'),
 
             setClientSidebarWidth: (width: number) => {
                 set(() => ({ clientSidebarWidth: width }));
@@ -185,6 +186,16 @@ export class StoreService {
 
                 set({
                     windowInnerWidth: width,
+                });
+            },
+
+            changeSelectedClientId: (clientId: string) => {
+                if (!clientId || !_.isString(clientId)) {
+                    return;
+                }
+
+                set({
+                    selectedClientId: clientId,
                 });
             },
         };

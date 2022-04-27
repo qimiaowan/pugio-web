@@ -56,6 +56,7 @@ export interface AppState {
     channelTabs: Map<string, List<ChannelTab>>;
     clientSidebarWidth: number;
     clientsDropdownOpen: boolean;
+    selectedClientId: string;
     pathnameReady: boolean;
     appNavbarHeight: number;
     controlsWrapperHeight: number;
@@ -77,4 +78,5 @@ export interface AppState {
     updateTabsScrollOffset: (clientId: string, offset: number) => void;
     setWindowInnerHeight: (height: number) => void;
     setWindowInnerWidth: (width: number) => void;
+    changeSelectedClientId: (clientId: string) => void;
 }
