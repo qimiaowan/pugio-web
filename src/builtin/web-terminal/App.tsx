@@ -93,10 +93,12 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                             return decodeURI(window.atob(rawData));
                         },
                         () => {
-                            appService.sendConsumeConfirm({
-                                clientId,
-                                terminalId,
-                                sequence: data?.sequence,
+                            socket.emit('channel_stream', {
+                                eventId: `terminal:${terminalId}:consume_confirm_data`,
+                                roomId: clientId,
+                                data: {
+                                    sequence: data?.sequence,
+                                },
                             });
                         },
                     );
@@ -105,7 +107,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
 
             const clientCloseHandler = () => {
                 terminal.dispose();
-                socket.off(`terminal:${terminalId}:data`, clientDataHandler);
+                socket.off(`terminal:${terminalId}:recv_data`, clientDataHandler);
                 socket.off(`terminal:${terminalId}:close`, clientCloseHandler);
                 tab.closeTab();
 
@@ -116,7 +118,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
             };
 
             const handleCleanClientListeners = () => {
-                socket.off(`terminal:${terminalId}:data`, clientDataHandler);
+                socket.off(`terminal:${terminalId}:recv_data`, clientDataHandler);
                 socket.off(`terminal:${terminalId}:close`, clientCloseHandler);
             };
 
@@ -126,7 +128,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                 handleCleanClientListeners();
             });
 
-            socket.on(`terminal:${terminalId}:data`, clientDataHandler);
+            socket.on(`terminal:${terminalId}:recv_data`, clientDataHandler);
             socket.on(`terminal:${terminalId}:close`, clientCloseHandler);
 
             terminal.open(terminalRef.current);
@@ -136,11 +138,14 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
 
             const listener = terminal.onSequenceData(async (data) => {
                 const { sequence, content } = data as any;
-                await appService.sendData({
-                    clientId,
-                    terminalId,
-                    sequence,
-                    terminalData: encodeURI(content),
+                console.log(content);
+                socket.emit('channel_stream', {
+                    eventId: `terminal:${terminalId}:send_data`,
+                    roomId: clientId,
+                    data: {
+                        sequence,
+                        data: window.btoa(encodeURI(content)),
+                    },
                 });
             });
 
