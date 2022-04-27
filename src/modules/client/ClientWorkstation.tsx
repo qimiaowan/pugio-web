@@ -322,7 +322,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
 
     useEffect(() => {
         if (appNavbarHeight && controlsWrapperHeight && windowInnerHeight) {
-            setPanelHeight(windowInnerHeight - appNavbarHeight * 2 - controlsWrapperHeight - tabsWrapperHeight);
+            setPanelHeight(windowInnerHeight - appNavbarHeight * 2 - controlsWrapperHeight - tabsWrapperHeight + 3);
         }
     }, [
         appNavbarHeight,

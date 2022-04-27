@@ -24,10 +24,17 @@
         <title>Pugio</title>
         <script src="//unpkg.zhimg.com/whatwg-fetch@3.6.2/dist/fetch.umd.js"></script>
         <script src="//npm.elemecdn.com/resize-observer-polyfill@1.5.1/dist/ResizeObserver.js"></script>
-        <script async defer src="//npm.elemecdn.com/requirejs@2.3.6/require.js"></script>
+        <script async defer src="//npm.elemecdn.com/requirejs@2.3.6/require.js" id="require-js"></script>
         <script src="//unpkg.zhimg.com/react@17.0.2/umd/react.production.min.js"></script>
         <script src="//unpkg.zhimg.com/react-dom@17.0.2/umd/react-dom.production.min.js"></script>
         <script src="//unpkg.zhimg.com/lodash@4.17.21/lodash.min.js"></script>
+        <script>
+            document.getElementById('require-js').onload = function() {
+                define('React', () => {
+                    return window.React;
+                });
+            }
+        </script>
     </head>
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
