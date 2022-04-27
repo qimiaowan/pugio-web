@@ -138,7 +138,6 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
 
             const listener = terminal.onSequenceData(async (data) => {
                 const { sequence, content } = data as any;
-                console.log(content);
                 socket.emit('channel_stream', {
                     eventId: `terminal:${terminalId}:send_data`,
                     roomId: clientId,
