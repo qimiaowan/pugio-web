@@ -5,7 +5,7 @@ import { ChannelService } from '@modules/channel/channel.service';
 import { UtilsService } from '@modules/utils/utils.service';
 import { LoadingComponent } from '@modules/brand/loading.component';
 
-const ChannelList = lazy(() => import('@modules/client/ChannelList'));
+const ChannelList = lazy(() => import('@/modules/channel/ChannelList'));
 
 @Component({
     component: ChannelList,

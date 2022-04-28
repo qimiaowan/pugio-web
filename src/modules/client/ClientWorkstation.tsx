@@ -37,10 +37,10 @@ import { useDebounce } from 'ahooks';
 import { ExceptionProps } from '@modules/brand/exception.interface';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { AppComponent as WebTerminalAppComponent } from '@builtin:web-terminal/app.component';
-import { ChannelListComponent } from '@modules/client/channel-list.component';
-import { ChannelListProps } from '@modules/client/channel-list.interface';
-import '@modules/client/client-workstation.component.less';
+import { ChannelListComponent } from '@modules/channel/channel-list.component';
+import { ChannelListProps } from '@modules/channel/channel-list.interface';
 import { BrandService } from '@modules/brand/brand.service';
+import '@modules/client/client-workstation.component.less';
 
 const ClientWorkstation: FC<InjectedComponentProps> = ({
     declarations,

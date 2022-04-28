@@ -9,7 +9,7 @@ import { InjectedComponentProps } from 'khamsa';
 import {
     ChannelListProps,
     ChannelListItemProps,
-} from '@modules/client/channel-list.interface';
+} from '@modules/channel/channel-list.interface';
 import { ChannelService } from '@modules/channel/channel.service';
 import { useDebounce } from 'ahooks';
 import { InfiniteScrollHookData } from '@modules/request/request.interface';
@@ -26,7 +26,7 @@ import Icon from '@mui/material/Icon';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { LocaleService } from '@modules/locale/locale.service';
-import '@modules/client/channel-list.component.less';
+import '@modules/channel/channel-list.component.less';
 import { LoadingComponent } from '@modules/brand/loading.component';
 
 const ChannelListItem: FC<ChannelListItemProps> = ({

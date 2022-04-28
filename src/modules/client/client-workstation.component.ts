@@ -9,7 +9,7 @@ import { ChannelService } from '@modules/channel/channel.service';
 import { UtilsService } from '@modules/utils/utils.service';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { AppComponent as WebTerminalAppComponent } from '@builtin:web-terminal/app.component';
-import { ChannelListComponent } from '@modules/client/channel-list.component';
+import { ChannelListComponent } from '@modules/channel/channel-list.component';
 import { BrandService } from '@modules/brand/brand.service';
 
 @Component({

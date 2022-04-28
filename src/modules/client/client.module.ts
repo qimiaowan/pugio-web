@@ -3,7 +3,7 @@ import { ClientDashboardComponent } from '@modules/client/client-dashboard.compo
 import { ClientMenuItemComponent } from '@modules/client/client-menu-item.component';
 import { ClientWorkstationComponent } from '@modules/client/client-workstation.component';
 import { ClientService } from '@modules/client/client.service';
-import { ChannelListComponent } from '@modules/client/channel-list.component';
+import { ClientComponent } from '@modules/client/client.component';
 
 const TabModule = import('@modules/tab/tab.module').then(({ TabModule }) => TabModule);
 const StoreModule = import('@modules/store/store.module').then(({ StoreModule }) => StoreModule);
@@ -22,9 +22,13 @@ const ChannelModule = import('@modules/channel/channel.module').then(({ ChannelM
         ClientDashboardComponent,
         ClientMenuItemComponent,
         ClientWorkstationComponent,
-        ChannelListComponent,
+        ClientComponent,
     ],
     routes: [
+        {
+            path: '',
+            useComponentClass: ClientComponent,
+        },
         {
             path: ':client_id',
             useComponentClass: ClientDashboardComponent,

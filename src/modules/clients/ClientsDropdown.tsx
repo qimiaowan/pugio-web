@@ -210,9 +210,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                         classes={{ root: 'link-button view-all-button' }}
                         endIcon={<Icon className="icon icon-arrow-right" fontSize="small" />}
                         onClick={() => navigate('/clients/list')}
-                    >
-                        {getComponentLocaleText('viewAll')}
-                    </Button>
+                    >{getComponentLocaleText('viewAll')}</Button>
                 </Box>
             </Popover>
         </Box>
