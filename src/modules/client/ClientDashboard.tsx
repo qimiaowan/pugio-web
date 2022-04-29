@@ -25,11 +25,13 @@ import { ClientService } from '@modules/client/client.service';
 import _ from 'lodash';
 import { useRequest } from 'ahooks';
 import '@modules/client/client-dashboard.component.less';
+import { UserClientRelationResponseData } from '@modules/client/client.interface';
 
 interface MenuMetadataItem {
     to: string;
     icon: string;
     titleSlotId: string;
+    condition?: (relation: UserClientRelationResponseData) => boolean;
 }
 
 const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
@@ -70,8 +72,17 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
         data: getClientInformationResponseData,
     } = useRequest(
         () => {
-            const getClientInformation = clientService.getClientInformation.bind(clientService) as typeof clientService.getClientInformation;
-            return getClientInformation({ clientId });
+            return clientService.getClientInformation({ clientId });
+        },
+        {
+            refreshDeps: [clientId],
+        },
+    );
+    const {
+        data: userClientRelationResponseData,
+    } = useRequest(
+        () => {
+            return clientService.getUserClientRelation({ clientId });
         },
         {
             refreshDeps: [clientId],
@@ -150,7 +161,7 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
     }, [controlsWrapperRef]);
 
     const updateMenuMetadataItems = useCallback(() => {
-        if (clientId) {
+        if (clientId && userClientRelationResponseData?.response) {
             setMenuMetadataItems(
                 [
                     {
@@ -162,6 +173,9 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
                         icon: 'icon-users',
                         to: `/client/${clientId}/members`,
                         titleSlotId: 'clientsSidebarMenu.members',
+                        condition: (relation) => {
+                            return relation.roleType <= 1;
+                        },
                     },
                     {
                         icon: 'icon-status',
@@ -176,7 +190,7 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
                 ],
             );
         }
-    }, [clientId]);
+    }, [clientId, userClientRelationResponseData]);
 
     useEffect(() => {
         updateMenuMetadataItems();
@@ -192,7 +206,12 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
                                 icon,
                                 to,
                                 titleSlotId,
+                                condition,
                             } = menuMetadataItem;
+
+                            if (_.isFunction(condition) && !condition(userClientRelationResponseData?.response)) {
+                                return null;
+                            }
 
                             return (
                                 <NavLink

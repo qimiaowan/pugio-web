@@ -24,6 +24,10 @@
             "welcome": {
                 "title": "Welcome to Pugio",
                 "subTitle": "There is no tabs created, you can click the button below to create a new tab to run a channel"
+            },
+            "offline": {
+                "title": "Client Offline",
+                "subTitle": "The client is currently offline, please check the client status and retry later"
             }
         }
     },

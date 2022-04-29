@@ -17,3 +17,13 @@ export interface GetClientInformationRequestOptions {
 }
 
 export type GetClientInformationResponseData = Client;
+
+export interface GetClientCurrentStatusRequestOptions {
+    clientId: string;
+    offlineThreshold?: number;
+}
+
+export interface GetClientCurrentStatusResponseData {
+    offline: boolean;
+    statusCode: number;
+}

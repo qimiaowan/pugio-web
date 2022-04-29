@@ -2,6 +2,8 @@ import { Injectable } from 'khamsa';
 import { RequestService } from '@modules/request/request.service';
 import { Response } from '@modules/request/request.interface';
 import {
+    GetClientCurrentStatusRequestOptions,
+    GetClientCurrentStatusResponseData,
     GetClientInformationRequestOptions,
     GetClientInformationResponseData,
     UserClientRelationRequestOptions,
@@ -36,6 +38,24 @@ export class ClientService {
             .request({
                 method: 'get',
                 url: `/client/${clientId}`,
+            });
+    }
+
+    public async getClientCurrentStatus(
+        options: GetClientCurrentStatusRequestOptions,
+    ): Promise<Response<GetClientCurrentStatusResponseData>> {
+        const {
+            clientId,
+            offlineThreshold = 150000,
+        } = options;
+
+        return await this.requestService.getInstance()
+            .request({
+                method: 'get',
+                url: `/client_status/${clientId}`,
+                query: {
+                    offlineThreshold,
+                },
             });
     }
 }

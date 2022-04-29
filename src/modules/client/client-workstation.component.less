@@ -1,6 +1,13 @@
 @import url('@/variables.less');
 
 .client-workstation-page {
+    &.offline {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
     .header-container {
         background-color: @bg-widget-color;
 
