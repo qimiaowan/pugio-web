@@ -6,6 +6,8 @@ import {
     GetClientCurrentStatusResponseData,
     GetClientInformationRequestOptions,
     GetClientInformationResponseData,
+    QueryClientMembersRequestOptions,
+    QueryClientMembersResponseData,
     UserClientRelationRequestOptions,
     UserClientRelationResponseData,
 } from '@modules/client/client.interface';
@@ -56,6 +58,22 @@ export class ClientService {
                 query: {
                     offlineThreshold,
                 },
+            });
+    }
+
+    public async queryClientMembers(
+        options: QueryClientMembersRequestOptions,
+    ): Promise<Response<QueryClientMembersResponseData>> {
+        const {
+            clientId,
+            ...query
+        } = options;
+
+        return await this.requestService.getInstance()
+            .request({
+                method: 'get',
+                url: `/client/${clientId}/membership`,
+                query,
             });
     }
 }

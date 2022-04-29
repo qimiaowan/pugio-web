@@ -3,6 +3,10 @@ import {
     Client,
     QueryClientsResponseData,
 } from '@modules/clients/clients.interface';
+import {
+    PaginationRequestOptions,
+    PaginationResponseData,
+} from '@modules/request/request.interface';
 
 export interface UserClientRelationRequestOptions {
     clientId: string;
@@ -27,3 +31,10 @@ export interface GetClientCurrentStatusResponseData {
     offline: boolean;
     statusCode: number;
 }
+
+export interface QueryClientMembersRequestOptions extends PaginationRequestOptions {
+    clientId: string;
+    role: number;
+}
+
+export type QueryClientMembersResponseData = PaginationResponseData<Omit<UserClientRelationResponseData, 'client'>>;
