@@ -4,6 +4,7 @@ import { ClientMenuItemComponent } from '@modules/client/client-menu-item.compon
 import { ClientWorkstationComponent } from '@modules/client/client-workstation.component';
 import { ClientService } from '@modules/client/client.service';
 import { ClientComponent } from '@modules/client/client.component';
+import { ClientMembersComponent } from '@modules/client/client-members.component';
 
 const TabModule = import('@modules/tab/tab.module').then(({ TabModule }) => TabModule);
 const StoreModule = import('@modules/store/store.module').then(({ StoreModule }) => StoreModule);
@@ -23,6 +24,7 @@ const ChannelModule = import('@modules/channel/channel.module').then(({ ChannelM
         ClientMenuItemComponent,
         ClientWorkstationComponent,
         ClientComponent,
+        ClientMembersComponent,
     ],
     routes: [
         {
