@@ -15,3 +15,15 @@ export interface ChannelListItemProps extends BoxProps {
     builtIn?: boolean;
     onDelete?: (data: Channel) => void;
 }
+
+export interface ChannelListCategory extends Required<ChannelListCategoryPatch> {
+    title: string;
+    query: Record<string, any>;
+}
+
+export interface ChannelListCategoryPatch {
+    loading?: boolean;
+    expanded?: boolean;
+}
+
+export type ChannelListCategoryPatchMap = Record<string, ChannelListCategoryPatch>;

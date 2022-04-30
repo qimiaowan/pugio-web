@@ -4,11 +4,15 @@ import {
     useState,
     useRef,
     MouseEvent as SyntheticMouseEvent,
+    useCallback,
 } from 'react';
 import { InjectedComponentProps } from 'khamsa';
 import {
     ChannelListProps,
     ChannelListItemProps,
+    ChannelListCategory,
+    ChannelListCategoryPatch,
+    ChannelListCategoryPatchMap,
 } from '@modules/channel/channel-list.interface';
 import { ChannelService } from '@modules/channel/channel.service';
 import { useDebounce } from 'ahooks';
@@ -124,19 +128,6 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
     height,
     onSelectChannel = _.noop,
 }) => {
-    const tabs = [
-        {
-            title: 'tabs.builtIn',
-            query: {
-                builtIn: 1,
-            },
-        },
-        {
-            title: 'tabs.thirdParties',
-            query: {},
-        },
-    ];
-
     const channelService = declarations.get<ChannelService>(ChannelService);
     const utilsService = declarations.get<UtilsService>(UtilsService);
     const localeService = declarations.get<LocaleService>(LocaleService);
@@ -148,6 +139,23 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
     const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
     const headerRef = useRef<HTMLDivElement>(null);
     const [headerHeight, setHeaderHeight] = useState<number>(0);
+    const [channelListGroups, setChannelListGroups] = useState<InfiniteScrollHookData<QueryClientChannelResponseDataItem>[]>([]);
+    const [categories, setCategories] = useState<ChannelListCategory[]>([
+        {
+            title: 'tabs.builtIn',
+            query: {
+                builtIn: 1,
+            },
+            expanded: false,
+            loading: false,
+        },
+        {
+            title: 'tabs.thirdParties',
+            query: {},
+            expanded: false,
+            loading: false,
+        },
+    ]);
 
     const {
         data: queryClientChannelsResponseData,
@@ -160,7 +168,7 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                 {
                     clientId,
                     ...data,
-                    ...(tabs[selectedTabIndex].query || {}),
+                    ...(categories[selectedTabIndex].query || {}),
                     search: debouncedSearchValue,
                 },
                 ['list'],
@@ -174,11 +182,120 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
         },
     );
 
+    const handleChangeAllCategoriesStatus = useCallback((patches: ChannelListCategoryPatch) => {
+        const newCategories = Array.from(categories).map((category) => {
+            return {
+                ...category,
+                ...patches,
+            };
+        });
+
+        setCategories(newCategories);
+    }, [categories]);
+
+    const handleChangeCategoriesStatus = useCallback((patchMap: ChannelListCategoryPatchMap) => {
+        const newCategories = Array.from(categories);
+
+        Object.keys(patchMap).forEach((key) => {
+            const patches = patchMap[key];
+            newCategories[key] = {
+                ...newCategories[key],
+                ...patches,
+            };
+        });
+
+        setCategories(newCategories);
+    }, [categories]);
+
+    // TODO
+    // eslint-disable-next-line no-unused-vars
+    const handleLoadMore = useCallback((indexes: number[]) => {
+        const newCategories = Array.from(categories);
+
+        handleChangeCategoriesStatus(indexes.reduce((result, index) => {
+            result[index] = true;
+            return result;
+        }, {}));
+
+        Promise.all(indexes.map((index) => {
+            const targetCategory = newCategories[index];
+            const targetChannelList = channelListGroups[index];
+            return channelService.queryClientChannels({
+                clientId,
+                ...(targetCategory.query || {}),
+                search: debouncedSearchValue,
+                lastCursor: targetChannelList.lastCursor,
+            }).then((response) => {
+                const data = response?.response;
+
+                const {
+                    items,
+                    ...props
+                } = data;
+
+                return {
+                    index: index.toString(),
+                    data: {
+                        list: items,
+                        ...props,
+                    },
+                };
+            });
+        })).then((data) => {
+            data.forEach((dataItem) => {
+                const {
+                    index,
+                    data,
+                } = dataItem;
+
+                newCategories[index] = data;
+            });
+
+            setCategories(newCategories);
+        }).finally(() => {
+            handleChangeCategoriesStatus(indexes.reduce((result, index) => {
+                result[index] = false;
+                return result;
+            }, {}));
+        });
+    }, [categories, debouncedSearchValue, channelListGroups]);
+
     useEffect(() => {
         if (headerRef.current) {
             setHeaderHeight((headerRef.current.clientHeight || 0) + 1);
         }
     }, [headerRef.current]);
+
+    useEffect(() => {
+        handleChangeAllCategoriesStatus({
+            loading: true,
+        });
+        Promise.all(categories.map((category) => {
+            return channelService.queryClientChannels({
+                clientId,
+                ...(category.query || {}),
+                search: debouncedSearchValue,
+            }).then((response) => {
+                const data = response?.response;
+
+                const {
+                    items,
+                    ...props
+                } = data;
+
+                return {
+                    list: items,
+                    ...props,
+                };
+            });
+        })).then((responses) => {
+            setChannelListGroups(responses);
+        }).finally(() => {
+            handleChangeAllCategoriesStatus({
+                loading: false,
+            });
+        });
+    }, [debouncedSearchValue]);
 
     return (
         <Box className="channel-list-container">
@@ -203,7 +320,7 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                     }}
                 >
                     {
-                        tabs.map((tabItem, index) => {
+                        categories.map((tabItem, index) => {
                             return (
                                 <Tab
                                     key={tabItem.title}
