@@ -11,14 +11,16 @@ import {
     ChannelListProps,
     ChannelListItemProps,
     ChannelListCategory,
-    ChannelListCategoryPatch,
     ChannelListCategoryPatchMap,
     ChannelLoaderMode,
 } from '@modules/channel/channel-list.interface';
 import { ChannelService } from '@modules/channel/channel.service';
 import { useDebounce } from 'ahooks';
 import { InfiniteScrollHookData } from '@modules/request/request.interface';
-import { QueryClientChannelResponseDataItem, QueryClientChannelsRequestOptions } from '@modules/channel/channel.interface';
+import {
+    QueryClientChannelResponseDataItem,
+    QueryClientChannelsRequestOptions,
+} from '@modules/channel/channel.interface';
 import { UtilsService } from '@modules/utils/utils.service';
 import _ from 'lodash';
 import SimpleBar from 'simplebar-react';
@@ -183,17 +185,6 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
         },
     );
 
-    const handleChangeAllCategoriesStatus = useCallback((patches: ChannelListCategoryPatch) => {
-        const newCategories = Array.from(categories).map((category) => {
-            return {
-                ...category,
-                ...patches,
-            };
-        });
-
-        setCategories(newCategories);
-    }, [categories]);
-
     const handleChangeCategoriesStatus = useCallback((patchMap: ChannelListCategoryPatchMap) => {
         const newCategories = Array.from(categories);
 
@@ -208,9 +199,7 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
         setCategories(newCategories);
     }, [categories]);
 
-    // TODO
-    // eslint-disable-next-line no-unused-vars
-    const handleLoadMore = useCallback(
+    const handleLoadChannels = useCallback(
         (indexes: number[], query: Record<string, any> = {}, mode: ChannelLoaderMode = 'search') => {
             const newCategories = Array.from(categories);
 
@@ -263,17 +252,21 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                         data,
                     } = dataItem;
 
-                    const currentList = Array.from(newChannelListGroups[parseInt(index, 10)]?.list || []);
+                    const indexNumber = parseInt(index, 10);
+                    const currentList = Array.from(newChannelListGroups[indexNumber]?.list || []);
+                    newChannelListGroups[indexNumber] = data;
 
                     switch (mode) {
                         case 'loadMore': {
-                            newChannelListGroups[index];
-                            const legacyItems = Array.from(newChannelListGroups[index].list);
+                            newChannelListGroups[indexNumber].list = currentList.concat(data.list || []);
+                            break;
                         }
+                        default:
+                            break;
                     }
-                    newCategories[index] = data;
                 });
-                setCategories(newCategories);
+
+                setChannelListGroups(newChannelListGroups);
             }).finally(() => {
                 handleChangeCategoriesStatus(indexes.reduce((result, index) => {
                     result[index] = false;
@@ -291,34 +284,15 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
     }, [headerRef.current]);
 
     useEffect(() => {
-        handleChangeAllCategoriesStatus({
-            loading: true,
-        });
-        Promise.all(categories.map((category) => {
-            return channelService.queryClientChannels({
-                clientId,
-                ...(category.query || {}),
+        handleLoadChannels(
+            new Array(categories.length)
+                .fill(null)
+                .map((value, index) => index),
+            {
                 search: debouncedSearchValue,
-            }).then((response) => {
-                const data = response?.response;
-
-                const {
-                    items,
-                    ...props
-                } = data;
-
-                return {
-                    list: items,
-                    ...props,
-                };
-            });
-        })).then((responses) => {
-            setChannelListGroups(responses);
-        }).finally(() => {
-            handleChangeAllCategoriesStatus({
-                loading: false,
-            });
-        });
+            },
+            'search',
+        );
     }, [debouncedSearchValue]);
 
     return (
@@ -358,9 +332,7 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
             </Box>
             {
                 queryClientChannelsLoading
-                    ? <Box className="loading-wrapper">
-                        <Loading />
-                    </Box>
+                    ? <Box className="loading-wrapper"><Loading /></Box>
                     : (!queryClientChannelsResponseData?.list || queryClientChannelsResponseData?.list?.length === 0)
                         ? <Box></Box>
                         : <SimpleBar
