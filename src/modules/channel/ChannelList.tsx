@@ -13,6 +13,7 @@ import {
     ChannelListCategory,
     ChannelListCategoryPatchMap,
     ChannelLoaderMode,
+    ChannelListCategoryPatch,
 } from '@modules/channel/channel-list.interface';
 import { ChannelService } from '@modules/channel/channel.service';
 import { useDebounce } from 'ahooks';
@@ -24,6 +25,7 @@ import {
 import { UtilsService } from '@modules/utils/utils.service';
 import _ from 'lodash';
 import SimpleBar from 'simplebar-react';
+// eslint-disable-next-line no-unused-vars
 import Box, { BoxProps } from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -34,7 +36,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { LocaleService } from '@modules/locale/locale.service';
 import '@modules/channel/channel-list.component.less';
-import { LoadingComponent } from '@modules/brand/loading.component';
+// import { LoadingComponent } from '@modules/brand/loading.component';
 
 const ChannelListItem: FC<ChannelListItemProps> = ({
     data = {},
@@ -134,7 +136,7 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
     const channelService = declarations.get<ChannelService>(ChannelService);
     const utilsService = declarations.get<UtilsService>(UtilsService);
     const localeService = declarations.get<LocaleService>(LocaleService);
-    const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
+    // const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
 
     const getLocaleText = localeService.useLocaleContext('components.channelList');
     const [searchValue, setSearchValue] = useState<string>('');
@@ -151,39 +153,41 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
             },
             expanded: false,
             loading: false,
+            loadingMore: false,
         },
         {
             title: 'tabs.thirdParties',
             query: {},
             expanded: false,
             loading: false,
+            loadingMore: false,
         },
     ]);
 
-    const {
-        data: queryClientChannelsResponseData,
-        loadMore: queryMoreClientChannels,
-        loading: queryClientChannelsLoading,
-        loadingMore: queryClientChannelsLoadingMore,
-    } = utilsService.useLoadMore<QueryClientChannelResponseDataItem>(
-        (data: InfiniteScrollHookData<QueryClientChannelResponseDataItem>) => {
-            return channelService.queryClientChannels(_.omit(
-                {
-                    clientId,
-                    ...data,
-                    ...(categories[selectedTabIndex].query || {}),
-                    search: debouncedSearchValue,
-                },
-                ['list'],
-            ));
-        },
-        {
-            reloadDeps: [
-                debouncedSearchValue,
-                selectedTabIndex,
-            ],
-        },
-    );
+    // const {
+    //     data: queryClientChannelsResponseData,
+    //     loadMore: queryMoreClientChannels,
+    //     loading: queryClientChannelsLoading,
+    //     loadingMore: queryClientChannelsLoadingMore,
+    // } = utilsService.useLoadMore<QueryClientChannelResponseDataItem>(
+    //     (data: InfiniteScrollHookData<QueryClientChannelResponseDataItem>) => {
+    //         return channelService.queryClientChannels(_.omit(
+    //             {
+    //                 clientId,
+    //                 ...data,
+    //                 ...(categories[selectedTabIndex].query || {}),
+    //                 search: debouncedSearchValue,
+    //             },
+    //             ['list'],
+    //         ));
+    //     },
+    //     {
+    //         reloadDeps: [
+    //             debouncedSearchValue,
+    //             selectedTabIndex,
+    //         ],
+    //     },
+    // );
 
     const handleChangeCategoriesStatus = useCallback((patchMap: ChannelListCategoryPatchMap) => {
         const newCategories = Array.from(categories);
@@ -204,9 +208,24 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
             const newCategories = Array.from(categories);
 
             handleChangeCategoriesStatus(indexes.reduce((result, index) => {
-                result[index] = true;
+                const patch = {} as ChannelListCategoryPatch;
+
+                switch (mode) {
+                    case 'loadMore': {
+                        patch.loadingMore = true;
+                        patch.loading = false;
+                        break;
+                    }
+                    case 'search': {
+                        patch.loadingMore = false;
+                        patch.loading = true;
+                    }
+                }
+
+                result[index] = patch;
+
                 return result;
-            }, {}));
+            }, {} as ChannelListCategoryPatchMap));
 
             Promise.all(indexes.map((index) => {
                 const targetCategory = newCategories[index];
@@ -304,7 +323,6 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                             root: 'search',
                         }}
                         placeholder={getLocaleText('searchPlaceholder')}
-                        disabled={queryClientChannelsLoading || queryClientChannelsLoadingMore}
                         onChange={(event) => setSearchValue(event.target.value)}
                     />
                     <Button
@@ -330,55 +348,54 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                     }
                 </Tabs>
             </Box>
-            {
-                queryClientChannelsLoading
-                    ? <Box className="loading-wrapper"><Loading /></Box>
-                    : (!queryClientChannelsResponseData?.list || queryClientChannelsResponseData?.list?.length === 0)
-                        ? <Box></Box>
-                        : <SimpleBar
-                            className="list-wrapper"
-                            style={{
-                                width,
-                                height: height - headerHeight,
-                            }}
-                        >
-                            <Box className="channels-list-wrapper">
-                                {
-                                    queryClientChannelsResponseData.list.map((item) => {
-                                        return (
-                                            <ChannelListItem
-                                                key={item.id}
-                                                builtIn={selectedTabIndex === 0}
-                                                data={item.channel}
-                                                width={utilsService.calculateItemWidth(width, 120)}
-                                                onClick={() => {
-                                                    onSelectChannel(item.channel.id);
-                                                }}
-                                            />
-                                        );
-                                    })
-                                }
-                                <Box className="load-more-wrapper">
-                                    <Box>
-                                        <Button
-                                            variant="text"
-                                            classes={{ root: 'load-more-button' }}
-                                            disabled={queryClientChannelsLoadingMore || queryClientChannelsResponseData?.remains === 0}
-                                            onClick={queryMoreClientChannels}
-                                        >
-                                            {
-                                                queryClientChannelsLoadingMore
-                                                    ? getLocaleText('loading')
-                                                    : queryClientChannelsResponseData?.remains === 0
-                                                        ? getLocaleText('noMore')
-                                                        : getLocaleText('loadMore')
-                                            }
-                                        </Button>
-                                    </Box>
+            <SimpleBar
+                className="list-wrapper"
+                style={{
+                    width,
+                    height: height - headerHeight,
+                }}
+            >
+                {
+                    categories.map((category, index) => {
+                        const channelList = channelListGroups[index];
+                        return <Box className="channels-list-wrapper" key={index}>
+                            {
+                                channelList.list.map((item) => {
+                                    return (
+                                        <ChannelListItem
+                                            key={item.id}
+                                            builtIn={selectedTabIndex === 0}
+                                            data={item.channel}
+                                            width={utilsService.calculateItemWidth(width, 120)}
+                                            onClick={() => {
+                                                onSelectChannel(item.channel.id);
+                                            }}
+                                        />
+                                    );
+                                })
+                            }
+                            <Box className="load-more-wrapper">
+                                <Box>
+                                    <Button
+                                        variant="text"
+                                        classes={{ root: 'load-more-button' }}
+                                        disabled={category.loadingMore || channelList?.remains === 0}
+                                        onClick={() => handleLoadChannels([index], {}, 'loadMore')}
+                                    >
+                                        {
+                                            category.loadingMore
+                                                ? getLocaleText('loading')
+                                                : channelList?.remains === 0
+                                                    ? getLocaleText('noMore')
+                                                    : getLocaleText('loadMore')
+                                        }
+                                    </Button>
                                 </Box>
                             </Box>
-                        </SimpleBar>
-            }
+                        </Box>;
+                    })
+                }
+            </SimpleBar>
         </Box>
     );
 };

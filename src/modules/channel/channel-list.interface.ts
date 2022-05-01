@@ -22,6 +22,7 @@ export interface ChannelListCategory extends Required<ChannelListCategoryPatch> 
 }
 
 export interface ChannelListCategoryPatch {
+    loadingMore?: boolean;
     loading?: boolean;
     expanded?: boolean;
 }
