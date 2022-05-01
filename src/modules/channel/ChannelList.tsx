@@ -360,7 +360,7 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                         const channelList = channelListGroups[index];
                         return <Box className="channels-list-wrapper" key={index}>
                             {
-                                channelList.list.map((item) => {
+                                (channelList?.list || []).map((item) => {
                                     return (
                                         <ChannelListItem
                                             key={item.id}
