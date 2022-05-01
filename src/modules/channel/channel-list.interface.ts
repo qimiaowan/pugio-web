@@ -27,3 +27,5 @@ export interface ChannelListCategoryPatch {
 }
 
 export type ChannelListCategoryPatchMap = Record<string, ChannelListCategoryPatch>;
+
+export type ChannelLoaderMode = 'loadMore' | 'search';

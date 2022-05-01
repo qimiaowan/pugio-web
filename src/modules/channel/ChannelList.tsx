@@ -13,11 +13,12 @@ import {
     ChannelListCategory,
     ChannelListCategoryPatch,
     ChannelListCategoryPatchMap,
+    ChannelLoaderMode,
 } from '@modules/channel/channel-list.interface';
 import { ChannelService } from '@modules/channel/channel.service';
 import { useDebounce } from 'ahooks';
 import { InfiniteScrollHookData } from '@modules/request/request.interface';
-import { QueryClientChannelResponseDataItem } from '@modules/channel/channel.interface';
+import { QueryClientChannelResponseDataItem, QueryClientChannelsRequestOptions } from '@modules/channel/channel.interface';
 import { UtilsService } from '@modules/utils/utils.service';
 import _ from 'lodash';
 import SimpleBar from 'simplebar-react';
@@ -209,56 +210,79 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
 
     // TODO
     // eslint-disable-next-line no-unused-vars
-    const handleLoadMore = useCallback((indexes: number[]) => {
-        const newCategories = Array.from(categories);
+    const handleLoadMore = useCallback(
+        (indexes: number[], query: Record<string, any> = {}, mode: ChannelLoaderMode = 'search') => {
+            const newCategories = Array.from(categories);
 
-        handleChangeCategoriesStatus(indexes.reduce((result, index) => {
-            result[index] = true;
-            return result;
-        }, {}));
-
-        Promise.all(indexes.map((index) => {
-            const targetCategory = newCategories[index];
-            const targetChannelList = channelListGroups[index];
-            return channelService.queryClientChannels({
-                clientId,
-                ...(targetCategory.query || {}),
-                search: debouncedSearchValue,
-                lastCursor: targetChannelList.lastCursor,
-            }).then((response) => {
-                const data = response?.response;
-
-                const {
-                    items,
-                    ...props
-                } = data;
-
-                return {
-                    index: index.toString(),
-                    data: {
-                        list: items,
-                        ...props,
-                    },
-                };
-            });
-        })).then((data) => {
-            data.forEach((dataItem) => {
-                const {
-                    index,
-                    data,
-                } = dataItem;
-
-                newCategories[index] = data;
-            });
-
-            setCategories(newCategories);
-        }).finally(() => {
             handleChangeCategoriesStatus(indexes.reduce((result, index) => {
-                result[index] = false;
+                result[index] = true;
                 return result;
             }, {}));
-        });
-    }, [categories, debouncedSearchValue, channelListGroups]);
+
+            Promise.all(indexes.map((index) => {
+                const targetCategory = newCategories[index];
+                const targetChannelList = channelListGroups[index];
+                const options: QueryClientChannelsRequestOptions = {
+                    clientId,
+                    ...(targetCategory.query || {}),
+                    ...query,
+                };
+
+                switch (mode) {
+                    case 'loadMore': {
+                        options.lastCursor = targetChannelList.lastCursor;
+                        break;
+                    }
+                    default:
+                        break;
+                }
+
+                return channelService.queryClientChannels(options).then((response) => {
+                    const data = response?.response;
+
+                    const {
+                        items,
+                        ...props
+                    } = data;
+
+                    return {
+                        index: index.toString(),
+                        data: {
+                            list: items,
+                            ...props,
+                            lastCursor: _.get(_.last(items), 'id'),
+                        },
+                    };
+                });
+            })).then((data) => {
+                const newChannelListGroups = Array.from(channelListGroups);
+
+                data.forEach((dataItem) => {
+                    const {
+                        index,
+                        data,
+                    } = dataItem;
+
+                    const currentList = Array.from(newChannelListGroups[parseInt(index, 10)]?.list || []);
+
+                    switch (mode) {
+                        case 'loadMore': {
+                            newChannelListGroups[index];
+                            const legacyItems = Array.from(newChannelListGroups[index].list);
+                        }
+                    }
+                    newCategories[index] = data;
+                });
+                setCategories(newCategories);
+            }).finally(() => {
+                handleChangeCategoriesStatus(indexes.reduce((result, index) => {
+                    result[index] = false;
+                    return result;
+                }, {}));
+            });
+        },
+        [categories, channelListGroups],
+    );
 
     useEffect(() => {
         if (headerRef.current) {
