@@ -1,6 +1,9 @@
 import { Injectable } from 'khamsa';
 import { RequestService } from '@modules/request/request.service';
-import { Response } from '@modules/request/request.interface';
+import {
+    PaginationResponseData,
+    Response,
+} from '@modules/request/request.interface';
 import {
     GetClientCurrentStatusRequestOptions,
     GetClientCurrentStatusResponseData,
@@ -63,7 +66,7 @@ export class ClientService {
 
     public async queryClientMembers(
         options: QueryClientMembersRequestOptions,
-    ): Promise<Response<QueryClientMembersResponseData>> {
+    ): Promise<PaginationResponseData<QueryClientMembersResponseData>> {
         const {
             clientId,
             ...query

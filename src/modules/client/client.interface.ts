@@ -37,4 +37,5 @@ export interface QueryClientMembersRequestOptions extends PaginationRequestOptio
     role: number;
 }
 
-export type QueryClientMembersResponseData = PaginationResponseData<Omit<UserClientRelationResponseData, 'client'>>;
+export type QueryClientMemberItem = Omit<UserClientRelationResponseData, 'client'>;
+export type QueryClientMembersResponseData = PaginationResponseData<QueryClientMemberItem>;

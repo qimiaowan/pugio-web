@@ -67,13 +67,12 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
         loading: queryClientsLoading,
         loadingMore: queryClientsLoadingMore,
     } = utilsService.useLoadMore<QueryClientsResponseData>(
-        (data) => clientsService.queryClients(_.omit(
+        (data) => clientsService.queryClients(
             {
-                ...data,
+                ..._.pick(data, ['lastCursor', 'size']),
                 search: debouncedSearchValue,
             },
-            ['items'],
-        )),
+        ),
         {
             reloadDeps: [debouncedSearchValue],
         },

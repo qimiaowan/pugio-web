@@ -14,8 +14,10 @@ export interface QueryClientsRequestOptions extends PaginationRequestOptions {
     roles?: string[];
 }
 
-export interface QueryClientsResponseData extends BaseResponseData {
+export interface QueryClientsBaseResponseData {
     id: string;
     roleType: number;
     client: Client;
 }
+
+export interface QueryClientsResponseData extends BaseResponseData, QueryClientsBaseResponseData {}
