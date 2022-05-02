@@ -101,15 +101,23 @@ export class UtilsService extends CaseTransformerService {
 
         return new Promise((resolve, reject) => {
             try {
-                amdRequire([url], (mod) => {
-                    const channelBundle = mod.default || mod;
+                amdRequire(
+                    [url],
+                    (mod) => {
+                        const channelBundle = mod.default || mod;
 
-                    if (!channelBundle || typeof channelBundle !== 'function') {
-                        reject(new Error(`Channel bundle may have a wrong type: ${typeof channelBundle}`));
-                    }
+                        if (!channelBundle || typeof channelBundle !== 'function') {
+                            reject(new Error(`Channel bundle may have a wrong type: ${typeof channelBundle}`));
+                        }
 
-                    resolve(channelBundle);
-                });
+                        resolve(channelBundle);
+                    },
+                    (error) => {
+                        if (error) {
+                            reject(error);
+                        }
+                    },
+                );
             } catch (e) {
                 reject(new Error(`Cannot load channel bundle '${channelId}'`));
             }
