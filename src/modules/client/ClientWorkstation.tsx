@@ -254,7 +254,9 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                         } else {
                             reject(new Error());
                         }
-                    }).catch((e) => reject(e));
+                    }).catch((e) => {
+                        reject(e);
+                    });
                 });
             })
             .then((result) => {

@@ -99,15 +99,33 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
                             onOpen={() => switchClientsDropdownVisibility(true)}
                             onClose={() => switchClientsDropdownVisibility(false)}
                         />
-                        <NavLink to="/marketplace" className="navlink">
+                        <NavLink to="/explore" className="navlink">
                             {
                                 <Button
                                     classes={{
                                         root: 'link',
                                     }}
-                                >{getLocaleText('app.navbar.marketplace')}</Button>
+                                >{getLocaleText('app.navbar.explore')}</Button>
                             }
                         </NavLink>
+                        <NavLink to="/development" className="navlink">
+                            {
+                                <Button
+                                    classes={{
+                                        root: 'link',
+                                    }}
+                                >{getLocaleText('app.navbar.development')}</Button>
+                            }
+                        </NavLink>
+                        <a target="_blank" href="https://github.com/pugiojs/pugio-web/issues" className="navlink">
+                            {
+                                <Button
+                                    classes={{
+                                        root: 'link',
+                                    }}
+                                >{getLocaleText('app.navbar.issues')}</Button>
+                            }
+                        </a>
                     </Box>
                     <Box className="wrapper avatar-and-locales">
                         <NavLink to="/settings" className="navlink">

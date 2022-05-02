@@ -2,7 +2,9 @@
     "app": {
         "navbar": {
             "clients": "Clients",
-            "marketplace": "Marketplace"
+            "explore": "Explore",
+            "development": "Developing",
+            "issues": "Issues"
         },
         "avatarDropdown": {
             "settings": "Account Settings",
@@ -59,7 +61,8 @@
                 "builtIn": "Built-in",
                 "thirdParties": "Third Parties"
             },
-            "create": "Create Channel",
+            "create": "Create",
+            "install": "Install",
             "searchPlaceholder": "Type to search...",
             "loadMore": "Load More",
             "loading": "Loading...",

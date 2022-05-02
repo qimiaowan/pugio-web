@@ -31,6 +31,7 @@ import IconButton from '@mui/material/IconButton';
 import Icon from '@mui/material/Icon';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
 import { LocaleService } from '@modules/locale/locale.service';
 import { LoadingComponent } from '@modules/brand/loading.component';
 import '@modules/channel/channel-list.component.less';
@@ -290,13 +291,18 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
         <Box className="channel-list-container">
             <Box className="header" ref={headerRef}>
                 <Box className="search-wrapper">
-                    <TextField
-                        classes={{
-                            root: 'search',
-                        }}
-                        placeholder={getLocaleText('searchPlaceholder')}
-                        onChange={(event) => setSearchValue(event.target.value)}
-                    />
+                    <Box className="left-wrapper">
+                        <TextField
+                            classes={{
+                                root: 'search',
+                            }}
+                            placeholder={getLocaleText('searchPlaceholder')}
+                            onChange={(event) => setSearchValue(event.target.value)}
+                        />
+                        <Button
+                            startIcon={<Icon className="icon-import" />}
+                        >{getLocaleText('install')}</Button>
+                    </Box>
                     <Button
                         startIcon={<Icon className="icon-plus" />}
                     >{getLocaleText('create')}</Button>
@@ -313,8 +319,8 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                     categories.map((category, index) => {
                         const channelList = channelListGroups[index];
                         return (
-                            <Box key={index} style={{ width: '100%' }}>
-                                <Box>
+                            <Box key={index} className="channel-list-group-wrapper">
+                                <Box className="switch-wrapper">
                                     <IconButton
                                         onClick={() => {
                                             handleChangeCategoriesStatus({
@@ -326,6 +332,14 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                                     >
                                         <Icon className={`icon-keyboard-arrow-${category?.expanded ? 'down' : 'right'}`} />
                                     </IconButton>
+                                    <Typography classes={{ root: 'title' }}>
+                                        {getLocaleText(category.title)}
+                                        {
+                                            !(category.loading || category.loadingMore) && (
+                                                ` (${channelList?.list?.length || 0 + channelList?.remains || 0})`
+                                            )
+                                        }
+                                    </Typography>
                                 </Box>
                                 {
                                     category?.expanded
@@ -372,6 +386,7 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                                             </Box>
                                         : null
                                 }
+                                <Divider />
                             </Box>
                         );
                     })
