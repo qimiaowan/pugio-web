@@ -55,42 +55,24 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
     };
 
     const [opacity, setOpacity] = useState<number>(0);
-    const [bgColor, setBgColor] = useState<string>('transparent');
-    const [mouseStay, setMouseStay] = useState<boolean>(false);
-
-    useEffect(() => {
-        setBgColor(mouseStay ? '#f9f9f9' : 'transparent');
-    }, [mouseStay]);
 
     return (
         <div
             className="channel-list-item"
             style={{
-                backgroundColor: bgColor,
                 ...style,
                 width,
             }}
             onMouseEnter={() => {
                 setOpacity(1);
-                setMouseStay(true);
             }}
             onMouseLeave={() => {
                 setOpacity(0);
-                setMouseStay(false);
-            }}
-            onMouseDown={() => {
-                setBgColor('#f3f3f3');
-            }}
-            onMouseUp={() => {
-                setBgColor('#f9f9f9');
             }}
             onClick={onClick}
         >
-
             <Box className="action-wrapper" style={{ opacity }}>
                 <IconButton
-                    onMouseDown={(event) => event.stopPropagation()}
-                    onMouseUp={(event) => event.stopPropagation()}
                     onClick={(event) => {
                         event.stopPropagation();
                     }}

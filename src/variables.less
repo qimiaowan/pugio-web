@@ -23,3 +23,11 @@
         scrollbar-width: none;
     }
 }
+
+
+@active-within: {
+    &:active:focus,
+    &:active:not(:focus):not(:focus-within) {
+        background-color: darken(@bg-widget-color, 5%);;
+    }
+}

@@ -113,6 +113,12 @@
     display: inline-block;
     user-select: none;
 
+    &:hover {
+        background-color: @bg-widget-color;
+    }
+
+    @active-within();
+
     .action-wrapper {
         height: 30px;
         padding-right: 5px;
