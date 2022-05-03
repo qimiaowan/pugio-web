@@ -5,14 +5,14 @@ import {
 } from 'immutable';
 import {
     Client,
-    QueryClientsResponseData,
+    QueryClientsResponseDataItem,
 } from '@modules/clients/clients.interface';
 import { Profile } from '@modules/profile/profile.interface';
 import { Channel } from '@modules/channel/channel.interface';
 
 export interface ChannelMetadata {
     client: Client;
-    relation: Omit<QueryClientsResponseData, 'client'>;
+    relation: Omit<QueryClientsResponseDataItem, 'client'>;
     user: Profile;
 }
 

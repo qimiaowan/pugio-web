@@ -9,8 +9,8 @@ import {
     GetClientCurrentStatusResponseData,
     GetClientInformationRequestOptions,
     GetClientInformationResponseData,
+    QueryClientMembersResponseDataItem,
     QueryClientMembersRequestOptions,
-    QueryClientMembersResponseData,
     UserClientRelationRequestOptions,
     UserClientRelationResponseData,
 } from '@modules/client/client.interface';
@@ -66,7 +66,7 @@ export class ClientService {
 
     public async queryClientMembers(
         options: QueryClientMembersRequestOptions,
-    ): Promise<PaginationResponseData<QueryClientMembersResponseData>> {
+    ): Promise<PaginationResponseData<QueryClientMembersResponseDataItem>> {
         const {
             clientId,
             ...query

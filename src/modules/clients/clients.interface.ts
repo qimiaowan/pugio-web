@@ -20,4 +20,4 @@ export interface QueryClientsBaseResponseData {
     client: Client;
 }
 
-export interface QueryClientsResponseData extends BaseResponseData, QueryClientsBaseResponseData {}
+export interface QueryClientsResponseDataItem extends BaseResponseData, QueryClientsBaseResponseData {}

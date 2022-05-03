@@ -7,7 +7,7 @@ import Box, { BoxProps } from '@mui/material/Box';
 import clsx from 'clsx';
 import { InjectedComponentProps } from 'khamsa';
 import { UtilsService } from '@modules/utils/utils.service';
-import { QueryClientMembersResponseData } from '@modules/client/client.interface';
+import { QueryClientMembersResponseDataItem } from '@modules/client/client.interface';
 import { ClientService } from '@modules/client/client.service';
 import _ from 'lodash';
 import { useDebounce } from 'ahooks';
@@ -31,7 +31,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
         loadMore: queryMoreClientMembers,
         loading: queryClientsLoading,
         loadingMore: queryClientsLoadingMore,
-    } = utilsService.useLoadMore<QueryClientMembersResponseData> (
+    } = utilsService.useLoadMore<QueryClientMembersResponseDataItem> (
         (data) => clientService.queryClientMembers(
             {
                 clientId,

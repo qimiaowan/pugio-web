@@ -20,7 +20,7 @@ import { ClientsDropdownProps } from '@modules/clients/clients-dropdown.interfac
 import _ from 'lodash';
 import { useDebounce } from 'ahooks';
 import { ClientsService } from '@modules/clients/clients.service';
-import { QueryClientsResponseData } from '@modules/clients/clients.interface';
+import { QueryClientsResponseDataItem } from '@modules/clients/clients.interface';
 import SimpleBar from 'simplebar-react';
 import '@modules/clients/clients-dropdown.component.less';
 import {
@@ -60,13 +60,13 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
     const getLocaleText = localeService.useLocaleContext();
     const getComponentLocaleText = localeService.useLocaleContext('components.clientsDropdown');
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement>(null);
-    const [clients, setClients] = useState<QueryClientsResponseData[]>([]);
+    const [clients, setClients] = useState<QueryClientsResponseDataItem[]>([]);
     const {
         data: queryClientsResponseData,
         loadMore: queryMoreClients,
         loading: queryClientsLoading,
         loadingMore: queryClientsLoadingMore,
-    } = utilsService.useLoadMore<QueryClientsResponseData>(
+    } = utilsService.useLoadMore<QueryClientsResponseDataItem>(
         (data) => clientsService.queryClients(
             {
                 ..._.pick(data, ['lastCursor', 'size']),

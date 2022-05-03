@@ -2,7 +2,7 @@ import { Injectable } from 'khamsa';
 import { RequestService } from '@modules/request/request.service';
 import {
     QueryClientsRequestOptions,
-    QueryClientsResponseData,
+    QueryClientsResponseDataItem,
 } from '@modules/clients/clients.interface';
 import { PaginationResponseData } from '@modules/request/request.interface';
 import { UtilsService } from '@modules/utils/utils.service';
@@ -14,7 +14,7 @@ export class ClientsService {
         private readonly utilsService: UtilsService,
     ) {}
 
-    public async queryClients(options: QueryClientsRequestOptions): Promise<PaginationResponseData<QueryClientsResponseData>> {
+    public async queryClients(options: QueryClientsRequestOptions): Promise<PaginationResponseData<QueryClientsResponseDataItem>> {
         const {
             search,
             lastCursor,
