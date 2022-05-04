@@ -12,6 +12,11 @@ import { ClientService } from '@modules/client/client.service';
 import _ from 'lodash';
 import { useDebounce } from 'ahooks';
 import { useParams } from 'react-router-dom';
+import Divider from '@mui/material/Divider';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import { ClientMemberTab } from '@modules/client/client-members.interface';
+import '@modules/client/client-members.component.less';
 
 const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
     className = '',
@@ -24,6 +29,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
     const { client_id: clientId } = useParams();
     const [searchValue, setSearchValue] = useState<string>('');
     const [role, setRole] = useState<number>(2);
+    const [tabs, setTabs] = useState<ClientMemberTab[]>([]);
     const debouncedSearchValue = useDebounce(searchValue);
 
     const {
@@ -52,9 +58,13 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
     return (
         <Box
             {...props}
-            className={clsx('page', className)}
+            className={clsx('client-members', className)}
         >
-            <Box className="header"></Box>
+            <Box className="header">
+                <Box className="header-controls-wrapper"></Box>
+                <Box className="header-controls-wrapper"></Box>
+            </Box>
+            <Divider />
             <Box className="single-column">
             </Box>
         </Box>

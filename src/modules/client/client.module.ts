@@ -39,6 +39,10 @@ const ChannelModule = import('@modules/channel/channel.module').then(({ ChannelM
                     path: 'workstation',
                     useComponentClass: ClientWorkstationComponent,
                 },
+                {
+                    path: 'members',
+                    useComponentClass: ClientMembersComponent,
+                },
             ],
         },
     ],
