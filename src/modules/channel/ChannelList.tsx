@@ -34,6 +34,7 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import { LocaleService } from '@modules/locale/locale.service';
 import { LoadingComponent } from '@modules/brand/loading.component';
+import clsx from 'clsx';
 import '@modules/channel/channel-list.component.less';
 
 const ChannelListItem: FC<ChannelListItemProps> = ({
@@ -324,49 +325,51 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                                     </Typography>
                                 </Box>
                                 {
-                                    category?.expanded
-                                        ? category?.loading
-                                            ? <Box className="loading-wrapper"><Loading/></Box>
-                                            : <Box className="channels-list-wrapper">
-                                                {
-                                                    (channelList?.list || []).map((item) => {
-                                                        return (
-                                                            <ChannelListItem
-                                                                key={item.id}
-                                                                builtIn={category?.query?.builtIn === 1}
-                                                                data={item.channel}
-                                                                width={utilsService.calculateItemWidth(width, 120)}
-                                                                onClick={() => {
-                                                                    onSelectChannel(item.channel.id);
-                                                                }}
-                                                            />
-                                                        );
-                                                    })
-                                                }
-                                                {
-                                                    channelList?.remains > 0 && (
-                                                        <Box className="load-more-wrapper">
-                                                            <Box>
-                                                                <Button
-                                                                    variant="text"
-                                                                    classes={{ root: 'load-more-button' }}
-                                                                    disabled={category.loadingMore}
-                                                                    onClick={() => handleLoadChannels([index], {}, 'loadMore')}
-                                                                >
-                                                                    {
-                                                                        category.loadingMore
-                                                                            ? getLocaleText('loading')
-                                                                            : channelList?.remains === 0
-                                                                                ? getLocaleText('noMore')
-                                                                                : getLocaleText('loadMore')
-                                                                    }
-                                                                </Button>
-                                                            </Box>
+                                    category?.loading
+                                        ? <Box className="loading-wrapper"><Loading/></Box>
+                                        : <Box
+                                            className={clsx('channels-list-wrapper', {
+                                                hidden: !category?.expanded,
+                                            })}
+                                        >
+                                            {
+                                                (channelList?.list || []).map((item) => {
+                                                    return (
+                                                        <ChannelListItem
+                                                            key={item.id}
+                                                            builtIn={category?.query?.builtIn === 1}
+                                                            data={item.channel}
+                                                            width={utilsService.calculateItemWidth(width, 120)}
+                                                            onClick={() => {
+                                                                onSelectChannel(item.channel.id);
+                                                            }}
+                                                        />
+                                                    );
+                                                })
+                                            }
+                                            {
+                                                channelList?.remains > 0 && (
+                                                    <Box className="load-more-wrapper">
+                                                        <Box>
+                                                            <Button
+                                                                variant="text"
+                                                                classes={{ root: 'load-more-button' }}
+                                                                disabled={category.loadingMore}
+                                                                onClick={() => handleLoadChannels([index], {}, 'loadMore')}
+                                                            >
+                                                                {
+                                                                    category.loadingMore
+                                                                        ? getLocaleText('loading')
+                                                                        : channelList?.remains === 0
+                                                                            ? getLocaleText('noMore')
+                                                                            : getLocaleText('loadMore')
+                                                                }
+                                                            </Button>
                                                         </Box>
-                                                    )
-                                                }
-                                            </Box>
-                                        : null
+                                                    </Box>
+                                                )
+                                            }
+                                        </Box>
                                 }
                                 <Divider />
                             </Box>

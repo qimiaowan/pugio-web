@@ -80,6 +80,11 @@
             .channels-list-wrapper {
                 flex-shrink: 0;
                 width: 100%;
+                overflow: hidden;
+
+                &.hidden {
+                    height: 0;
+                }
 
                 .load-more-wrapper {
                     padding: @padding-vertical-width @padding-horizontal-width;
