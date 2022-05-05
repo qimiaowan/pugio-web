@@ -46,5 +46,8 @@ const ChannelModule = import('@modules/channel/channel.module').then(({ ChannelM
             ],
         },
     ],
+    exports: [
+        ClientService,
+    ],
 })
 export class ClientModule {}

@@ -13,12 +13,15 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import TextField from '@mui/material/TextField';
-import { TypographyProps } from '@mui/material/Typography';
+import Typography, { TypographyProps } from '@mui/material/Typography';
 import { InjectedComponentProps } from 'khamsa';
 import { LocaleService } from '@modules/locale/locale.service';
 import { ClientsDropdownProps } from '@modules/clients/clients-dropdown.interface';
 import _ from 'lodash';
-import { useDebounce } from 'ahooks';
+import {
+    useDebounce,
+    useRequest,
+} from 'ahooks';
 import { ClientsService } from '@modules/clients/clients.service';
 import { QueryClientsResponseDataItem } from '@modules/clients/clients.interface';
 import SimpleBar from 'simplebar-react';
@@ -31,6 +34,8 @@ import { LoadingComponent } from '@modules/brand/loading.component';
 import { ExceptionProps } from '@modules/brand/exception.interface';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { UtilsService } from '@modules/utils/utils.service';
+import { ClientService } from '@modules/client/client.service';
+import clsx from 'clsx';
 
 const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
     declarations,
@@ -49,6 +54,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
     const localeService = declarations.get<LocaleService>(LocaleService);
     const clientsService = declarations.get<ClientsService>(ClientsService);
     const utilsService = declarations.get<UtilsService>(UtilsService);
+    const clientService = declarations.get<ClientService>(ClientService);
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
     const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
 
@@ -75,6 +81,18 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
         ),
         {
             reloadDeps: [debouncedSearchValue],
+        },
+    );
+    const {
+        data: getClientInformationResponseData,
+    } = useRequest(
+        () => {
+            return clientService.getClientInformation({
+                clientId: selectedClientId,
+            });
+        },
+        {
+            refreshDeps: [selectedClientId],
         },
     );
 
@@ -104,9 +122,28 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                 classes={{ root: 'link' }}
                 variant="text"
                 endIcon={<Icon className="dropdown-icon icon-keyboard-arrow-down" />}
+                startIcon={
+                    getClientInformationResponseData?.response?.name
+                        ? <Icon className="icon-server" />
+                        : null
+                }
                 ref={buttonRef}
                 onClick={onOpen}
-            >{getLocaleText('app.navbar.clients')}</Button>
+            >
+                <Typography
+                    classes={{
+                        root: clsx('text', {
+                            selected: Boolean(getClientInformationResponseData?.response?.name),
+                        }),
+                    }}
+                >
+                    {
+                        getClientInformationResponseData?.response?.name
+                            ? getClientInformationResponseData.response.name
+                            : getLocaleText('app.navbar.clients')
+                    }
+                </Typography>
+            </Button>
             <Popover
                 classes={{ root: 'clients-popover' }}
                 open={Boolean(anchorEl)}

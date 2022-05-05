@@ -10,7 +10,8 @@
             "settings": "Account Settings",
             "signout": "Sign Out",
             "create": "Create a new account"
-        }
+        },
+        "createClient": "Client"
     },
     "clientsSidebarMenu": {
         "workstation": "Workstation",

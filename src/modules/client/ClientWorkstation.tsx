@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
     createElement,
     FC,
@@ -81,7 +80,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const {
         sidebarWidth,
         appNavbarHeight,
-        controlsWrapperHeight,
         tabsWrapperHeight,
         clientTabsMap,
         selectedTabMap,
@@ -97,7 +95,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     } = storeService.useStore((state) => {
         const {
             appNavbarHeight,
-            controlsWrapperHeight,
             tabsWrapperHeight,
             clientSidebarWidth: sidebarWidth,
             channelTabs: clientTabsMap,
@@ -115,7 +112,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
 
         return {
             appNavbarHeight,
-            controlsWrapperHeight,
             tabsWrapperHeight,
             sidebarWidth,
             clientTabsMap,
@@ -338,12 +334,11 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     }, [placeholderRef.current]);
 
     useEffect(() => {
-        if (appNavbarHeight && controlsWrapperHeight && windowInnerHeight) {
-            setPanelHeight(windowInnerHeight - appNavbarHeight * 2 - controlsWrapperHeight - tabsWrapperHeight + 3);
+        if (appNavbarHeight && windowInnerHeight) {
+            setPanelHeight(windowInnerHeight - appNavbarHeight * 2 - tabsWrapperHeight + 3);
         }
     }, [
         appNavbarHeight,
-        controlsWrapperHeight,
         tabsWrapperHeight,
         windowInnerHeight,
     ]);

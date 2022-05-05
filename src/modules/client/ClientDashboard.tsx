@@ -6,8 +6,6 @@ import {
     useState,
 } from 'react';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
 import { InjectedComponentProps } from 'khamsa';
@@ -15,7 +13,6 @@ import {
     NavLink,
     Outlet,
     useParams,
-    useNavigate,
 } from 'react-router-dom';
 import { LocaleService } from '@modules/locale/locale.service';
 import { StoreService } from '@modules/store/store.service';
@@ -41,43 +38,24 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
     const clientService = declarations.get<ClientService>(ClientService);
 
     const { client_id: clientId } = useParams();
-    const navigate = useNavigate();
     const sidebarRef = useRef<HTMLDivElement>(null);
-    const controlsWrapperRef = useRef<HTMLDivElement>(null);
     const getLocaleText = localeService.useLocaleContext();
-    const getPageLocaleText = localeService.useLocaleContext('pages.client_workstation');
     const [fullWidthMenu, setFullWidthMenu] = useState<boolean>(false);
     const [menuMetadataItems, setMenuMetadataItems] = useState<MenuMetadataItem[]>([]);
     const {
         setSidebarWidth,
-        setControlsWrapperHeight,
-        switchClientsDropdownVisibility,
         changeSelectedClientId,
     } = storeService.useStore((state) => {
         const {
             setClientSidebarWidth,
-            setControlsWrapperHeight,
-            switchClientsDropdownVisibility,
             changeSelectedClientId,
         } = state;
 
         return {
             setSidebarWidth: setClientSidebarWidth,
-            setControlsWrapperHeight,
-            switchClientsDropdownVisibility,
             changeSelectedClientId,
         };
     });
-    const {
-        data: getClientInformationResponseData,
-    } = useRequest(
-        () => {
-            return clientService.getClientInformation({ clientId });
-        },
-        {
-            refreshDeps: [clientId],
-        },
-    );
     const {
         data: userClientRelationResponseData,
     } = useRequest(
@@ -137,28 +115,6 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
             observer.disconnect();
         };
     }, [sidebarRef]);
-
-    useEffect(() => {
-        const observer = new ResizeObserver((entries) => {
-            const [observationData] = entries;
-
-            if (observationData) {
-                const blockSize = _.get(observationData, 'borderBoxSize[0].blockSize');
-
-                if (_.isNumber(blockSize)) {
-                    setControlsWrapperHeight(blockSize);
-                }
-            }
-        });
-
-        if (controlsWrapperRef.current) {
-            observer.observe(controlsWrapperRef.current);
-        }
-
-        return () => {
-            observer.disconnect();
-        };
-    }, [controlsWrapperRef]);
 
     const updateMenuMetadataItems = useCallback(() => {
         if (clientId && userClientRelationResponseData?.response) {
@@ -243,33 +199,6 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
                 </Box>
             </Box>
             <Box className="content-container">
-                <Box className="controls" ref={controlsWrapperRef}>
-                    {
-                        getClientInformationResponseData?.response && (
-                            <>
-                                <Icon className="icon-server" />
-                                <Typography
-                                    variant="subtitle2"
-                                    className="client-name"
-                                    noWrap={true}
-                                    title={getClientInformationResponseData?.response?.name || null}
-                                >{getClientInformationResponseData?.response?.name || null}</Typography>
-                            </>
-                        )
-                    }
-                    <Button
-                        size="small"
-                        classes={{ sizeSmall: 'control-button' }}
-                        startIcon={<Icon className="icon-plus" />}
-                        onClick={() => navigate('/clients/create')}
-                    >{getPageLocaleText('create')}</Button>
-                    <Button
-                        size="small"
-                        classes={{ sizeSmall: 'control-button' }}
-                        startIcon={<Icon className="icon-switch" />}
-                        onClick={() => switchClientsDropdownVisibility(true)}
-                    >{getPageLocaleText('switch')}</Button>
-                </Box>
                 <Outlet />
             </Box>
         </Box>

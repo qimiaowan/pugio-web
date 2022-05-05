@@ -9,6 +9,7 @@ import {
 import {
     NavLink,
     Outlet,
+    useNavigate,
 } from 'react-router-dom';
 import { LocaleService } from '@modules/locale/locale.service';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
@@ -45,6 +46,7 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
 
     const theme = brandService.getTheme();
 
+    const navigate = useNavigate();
     const [locales, setLocales] = useState<LocaleListItem[]>([]);
     const [locale, setLocale] = useState(localStorage.getItem('locale') || 'en_US');
     const [logo, setLogo] = useState<string>('');
@@ -128,6 +130,13 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
                         </a>
                     </Box>
                     <Box className="wrapper avatar-and-locales">
+                        <Button
+                            size="small"
+                            variant="contained"
+                            classes={{ sizeSmall: 'control-button' }}
+                            startIcon={<Icon className="icon-plus" />}
+                            onClick={() => navigate('/clients/create')}
+                        >{getLocaleText('app.createClient')}</Button>
                         <NavLink to="/settings" className="navlink">
                             <IconButton>
                                 <Icon className="icon-settings" />
