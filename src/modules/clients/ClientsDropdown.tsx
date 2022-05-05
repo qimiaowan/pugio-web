@@ -131,6 +131,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                 onClick={onOpen}
             >
                 <Typography
+                    noWrap={true}
                     classes={{
                         root: clsx('text', {
                             selected: Boolean(getClientInformationResponseData?.response?.name),

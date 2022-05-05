@@ -14,5 +14,17 @@
         padding: @padding-vertical-width @padding-horizontal-width;
         display: flex;
         justify-content: space-between;
+
+        .header-controls-wrapper {
+            display: flex;
+
+            & > * {
+                margin-right: @padding-horizontal-width;
+
+                &:last-child {
+                    margin-right: 0;
+                }
+            }
+        }
     }
 }

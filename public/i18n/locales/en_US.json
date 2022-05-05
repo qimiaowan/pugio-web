@@ -32,6 +32,12 @@
                 "title": "Client Offline",
                 "subTitle": "The client is currently offline, please check the client status and retry later"
             }
+        },
+        "clientMembers": {
+            "tabs": {
+                "members": "Members",
+                "admins": "Admins"
+            }
         }
     },
     "components": {
