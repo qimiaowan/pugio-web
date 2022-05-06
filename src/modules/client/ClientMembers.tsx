@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
     createElement,
     FC,
@@ -46,6 +45,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
     const UserCard = declarations.get<FC<UserCardProps>>(UserCardComponent);
 
     const { client_id: clientId } = useParams();
+    const getLocaleText = localeService.useLocaleContext();
     const getPageLocaleText = localeService.useLocaleContext('pages.clientMembers');
     const [searchValue, setSearchValue] = useState<string>('');
     const [role, setRole] = useState<number>(2);
@@ -55,7 +55,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
         data: queryClientMembersResponseData,
         loadMore: queryMoreClientMembers,
         loading: queryClientMembersLoading,
-        loadingMore: queryClientsLoadingMore,
+        loadingMore: queryClientMembersLoadingMore,
     } = utilsService.useLoadMore<QueryClientMembersResponseDataItem> (
         (data) => clientService.queryClientMembers(
             {
@@ -169,9 +169,23 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                             </Tabs>
                         )
                     }
-                    <TextField classes={{ root: 'search' }} placeholder={getPageLocaleText('placeholder')} />
+                    <TextField
+                        classes={{ root: 'search' }}
+                        placeholder={getPageLocaleText('placeholder')}
+                        onChange={(event) => {
+                            setSearchValue(event.target.value);
+                        }}
+                    />
                 </Box>
                 <Box className="header-controls-wrapper">
+                    {
+                        (_.isArray(selectedMembersMap.get(role)) && selectedMembersMap.get(role).length > 0) && (
+                            <Button
+                                startIcon={<Icon className="icon-delete" />}
+                                title={getPageLocaleText('delete', { count: selectedMembersMap.get(role).length })}
+                            >{selectedMembersMap.get(role).length}</Button>
+                        )
+                    }
                     <Button
                         startIcon={<Icon className="icon-account-add" />}
                     >{getPageLocaleText('add')}</Button>
@@ -193,34 +207,52 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                                     title={getPageLocaleText('empty.title')}
                                     subTitle={getPageLocaleText('empty.subTitle')}
                                 />
-                                : queryClientMembersResponseData.list.map((listItem) => {
-                                    const {
-                                        id,
-                                        user,
-                                    } = listItem;
+                                : <>
+                                    {
+                                        queryClientMembersResponseData.list.map((listItem) => {
+                                            const {
+                                                id,
+                                                user,
+                                            } = listItem;
 
-                                    return createElement(
-                                        UserCard,
-                                        {
-                                            key: id,
-                                            profile: user,
-                                            menu: [
+                                            return createElement(
+                                                UserCard,
                                                 {
-                                                    icon: 'icon-delete',
-                                                    title: getPageLocaleText('userCardMenu.delete'),
+                                                    key: id,
+                                                    profile: user,
+                                                    menu: [
+                                                        {
+                                                            icon: 'icon-delete',
+                                                            title: getPageLocaleText('userCardMenu.delete'),
+                                                        },
+                                                    ],
+                                                    checked: (selectedMembersMap.get(role) || []).indexOf(user.id) !== -1,
+                                                    onCheckStatusChange: (checked) => {
+                                                        if (checked) {
+                                                            handleAddSelectedMembersToList(role, [user.id]);
+                                                        } else {
+                                                            handleDeleteSelectedMembersFromList(role, [user.id]);
+                                                        }
+                                                    },
                                                 },
-                                            ],
-                                            checked: (selectedMembersMap.get(role) || []).indexOf(user.id) !== -1,
-                                            onCheckStatusChange: (checked) => {
-                                                if (checked) {
-                                                    handleAddSelectedMembersToList(role, [user.id]);
-                                                } else {
-                                                    handleDeleteSelectedMembersFromList(role, [user.id]);
-                                                }
-                                            },
-                                        },
-                                    );
-                                })
+                                            );
+                                        })
+                                    }
+                                    <Button
+                                        variant="text"
+                                        classes={{ root: 'load-more-button' }}
+                                        disabled={queryClientMembersLoadingMore || queryClientMembersResponseData?.remains === 0}
+                                        onClick={queryMoreClientMembers}
+                                    >
+                                        {
+                                            queryClientMembersLoadingMore
+                                                ? getLocaleText('loadings.loading')
+                                                : queryClientMembersResponseData?.remains === 0
+                                                    ? getLocaleText('loadings.noMore')
+                                                    : getLocaleText('loadings.loadMore')
+                                        }
+                                    </Button>
+                                </>
                     }
                 </Box>
             </Box>

@@ -46,7 +46,8 @@
             "userCardMenu": {
                 "delete": "Delete Member"
             },
-            "add": "Add Members"
+            "add": "Add Members",
+            "delete": "Delete {{ count }} Member(s)"
         }
     },
     "components": {
@@ -91,5 +92,10 @@
             "clipboard": "Clipboard",
             "close": "Close Connection"
         }
+    },
+    "loadings": {
+        "loading": "Loading...",
+        "loadMore": "Load More",
+        "noMore": "No More"
     }
 }
