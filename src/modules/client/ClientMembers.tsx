@@ -31,6 +31,7 @@ import { ExceptionProps } from '@modules/brand/exception.interface';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { UserCardProps } from '@modules/user/user-card.interface';
 import { UserCardComponent } from '@modules/user/user-card.component';
+import { Map } from 'immutable';
 
 const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
     className = '',
@@ -81,6 +82,35 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
             });
         },
     );
+    const [
+        selectedMembersMap,
+        setSelectedMembersMap,
+    ] = useState<Map<number, string[]>>(Map<number, string[]>());
+
+    const handleAddSelectedMembersToList = (role: number, memberIdList: string[]) => {
+        setSelectedMembersMap(
+            selectedMembersMap.set(
+                role,
+                _.uniq((selectedMembersMap.get(role) || []).concat(memberIdList)),
+            ),
+        );
+    };
+
+    const handleDeleteSelectedMembersFromList = (role: number, memberIdList: string[]) => {
+        if (!_.isArray(selectedMembersMap.get(role))) {
+            setSelectedMembersMap(selectedMembersMap.set(role, []));
+            return;
+        }
+
+        setSelectedMembersMap(
+            selectedMembersMap.set(
+                role,
+                selectedMembersMap.get(role).filter((memberId) => {
+                    return memberIdList.indexOf(memberId) === -1;
+                }),
+            ),
+        );
+    };
 
     useEffect(() => {
         if (userClientRelationResponseData?.response) {
@@ -139,7 +169,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                             </Tabs>
                         )
                     }
-                    <TextField placeholder={getPageLocaleText('placeholder')} />
+                    <TextField classes={{ root: 'search' }} placeholder={getPageLocaleText('placeholder')} />
                 </Box>
                 <Box className="header-controls-wrapper">
                     <Button
@@ -163,30 +193,34 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                                     title={getPageLocaleText('empty.title')}
                                     subTitle={getPageLocaleText('empty.subTitle')}
                                 />
-                                : <>
-                                    {
-                                        queryClientMembersResponseData.list.map((listItem) => {
-                                            const {
-                                                id,
-                                                user,
-                                            } = listItem;
+                                : queryClientMembersResponseData.list.map((listItem) => {
+                                    const {
+                                        id,
+                                        user,
+                                    } = listItem;
 
-                                            return createElement(
-                                                UserCard,
+                                    return createElement(
+                                        UserCard,
+                                        {
+                                            key: id,
+                                            profile: user,
+                                            menu: [
                                                 {
-                                                    key: id,
-                                                    profile: user,
-                                                    menu: [
-                                                        {
-                                                            icon: 'icon-delete',
-                                                            title: getPageLocaleText('userCardMenu.delete'),
-                                                        },
-                                                    ],
+                                                    icon: 'icon-delete',
+                                                    title: getPageLocaleText('userCardMenu.delete'),
                                                 },
-                                            );
-                                        })
-                                    }
-                                </>
+                                            ],
+                                            checked: (selectedMembersMap.get(role) || []).indexOf(user.id) !== -1,
+                                            onCheckStatusChange: (checked) => {
+                                                if (checked) {
+                                                    handleAddSelectedMembersToList(role, [user.id]);
+                                                } else {
+                                                    handleDeleteSelectedMembersFromList(role, [user.id]);
+                                                }
+                                            },
+                                        },
+                                    );
+                                })
                     }
                 </Box>
             </Box>

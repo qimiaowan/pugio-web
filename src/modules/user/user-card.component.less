@@ -7,13 +7,20 @@
     padding: @padding-vertical-width @padding-horizontal-width;
     align-items: center;
     border-bottom: 1px solid @bg-divider-color;
+    cursor: pointer;
 
     &, * {
         user-select: none;
     }
 
-    &:hover {
+    &:hover, &.checked:hover {
         background-color: @bg-widget-color;
+    }
+
+    @active-within();
+
+    &.checked {
+        background-color: darken(@bg-widget-color, 2%);
     }
 
     .avatar {
@@ -51,5 +58,13 @@
                 margin-right: 0;
             }
         }
+    }
+
+    .checkbox-wrapper {
+        width: 50px;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 }

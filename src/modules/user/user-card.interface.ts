@@ -10,7 +10,9 @@ export interface UserCardMenuItem {
 
 export interface UserCardProps extends BoxProps {
     profile: Profile;
+    checked?: boolean;
     menu?: UserCardMenuItem[];
+    onCheckStatusChange?: (checked: boolean) => void;
 }
 
 export interface UserCardMenuProps {

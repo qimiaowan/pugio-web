@@ -4,6 +4,7 @@ import {
     MouseEvent,
 } from 'react';
 import Box from '@mui/material/Box';
+import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
@@ -80,6 +81,9 @@ const UserCard: FC<InjectedComponentProps<UserCardProps>> = ({
     menu = [],
     className = '',
     declarations,
+    checked = false,
+    onCheckStatusChange = _.noop,
+    onClick = _.noop,
     ...props
 }) => {
     const utilsService = declarations.get<UtilsService>(UtilsService);
@@ -98,14 +102,28 @@ const UserCard: FC<InjectedComponentProps<UserCardProps>> = ({
     return (
         <Box
             {...props}
-            className={clsx('user-card', className)}
+            className={clsx('user-card', { checked }, className)}
             onMouseEnter={() => setControlsVisible(true)}
             onMouseLeave={() => setControlsVisible(false)}
+            onClick={(event) => {
+                onClick(event);
+                onCheckStatusChange(!checked);
+            }}
         >
+            <Box className="checkbox-wrapper">
+                {
+                    (controlsVisible || checked) && (
+                        <Checkbox
+                            checked={checked}
+                            onChange={(event) => onCheckStatusChange(event.target.checked)}
+                        />
+                    )
+                }
+            </Box>
             <Box className="avatar" component="img" src={avatar} />
             <Box className="description">
                 <Typography
-                    variant="h6"
+                    variant="subtitle1"
                     noWrap={true}
                     classes={{ root: 'title' }}
                     title={extraTitle}
@@ -133,7 +151,10 @@ const UserCard: FC<InjectedComponentProps<UserCardProps>> = ({
                                     <IconButton
                                         key={index}
                                         title={title}
-                                        onClick={onActive}
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                            onActive();
+                                        }}
                                     ><Icon className={icon} /></IconButton>
                                 );
                             })
