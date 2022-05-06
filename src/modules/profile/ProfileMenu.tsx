@@ -21,8 +21,7 @@ import { useRequest } from 'ahooks';
 import { LoadingComponent } from '@modules/brand/loading.component';
 import { StoreService } from '@modules/store/store.service';
 import shallow from 'zustand/shallow';
-
-const DEFAULT_PICTURE_URL = '/static/images/profile_avatar_fallback.svg';
+import { DEFAULT_PICTURE_URL } from '@/constants';
 
 const ProfileMenu: FC<InjectedComponentProps> = ({
     declarations,

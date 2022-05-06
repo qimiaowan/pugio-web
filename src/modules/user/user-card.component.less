@@ -1,0 +1,40 @@
+@import url('@/variables.less');
+
+.user-card {
+    display: flex;
+    align-items: stretch;
+    box-sizing: border-box;
+    padding: @padding-vertical-width @padding-horizontal-width;
+
+    &:hover {
+        background-color: @bg-widget-color;
+    }
+
+    .avatar {
+        flex-grow: 0;
+        flex-shrink: 0;
+    }
+
+    .description {
+        flex-grow: 1;
+        flex-shrink: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .controls {
+        flex-grow: 0;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+
+        & > * {
+            margin-right: @padding-horizontal-width;
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+    }
+}

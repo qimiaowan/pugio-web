@@ -4,6 +4,7 @@ import _ from 'lodash';
 import {
     ORIGIN,
     clientId,
+    DEFAULT_PICTURE_URL,
 } from '@/constants';
 import {
     InfiniteScrollHookData,
@@ -15,6 +16,7 @@ import { FC } from 'react';
 import { LoadedChannelProps } from '@modules/store/store.interface';
 import { useInfiniteScroll } from 'ahooks';
 import { InfiniteScrollOptions } from 'ahooks/lib/useInfiniteScroll/types';
+import { Profile } from '@modules/profile/profile.interface';
 
 @Injectable()
 export class UtilsService extends CaseTransformerService {
@@ -175,5 +177,38 @@ export class UtilsService extends CaseTransformerService {
         const count = Math.ceil(baselineWidth / width);
 
         return baselineWidth / count;
+    }
+
+    public generateUserDescription(profile: Profile) {
+        const {
+            fullName,
+            firstName,
+            middleName,
+            lastName,
+            email,
+            picture = DEFAULT_PICTURE_URL,
+        } = profile;
+
+        const result = {
+            avatar: picture,
+            title: '',
+            extraTitle: '',
+            subTitle: email,
+        };
+
+        const name = [
+            firstName,
+            middleName,
+            lastName,
+        ].filter((nameSegment) => Boolean(nameSegment)).join('.');
+
+        if (fullName) {
+            result.title = fullName;
+            result.extraTitle = name;
+        } else {
+            result.title = name;
+        }
+
+        return result;
     }
 }
