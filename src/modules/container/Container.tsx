@@ -133,6 +133,7 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
                         <Button
                             size="small"
                             variant="contained"
+                            color="primary"
                             classes={{ sizeSmall: 'control-button' }}
                             startIcon={<Icon className="icon-plus" />}
                             onClick={() => navigate('/clients/create')}

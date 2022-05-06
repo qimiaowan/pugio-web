@@ -20,8 +20,8 @@ import {
 } from 'ahooks';
 import { useParams } from 'react-router-dom';
 import Divider from '@mui/material/Divider';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { ClientMemberTab } from '@modules/client/client-members.interface';
 import '@modules/client/client-members.component.less';
 import { LocaleService } from '@modules/locale/locale.service';
@@ -144,7 +144,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                 <Box className="header-controls-wrapper">
                     {
                         tabs.length > 0 && (
-                            <Tabs value={role}>
+                            <ToggleButtonGroup value={role}>
                                 {
                                     tabs.map((tab) => {
                                         const {
@@ -153,25 +153,25 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                                         } = tab;
 
                                         return (
-                                            <Tab
+                                            <ToggleButton
                                                 value={query?.role}
                                                 key={title}
-                                                label={getPageLocaleText(title)}
                                                 onClick={() => {
                                                     if (typeof query?.role === 'number') {
                                                         setRole(query.role);
                                                     }
                                                 }}
-                                            />
+                                            >{getPageLocaleText(title)}</ToggleButton>
                                         );
                                     })
                                 }
-                            </Tabs>
+                            </ToggleButtonGroup>
                         )
                     }
                     <TextField
                         classes={{ root: 'search' }}
                         placeholder={getPageLocaleText('placeholder')}
+                        disabled={queryClientMembersLoading || queryClientMembersLoadingMore}
                         onChange={(event) => {
                             setSearchValue(event.target.value);
                         }}
@@ -181,6 +181,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                     {
                         (_.isArray(selectedMembersMap.get(role)) && selectedMembersMap.get(role).length > 0) && (
                             <Button
+                                color="error"
                                 startIcon={<Icon className="icon-delete" />}
                                 title={getPageLocaleText('delete', { count: selectedMembersMap.get(role).length })}
                             >{selectedMembersMap.get(role).length}</Button>

@@ -3,6 +3,8 @@ import logo from '@modules/brand/logo.svg';
 import { ThemeOptions } from '@mui/material/styles';
 import createTheme from '@mui/material/styles/createTheme';
 import theme from '@lenconda/shuffle-mui-theme';
+import createStyles from '@mui/material/styles/createStyles';
+import Color from 'color';
 
 @Injectable()
 export class BrandService {
@@ -12,6 +14,11 @@ export class BrandService {
 
     public getTheme() {
         const pugioTheme = createTheme(theme, {
+            palette: {
+                secondary: {
+                    main: '#ededed',
+                },
+            },
             components: {
                 MuiIcon: {
                     defaultProps: {
@@ -73,6 +80,10 @@ export class BrandService {
                     },
                 },
                 MuiButton: {
+                    defaultProps: {
+                        color: 'secondary',
+                        variant: 'contained',
+                    },
                     styleOverrides: {
                         sizeMedium: {
                             fontSize: 12,
@@ -114,6 +125,44 @@ export class BrandService {
                             },
                         },
                     },
+                    variants: [
+                        {
+                            props: {
+                                color: 'error',
+                                variant: 'contained',
+                            },
+                            style: createStyles((data) => {
+                                return {
+                                    color: 'white',
+                                    backgroundColor: data.theme.palette.error.main,
+                                    '&:hover': {
+                                        backgroundColor: Color(data.theme.palette.error.main).darken(0.1).toString(),
+                                    },
+                                    '&:active': {
+                                        backgroundColor: Color(data.theme.palette.error.main).darken(0.15).toString(),
+                                    },
+                                };
+                            }),
+                        },
+                        {
+                            props: {
+                                color: 'secondary',
+                                variant: 'contained',
+                            },
+                            style: createStyles((data) => {
+                                return {
+                                    // color: data.theme.text.primary,
+                                    backgroundColor: data.theme.palette.secondary.main,
+                                    '&:hover': {
+                                        backgroundColor: Color(data.theme.palette.secondary.main).darken(0.1).toString(),
+                                    },
+                                    '&:active': {
+                                        backgroundColor: Color(data.theme.palette.secondary.main).darken(0.15).toString(),
+                                    },
+                                };
+                            }),
+                        },
+                    ],
                 },
             },
         } as ThemeOptions);
