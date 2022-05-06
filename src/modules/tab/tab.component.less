@@ -9,14 +9,15 @@
     flex-grow: 0;
     user-select: none;
     padding: @padding-vertical-width @padding-horizontal-width;
-    border-bottom: 1px solid @bg-divider-color;
+    border-top: 1px solid transparent;
     border-right: 1px solid @bg-divider-color;
+    border-bottom: 1px solid @bg-divider-color;
     height: 45px;
     overflow-y: hidden;
     min-width: 150px;
 
     &:last-child {
-        border-right: 0;
+        border-right-color: transparent;
     }
 
     &:not(.placeholder) {
@@ -29,7 +30,7 @@
 
     &.active {
         border-top: 1px solid @bg-divider-color;
-        border-bottom: 0;
+        border-bottom-color: transparent;
         background-color: white;
 
         &:hover {
