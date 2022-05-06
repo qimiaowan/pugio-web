@@ -6,6 +6,8 @@ import {
     useState,
 } from 'react';
 import Box, { BoxProps } from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Icon from '@mui/material/Icon';
 import TextField from '@mui/material/TextField';
 import clsx from 'clsx';
 import { InjectedComponentProps } from 'khamsa';
@@ -139,7 +141,11 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                     }
                     <TextField placeholder={getPageLocaleText('placeholder')} />
                 </Box>
-                <Box className="header-controls-wrapper"></Box>
+                <Box className="header-controls-wrapper">
+                    <Button
+                        startIcon={<Icon className="icon-account-add" />}
+                    >{getPageLocaleText('add')}</Button>
+                </Box>
             </Box>
             <Divider />
             <Box className="page client-members-page">

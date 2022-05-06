@@ -45,7 +45,8 @@
             },
             "userCardMenu": {
                 "delete": "Delete Member"
-            }
+            },
+            "add": "Add Members"
         }
     },
     "components": {
