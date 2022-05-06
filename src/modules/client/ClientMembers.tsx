@@ -176,8 +176,6 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                             setSearchValue(event.target.value);
                         }}
                     />
-                </Box>
-                <Box className="header-controls-wrapper">
                     {
                         (_.isArray(selectedMembersMap.get(role)) && selectedMembersMap.get(role).length > 0) && (
                             <Button
@@ -187,6 +185,8 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                             >{selectedMembersMap.get(role).length}</Button>
                         )
                     }
+                </Box>
+                <Box className="header-controls-wrapper">
                     <Button
                         startIcon={<Icon className="icon-account-add" />}
                     >{getPageLocaleText('add')}</Button>
