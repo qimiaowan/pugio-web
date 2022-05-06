@@ -5,6 +5,9 @@ import { StoreService } from '@modules/store/store.service';
 import { UserSelectorComponent } from '@modules/user/user-selector.component';
 import { ClientService } from '@modules/client/client.service';
 import { UtilsService } from '@modules/utils/utils.service';
+import { LoadingComponent } from '@modules/brand/loading.component';
+import { ExceptionComponent } from '@modules/brand/exception.component';
+import { UserCardComponent } from '@modules/user/user-card.component';
 
 @Component({
     component: lazy(() => import('@modules/client/ClientMembers')),
@@ -14,6 +17,9 @@ import { UtilsService } from '@modules/utils/utils.service';
         UserSelectorComponent,
         ClientService,
         UtilsService,
+        LoadingComponent,
+        ExceptionComponent,
+        UserCardComponent,
     ],
 })
 export class ClientMembersComponent {}

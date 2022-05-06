@@ -61,7 +61,9 @@ const UserCardMenu: FC<UserCardMenuProps> = ({
                                 <ListItemText>{title}</ListItemText>
                                 {
                                     extra && (
-                                        <Typography variant="body2" color="text.secondary">{extra}</Typography>
+                                        <ListItemText classes={{ root: 'list-item-extra-text' }}>
+                                            <Typography variant="body2" color="text.secondary">{extra}</Typography>
+                                        </ListItemText>
                                     )
                                 }
                             </MenuItem>
@@ -91,19 +93,34 @@ const UserCard: FC<InjectedComponentProps<UserCardProps>> = ({
         subTitle,
     } = utilsService.generateUserDescription(profile);
 
+    const [controlsVisible, setControlsVisible] = useState<boolean>(false);
+
     return (
         <Box
             {...props}
             className={clsx('user-card', className)}
+            onMouseEnter={() => setControlsVisible(true)}
+            onMouseLeave={() => setControlsVisible(false)}
         >
             <Box className="avatar" component="img" src={avatar} />
             <Box className="description">
-                <Typography variant="h6" noWrap={true}>{title}{extraTitle ? ` (${extraTitle})` : ''}</Typography>
-                <Typography variant="subtitle2">{subTitle}</Typography>
+                <Typography
+                    variant="h6"
+                    noWrap={true}
+                    classes={{ root: 'title' }}
+                    title={extraTitle}
+                >{title}{extraTitle ? ` (${extraTitle})` : ''}</Typography>
+                <Typography
+                    variant="subtitle2"
+                    color="text.secondary"
+                    noWrap={true}
+                    classes={{ root: 'subtitle' }}
+                    title={subTitle}
+                >{subTitle}</Typography>
             </Box>
             {
-                menu.length > 0 && (
-                    <Box className="controls">
+                (menu.length > 0 && controlsVisible) && (
+                    <Box className="controls-button-wrapper">
                         {
                             iconButtons.map((iconButton, index) => {
                                 const {

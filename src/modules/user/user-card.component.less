@@ -5,6 +5,12 @@
     align-items: stretch;
     box-sizing: border-box;
     padding: @padding-vertical-width @padding-horizontal-width;
+    align-items: center;
+    border-bottom: 1px solid @bg-divider-color;
+
+    &, * {
+        user-select: none;
+    }
 
     &:hover {
         background-color: @bg-widget-color;
@@ -13,6 +19,11 @@
     .avatar {
         flex-grow: 0;
         flex-shrink: 0;
+        pointer-events: none;
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        margin-right: @padding-horizontal-width;
     }
 
     .description {
@@ -21,9 +32,13 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
+
+        .title, .subtitle {
+            max-width: 480px;
+        }
     }
 
-    .controls {
+    .controls-button-wrapper {
         flex-grow: 0;
         flex-shrink: 0;
         display: flex;

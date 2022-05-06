@@ -27,4 +27,31 @@
             }
         }
     }
+
+    .client-members-page {
+        display: flex;
+        flex-direction: column;
+        justify-content: stretch;
+        align-items: center;
+
+        .exception {
+            height: 100%;
+        }
+
+        .members-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: stretch;
+            box-sizing: border-box;
+            padding: 0 calc(@padding-horizontal-width * 5);
+
+            &.loading-wrapper {
+                justify-content: center;
+                align-items: center;
+            }
+        }
+    }
 }

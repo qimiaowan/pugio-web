@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import {
+    createElement,
     FC,
     useEffect,
     useState,
@@ -23,6 +24,11 @@ import Tabs from '@mui/material/Tabs';
 import { ClientMemberTab } from '@modules/client/client-members.interface';
 import '@modules/client/client-members.component.less';
 import { LocaleService } from '@modules/locale/locale.service';
+import { LoadingComponent } from '@modules/brand/loading.component';
+import { ExceptionProps } from '@modules/brand/exception.interface';
+import { ExceptionComponent } from '@modules/brand/exception.component';
+import { UserCardProps } from '@modules/user/user-card.interface';
+import { UserCardComponent } from '@modules/user/user-card.component';
 
 const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
     className = '',
@@ -32,6 +38,9 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
     const clientService = declarations.get<ClientService>(ClientService);
     const utilsService = declarations.get<UtilsService>(UtilsService);
     const localeService = declarations.get<LocaleService>(LocaleService);
+    const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
+    const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
+    const UserCard = declarations.get<FC<UserCardProps>>(UserCardComponent);
 
     const { client_id: clientId } = useParams();
     const getPageLocaleText = localeService.useLocaleContext('pages.clientMembers');
@@ -42,7 +51,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
     const {
         data: queryClientMembersResponseData,
         loadMore: queryMoreClientMembers,
-        loading: queryClientsLoading,
+        loading: queryClientMembersLoading,
         loadingMore: queryClientsLoadingMore,
     } = utilsService.useLoadMore<QueryClientMembersResponseDataItem> (
         (data) => clientService.queryClientMembers(
@@ -128,12 +137,52 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                             </Tabs>
                         )
                     }
-                    <TextField />
+                    <TextField placeholder={getPageLocaleText('placeholder')} />
                 </Box>
                 <Box className="header-controls-wrapper"></Box>
             </Box>
             <Divider />
-            <Box className="single-column">
+            <Box className="page client-members-page">
+                <Box
+                    className={clsx('members-wrapper', {
+                        'loading-wrapper': queryClientMembersLoading,
+                    })}
+                >
+                    {
+                        queryClientMembersLoading
+                            ? <Loading />
+                            : queryClientMembersResponseData?.list.length === 0
+                                ? <Exception
+                                    imageSrc="/static/images/empty.svg"
+                                    title={getPageLocaleText('empty.title')}
+                                    subTitle={getPageLocaleText('empty.subTitle')}
+                                />
+                                : <>
+                                    {
+                                        queryClientMembersResponseData.list.map((listItem) => {
+                                            const {
+                                                id,
+                                                user,
+                                            } = listItem;
+
+                                            return createElement(
+                                                UserCard,
+                                                {
+                                                    key: id,
+                                                    profile: user,
+                                                    menu: [
+                                                        {
+                                                            icon: 'icon-delete',
+                                                            title: getPageLocaleText('userCardMenu.delete'),
+                                                        },
+                                                    ],
+                                                },
+                                            );
+                                        })
+                                    }
+                                </>
+                    }
+                </Box>
             </Box>
         </Box>
     );

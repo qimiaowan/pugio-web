@@ -37,6 +37,14 @@
             "tabs": {
                 "members": "Members",
                 "admins": "Admins"
+            },
+            "placeholder": "Type to search...",
+            "empty": {
+                "title": "No Members",
+                "subTitle": "There are no members in current category. You can add users as members by click the button in the top-right corner"
+            },
+            "userCardMenu": {
+                "delete": "Delete Member"
             }
         }
     },
