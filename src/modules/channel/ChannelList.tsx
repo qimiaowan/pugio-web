@@ -190,6 +190,7 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                     clientId,
                     ...(targetCategory.query || {}),
                     ...query,
+                    status: 1,
                 };
 
                 switch (mode) {

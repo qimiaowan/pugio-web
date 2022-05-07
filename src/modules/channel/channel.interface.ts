@@ -36,6 +36,7 @@ export interface QueryClientChannelsRequestData extends PaginationRequestOptions
 
 export interface QueryClientChannelsRequestOptions extends QueryClientChannelsRequestData {
     clientId: string;
+    status?: number;
 }
 
 export interface QueryClientChannelResponseDataItem extends BaseResponseData {
