@@ -1,6 +1,9 @@
 import { Injectable } from 'khamsa';
 import logo from '@modules/brand/logo.svg';
-import { ThemeOptions } from '@mui/material/styles';
+import {
+    ThemeOptions,
+    createStyles,
+} from '@mui/material/styles';
 import createTheme from '@mui/material/styles/createTheme';
 import { createMuiTheme } from '@lenconda/shuffle-mui-theme';
 
@@ -123,6 +126,17 @@ export class BrandService {
                                     fontSize: 18,
                                 },
                             },
+                        },
+                    },
+                    MuiDialogContentText: {
+                        styleOverrides: {
+                            root: createStyles((data) => {
+                                if (data?.theme.palette.mode === 'light') {
+                                    return {
+                                        color: data?.theme.palette.text.primary,
+                                    };
+                                }
+                            }),
                         },
                     },
                 },

@@ -142,7 +142,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                             selectedMembersMap.set(
                                 role,
                                 selectedMembersMap.get(role).filter((userId) => {
-                                    return !deletedUsers.some((selectedUser) => selectedUser.user.id === userId);
+                                    return !deletedUsers.some((selectedMembership) => selectedMembership?.user.id === userId);
                                 }),
                             ),
                         );
@@ -269,6 +269,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                                                         {
                                                             icon: 'icon-delete',
                                                             title: getPageLocaleText('userCardMenu.delete'),
+                                                            onActive: () => handleDeleteSelectedMembers(role, [user.id]),
                                                         },
                                                     ],
                                                     checked: (selectedMembersMap.get(role) || []).indexOf(user.id) !== -1,
