@@ -9,7 +9,7 @@ import Popover from '@mui/material/Popover';
 import Icon from '@mui/material/Icon';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import ListItem from '@mui/material/ListItem';
+import MenuItem from '@mui/material/MenuItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import TextField from '@mui/material/TextField';
@@ -195,7 +195,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                                 {
                                     clients.map((item) => {
                                         return (
-                                            <ListItem
+                                            <MenuItem
                                                 key={item.id}
                                                 onClick={() => handleSelectClient(item.client.id)}
                                             >
@@ -212,7 +212,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                                                     primaryTypographyProps={typographyProps}
                                                     secondaryTypographyProps={typographyProps}
                                                 >{item.client.name || item.client.id}</ListItemText>
-                                            </ListItem>
+                                            </MenuItem>
                                         );
                                     })
                                 }

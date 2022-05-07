@@ -25,6 +25,16 @@
 
         &:hover {
             background-color: darken(@bg-widget-color, 5%);
+
+            .close-icon {
+                &:hover {
+                    background-color: darken(@bg-widget-color, 10%);
+                }
+
+                &:active {
+                    background-color: darken(@bg-widget-color, 15%);
+                }
+            }
         }
     }
 
