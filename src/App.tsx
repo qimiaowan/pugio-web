@@ -11,6 +11,7 @@ import { ContainerComponent } from '@modules/container/container.component';
 import { ContainerProps } from '@modules/container/container.interface';
 import { AliveScope } from 'react-activation';
 import { ListenerComponent } from '@modules/container/listener.component';
+import { SnackbarProvider } from 'notistack';
 
 const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) => {
     const brandService = declarations.get<BrandService>(BrandService);
@@ -44,7 +45,9 @@ const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) =>
                         localeTextMap: localeMap,
                     }}
                 >
-                    <Container onLocaleChange={(locale) => setLocale(locale)} />
+                    <SnackbarProvider>
+                        <Container onLocaleChange={(locale) => setLocale(locale)} />
+                    </SnackbarProvider>
                 </LocaleContext.Provider>
             </AliveScope>
             <Listener />

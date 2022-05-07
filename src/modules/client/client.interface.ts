@@ -35,3 +35,10 @@ export interface QueryClientMembersRequestOptions extends PaginationRequestOptio
 }
 
 export type QueryClientMembersResponseDataItem = Omit<UserClientRelationResponseData, 'client'>;
+
+export interface DeleteClientMembersRequestOptions {
+    clientId: string;
+    users?: string[];
+}
+
+export type DeleteClientMembersResponseData = UserClientRelationResponseData[];

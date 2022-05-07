@@ -47,7 +47,11 @@
                 "delete": "Delete Member"
             },
             "add": "Add Members",
-            "delete": "Delete {{ count }} Member(s)"
+            "delete": "Delete {{ count }} Member(s)",
+            "deleteConfirm": "Would you want to delete these {{ count }} member(s)?",
+            "exceptions": {
+                "deleteMembers": "Failed to delete members"
+            }
         }
     },
     "components": {
@@ -84,6 +88,9 @@
             "loadMore": "Load More",
             "loading": "Loading...",
             "noMore": "No More"
+        },
+        "muibox": {
+            "confirm": "Confirm"
         }
     },
     "builtin": {

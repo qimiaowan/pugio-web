@@ -31,6 +31,8 @@ import { ExceptionComponent } from '@modules/brand/exception.component';
 import { UserCardProps } from '@modules/user/user-card.interface';
 import { UserCardComponent } from '@modules/user/user-card.component';
 import { Map } from 'immutable';
+import { useDialog } from 'muibox';
+import { useSnackbar } from 'notistack';
 
 const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
     className = '',
@@ -47,6 +49,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
     const { client_id: clientId } = useParams();
     const getLocaleText = localeService.useLocaleContext();
     const getPageLocaleText = localeService.useLocaleContext('pages.clientMembers');
+    const getComponentLocaleText = localeService.useLocaleContext('components');
     const [searchValue, setSearchValue] = useState<string>('');
     const [role, setRole] = useState<number>(2);
     const [tabs, setTabs] = useState<ClientMemberTab[]>([]);
@@ -56,6 +59,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
         loadMore: queryMoreClientMembers,
         loading: queryClientMembersLoading,
         loadingMore: queryClientMembersLoadingMore,
+        reload: reloadQueryClientMembers,
     } = utilsService.useLoadMore<QueryClientMembersResponseDataItem> (
         (data) => clientService.queryClientMembers(
             {
@@ -86,6 +90,8 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
         selectedMembersMap,
         setSelectedMembersMap,
     ] = useState<Map<number, string[]>>(Map<number, string[]>());
+    const dialog = useDialog();
+    const { enqueueSnackbar } = useSnackbar();
 
     const handleAddSelectedMembersToList = (role: number, memberIdList: string[]) => {
         setSelectedMembersMap(
@@ -110,6 +116,43 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                 }),
             ),
         );
+    };
+
+    const handleDeleteSelectedMembers = (role: number, memberIdList: string[]) => {
+        dialog.confirm({
+            title: getComponentLocaleText('muibox.confirm'),
+            message: getPageLocaleText('deleteConfirm', { count: memberIdList.length }),
+            ok: {
+                variant: 'contained',
+                color: 'primary',
+                text: 'OK',
+            },
+            cancel: {
+                text: 'Cancel',
+            },
+        })
+            .then(() => {
+                clientService.deleteClientMembers({
+                    clientId,
+                    users: memberIdList,
+                })
+                    .then((response) => {
+                        const deletedUsers = response?.response || [];
+                        setSelectedMembersMap(
+                            selectedMembersMap.set(
+                                role,
+                                selectedMembersMap.get(role).filter((userId) => {
+                                    return !deletedUsers.some((selectedUser) => selectedUser.user.id === userId);
+                                }),
+                            ),
+                        );
+                        reloadQueryClientMembers();
+                    })
+                    .catch(() => enqueueSnackbar(getPageLocaleText('exceptions.deleteMembers'), {
+                        variant: 'error',
+                    }));
+            })
+            .catch(_.noop);
     };
 
     useEffect(() => {
@@ -182,6 +225,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                                 color="error"
                                 startIcon={<Icon className="icon-delete" />}
                                 title={getPageLocaleText('delete', { count: selectedMembersMap.get(role).length })}
+                                onClick={() => handleDeleteSelectedMembers(role, selectedMembersMap.get(role))}
                             >{selectedMembersMap.get(role).length}</Button>
                         )
                     }

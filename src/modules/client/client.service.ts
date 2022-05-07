@@ -13,6 +13,8 @@ import {
     QueryClientMembersRequestOptions,
     UserClientRelationRequestOptions,
     UserClientRelationResponseData,
+    DeleteClientMembersRequestOptions,
+    DeleteClientMembersResponseData,
 } from '@modules/client/client.interface';
 
 @Injectable()
@@ -77,6 +79,22 @@ export class ClientService {
                 method: 'get',
                 url: `/client/${clientId}/membership`,
                 query,
+            });
+    }
+
+    public async deleteClientMembers(
+        options: DeleteClientMembersRequestOptions,
+    ): Promise<Response<DeleteClientMembersResponseData>> {
+        const {
+            clientId,
+            ...data
+        } = options;
+
+        return await this.requestService.getInstance()
+            .request({
+                method: 'delete',
+                url: `/client/${clientId}/membership`,
+                data,
             });
     }
 }
