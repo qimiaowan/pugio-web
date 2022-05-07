@@ -8,8 +8,6 @@
     text-decoration: none;
     color: @text-nav-link-color;
     padding: @padding-sidebar-menu-item;
-    border-radius: 5px;
-    margin-bottom: calc(@padding-vertical-width / 2);
 
     .title {
         font-size: 10px;
@@ -27,6 +25,7 @@
 
     &.full-width {
         flex-direction: row;
+        min-width: 120px;
 
         .icon {
             margin-right: 5px;
@@ -35,13 +34,16 @@
 
     &.active {
         background-color: fade(@grey, 20%);
+        color: @text-nav-link-hover-color;
 
         &:hover {
             background-color: fade(@grey, 20%);
+            color: @text-nav-link-hover-color;
         }
     }
 
     &:hover {
         background-color: fade(@grey, 10%);
+        color: @text-nav-link-hover-color;
     }
 }

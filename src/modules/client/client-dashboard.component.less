@@ -15,9 +15,8 @@
         flex-shrink: 1;
         flex-grow: 0;
         box-sizing: border-box;
-        padding: calc(@padding-vertical-width * 2) @padding-horizontal-width;
-        padding-bottom: 0;
-        padding-right: 0;
+        padding: calc(@padding-vertical-width * 2) 0;
+        padding-top: 0;
         background-color: @bg-widget-color;
         border-right: 1px solid @bg-divider-color;
 
@@ -28,7 +27,6 @@
             flex-shrink: 1;
             flex-grow: 1;
             overflow-y: auto;
-            padding-right: calc(@padding-horizontal-width - 3px);
 
             .sidebar-link {
                 display: block;
