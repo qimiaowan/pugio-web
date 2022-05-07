@@ -5,6 +5,7 @@ import {
     useRef,
     useState,
     useCallback,
+    Suspense,
 } from 'react';
 import Box from '@mui/material/Box';
 import Icon from '@mui/material/Icon';
@@ -221,28 +222,30 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                 localeTextMap: localeMap,
                                             }}
                                         >
-                                            <ChannelEntry
-                                                width={headerWidth}
-                                                height={panelHeight}
-                                                metadata={metadata}
-                                                basename={`/client/${clientId}/workstation`}
-                                                setup={(lifecycle = {}) => {
-                                                    updateTab(clientId, tabId, {
-                                                        lifecycle,
-                                                        loading: false,
-                                                    });
-                                                }}
-                                                tab={{
-                                                    closeTab: () => destroyTab(clientId, tabId),
-                                                    createNewTab: (focus, channelId) => {
-                                                        if (focus) {
-                                                            handleCreateTab(clientId, { channelId });
-                                                        } else {
-                                                            createTab(clientId, { channelId });
-                                                        }
-                                                    },
-                                                }}
-                                            />
+                                            <Suspense fallback={null}>
+                                                <ChannelEntry
+                                                    width={headerWidth}
+                                                    height={panelHeight}
+                                                    metadata={metadata}
+                                                    basename={`/client/${clientId}/workstation`}
+                                                    setup={(lifecycle = {}) => {
+                                                        updateTab(clientId, tabId, {
+                                                            lifecycle,
+                                                            loading: false,
+                                                        });
+                                                    }}
+                                                    tab={{
+                                                        closeTab: () => destroyTab(clientId, tabId),
+                                                        createNewTab: (focus, channelId) => {
+                                                            if (focus) {
+                                                                handleCreateTab(clientId, { channelId });
+                                                            } else {
+                                                                createTab(clientId, { channelId });
+                                                            }
+                                                        },
+                                                    }}
+                                                />
+                                            </Suspense>
                                         </LocaleContext.Provider>
                                     </StyledEngineProvider>,
                                 ),
