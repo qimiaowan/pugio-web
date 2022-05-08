@@ -141,36 +141,6 @@ export class BrandService {
                             }),
                         },
                     },
-                    MuiDialogTitle: {
-                        styleOverrides: {
-                            root: createStyles((data) => {
-                                const theme = data?.theme;
-
-                                if (theme && theme.palette.mode === 'light') {
-                                    return {
-                                        backgroundColor: theme.palette.grey[100],
-                                    };
-                                }
-
-                                return {};
-                            }),
-                        },
-                    },
-                    MuiDialogActions: {
-                        styleOverrides: {
-                            root: createStyles((data) => {
-                                const theme = data?.theme;
-
-                                if (theme && theme.palette.mode === 'light') {
-                                    return {
-                                        backgroundColor: theme.palette.grey[100],
-                                    };
-                                }
-
-                                return {};
-                            }),
-                        },
-                    },
                 },
             } as ThemeOptions);
 

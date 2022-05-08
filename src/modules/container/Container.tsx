@@ -32,8 +32,8 @@ import shallow from 'zustand/shallow';
 import { ContainerProps } from '@modules/container/container.interface';
 import _ from 'lodash';
 import '@modules/container/container.component.less';
-import { DialogProvider } from 'muibox';
 import { SnackbarProvider } from 'notistack';
+import { ConfirmDialogProvider } from 'react-mui-confirm';
 
 const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> = ({
     declarations,
@@ -53,6 +53,7 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
     const [locale, setLocale] = useState(localStorage.getItem('locale') || 'en_US');
     const [logo, setLogo] = useState<string>('');
     const getLocaleText = localeService.useLocaleContext();
+    const getConfirmLocaleText = localeService.useLocaleContext('components.confirm');
     const {
         clientsDropdownOpen,
         switchClientsDropdownVisibility,
@@ -90,7 +91,16 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
         ThemeProvider,
         { theme },
         <StyledEngineProvider injectFirst={true}>
-            <DialogProvider>
+            <ConfirmDialogProvider
+                confirmButtonText={getConfirmLocaleText('ok')}
+                cancelButtonText={getConfirmLocaleText('cancel')}
+                dialogProps={{
+                    disableEscapeKeyDown: true,
+                }}
+                cancelButtonProps={{
+                    color: 'secondary',
+                }}
+            >
                 <SnackbarProvider autoHideDuration={5000}>
                     <Box className="app-container" style={{ paddingTop: appNavbarHeight }}>
                         <Box className="navbar" style={{ height: appNavbarHeight }}>
@@ -160,8 +170,7 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
                         </Box>
                     </Box>
                 </SnackbarProvider>
-
-            </DialogProvider>
+            </ConfirmDialogProvider>
         </StyledEngineProvider>,
     );
 };

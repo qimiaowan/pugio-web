@@ -90,7 +90,7 @@
             "loading": "Loading...",
             "noMore": "No More"
         },
-        "muibox": {
+        "confirm": {
             "confirm": "Confirm",
             "ok": "OK",
             "cancel": "Cancel"

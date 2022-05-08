@@ -32,7 +32,7 @@ import { ExceptionComponent } from '@modules/brand/exception.component';
 import { UserCardProps } from '@modules/user/user-card.interface';
 import { UserCardComponent } from '@modules/user/user-card.component';
 import { Map } from 'immutable';
-import { useDialog } from 'muibox';
+import { useConfirmDialog } from 'react-mui-confirm';
 import { useSnackbar } from 'notistack';
 import { UserSelectorProps } from '@modules/user/user-selector.interface';
 import { UserSelectorComponent } from '@modules/user/user-selector.component';
@@ -101,7 +101,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
         selectedMembersMap,
         setSelectedMembersMap,
     ] = useState<Map<number, string[]>>(Map<number, string[]>());
-    const dialog = useDialog();
+    const confirm = useConfirmDialog();
     const { enqueueSnackbar } = useSnackbar();
     const [userSelectorOpen, setUserSelectorOpen] = useState<boolean>(false);
     const {
@@ -151,19 +151,10 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
     };
 
     const handleDeleteSelectedMembers = (role: number, memberIdList: string[]) => {
-        dialog.confirm({
-            title: getComponentLocaleText('muibox.confirm'),
-            message: getPageLocaleText('deleteConfirm', { count: memberIdList.length }),
-            ok: {
-                variant: 'contained',
-                color: 'primary',
-                text: 'OK',
-            },
-            cancel: {
-                text: 'Cancel',
-            },
-        })
-            .then(() => {
+        confirm({
+            title: getComponentLocaleText('confirm.confirm'),
+            description: getPageLocaleText('deleteConfirm', { count: memberIdList.length }),
+            onConfirm: () => {
                 clientService.deleteClientMembers({
                     clientId,
                     users: memberIdList,
@@ -183,8 +174,8 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                     .catch(() => enqueueSnackbar(getPageLocaleText('exceptions.deleteMembers'), {
                         variant: 'error',
                     }));
-            })
-            .catch(_.noop);
+            },
+        });
     };
 
     useEffect(() => {
