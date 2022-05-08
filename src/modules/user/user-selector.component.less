@@ -1,0 +1,24 @@
+@import url('@/variables.less');
+
+.user-selector {
+    .title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: transparent;
+        padding-left: @padding-horizontal-width;
+        padding-right: @padding-horizontal-width;
+
+        .search {
+            flex-grow: 1;
+            margin: 0 @padding-horizontal-width;
+        }
+    }
+
+    .content {
+        max-height: 720px;
+        min-height: 320px;
+        padding: 0;
+        border-top: 0;
+    }
+}

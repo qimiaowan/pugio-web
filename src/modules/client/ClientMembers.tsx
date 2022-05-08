@@ -3,6 +3,7 @@ import {
     FC,
     useEffect,
     useState,
+    useRef,
 } from 'react';
 import Box, { BoxProps } from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -33,6 +34,10 @@ import { UserCardComponent } from '@modules/user/user-card.component';
 import { Map } from 'immutable';
 import { useDialog } from 'muibox';
 import { useSnackbar } from 'notistack';
+import { UserSelectorProps } from '@modules/user/user-selector.interface';
+import { UserSelectorComponent } from '@modules/user/user-selector.component';
+import { StoreService } from '@modules/store/store.service';
+import SimpleBar from 'simplebar-react';
 
 const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
     className = '',
@@ -42,9 +47,11 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
     const clientService = declarations.get<ClientService>(ClientService);
     const utilsService = declarations.get<UtilsService>(UtilsService);
     const localeService = declarations.get<LocaleService>(LocaleService);
+    const storeService = declarations.get<StoreService>(StoreService);
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
     const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
     const UserCard = declarations.get<FC<UserCardProps>>(UserCardComponent);
+    const UserSelector = declarations.get<FC<UserSelectorProps>>(UserSelectorComponent);
 
     const { client_id: clientId } = useParams();
     const getLocaleText = localeService.useLocaleContext();
@@ -53,6 +60,10 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
     const [searchValue, setSearchValue] = useState<string>('');
     const [role, setRole] = useState<number>(2);
     const [tabs, setTabs] = useState<ClientMemberTab[]>([]);
+    const [controlsWrapperHeight, setControlsWrapperHeight] = useState<number>(0);
+    const [membersContainerHeight, setMembersContainerHeight] = useState<number>(0);
+    const [membersContainerWidth, setMembersContainerWidth] = useState<number>(0);
+    const controlsWrapperRef = useRef<HTMLDivElement>(null);
     const debouncedSearchValue = useDebounce(searchValue);
     const {
         data: queryClientMembersResponseData,
@@ -92,6 +103,27 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
     ] = useState<Map<number, string[]>>(Map<number, string[]>());
     const dialog = useDialog();
     const { enqueueSnackbar } = useSnackbar();
+    const [userSelectorOpen, setUserSelectorOpen] = useState<boolean>(false);
+    const {
+        windowInnerHeight,
+        windowInnerWidth,
+        appNavbarHeight,
+        clientSidebarWidth,
+    } = storeService.useStore((state) => {
+        const {
+            windowInnerHeight,
+            windowInnerWidth,
+            appNavbarHeight,
+            clientSidebarWidth,
+        } = state;
+
+        return {
+            windowInnerHeight,
+            windowInnerWidth,
+            appNavbarHeight,
+            clientSidebarWidth,
+        };
+    });
 
     const handleAddSelectedMembersToList = (role: number, memberIdList: string[]) => {
         setSelectedMembersMap(
@@ -178,12 +210,29 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
         }
     }, [userClientRelationResponseData]);
 
+    useEffect(() => {
+        if (controlsWrapperRef.current) {
+            setControlsWrapperHeight(controlsWrapperRef.current.clientHeight);
+        }
+    }, [controlsWrapperRef.current]);
+
+    useEffect(() => {
+        setMembersContainerHeight(windowInnerHeight - appNavbarHeight * 2 - controlsWrapperHeight + 2);
+        setMembersContainerWidth(windowInnerWidth - clientSidebarWidth + 1);
+    }, [
+        controlsWrapperHeight,
+        windowInnerHeight,
+        windowInnerWidth,
+        appNavbarHeight,
+        clientSidebarWidth,
+    ]);
+
     return (
         <Box
             {...props}
             className={clsx('client-members', className)}
         >
-            <Box className="header">
+            <Box className="header" ref={controlsWrapperRef}>
                 <Box className="header-controls-wrapper">
                     {
                         tabs.length > 0 && (
@@ -233,6 +282,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                 <Box className="header-controls-wrapper">
                     <Button
                         startIcon={<Icon className="icon-account-add" />}
+                        onClick={() => setUserSelectorOpen(true)}
                     >{getPageLocaleText('add')}</Button>
                 </Box>
             </Box>
@@ -252,7 +302,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                                     title={getPageLocaleText('empty.title')}
                                     subTitle={getPageLocaleText('empty.subTitle')}
                                 />
-                                : <>
+                                : <SimpleBar style={{ width: membersContainerWidth, height: membersContainerHeight }}>
                                     {
                                         queryClientMembersResponseData.list.map((listItem) => {
                                             const {
@@ -298,10 +348,14 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                                                     : getLocaleText('loadings.loadMore')
                                         }
                                     </Button>
-                                </>
+                                </SimpleBar>
                     }
                 </Box>
             </Box>
+            <UserSelector
+                open={userSelectorOpen}
+                onClose={() => setUserSelectorOpen(false)}
+            />
         </Box>
     );
 };

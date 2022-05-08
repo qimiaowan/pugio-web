@@ -11,7 +11,8 @@
             "signout": "Sign Out",
             "create": "Create a new account"
         },
-        "createClient": "Client"
+        "createClient": "Client",
+        "searchPlaceholder": "Type to search..."
     },
     "clientsSidebarMenu": {
         "workstation": "Workstation",
@@ -90,7 +91,15 @@
             "noMore": "No More"
         },
         "muibox": {
-            "confirm": "Confirm"
+            "confirm": "Confirm",
+            "ok": "OK",
+            "cancel": "Cancel"
+        },
+        "userSelector": {
+            "ok": "OK",
+            "cancel": "Cancel",
+            "search": "Search",
+            "selected": "Selected"
         }
     },
     "builtin": {

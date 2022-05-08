@@ -136,6 +136,38 @@ export class BrandService {
                                         color: data?.theme.palette.text.primary,
                                     };
                                 }
+
+                                return {};
+                            }),
+                        },
+                    },
+                    MuiDialogTitle: {
+                        styleOverrides: {
+                            root: createStyles((data) => {
+                                const theme = data?.theme;
+
+                                if (theme && theme.palette.mode === 'light') {
+                                    return {
+                                        backgroundColor: theme.palette.grey[100],
+                                    };
+                                }
+
+                                return {};
+                            }),
+                        },
+                    },
+                    MuiDialogActions: {
+                        styleOverrides: {
+                            root: createStyles((data) => {
+                                const theme = data?.theme;
+
+                                if (theme && theme.palette.mode === 'light') {
+                                    return {
+                                        backgroundColor: theme.palette.grey[100],
+                                    };
+                                }
+
+                                return {};
                             }),
                         },
                     },
