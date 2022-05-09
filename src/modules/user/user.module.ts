@@ -8,8 +8,10 @@ import { UserCardComponent } from '@modules/user/user-card.component';
 
 @Global()
 @Module({
-    components: [
+    providers: [
         UserService,
+    ],
+    components: [
         UserSelectorComponent,
         UserCardComponent,
     ],

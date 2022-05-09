@@ -81,6 +81,7 @@ const UserCard: FC<InjectedComponentProps<UserCardProps>> = ({
     menu = [],
     className = '',
     declarations,
+    checkable = true,
     checked = false,
     onCheckStatusChange = _.noop,
     onClick = _.noop,
@@ -110,16 +111,20 @@ const UserCard: FC<InjectedComponentProps<UserCardProps>> = ({
                 onCheckStatusChange(!checked);
             }}
         >
-            <Box className="checkbox-wrapper">
-                {
-                    (controlsVisible || checked) && (
-                        <Checkbox
-                            checked={checked}
-                            onChange={(event) => onCheckStatusChange(event.target.checked)}
-                        />
-                    )
-                }
-            </Box>
+            {
+                checkable && (
+                    <Box className="checkbox-wrapper">
+                        {
+                            (controlsVisible || checked) && (
+                                <Checkbox
+                                    checked={checked}
+                                    onChange={(event) => onCheckStatusChange(event.target.checked)}
+                                />
+                            )
+                        }
+                    </Box>
+                )
+            }
             <Box className="avatar" component="img" src={avatar} />
             <Box className="description">
                 <Typography

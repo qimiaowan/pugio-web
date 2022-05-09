@@ -99,7 +99,12 @@
             "ok": "OK",
             "cancel": "Cancel",
             "search": "Search",
-            "selected": "Selected"
+            "selected": "Selected",
+            "loadMore": "Load More",
+            "loading": "Loading...",
+            "noMore": "No More",
+            "clearAll": "Clear All",
+            "clearSelected": "Clear Selected"
         }
     },
     "builtin": {

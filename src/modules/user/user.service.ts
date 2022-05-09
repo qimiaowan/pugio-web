@@ -2,9 +2,9 @@ import { Injectable } from 'khamsa';
 import { RequestService } from '@modules/request/request.service';
 import {
     QueryUsersRequestOptions,
-    QueryUsersResponseData,
+    QueryUsersResponseDataItem,
 } from '@modules/user/user.interface';
-import { Response } from '@modules/request/request.interface';
+import { PaginationResponseData } from '@modules/request/request.interface';
 
 @Injectable()
 export class UserService {
@@ -14,7 +14,7 @@ export class UserService {
 
     public async queryUsers(
         options: QueryUsersRequestOptions,
-    ): Promise<Response<QueryUsersResponseData>> {
+    ): Promise<PaginationResponseData<QueryUsersResponseDataItem>> {
         return await this.requestService.getInstance()
             .request({
                 url: '/user',

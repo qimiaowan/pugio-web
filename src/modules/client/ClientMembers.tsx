@@ -262,10 +262,11 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                         (_.isArray(selectedMembersMap.get(role)) && selectedMembersMap.get(role).length > 0) && (
                             <Button
                                 color="error"
+                                variant="outlined"
                                 startIcon={<Icon className="icon-delete" />}
                                 title={getPageLocaleText('delete', { count: selectedMembersMap.get(role).length })}
                                 onClick={() => handleDeleteSelectedMembers(role, selectedMembersMap.get(role))}
-                            >{selectedMembersMap.get(role).length}</Button>
+                            >{getPageLocaleText('delete', { count: selectedMembersMap.get(role).length })}</Button>
                         )
                     }
                 </Box>

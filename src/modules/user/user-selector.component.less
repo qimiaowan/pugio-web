@@ -21,4 +21,35 @@
         padding: 0;
         border-top: 0;
     }
+
+    .loading-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .simplebar-content {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .load-more-wrapper {
+        padding: @padding-vertical-width @padding-horizontal-width;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .selected-controls-wrapper {
+        flex-grow: 1;
+        flex-shrink: 1;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        & > button {
+            margin-left: @padding-horizontal-width;
+        }
+    }
 }
