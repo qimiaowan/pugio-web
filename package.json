@@ -25,7 +25,6 @@
         "immutable": "^4.0.0",
         "khamsa": "^0.9.5",
         "lodash": "^4.17.21",
-        "muibox": "^2.0.0",
         "mustache": "^4.2.0",
         "notistack": "^2.0.4",
         "qs": "^6.10.3",
