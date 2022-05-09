@@ -32,7 +32,6 @@ import { ExceptionComponent } from '@modules/brand/exception.component';
 import { UserCardProps } from '@modules/user/user-card.interface';
 import { UserCardComponent } from '@modules/user/user-card.component';
 import { Map } from 'immutable';
-import { useConfirmDialog } from 'react-mui-confirm';
 import { useSnackbar } from 'notistack';
 import { UserSelectorProps } from '@modules/user/user-selector.interface';
 import { UserSelectorComponent } from '@modules/user/user-selector.component';
@@ -101,7 +100,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
         selectedMembersMap,
         setSelectedMembersMap,
     ] = useState<Map<number, string[]>>(Map<number, string[]>());
-    const confirm = useConfirmDialog();
+    const confirm = utilsService.useConfirm();
     const { enqueueSnackbar } = useSnackbar();
     const [userSelectorOpen, setUserSelectorOpen] = useState<boolean>(false);
     const {

@@ -53,7 +53,6 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
     const [locale, setLocale] = useState(localStorage.getItem('locale') || 'en_US');
     const [logo, setLogo] = useState<string>('');
     const getLocaleText = localeService.useLocaleContext();
-    const getConfirmLocaleText = localeService.useLocaleContext('components.confirm');
     const {
         clientsDropdownOpen,
         switchClientsDropdownVisibility,
@@ -92,11 +91,6 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
         { theme },
         <StyledEngineProvider injectFirst={true}>
             <ConfirmDialogProvider
-                confirmButtonText={getConfirmLocaleText('ok')}
-                cancelButtonText={getConfirmLocaleText('cancel')}
-                dialogProps={{
-                    disableEscapeKeyDown: true,
-                }}
                 cancelButtonProps={{
                     color: 'secondary',
                 }}

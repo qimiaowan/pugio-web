@@ -12,14 +12,29 @@ import {
     TDateRange,
 } from '@modules/request/request.interface';
 import { Location } from 'react-router-dom';
-import { FC } from 'react';
+import {
+    FC,
+    useCallback,
+} from 'react';
 import { LoadedChannelProps } from '@modules/store/store.interface';
 import { useInfiniteScroll } from 'ahooks';
 import { InfiniteScrollOptions } from 'ahooks/lib/useInfiniteScroll/types';
 import { Profile } from '@modules/profile/profile.interface';
+import {
+    useConfirmDialog,
+    GlobalOptions,
+    ConfirmOptions,
+} from 'react-mui-confirm';
+import { LocaleService } from '@modules/locale/locale.service';
 
 @Injectable()
 export class UtilsService extends CaseTransformerService {
+    public constructor(
+        private readonly localeService: LocaleService,
+    ) {
+        super();
+    }
+
     public generateOAuthState(redirectPath = '/') {
         const stateData = {
             clientId,
@@ -210,5 +225,20 @@ export class UtilsService extends CaseTransformerService {
         }
 
         return result;
+    }
+
+    public useConfirm() {
+        const getConfirmLocaleText = this.localeService.useLocaleContext('components.confirm');
+        const createConfirm = useConfirmDialog();
+        const confirm = useCallback((options: ConfirmOptions & GlobalOptions) => {
+            createConfirm({
+                confirmButtonText: getConfirmLocaleText('ok'),
+                cancelButtonText: getConfirmLocaleText('cancel'),
+                title: getConfirmLocaleText('confirm'),
+                ...options,
+            });
+        }, [getConfirmLocaleText, createConfirm]);
+
+        return confirm;
     }
 }

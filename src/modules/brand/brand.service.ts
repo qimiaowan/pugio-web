@@ -1,9 +1,6 @@
 import { Injectable } from 'khamsa';
 import logo from '@modules/brand/logo.svg';
-import {
-    ThemeOptions,
-    createStyles,
-} from '@mui/material/styles';
+import { ThemeOptions } from '@mui/material/styles';
 import createTheme from '@mui/material/styles/createTheme';
 import { createMuiTheme } from '@lenconda/shuffle-mui-theme';
 
@@ -128,21 +125,9 @@ export class BrandService {
                             },
                         },
                     },
-                    MuiDialogContentText: {
-                        styleOverrides: {
-                            root: createStyles((data) => {
-                                if (data?.theme.palette.mode === 'light') {
-                                    return {
-                                        color: data?.theme.palette.text.primary,
-                                    };
-                                }
-
-                                return {};
-                            }),
-                        },
-                    },
                 },
-            } as ThemeOptions);
+            } as ThemeOptions,
+        );
 
         return pugioTheme;
     }
