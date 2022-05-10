@@ -5,6 +5,7 @@ import { UtilsService } from '@modules/utils/utils.service';
 import { UserService } from '@modules/user/user.service';
 import { UserCardComponent } from '@modules/user/user-card.component';
 import { LoadingComponent } from '@modules/brand/loading.component';
+import { ExceptionComponent } from '@modules/brand/exception.component';
 
 @Component({
     component: lazy(() => import('@modules/user/UserSelector')),
@@ -14,6 +15,7 @@ import { LoadingComponent } from '@modules/brand/loading.component';
         UserService,
         UserCardComponent,
         LoadingComponent,
+        ExceptionComponent,
     ],
 })
 export class UserSelectorComponent {}

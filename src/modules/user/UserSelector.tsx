@@ -30,6 +30,8 @@ import { UtilsService } from '@modules/utils/utils.service';
 import { QueryUsersResponseDataItem } from '@modules/user/user.interface';
 import { LoadingComponent } from '@modules/brand/loading.component';
 import { Profile } from '@modules/profile/profile.interface';
+import { ExceptionComponentProps } from '@modules/brand/exception.interface';
+import { ExceptionComponent } from '@modules/brand/exception.component';
 
 const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
     declarations,
@@ -43,6 +45,7 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
     const utilsService = declarations.get<UtilsService>(UtilsService);
     const UserCard = declarations.get<FC<UserCardProps>>(UserCardComponent);
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
+    const Exception = declarations.get<FC<ExceptionComponentProps>>(ExceptionComponent);
 
     const [mode, setMode] = useState<string>('search');
     const [searchValue, setSearchValue] = useState<string>('');
@@ -140,40 +143,46 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
             }
             case 'selected': {
                 return (
-                    <SimpleBar style={{ maxHeight: dialogContentHeight - 1 || 720 }}>
-                        {
-                            selectedUserList.map((selectedUser) => {
-                                return createElement(
-                                    UserCard,
-                                    {
-                                        key: selectedUser.id,
-                                        profile: selectedUser,
-                                        checked: selectedSelectedUserIdList.indexOf(selectedUser.id) !== -1,
-                                        menu: [
-                                            {
-                                                icon: 'icon-close',
-                                                title: getComponentLocaleText('clearSelected'),
-                                                onActive: () => {
-                                                    setSelectedUserList(selectedUserList.filter((user) => {
-                                                        return user.id !== selectedUser.id;
-                                                    }));
+                    selectedUserList.length === 0
+                        ? <Exception
+                            imageSrc="/static/images/empty.svg"
+                            title={getComponentLocaleText('noSelected.title')}
+                            subTitle={getComponentLocaleText('noSelected.subTitle')}
+                        />
+                        : <SimpleBar style={{ maxHeight: dialogContentHeight - 1 || 720 }}>
+                            {
+                                selectedUserList.map((selectedUser) => {
+                                    return createElement(
+                                        UserCard,
+                                        {
+                                            key: selectedUser.id,
+                                            profile: selectedUser,
+                                            checked: selectedSelectedUserIdList.indexOf(selectedUser.id) !== -1,
+                                            menu: [
+                                                {
+                                                    icon: 'icon-close',
+                                                    title: getComponentLocaleText('clearSelected'),
+                                                    onActive: () => {
+                                                        setSelectedUserList(selectedUserList.filter((user) => {
+                                                            return user.id !== selectedUser.id;
+                                                        }));
+                                                    },
                                                 },
+                                            ],
+                                            onCheckStatusChange: (checked) => {
+                                                if (checked) {
+                                                    setSelectedSelectedUserIdList(_.uniq(selectedSelectedUserIdList.concat(selectedUser.id)));
+                                                } else {
+                                                    setSelectedSelectedUserIdList(selectedSelectedUserIdList.filter((userId) => {
+                                                        return userId !== selectedUser.id;
+                                                    }));
+                                                }
                                             },
-                                        ],
-                                        onCheckStatusChange: (checked) => {
-                                            if (checked) {
-                                                setSelectedSelectedUserIdList(_.uniq(selectedSelectedUserIdList.concat(selectedUser.id)));
-                                            } else {
-                                                setSelectedSelectedUserIdList(selectedSelectedUserIdList.filter((userId) => {
-                                                    return userId !== selectedUser.id;
-                                                }));
-                                            }
                                         },
-                                    },
-                                );
-                            })
-                        }
-                    </SimpleBar>
+                                    );
+                                })
+                            }
+                        </SimpleBar>
                 );
             }
             default:
@@ -301,6 +310,10 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                 <Button
                     color="primary"
                     disabled={selectedUserList.length === 0}
+                    onClick={() => {
+                        onSelectUsers(selectedUserList);
+                        handleCloseSelector();
+                    }}
                 >{getComponentLocaleText('ok')}</Button>
             </DialogActions>
         </Dialog>

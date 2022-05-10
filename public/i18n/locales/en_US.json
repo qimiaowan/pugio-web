@@ -104,7 +104,11 @@
             "loading": "Loading...",
             "noMore": "No More",
             "clearAll": "Clear All",
-            "clearSelected": "Clear Selected"
+            "clearSelected": "Clear Selected",
+            "noSelected": {
+                "title": "No Selected Users",
+                "subTitle": "No users selected, you can select some users in the 'Search' pad"
+            }
         }
     },
     "builtin": {

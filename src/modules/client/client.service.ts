@@ -97,4 +97,6 @@ export class ClientService {
                 data,
             });
     }
+
+    public async addClientMembers() {}
 }
