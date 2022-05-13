@@ -87,21 +87,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
 
             const clientDataHandler = (data) => {
                 if (data?.content) {
-                    terminal.sequenceWrite(
-                        data,
-                        (rawData: string) => {
-                            return decodeURI(window.atob(rawData));
-                        },
-                        () => {
-                            socket.emit('channel_stream', {
-                                eventId: `terminal:${terminalId}:consume_confirm_data`,
-                                roomId: clientId,
-                                data: {
-                                    sequence: data?.sequence,
-                                },
-                            });
-                        },
-                    );
+                    terminal.write(decodeURI(window.atob(data.content)));
                 }
             };
 
@@ -136,14 +122,12 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
 
             setTerminal(terminal);
 
-            const listener = terminal.onSequenceData(async (data) => {
-                const { sequence, content } = data as any;
+            const listener = terminal.onData((data) => {
                 socket.emit('channel_stream', {
                     eventId: `terminal:${terminalId}:send_data`,
                     roomId: clientId,
                     data: {
-                        sequence,
-                        data: window.btoa(encodeURI(content)),
+                        data: window.btoa(encodeURI(data)),
                     },
                 });
             });
@@ -221,7 +205,13 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                             title: getLocaleText('clipboard'),
                             onClick: () => {
                                 if (clipboardText) {
-                                    terminal.pushSequenceData(clipboardText);
+                                    socket.emit('channel_stream', {
+                                        eventId: `terminal:${terminalId}:send_data`,
+                                        roomId: clientId,
+                                        data: {
+                                            data: window.btoa(encodeURI(clipboardText)),
+                                        },
+                                    });
                                 }
                             },
                         },
