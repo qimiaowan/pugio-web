@@ -54,7 +54,6 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     const [headerControlItems, setHeaderControlItems] = useState<HeaderControlItem[]>([]);
     const [closeConnection, setCloseConnection] = useState<Function>(() => _.noop);
     const [cleanConnection, setCleanConnection] = useState<Function>(() => _.noop);
-    const [clipboardText, setClipboardText] = useState<string>('');
 
     const handleCloseConnection = useCallback((clientId: string, terminalId: string) => {
         if (terminal) {
@@ -200,19 +199,20 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                             disabled: loading ||
                                 closeConnectionLoading ||
                                 cleanConnectionLoading ||
-                                !clipboardAvailable ||
-                                !clipboardText,
+                                !clipboardAvailable,
                             title: getLocaleText('clipboard'),
                             onClick: () => {
-                                if (clipboardText) {
-                                    socket.emit('channel_stream', {
-                                        eventId: `terminal:${terminalId}:send_data`,
-                                        roomId: clientId,
-                                        data: {
-                                            data: window.btoa(encodeURI(clipboardText)),
-                                        },
-                                    });
-                                }
+                                navigator.clipboard.readText().then((data) => {
+                                    if (data) {
+                                        socket.emit('channel_stream', {
+                                            eventId: `terminal:${terminalId}:send_data`,
+                                            roomId: clientId,
+                                            data: {
+                                                data: window.btoa(encodeURI(data)),
+                                            },
+                                        });
+                                    }
+                                });
                             },
                         },
                     },
@@ -241,14 +241,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
         closeConnectionLoading,
         cleanConnectionLoading,
         clipboardAvailable,
-        clipboardText,
     ]);
-
-    useEffect(() => {
-        navigator.clipboard.readText().then((data) => {
-            setClipboardText(data);
-        });
-    }, []);
 
     return (
         <Context.Provider
