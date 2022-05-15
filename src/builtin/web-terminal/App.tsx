@@ -166,13 +166,10 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     }, [terminalId, closeConnection]);
 
     useEffect(() => {
-        const socket = io('/client', {
-            transportOptions: {
-                polling: {
-                    extraHeaders: {
-                        Authorization: 'Bearer ' + localStorage.getItem('ACCESS_TOKEN'),
-                    },
-                },
+        const socket = io('wss://pugio.lenconda.top/client', {
+            query: {
+                auth_type: 'bearer',
+                auth_token: localStorage.getItem('ACCESS_TOKEN'),
             },
         });
         socket.emit('join', clientId);
