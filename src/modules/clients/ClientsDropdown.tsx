@@ -36,6 +36,20 @@ import { ExceptionComponent } from '@modules/brand/exception.component';
 import { UtilsService } from '@modules/utils/utils.service';
 import { ClientService } from '@modules/client/client.service';
 import clsx from 'clsx';
+import makeStyles from '@mui/styles/makeStyles';
+import createStyles from '@mui/styles/createStyles';
+import useTheme from '@mui/material/styles/useTheme';
+import { Theme } from '@mui/material/styles/createTheme';
+
+const useStyles = makeStyles((theme) => createStyles({
+    selected: {
+        '&, & *': {
+            color: (props: Theme) => props.palette.mode === 'dark'
+                ? props.palette.grey[100]
+                : props.palette.grey[900],
+        },
+    },
+}));
 
 const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
     declarations,
@@ -59,6 +73,8 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
     const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
 
     const navigate = useNavigate();
+    const theme = useTheme();
+    const styles = useStyles(theme);
     const [searchValue, setSearchValue] = useState<string>('');
     const debouncedSearchValue = useDebounce(searchValue, { wait: 500 });
     const { client_id: selectedClientId } = useParams();
@@ -197,6 +213,11 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                                         return (
                                             <MenuItem
                                                 key={item.id}
+                                                classes={{
+                                                    root: clsx({
+                                                        [styles.selected]: selectedClientId === item.client.id,
+                                                    }),
+                                                }}
                                                 onClick={() => handleSelectClient(item.client.id)}
                                             >
                                                 <ListItemIcon>
