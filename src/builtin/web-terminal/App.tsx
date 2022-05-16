@@ -12,7 +12,6 @@ import IconButton from '@mui/material/IconButton';
 import { InjectedComponentProps } from 'khamsa';
 import { Context } from '@builtin:web-terminal/context';
 import { LoadedChannelProps } from '@modules/store/store.interface';
-import io, { Socket } from 'socket.io-client';
 import { Terminal } from '@pugio/xterm';
 import _ from 'lodash';
 import { AppService } from '@builtin:web-terminal/app.service';
@@ -45,7 +44,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
 
     const terminalRef = useRef<HTMLDivElement>(null);
     const [terminalId, setTerminalId] = useState<string>(null);
-    const [socket, setSocket] = useState<Socket>(null);
+    const [dataSocket, setDataSocket] = useState<WebSocket>(null);
     const getLocaleText = localeService.useLocaleContext('builtin.webTerminal');
     const [loading, setLoading] = useState<boolean>(false);
     const [closeConnectionLoading, setCloseConnectionLoading] = useState<boolean>(false);
@@ -79,32 +78,40 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     }, [terminal, cleanConnection]);
 
     useAsyncEffect(async () => {
-        if (terminalRef.current && terminalId && socket) {
+        if (terminalRef.current && terminalId) {
+            const dataSocket = new WebSocket(`wss://pugio.lenconda.top/websocket?auth_type=bearer&auth_token=${localStorage.getItem('ACCESS_TOKEN')}&event=terminal:${terminalId}:recv_data&broadcast[]=terminal:${terminalId}:send_data&room=${clientId}`);
+            const closeSocket = new WebSocket(`wss://pugio.lenconda.top/websocket?auth_type=bearer&auth_token=${localStorage.getItem('ACCESS_TOKEN')}&event=terminal:${terminalId}:close&broadcast[]=terminal:${terminalId}:close&room=${clientId}`);
+
+            setDataSocket(dataSocket);
+
             const terminal = new Terminal();
             const xtermFitAddon = new FitAddon();
             terminal.loadAddon(xtermFitAddon);
 
-            const clientDataHandler = (data) => {
-                if (data?.content) {
-                    terminal.write(decodeURI(window.atob(data.content)));
+            const clientDataHandler = (event: MessageEvent<any>) => {
+                if (event?.data) {
+                    terminal.write(decodeURI(event.data));
                 }
             };
 
             const clientCloseHandler = () => {
                 terminal.dispose();
-                socket.off(`terminal:${terminalId}:recv_data`, clientDataHandler);
-                socket.off(`terminal:${terminalId}:close`, clientCloseHandler);
+                dataSocket.removeEventListener('message', clientDataHandler);
+                closeSocket.removeEventListener('message', clientCloseHandler);
                 tab.closeTab();
 
-                if (socket) {
-                    socket.disconnect();
-                    socket.close();
+                if (dataSocket) {
+                    dataSocket.close();
+                }
+
+                if (closeSocket) {
+                    closeSocket.close();
                 }
             };
 
             const handleCleanClientListeners = () => {
-                socket.off(`terminal:${terminalId}:recv_data`, clientDataHandler);
-                socket.off(`terminal:${terminalId}:close`, clientCloseHandler);
+                dataSocket.removeEventListener('message', clientDataHandler);
+                closeSocket.removeEventListener('message', clientCloseHandler);
             };
 
             setCloseConnection(() => clientCloseHandler);
@@ -113,8 +120,8 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                 handleCleanClientListeners();
             });
 
-            socket.on(`terminal:${terminalId}:recv_data`, clientDataHandler);
-            socket.on(`terminal:${terminalId}:close`, clientCloseHandler);
+            dataSocket.addEventListener('message', clientDataHandler);
+            closeSocket.addEventListener('message', clientCloseHandler);
 
             terminal.open(terminalRef.current);
             xtermFitAddon.fit();
@@ -122,13 +129,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
             setTerminal(terminal);
 
             const listener = terminal.onData((data) => {
-                socket.emit('channel_stream', {
-                    eventId: `terminal:${terminalId}:send_data`,
-                    roomId: clientId,
-                    data: {
-                        data: window.btoa(encodeURI(data)),
-                    },
-                });
+                dataSocket.send(encodeURI(data));
             });
 
             const connectionResponse = await appService.connect({
@@ -146,7 +147,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                 handleCleanClientListeners();
             };
         }
-    }, [terminalRef.current, socket, terminalId]);
+    }, [terminalRef.current, terminalId]);
 
     useEffect(() => {
         if (!terminalId) {
@@ -164,17 +165,6 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
             });
         }
     }, [terminalId, closeConnection]);
-
-    useEffect(() => {
-        const socket = io('wss://pugio.lenconda.top/client', {
-            query: {
-                auth_type: 'bearer',
-                auth_token: localStorage.getItem('ACCESS_TOKEN'),
-            },
-        });
-        socket.emit('join', clientId);
-        setSocket(socket);
-    }, []);
 
     useEffect(() => {
         if (terminal && terminalId) {
@@ -196,18 +186,13 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                             disabled: loading ||
                                 closeConnectionLoading ||
                                 cleanConnectionLoading ||
-                                !clipboardAvailable,
+                                !clipboardAvailable ||
+                                !dataSocket,
                             title: getLocaleText('clipboard'),
                             onClick: () => {
                                 navigator.clipboard.readText().then((data) => {
                                     if (data) {
-                                        socket.emit('channel_stream', {
-                                            eventId: `terminal:${terminalId}:send_data`,
-                                            roomId: clientId,
-                                            data: {
-                                                data: window.btoa(encodeURI(data)),
-                                            },
-                                        });
+                                        dataSocket.send(window.btoa(encodeURI(data)));
                                     }
                                 });
                             },
@@ -232,7 +217,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     }, [
         terminalId,
         terminal,
-        socket,
+        dataSocket,
         getLocaleText,
         loading,
         closeConnectionLoading,
