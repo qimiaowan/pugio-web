@@ -10,7 +10,6 @@ import Divider from '@mui/material/Divider';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
 import { InjectedComponentProps } from 'khamsa';
-import { Context } from '@builtin:web-terminal/context';
 import { LoadedChannelProps } from '@modules/store/store.interface';
 import { Terminal } from '@pugio/xterm';
 import _ from 'lodash';
@@ -23,13 +22,13 @@ import { HeaderControlItem } from '@builtin:web-terminal/app.interface';
 import { LoadingComponent } from '@modules/brand/loading.component';
 import SimpleBar from 'simplebar-react';
 import clsx from 'clsx';
+import { useDebounceEffect } from 'ahooks';
 
 const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     const {
         metadata,
         width,
         height,
-        basename,
         declarations,
         tab,
         setup,
@@ -43,7 +42,6 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
 
     const terminalRef = useRef<HTMLDivElement>(null);
-    const controlsWrapperRef = useRef<SimpleBar>(null);
     const [terminalId, setTerminalId] = useState<string>(null);
     const [dataSocket, setDataSocket] = useState<WebSocket>(null);
     const getLocaleText = localeService.useLocaleContext('builtin.webTerminal');
@@ -55,6 +53,8 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     const [closeConnection, setCloseConnection] = useState<Function>(() => _.noop);
     const [cleanConnection, setCleanConnection] = useState<Function>(() => _.noop);
     const [terminalHeight, setTerminalHeight] = useState<number>(0);
+    const [terminalWidth, setTerminalWidth] = useState<number>(0);
+    const [terminalFitAddon, setTerminalFitAddon] = useState<FitAddon>(null);
 
     const calculateTerminalSize = (
         width: number,
@@ -90,7 +90,10 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
             rows = 80;
         }
 
-        return { cols, rows };
+        return {
+            cols: Math.round(cols),
+            rows: Math.round(rows),
+        };
     };
 
     const handleCloseConnection = useCallback((clientId: string, terminalId: string) => {
@@ -174,20 +177,21 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
             const connectionResponse = await appService.connect({
                 clientId,
                 terminalId,
-                ...calculateTerminalSize(width, terminalHeight, terminal),
+                ...calculateTerminalSize(width, height, terminal),
             });
 
             const initialContent = connectionResponse?.response?.data?.content || [];
             terminal.initialize(initialContent);
 
             setLoading(false);
+            setTerminalFitAddon(xtermFitAddon);
 
             return () => {
                 listener.dispose();
                 handleCleanClientListeners();
             };
         }
-    }, [terminalRef.current, terminalId, terminalHeight]);
+    }, [terminalRef.current, terminalId]);
 
     useEffect(() => {
         if (!terminalId) {
@@ -265,69 +269,92 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
         clipboardAvailable,
     ]);
 
+    useDebounceEffect(
+        () => {
+            if (terminal && terminalHeight && terminalWidth && terminalFitAddon) {
+                console.log(terminalHeight, terminalWidth);
+                const {
+                    cols,
+                    rows,
+                } = calculateTerminalSize(terminalWidth, terminalHeight, terminal);
+                terminal.resize(cols, rows);
+            }
+        },
+        [terminal, terminalHeight, terminalWidth, terminalFitAddon],
+        {
+            wait: 300,
+        },
+    );
+
     useEffect(() => {
-        if (controlsWrapperRef.current) {
-            const controlsWrapperHeight = controlsWrapperRef.current?.el?.clientHeight || 0;
-            setTerminalHeight(height - controlsWrapperHeight);
+        const observer = new ResizeObserver((entries) => {
+            const [observationData] = entries;
+
+            if (observationData) {
+                const width = _.get(observationData, 'borderBoxSize[0].inlineSize');
+                const height = _.get(observationData, 'borderBoxSize[0].blockSize');
+
+                setTerminalWidth(width);
+                setTerminalHeight(height);
+            }
+        });
+
+        if (terminalRef.current) {
+            observer.observe(terminalRef.current);
         }
-    }, [controlsWrapperRef.current]);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [terminalRef]);
 
     return (
-        <Context.Provider
-            value={{
-                metadata,
-                width,
-                height,
-                basename,
-            }}
-        >
-            <Box className={clsx('container', { loading })}>
-                <SimpleBar style={{ width }} className="controls-wrapper" ref={controlsWrapperRef}>
-                    {
-                        headerControlItems.map((item, index) => {
-                            const {
-                                button,
-                                divider,
-                            } = item;
-
-                            if (button) {
-                                const {
-                                    icon,
-                                    props = {},
-                                } = button;
-
-                                return (
-                                    <IconButton key={index} {...props} >
-                                        <Icon className={icon} />
-                                    </IconButton>
-                                );
-                            } else if (divider) {
-                                return (
-                                    <Divider
-                                        key={index}
-                                        variant="fullWidth"
-                                        orientation="vertical"
-                                        classes={{
-                                            root: 'divider',
-                                        }}
-                                    />
-                                );
-                            } else {
-                                return null;
-                            }
-                        })
-                    }
-                </SimpleBar>
-                <Box style={{ width, height: terminalHeight }} className="terminal-wrapper" ref={terminalRef} />
+        <Box className={clsx('container', { loading })}>
+            <SimpleBar style={{ width }} className="controls-wrapper">
                 {
-                    loading && (
-                        <Box className="loading-wrapper">
-                            <Loading />
-                        </Box>
-                    )
+                    headerControlItems.map((item, index) => {
+                        const {
+                            button,
+                            divider,
+                        } = item;
+
+                        if (button) {
+                            const {
+                                icon,
+                                props = {},
+                            } = button;
+
+                            return (
+                                <IconButton key={index} {...props} >
+                                    <Icon className={icon} />
+                                </IconButton>
+                            );
+                        } else if (divider) {
+                            return (
+                                <Divider
+                                    key={index}
+                                    variant="fullWidth"
+                                    orientation="vertical"
+                                    classes={{
+                                        root: 'divider',
+                                    }}
+                                />
+                            );
+                        } else {
+                            return null;
+                        }
+                    })
                 }
-            </Box>
-        </Context.Provider>
+            </SimpleBar>
+            <Box className="terminal-wrapper" ref={terminalRef} />
+            {
+                loading && (
+                    <Box className="loading-wrapper">
+                        <Loading />
+                    </Box>
+                )
+            }
+        </Box>
     );
 };
 
