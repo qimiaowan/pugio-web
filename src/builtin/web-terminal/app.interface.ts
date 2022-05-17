@@ -17,6 +17,12 @@ export interface MakeHandshakeChannelResponseData {
 
 export interface ConnectRequestOptions extends ChannelRequestOptions {
     terminalId: string;
+    dieTimeout?: number;
+    args?: string[];
+    rows?: number;
+    cols?: number;
+    cwd?: string;
+    env?: Record<string, string>;
 }
 
 export interface ConnectResponseData {

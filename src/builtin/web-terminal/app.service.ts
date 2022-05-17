@@ -53,6 +53,7 @@ export class AppService {
         const {
             terminalId,
             clientId,
+            ...otherOptions
         } = options;
 
         return this.requestService.getInstance()
@@ -64,6 +65,7 @@ export class AppService {
                     data: {
                         type: 'connect',
                         id: terminalId,
+                        ...otherOptions,
                     },
                 },
             });

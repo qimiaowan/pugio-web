@@ -43,6 +43,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
 
     const terminalRef = useRef<HTMLDivElement>(null);
+    const controlsWrapperRef = useRef<SimpleBar>(null);
     const [terminalId, setTerminalId] = useState<string>(null);
     const [dataSocket, setDataSocket] = useState<WebSocket>(null);
     const getLocaleText = localeService.useLocaleContext('builtin.webTerminal');
@@ -53,6 +54,44 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     const [headerControlItems, setHeaderControlItems] = useState<HeaderControlItem[]>([]);
     const [closeConnection, setCloseConnection] = useState<Function>(() => _.noop);
     const [cleanConnection, setCleanConnection] = useState<Function>(() => _.noop);
+    const [terminalHeight, setTerminalHeight] = useState<number>(0);
+
+    const calculateTerminalSize = (
+        width: number,
+        height: number,
+        terminal: Terminal<Record<string, any>>,
+    ) => {
+        if (!width || !height || !terminal) {
+            return {
+                cols: 120,
+                rows: 80,
+            };
+        }
+
+        const terminalScrollBarWidth = _.get(terminal, '_core.viewport.scrollBarWidth') || 0;
+        const terminalActualCellWidth = _.get(terminal, '_core._renderService._renderer.dimensions.actualCellWidth') || 0;
+        const terminalActualCellHeight = _.get(terminal, '_core._renderService._renderer.dimensions.actualCellHeight') || 0;
+
+        if (!terminalActualCellWidth || !terminalActualCellHeight) {
+            return {
+                cols: 120,
+                rows: 80,
+            };
+        }
+
+        let cols = (width - terminalScrollBarWidth - 15) / terminalActualCellWidth;
+        let rows = height / terminalActualCellHeight - 1;
+
+        if (cols < 120) {
+            cols = 120;
+        }
+
+        if (rows < 80) {
+            rows = 80;
+        }
+
+        return { cols, rows };
+    };
 
     const handleCloseConnection = useCallback((clientId: string, terminalId: string) => {
         if (terminal) {
@@ -78,7 +117,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     }, [terminal, cleanConnection]);
 
     useAsyncEffect(async () => {
-        if (terminalRef.current && terminalId) {
+        if (terminalRef.current && terminalId && terminalHeight > 0) {
             const dataSocket = new WebSocket(`wss://pugio.lenconda.top/websocket?auth_type=bearer&auth_token=${localStorage.getItem('ACCESS_TOKEN')}&event=terminal:${terminalId}:recv_data&broadcast[]=terminal:${terminalId}:send_data&room=${clientId}`);
             const closeSocket = new WebSocket(`wss://pugio.lenconda.top/websocket?auth_type=bearer&auth_token=${localStorage.getItem('ACCESS_TOKEN')}&event=terminal:${terminalId}:close&broadcast[]=terminal:${terminalId}:close&room=${clientId}`);
 
@@ -135,6 +174,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
             const connectionResponse = await appService.connect({
                 clientId,
                 terminalId,
+                ...calculateTerminalSize(width, terminalHeight, terminal),
             });
 
             const initialContent = connectionResponse?.response?.data?.content || [];
@@ -147,7 +187,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                 handleCleanClientListeners();
             };
         }
-    }, [terminalRef.current, terminalId]);
+    }, [terminalRef.current, terminalId, terminalHeight]);
 
     useEffect(() => {
         if (!terminalId) {
@@ -225,6 +265,13 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
         clipboardAvailable,
     ]);
 
+    useEffect(() => {
+        if (controlsWrapperRef.current) {
+            const controlsWrapperHeight = controlsWrapperRef.current?.el?.clientHeight || 0;
+            setTerminalHeight(height - controlsWrapperHeight);
+        }
+    }, [controlsWrapperRef.current]);
+
     return (
         <Context.Provider
             value={{
@@ -235,7 +282,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
             }}
         >
             <Box className={clsx('container', { loading })}>
-                <SimpleBar style={{ width }} className="controls-wrapper">
+                <SimpleBar style={{ width }} className="controls-wrapper" ref={controlsWrapperRef}>
                     {
                         headerControlItems.map((item, index) => {
                             const {
@@ -271,7 +318,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                         })
                     }
                 </SimpleBar>
-                <Box style={{ width }} className="terminal-wrapper" ref={terminalRef} />
+                <Box style={{ width, height: terminalHeight }} className="terminal-wrapper" ref={terminalRef} />
                 {
                     loading && (
                         <Box className="loading-wrapper">
