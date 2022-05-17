@@ -127,7 +127,7 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
     const [channelListGroups, setChannelListGroups] = useState<InfiniteScrollHookData<QueryClientChannelResponseDataItem>[]>([]);
     const [categories, setCategories] = useState<ChannelListCategory[]>([
         {
-            title: 'tabs.builtIn',
+            title: 'tabs.official',
             query: {
                 builtIn: 1,
             },
@@ -136,7 +136,7 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
             loadingMore: false,
         },
         {
-            title: 'tabs.thirdParties',
+            title: 'tabs.fromMarket',
             query: {
             },
             expanded: true,

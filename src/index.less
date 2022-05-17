@@ -125,3 +125,15 @@ body {
 .list-item-extra-text {
     margin-left: @padding-horizontal-width;
 }
+
+.pugio-list-item-button {
+    border-radius: 0;
+
+    &:hover, &-selected {
+        color: @text-nav-link-hover-color;
+
+        * {
+            color: @text-nav-link-hover-color;
+        }
+    }
+}

@@ -10,7 +10,7 @@ import Divider from '@mui/material/Divider';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { InjectedComponentProps } from 'khamsa';
@@ -109,19 +109,19 @@ const ProfileMenu: FC<InjectedComponentProps> = ({
                         'aria-labelledby': 'basic-button',
                     }}
                 >
-                    <MenuItem>
+                    <ListItemButton>
                         <ListItemIcon><Icon className="icon-account" /></ListItemIcon>
                         <ListItemText>{getLocaleText('app.avatarDropdown.settings')}</ListItemText>
-                    </MenuItem>
-                    <MenuItem>
+                    </ListItemButton>
+                    <ListItemButton>
                         <ListItemIcon><Icon className="icon-logout" /></ListItemIcon>
                         <ListItemText>{getLocaleText('app.avatarDropdown.signout')}</ListItemText>
-                    </MenuItem>
+                    </ListItemButton>
                     <Divider />
-                    <MenuItem>
+                    <ListItemButton>
                         <ListItemIcon><Icon className="icon-account-add" /></ListItemIcon>
                         <ListItemText>{getLocaleText('app.avatarDropdown.create')}</ListItemText>
-                    </MenuItem>
+                    </ListItemButton>
                 </Menu>
             </Box>
     );

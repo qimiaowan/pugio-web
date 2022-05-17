@@ -125,6 +125,14 @@ export class BrandService {
                             },
                         },
                     },
+                    MuiListItemButton: {
+                        defaultProps: {
+                            classes: {
+                                root: 'pugio-list-item-button',
+                                selected: 'pugio-list-item-button-selected',
+                            },
+                        },
+                    },
                 },
             } as ThemeOptions,
         );

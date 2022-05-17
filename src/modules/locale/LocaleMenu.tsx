@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { LocaleMenuProps } from '@modules/locale/locale.interface';
@@ -51,7 +51,7 @@ const LocaleMenu: FC<LocaleMenuProps> = ({
                             const { title, id } = localeItem;
 
                             return (
-                                <MenuItem
+                                <ListItemButton
                                     key={id}
                                     onClick={() => {
                                         onLocaleChange(localeItem);
@@ -64,7 +64,7 @@ const LocaleMenu: FC<LocaleMenuProps> = ({
                                         }
                                     </ListItemIcon>
                                     <ListItemText>{title}</ListItemText>
-                                </MenuItem>
+                                </ListItemButton>
                             );
                         })
                     }

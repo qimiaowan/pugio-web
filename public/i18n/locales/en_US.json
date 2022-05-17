@@ -80,8 +80,8 @@
         },
         "channelList": {
             "tabs": {
-                "builtIn": "Built-in",
-                "thirdParties": "Third Parties"
+                "official": "Official",
+                "fromMarket": "From Market"
             },
             "create": "Create",
             "install": "Install",
