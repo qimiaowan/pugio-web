@@ -561,6 +561,9 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                 title={getLocaleText('welcome.title')}
                                 subTitle={getLocaleText('welcome.subTitle')}
                                 sx={{
+                                    '.title': {
+                                        fontSize: 18,
+                                    },
                                     'img': {
                                         width: 120,
                                         height: 120,

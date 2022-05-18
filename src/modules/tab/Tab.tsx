@@ -84,7 +84,7 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
         >
             {
                 loading
-                    ? <Loading style={{ width: 36 }} />
+                    ? <Loading style={{ width: 28 }} />
                     : slotElement
                         ? children
                         : (
