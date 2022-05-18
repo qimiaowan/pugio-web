@@ -13,6 +13,7 @@ const ExceptionWrapper = styled(Box)(({ theme }) => {
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        align-self: center;
 
         &, * {
             user-select: none;

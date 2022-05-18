@@ -560,12 +560,20 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                 imageSrc="/static/images/welcome.svg"
                                 title={getLocaleText('welcome.title')}
                                 subTitle={getLocaleText('welcome.subTitle')}
-                                className="welcome"
+                                sx={{
+                                    'img': {
+                                        width: 120,
+                                        height: 120,
+                                    },
+                                }}
                             >
                                 <Button
                                     variant="contained"
                                     color="primary"
                                     startIcon={<Icon className="icon-plus" />}
+                                    sx={{
+                                        marginTop: '30px',
+                                    }}
                                     onClick={() => handleCreateTab(clientId)}
                                 >Create a Tab</Button>
                             </Exception>
