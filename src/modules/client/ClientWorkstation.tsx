@@ -157,7 +157,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
         });
     };
 
-    const handleLoadChannel = (channelId: string, clientId: string, tabId: string) => {
+    const handleLoadChannel = useCallback((channelId: string, clientId: string, tabId: string) => {
         updateTab(clientId, tabId, {
             loading: true,
         });
@@ -243,6 +243,21 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                                 createTab(clientId, { channelId });
                                                             }
                                                         },
+                                                        setTitle: (setterOrString) => {
+                                                            let newTitle: string;
+                                                            if (_.isString(setterOrString)) {
+                                                                newTitle = setterOrString;
+                                                            } else if (_.isFunction(setterOrString)) {
+                                                                try {
+                                                                    const tab = tabs.find((currentTab) => currentTab.tabId === tabId);
+                                                                    newTitle = setterOrString(tab.title || tab.data.name);
+                                                                } catch (e) {}
+                                                            }
+
+                                                            if (newTitle) {
+                                                                updateTab(clientId, tabId, { title: newTitle });
+                                                            }
+                                                        },
                                                     }}
                                                 />
                                             </Suspense>
@@ -267,7 +282,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                     loading: false,
                 });
             });
-    };
+    }, [tabs]);
 
     const tabsControlButtons = (
         <>
@@ -471,6 +486,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                         tabId,
                                                         channelId,
                                                         data,
+                                                        title,
                                                         loading,
                                                         errored,
                                                         lifecycle = {},
@@ -484,7 +500,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                             loading,
                                                             errored,
                                                             channelId,
-                                                            title: data?.name,
+                                                            title: title || data?.name,
                                                             avatar: data?.avatar || '/static/images/channel_avatar_fallback.svg',
                                                             active: selectedTabId === tabId,
                                                             metadata: selectedTabMetadata,

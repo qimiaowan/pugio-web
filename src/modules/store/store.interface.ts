@@ -29,9 +29,11 @@ export interface ChannelConfig {
     basename: string;
 }
 
+type TabTitleSetter = (previousTitle: string) => string;
 export interface TabFunctionMap {
     closeTab: () => void;
     createNewTab: (focus?: boolean, channelId?: string) => void;
+    setTitle: (setterOrString: string | TabTitleSetter) => void;
 }
 
 export interface LoadedChannelProps extends ChannelConfig {
@@ -41,6 +43,7 @@ export interface LoadedChannelProps extends ChannelConfig {
 
 export interface ChannelTab {
     tabId: string;
+    title?: string;
     channelId?: string;
     data?: Channel;
     nodes?: ReactNode;
