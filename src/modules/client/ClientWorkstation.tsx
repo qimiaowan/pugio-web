@@ -511,10 +511,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                                 }
                                                             },
                                                             onClose: () => {
-                                                                if (
-                                                                    typeof lifecycle.onBeforeDestroy === 'function' &&
-                                                                !lifecycle.onBeforeDestroy()
-                                                                ) {
+                                                                if (typeof lifecycle.onBeforeDestroy === 'function' && !lifecycle.onBeforeDestroy()) {
                                                                     return;
                                                                 }
 

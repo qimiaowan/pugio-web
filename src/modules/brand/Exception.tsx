@@ -1,9 +1,41 @@
 import { FC } from 'react';
 import Box from '@mui/material/Box';
 import clsx from 'clsx';
-import '@modules/brand/exception.component.less';
 import { ExceptionProps } from '@modules/brand/exception.interface';
 import Typography from '@mui/material/Typography';
+import styled from '@mui/material/styles/styled';
+
+const ExceptionWrapper = styled(Box)(({ theme }) => {
+    return `
+        width: 100%;
+        height: 240px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        &, * {
+            user-select: none;
+        }
+
+        img {
+            height: 81px;
+            pointer-events: none;
+        }
+
+        .title {
+            font-size: 15px;
+            margin-top: 15px;
+            color: ${theme.palette.text.primary}
+        }
+
+        .subtitle {
+            font-size: 13px;
+            margin: 10px 0;
+            color: ${theme.palette.text.secondary}
+        }
+    `;
+});
 
 const Exception: FC<ExceptionProps> = ({
     imageSrc = '',
@@ -12,9 +44,9 @@ const Exception: FC<ExceptionProps> = ({
     ...props
 }) => {
     return (
-        <Box
+        <ExceptionWrapper
             {...props}
-            className={clsx('exception', props.className || '')}
+            className={clsx(props.className || '')}
         >
             {
                 imageSrc && (
@@ -32,7 +64,7 @@ const Exception: FC<ExceptionProps> = ({
                 )
             }
             {props.children}
-        </Box>
+        </ExceptionWrapper>
     );
 };
 
