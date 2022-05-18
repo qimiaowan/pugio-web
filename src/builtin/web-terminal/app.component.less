@@ -12,18 +12,6 @@
         box-sizing: border-box;
     }
 
-    .xterm-viewport {
-        width: initial !important;
-    }
-
-    .terminal.xterm {
-        height: 100%;
-    }
-
-    .xterm-viewport {
-        height: 100% !important;
-    }
-
     &.loading {
         position: relative;
     }
@@ -72,5 +60,15 @@
     .terminal-wrapper {
         flex-grow: 1;
         flex-shrink: 1;
+        background-color: black;
     }
+}
+
+.resize-detector {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -99;
 }

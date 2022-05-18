@@ -42,6 +42,8 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
 
     const terminalRef = useRef<HTMLDivElement>(null);
+    const controlsWrapperRef = useRef<SimpleBar>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const [terminalId, setTerminalId] = useState<string>(null);
     const [dataSocket, setDataSocket] = useState<WebSocket>(null);
     const getLocaleText = localeService.useLocaleContext('builtin.webTerminal');
@@ -79,8 +81,16 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
             };
         }
 
-        let cols = (width - terminalScrollBarWidth - 15) / terminalActualCellWidth;
-        let rows = height / terminalActualCellHeight - 1;
+        let cols = 120;
+        let rows = 80;
+
+        if (terminalActualCellWidth) {
+            cols = (width - terminalScrollBarWidth) / terminalActualCellWidth;
+        }
+
+        if (terminalActualCellHeight) {
+            rows = height / terminalActualCellHeight - 1;
+        }
 
         if (cols < 120) {
             cols = 120;
@@ -126,7 +136,9 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
 
             setDataSocket(dataSocket);
 
-            const terminal = new Terminal();
+            const terminal = new Terminal({
+                scrollback: 0,
+            });
             const xtermFitAddon = new FitAddon();
             terminal.loadAddon(xtermFitAddon);
 
@@ -271,16 +283,28 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
 
     useDebounceEffect(
         () => {
-            if (terminal && terminalHeight && terminalWidth && terminalFitAddon) {
-                console.log(terminalHeight, terminalWidth);
+            if (terminalId && terminal && terminalHeight && terminalWidth && terminalFitAddon) {
                 const {
                     cols,
                     rows,
                 } = calculateTerminalSize(terminalWidth, terminalHeight, terminal);
                 terminal.resize(cols, rows);
+                appService.resize({
+                    clientId,
+                    terminalId,
+                    cols,
+                    rows,
+                });
+                terminalFitAddon.fit();
             }
         },
-        [terminal, terminalHeight, terminalWidth, terminalFitAddon],
+        [
+            terminalId,
+            terminal,
+            terminalHeight,
+            terminalWidth,
+            terminalFitAddon,
+        ],
         {
             wait: 300,
         },
@@ -290,71 +314,78 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
         const observer = new ResizeObserver((entries) => {
             const [observationData] = entries;
 
-            if (observationData) {
+            if (observationData && controlsWrapperRef.current) {
                 const width = _.get(observationData, 'borderBoxSize[0].inlineSize');
                 const height = _.get(observationData, 'borderBoxSize[0].blockSize');
 
                 setTerminalWidth(width);
-                setTerminalHeight(height);
+                setTerminalHeight(height - controlsWrapperRef.current?.el?.clientHeight || 0);
             }
         });
 
-        if (terminalRef.current) {
-            observer.observe(terminalRef.current);
+        if (containerRef.current) {
+            observer.observe(containerRef.current);
         }
 
         return () => {
             observer.disconnect();
         };
-    }, [terminalRef]);
+    }, [containerRef.current, controlsWrapperRef.current]);
 
     return (
-        <Box className={clsx('container', { loading })}>
-            <SimpleBar style={{ width }} className="controls-wrapper">
-                {
-                    headerControlItems.map((item, index) => {
-                        const {
-                            button,
-                            divider,
-                        } = item;
-
-                        if (button) {
+        <>
+            <Box className={clsx('container', { loading })}>
+                <SimpleBar style={{ width: terminalWidth }} className="controls-wrapper" ref={controlsWrapperRef}>
+                    {
+                        headerControlItems.map((item, index) => {
                             const {
-                                icon,
-                                props = {},
-                            } = button;
+                                button,
+                                divider,
+                            } = item;
 
-                            return (
-                                <IconButton key={index} {...props} >
-                                    <Icon className={icon} />
-                                </IconButton>
-                            );
-                        } else if (divider) {
-                            return (
-                                <Divider
-                                    key={index}
-                                    variant="fullWidth"
-                                    orientation="vertical"
-                                    classes={{
-                                        root: 'divider',
-                                    }}
-                                />
-                            );
-                        } else {
-                            return null;
-                        }
-                    })
+                            if (button) {
+                                const {
+                                    icon,
+                                    props = {},
+                                } = button;
+
+                                return (
+                                    <IconButton key={index} {...props} >
+                                        <Icon className={icon} />
+                                    </IconButton>
+                                );
+                            } else if (divider) {
+                                return (
+                                    <Divider
+                                        key={index}
+                                        variant="fullWidth"
+                                        orientation="vertical"
+                                        classes={{
+                                            root: 'divider',
+                                        }}
+                                    />
+                                );
+                            } else {
+                                return null;
+                            }
+                        })
+                    }
+                </SimpleBar>
+                <Box
+                    className="terminal-wrapper"
+                    style={{ width: terminalWidth, height: terminalHeight }}
+                    ref={terminalRef}
+                />
+                {
+                    loading && (
+                        <Box className="loading-wrapper">
+                            <Loading />
+                        </Box>
+                    )
                 }
-            </SimpleBar>
-            <Box className="terminal-wrapper" ref={terminalRef} />
-            {
-                loading && (
-                    <Box className="loading-wrapper">
-                        <Loading />
-                    </Box>
-                )
-            }
-        </Box>
+            </Box>
+            <Box className="resize-detector" ref={containerRef} />
+        </>
     );
 };
 
