@@ -128,7 +128,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             updateTabsScrollOffset,
         };
     }, shallow);
-    const getLocaleText = localeService.useLocaleContext('pages.client_workstation');
+    const getLocaleText = localeService.useLocaleContext('pages.clientWorkstation');
     const [selectedTabId, setSelectedTabId] = useState<string>(null);
     const [selectedTabMetadata, setSelectedTabMetadata] = useState<string[]>([]);
     const {
@@ -578,7 +578,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                         marginTop: '30px',
                                     }}
                                     onClick={() => handleCreateTab(clientId)}
-                                >Create a Tab</Button>
+                                >{getLocaleText('createTab')}</Button>
                             </Exception>
                         </Box>
                         : <SimpleBar
