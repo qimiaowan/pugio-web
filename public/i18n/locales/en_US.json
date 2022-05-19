@@ -89,7 +89,8 @@
             "searchPlaceholder": "Type to search...",
             "loadMore": "Load More",
             "loading": "Loading...",
-            "noMore": "No More"
+            "noMore": "No More",
+            "info": "Information"
         },
         "confirm": {
             "confirm": "Confirm",

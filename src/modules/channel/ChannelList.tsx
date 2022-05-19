@@ -277,6 +277,7 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                                                             menu: [
                                                                 {
                                                                     icon: 'icon-info',
+                                                                    title: getLocaleText('info'),
                                                                 },
                                                             ],
                                                             onClick: () => {
