@@ -1,15 +1,14 @@
 import {
+    createElement,
     FC,
     useEffect,
     useState,
     useRef,
-    MouseEvent as SyntheticMouseEvent,
     useCallback,
 } from 'react';
 import { InjectedComponentProps } from 'khamsa';
 import {
     ChannelListProps,
-    ChannelListItemProps,
     ChannelListCategory,
     ChannelListCategoryPatchMap,
     ChannelLoaderMode,
@@ -36,76 +35,8 @@ import { LocaleService } from '@modules/locale/locale.service';
 import { LoadingComponent } from '@modules/brand/loading.component';
 import clsx from 'clsx';
 import '@modules/channel/channel-list.component.less';
-
-const ChannelListItem: FC<ChannelListItemProps> = ({
-    data = {},
-    style,
-    builtIn = false,
-    width,
-    onClick,
-    // onDelete = _.noop,
-}) => {
-    const {
-        name,
-        avatar,
-    } = data;
-
-    const handleAction = (event: SyntheticMouseEvent<HTMLButtonElement, MouseEvent>) => {
-        event.stopPropagation();
-        event.preventDefault();
-    };
-
-    const [opacity, setOpacity] = useState<number>(0);
-
-    return (
-        <div
-            className="channel-list-item"
-            style={{
-                ...style,
-                width,
-            }}
-            onMouseEnter={() => {
-                setOpacity(1);
-            }}
-            onMouseLeave={() => {
-                setOpacity(0);
-            }}
-            onClick={onClick}
-        >
-            <Box className="action-wrapper" style={{ opacity }}>
-                <IconButton
-                    onClick={(event) => {
-                        event.stopPropagation();
-                    }}
-                >
-                    <Icon className="icon icon-info" />
-                </IconButton>
-                {
-                    !builtIn && (
-                        <IconButton
-                            onClick={handleAction}
-                            onMouseDown={(event) => event.stopPropagation()}
-                            onMouseUp={(event) => event.stopPropagation()}
-                        >
-                            <Icon className="icon icon-delete" />
-                        </IconButton>
-                    )
-                }
-            </Box>
-            <Box className="content-wrapper">
-                <Box
-                    component="img"
-                    style={{
-                        width: width * 0.3,
-                        height: width * 0.3,
-                    }}
-                    src={avatar || '/static/images/channel_avatar_fallback.svg'}
-                />
-                <Typography classes={{ root: 'text' }} variant="subtitle2">{name}</Typography>
-            </Box>
-        </div>
-    );
-};
+import { ChannelListItemComponent } from '@modules/channel/channel-list-item.component';
+import { ChannelListItemProps } from '@modules/channel/channel-list-item.interface';
 
 const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
     declarations,
@@ -118,6 +49,7 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
     const utilsService = declarations.get<UtilsService>(UtilsService);
     const localeService = declarations.get<LocaleService>(LocaleService);
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
+    const ChannelListItem = declarations.get<FC<ChannelListItemProps>>(ChannelListItemComponent);
 
     const getLocaleText = localeService.useLocaleContext('components.channelList');
     const [searchValue, setSearchValue] = useState<string>('');
@@ -335,16 +267,17 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                                         >
                                             {
                                                 (channelList?.list || []).map((item) => {
-                                                    return (
-                                                        <ChannelListItem
-                                                            key={item.id}
-                                                            builtIn={category?.query?.builtIn === 1}
-                                                            data={item.channel}
-                                                            width={utilsService.calculateItemWidth(width, 120)}
-                                                            onClick={() => {
+                                                    return createElement(
+                                                        ChannelListItem,
+                                                        {
+                                                            key: item.id,
+                                                            builtIn: category?.query?.builtIn === 1,
+                                                            data: item.channel,
+                                                            width: utilsService.calculateItemWidth(width, 120),
+                                                            onClick: () => {
                                                                 onSelectChannel(item.channel.id);
-                                                            }}
-                                                        />
+                                                            },
+                                                        },
                                                     );
                                                 })
                                             }
