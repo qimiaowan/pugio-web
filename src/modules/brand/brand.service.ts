@@ -127,10 +127,20 @@ export class BrandService {
                     },
                     MuiListItemButton: {
                         defaultProps: {
-                            classes: {
-                                root: 'pugio-list-item-button',
-                                selected: 'pugio-list-item-button-selected',
-                            },
+                            sx: (theme) => ({
+                                borderRadius: 0,
+
+                                '&:hover, &.Mui-selected': {
+                                    color: theme.palette.mode === 'dark'
+                                        ? 'white'
+                                        : theme.palette.grey[900],
+                                    '& *': {
+                                        color: theme.palette.mode === 'dark'
+                                            ? 'white'
+                                            : theme.palette.grey[900],
+                                    },
+                                },
+                            }),
                         },
                     },
                 },
