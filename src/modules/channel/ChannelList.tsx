@@ -274,6 +274,11 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                                                             builtIn: category?.query?.builtIn === 1,
                                                             data: item.channel,
                                                             width: utilsService.calculateItemWidth(width, 120),
+                                                            menu: [
+                                                                {
+                                                                    icon: 'icon-info',
+                                                                },
+                                                            ],
                                                             onClick: () => {
                                                                 onSelectChannel(item.channel.id);
                                                             },
