@@ -34,7 +34,7 @@ import { ChannelService } from '@modules/channel/channel.service';
 import { UtilsService } from '@modules/utils/utils.service';
 import { useParams } from 'react-router-dom';
 import { List } from 'immutable';
-import { useDebounce, useRequest } from 'ahooks';
+import { useDebounce } from 'ahooks';
 import { ExceptionProps } from '@modules/brand/exception.interface';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { AppComponent as WebTerminalAppComponent } from '@builtin:web-terminal/app.component';
@@ -131,20 +131,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const getLocaleText = localeService.useLocaleContext('pages.clientWorkstation');
     const [selectedTabId, setSelectedTabId] = useState<string>(null);
     const [selectedTabMetadata, setSelectedTabMetadata] = useState<string[]>([]);
-    const {
-        run: runFirstGetClientCurrentStatus,
-        data: clientCurrentStatusResponseData,
-    } = useRequest(
-        () => {
-            return clientService.getClientCurrentStatus({
-                clientId,
-            });
-        },
-        {
-            refreshDeps: [clientId],
-            pollingInterval: 30000,
-        },
-    );
+    const [clientOffline, setClientOffline] = useState<boolean>(false);
 
     const handleCreateTab = (clientId: string, data: TabData = {}) => {
         const tabId = createTab(clientId, data);
@@ -453,11 +440,19 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     }, [tabsScrollRef.current]);
 
     useEffect(() => {
-        runFirstGetClientCurrentStatus();
+        const intervalId = setInterval(() => {
+            clientService.getClientCurrentStatus({ clientId }).then((response) => {
+                setClientOffline(response?.response?.offline);
+            });
+        }, 30000);
+
+        return () => {
+            clearInterval(intervalId);
+        };
     }, []);
 
     return (
-        clientCurrentStatusResponseData?.response?.offline
+        clientOffline
             ? <Box className="page client-workstation-page offline">
                 <Exception
                     imageSrc="/static/images/error.svg"
