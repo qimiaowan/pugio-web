@@ -21,7 +21,6 @@ import { LocaleService } from '@modules/locale/locale.service';
 import SimpleBar from 'simplebar-react';
 import clsx from 'clsx';
 import _ from 'lodash';
-import '@modules/user/user-selector.component.less';
 import { UserCardProps } from '@modules/user/user-card.interface';
 import { UserCardComponent } from '@modules/user/user-card.component';
 import { UserService } from '@modules/user/user.service';
@@ -32,6 +31,63 @@ import { LoadingComponent } from '@modules/brand/loading.component';
 import { Profile } from '@modules/profile/profile.interface';
 import { ExceptionComponentProps } from '@modules/brand/exception.interface';
 import { ExceptionComponent } from '@modules/brand/exception.component';
+import styled from '@mui/material/styles/styled';
+
+const UserSelectorWrapper = styled(Dialog)(({ theme }) => {
+    return `
+        .title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: transparent;
+            padding-left: ${theme.spacing(1)};
+            padding-right: ${theme.spacing(1)};
+
+            .search {
+                flex-grow: 1;
+                margin: 0 ${theme.spacing(1)};
+            }
+        }
+
+        .content {
+            max-height: 720px;
+            min-height: 320px;
+            padding: 0;
+            border-top: 0;
+        }
+
+        .loading-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .simplebar-content {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .load-more-wrapper {
+            padding: ${theme.spacing(1)};
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .selected-controls-wrapper {
+            flex-grow: 1;
+            flex-shrink: 1;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+
+            & > button {
+                margin-left: ${theme.spacing(1)};
+            }
+        }
+    `;
+});
 
 const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
     declarations,
@@ -265,7 +321,7 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
     }, [dialogContentElement]);
 
     return (
-        <Dialog
+        <UserSelectorWrapper
             {...props}
             disableEscapeKeyDown={true}
             maxWidth="sm"
@@ -316,7 +372,7 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                     }}
                 >{getComponentLocaleText('ok')}</Button>
             </DialogActions>
-        </Dialog>
+        </UserSelectorWrapper>
     );
 };
 

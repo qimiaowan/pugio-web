@@ -16,7 +16,6 @@ import ListItemText from '@mui/material/ListItemText';
 import { InjectedComponentProps } from 'khamsa';
 import { LocaleService } from '@modules/locale/locale.service';
 import { ProfileService } from '@modules/profile/profile.service';
-import '@modules/profile/profile-menu.component.less';
 import { useRequest } from 'ahooks';
 import { LoadingComponent } from '@modules/brand/loading.component';
 import { StoreService } from '@modules/store/store.service';
@@ -80,16 +79,18 @@ const ProfileMenu: FC<InjectedComponentProps> = ({
 
     return (
         getProfileLoading
-            ? <Loading className="profile-loading" />
-            : <Box className="profile-menu">
+            ? <Loading style={{ width: 31, height: '31px !important' }} />
+            : <Box>
                 <IconButton
                     aria-haspopup="true"
                     aria-expanded={open ? 'true' : undefined}
                     onClick={handleClick}
                 >
                     <Avatar
-                        classes={{
-                            root: 'avatar',
+                        sx={{
+                            width: '21px',
+                            height: '21px',
+                            pointerEvents: 'none',
                         }}
                         src={avatarUrl}
                         imgProps={{

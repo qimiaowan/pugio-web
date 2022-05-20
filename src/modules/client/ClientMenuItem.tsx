@@ -45,12 +45,12 @@ const ClientMenuItemWrapper = styled(Box)(({ theme }) => {
 
         &.active {
             &, &:hover {
-                background-color: ${mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[200]};
+                background-color: ${mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[300]};
             }
         }
 
         &:hover {
-            background-color: ${mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[100]};
+            background-color: ${mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[200]};
         }
 
         &.active, &:hover {
