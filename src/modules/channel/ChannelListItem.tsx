@@ -60,6 +60,10 @@ const ChannelListItemWrapper = styled('div')(({ theme }) => {
 
         &:hover {
             background-color: ${mode === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.03)'};
+
+            .action-wrapper {
+                display: flex;
+            }
         }
 
         &:active:focus,
@@ -69,7 +73,7 @@ const ChannelListItemWrapper = styled('div')(({ theme }) => {
 
         .action-wrapper {
             padding-right: 5px;
-            display: flex;
+            display: none;
             justify-content: flex-end;
             align-items: center;
             position: absolute;
@@ -82,7 +86,7 @@ const ChannelListItemWrapper = styled('div')(({ theme }) => {
 
             .control-button {
                 color: ${theme.palette.background.default};
-                background-color: ${Color(theme.palette.background.default).alpha(0.25).toString()};
+                background-color: transparent;
 
                 &:hover {
                     background-color: ${Color(theme.palette.background.default).alpha(0.2).toString()};
@@ -141,6 +145,7 @@ const ChannelListItemMenu: FC<ChannelListItemMenuProps> = ({
                 <Menu
                     anchorEl={anchorEl}
                     open={open}
+                    disablePortal={true}
                     onClose={handleClose}
                 >
                     {
@@ -152,9 +157,19 @@ const ChannelListItemMenu: FC<ChannelListItemMenuProps> = ({
                             } = menuItem;
 
                             return (
-                                <ListItemButton key={index} onClick={onClick}>
-                                    <ListItemIcon className={clsx('icon', icon)} />
-                                    <ListItemText>{title}</ListItemText>
+                                <ListItemButton key={index} style={{ minWidth: 180 }} onClick={onClick}>
+                                    <ListItemIcon>
+                                        <Icon className={clsx('icon', icon)} />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        sx={{
+                                            maxWidth: '240px',
+                                            textOverflow: 'ellipsis',
+                                            overflow: 'hidden',
+                                            whitespace: 'nowrap',
+                                        }}
+                                        title={title}
+                                    >{title}</ListItemText>
                                 </ListItemButton>
                             );
                         })
@@ -188,7 +203,7 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
     }
 
     const theme = useTheme();
-    const [opacity, setOpacity] = useState<number>(0);
+    // const [opacity, setOpacity] = useState<number>(0);
 
     return (
         <ChannelListItemWrapper
@@ -204,19 +219,19 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
                 'appearance-list-item': channelListItemDisplayMode === 'list-item',
             })}
             title={description}
-            onMouseEnter={() => {
-                setOpacity(1);
-            }}
-            onMouseLeave={() => {
-                setOpacity(0);
-            }}
+            // onMouseEnter={() => {
+            //     setOpacity(1);
+            // }}
+            // onMouseLeave={() => {
+            //     setOpacity(0);
+            // }}
             onClick={onClick}
         >
             {
                 menu.length > 0 && (
                     <Box
                         className="action-wrapper"
-                        style={{ opacity }}
+                        // style={{ opacity }}
                         sx={
                             channelListItemDisplayMode === 'list-item'
                                 ? {

@@ -270,15 +270,25 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                                                     return createElement(
                                                         ChannelListItem,
                                                         {
-                                                            key: item.id,
+                                                            key: item?.id,
                                                             builtIn: category?.query?.builtIn === 1,
-                                                            data: item.channel,
+                                                            data: item?.channel,
                                                             width: utilsService.calculateItemWidth(width, 120),
                                                             menu: [
                                                                 {
                                                                     icon: 'icon-info',
                                                                     title: getLocaleText('info'),
                                                                 },
+                                                                ...(
+                                                                    category?.query?.builtIn !== 1
+                                                                        ? [
+                                                                            {
+                                                                                icon: 'icon-delete',
+                                                                                title: getLocaleText('delete'),
+                                                                            },
+                                                                        ]
+                                                                        : []
+                                                                ),
                                                             ],
                                                             onClick: () => {
                                                                 onSelectChannel(item.channel.id);

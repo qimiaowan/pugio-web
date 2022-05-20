@@ -90,7 +90,8 @@
             "loadMore": "Load More",
             "loading": "Loading...",
             "noMore": "No More",
-            "info": "Information"
+            "info": "Information",
+            "delete": "Delete"
         },
         "confirm": {
             "confirm": "Confirm",
