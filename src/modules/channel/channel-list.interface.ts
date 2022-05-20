@@ -1,8 +1,15 @@
+import { TextFieldProps } from '@mui/material/TextField';
+import { BoxProps } from '@mui/material/Box';
+import { ReactNode } from 'react';
+
 export interface ChannelListProps {
     tabId: string;
     clientId: string;
     width: number;
     height: number;
+    headerSlot?: ReactNode;
+    headerProps?: BoxProps;
+    searchProps?: TextFieldProps;
     onSelectChannel?: (channelId: string) => void;
 }
 

@@ -10,14 +10,20 @@ export class BrandService {
         return logo;
     }
 
-    public getTheme() {
+    public getTheme(mode: 'light' | 'dark' = 'light') {
         const pugioTheme = createTheme(
             createMuiTheme({
                 variants: {
                     primary: '#4b768b',
                 },
+                mode,
             }),
             {
+                palette: {
+                    divider: mode === 'light'
+                        ? '#e6e6e6'
+                        : '#424242',
+                },
                 components: {
                     MuiIcon: {
                         defaultProps: {

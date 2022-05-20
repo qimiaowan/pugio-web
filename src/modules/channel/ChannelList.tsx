@@ -34,9 +34,118 @@ import Divider from '@mui/material/Divider';
 import { LocaleService } from '@modules/locale/locale.service';
 import { LoadingComponent } from '@modules/brand/loading.component';
 import clsx from 'clsx';
-import '@modules/channel/channel-list.component.less';
 import { ChannelListItemComponent } from '@modules/channel/channel-list-item.component';
 import { ChannelListItemProps } from '@modules/channel/channel-list-item.interface';
+import styled from '@mui/material/styles/styled';
+
+const ChannelListContainer = styled(Box)(({ theme }) => {
+    return `
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        &, * {
+            box-sizing: border-box;
+        }
+
+        .header {
+            width: 100%;
+            padding: ${theme.spacing(1)};
+            flex-grow: 0;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid ${theme.palette.divider};
+
+            .search-wrapper {
+                display: flex;
+                align-items: stretch;
+                justify-content: space-between;
+                width: 100%;
+
+                .left-wrapper {
+                    width: 100%;
+                    display: flex;
+                    align-items: stretch;
+
+                    & > * {
+                        margin-right: ${theme.spacing(1)};
+                    }
+
+                    .search {
+                        width: 200px;
+                    }
+                }
+            }
+        }
+
+        .list-wrapper {
+            flex-grow: 1;
+            flex-shrink: 1;
+            width: 100%;
+
+            .simplebar-content {
+                height: 100%;
+                max-width: 100%;
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .channel-list-group-wrapper {
+                width: 100%;
+
+                .switch-wrapper {
+                    box-sizing: border-box;
+                    display: flex;
+                    justify-content: flex-start;
+                    align-items: center;
+                    padding: ${theme.spacing(1)};
+
+                    & > .title {
+                        user-select: none;
+                        color: ${theme.palette.text.primary};
+                        margin-left: ${theme.spacing(1)};
+                    }
+                }
+
+                .channels-list-wrapper {
+                    flex-shrink: 0;
+                    width: 100%;
+                    overflow: hidden;
+
+                    &.hidden {
+                        height: 0;
+                    }
+
+                    .load-more-wrapper {
+                        padding: ${theme.spacing(1)};
+                        width: 100%;
+                        display: block;
+                        user-select: none;
+
+                        & > div {
+                            width: 100%;
+                            height: 100;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                        }
+                    }
+                }
+            }
+        }
+
+        .loading-wrapper {
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    `;
+});
 
 const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
     declarations,
@@ -204,7 +313,7 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
     }, [debouncedSearchValue]);
 
     return (
-        <Box className="channel-list-container">
+        <ChannelListContainer className="channel-list-container">
             <Box className="header" ref={headerRef}>
                 <Box className="search-wrapper">
                     <Box className="left-wrapper">
@@ -327,7 +436,7 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                     })
                 }
             </SimpleBar>
-        </Box>
+        </ChannelListContainer>
     );
 };
 

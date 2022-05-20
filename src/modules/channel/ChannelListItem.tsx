@@ -166,6 +166,7 @@ const ChannelListItemMenu: FC<ChannelListItemMenuProps> = ({
                                         if (_.isFunction(onClick)) {
                                             onClick(event);
                                         }
+                                        setAnchorEl(null);
                                     }}
                                 >
                                     <ListItemIcon>
