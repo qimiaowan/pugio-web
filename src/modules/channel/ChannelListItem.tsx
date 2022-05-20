@@ -2,6 +2,7 @@
 import {
     FC,
     useState,
+    useEffect,
     MouseEvent,
 } from 'react';
 import {
@@ -14,7 +15,6 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Icon from '@mui/material/Icon';
 import styled from '@mui/material/styles/styled';
-import useTheme from '@mui/material/styles/useTheme';
 import clsx from 'clsx';
 import _ from 'lodash';
 import Color from 'color';
@@ -58,17 +58,19 @@ const ChannelListItemWrapper = styled('div')(({ theme }) => {
             }
         }
 
+        &.handle-click {
+            &:active:focus,
+            &:active:not(:focus):not(:focus-within) {
+                background-color: ${mode === 'dark' ? 'rgba(255, 255, 255, 0.01)' : 'rgba(0, 0, 0, 0.05)'};
+            }
+        }
+
         &:hover {
             background-color: ${mode === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.03)'};
 
             .action-wrapper {
                 display: flex;
             }
-        }
-
-        &:active:focus,
-        &:active:not(:focus):not(:focus-within) {
-            background-color: ${mode === 'dark' ? 'rgba(255, 255, 255, 0.01)' : 'rgba(0, 0, 0, 0.05)'};
         }
 
         .action-wrapper {
@@ -82,7 +84,7 @@ const ChannelListItemWrapper = styled('div')(({ theme }) => {
             left: 0;
             padding: 5px;
             background-color: ${mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)'};
-            cursor: pointer;
+            cursor: default;
 
             .control-button {
                 color: ${theme.palette.background.default};
@@ -157,7 +159,15 @@ const ChannelListItemMenu: FC<ChannelListItemMenuProps> = ({
                             } = menuItem;
 
                             return (
-                                <ListItemButton key={index} style={{ minWidth: 180 }} onClick={onClick}>
+                                <ListItemButton
+                                    key={index}
+                                    style={{ minWidth: 180 }}
+                                    onClick={(event) => {
+                                        if (_.isFunction(onClick)) {
+                                            onClick(event);
+                                        }
+                                    }}
+                                >
                                     <ListItemIcon>
                                         <Icon className={clsx('icon', icon)} />
                                     </ListItemIcon>
@@ -202,8 +212,19 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
         channelListItemDisplayMode = 'app-entry';
     }
 
-    const theme = useTheme();
-    // const [opacity, setOpacity] = useState<number>(0);
+    const [shouldHaveClickClass, setShouldHaveClickClass] = useState<boolean>(true);
+
+    useEffect(() => {
+        const handler = () => {
+            setShouldHaveClickClass(true);
+        };
+
+        window.addEventListener('mouseup', handler);
+
+        return () => {
+            window.removeEventListener('mouseup', handler);
+        };
+    }, []);
 
     return (
         <ChannelListItemWrapper
@@ -216,22 +237,16 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
                 ),
             }}
             className={clsx({
+                'handle-click': shouldHaveClickClass,
                 'appearance-list-item': channelListItemDisplayMode === 'list-item',
             })}
             title={description}
-            // onMouseEnter={() => {
-            //     setOpacity(1);
-            // }}
-            // onMouseLeave={() => {
-            //     setOpacity(0);
-            // }}
             onClick={onClick}
         >
             {
                 menu.length > 0 && (
                     <Box
                         className="action-wrapper"
-                        // style={{ opacity }}
                         sx={
                             channelListItemDisplayMode === 'list-item'
                                 ? {
@@ -241,7 +256,15 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
                                 }
                                 : {}
                         }
-                        onClick={(event) => event.stopPropagation()}
+                        onClick={(event) => {
+                            event.stopPropagation();
+                        }}
+                        onMouseDown={() => {
+                            setShouldHaveClickClass(false);
+                        }}
+                        onMouseUp={() => {
+                            setShouldHaveClickClass(true);
+                        }}
                     >
                         {
                             menu.slice(0, 1).map((menuItem, index) => {
