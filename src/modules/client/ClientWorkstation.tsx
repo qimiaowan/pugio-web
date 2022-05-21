@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
     createElement,
     FC,
@@ -44,6 +45,8 @@ import { AppComponent as WebTerminalAppComponent } from '@builtin:web-terminal/a
 import { ChannelListComponent } from '@modules/channel/channel-list.component';
 import { ChannelListProps } from '@modules/channel/channel-list.interface';
 import styled from '@mui/material/styles/styled';
+import { ChannelPopoverProps } from '@modules/channel/channel-popover.interface';
+import { ChannelPopoverComponent } from '@modules/channel/channel-popover.component';
 
 const ClientWorkstationWrapper = styled(Box)(({ theme }) => {
     const mode = theme.palette.mode;
@@ -162,6 +165,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const utilsService = declarations.get<UtilsService>(UtilsService);
     const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
     const ChannelList = declarations.get<FC<ChannelListProps>>(ChannelListComponent);
+    const ChannelPopover = declarations.get<FC<ChannelPopoverProps>>(ChannelPopoverComponent);
 
     const internalChannelMap = {
         'pugio.web-terminal': WebTerminalAppComponent,
