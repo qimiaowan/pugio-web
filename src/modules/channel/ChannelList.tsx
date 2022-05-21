@@ -150,6 +150,8 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
     width,
     height,
     headerSlot,
+    headerProps = {},
+    searchProps = {},
     onSelectChannel = _.noop,
 }) => {
     const channelService = declarations.get<ChannelService>(ChannelService);
@@ -312,9 +314,10 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
 
     return (
         <ChannelListContainer className="channel-list-container">
-            <Box className="header" ref={headerRef}>
+            <Box className="header" {...headerProps} ref={headerRef}>
                 <Box className="search-wrapper">
                     <TextField
+                        {...searchProps}
                         classes={{
                             root: clsx('search', {
                                 'full-width': !headerSlot,
