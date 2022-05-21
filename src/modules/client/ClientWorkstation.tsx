@@ -727,6 +727,25 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                         clientId={clientId}
                                         width={headerWidth}
                                         height={panelHeight}
+                                        headerSlot={
+                                            <Box
+                                                sx={{
+                                                    flexGrow: 1,
+                                                    flexShrink: 1,
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    alignItems: 'center',
+                                                    padding: `0 ${theme.spacing(1)}`,
+                                                }}
+                                            >
+                                                <Button
+                                                    startIcon={<Icon className="icon-import" />}
+                                                >{getLocaleText('installChannel')}</Button>
+                                                <Button
+                                                    startIcon={<Icon className="icon-plus" />}
+                                                >{getLocaleText('createChannel')}</Button>
+                                            </Box>
+                                        }
                                         onSelectChannel={(channelId) => {
                                             handleSelectChannel(clientId, selectedTabId, channelId);
                                         }}

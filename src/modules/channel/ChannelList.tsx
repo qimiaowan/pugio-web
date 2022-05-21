@@ -61,20 +61,17 @@ const ChannelListContainer = styled(Box)(({ theme }) => {
             .search-wrapper {
                 display: flex;
                 align-items: stretch;
-                justify-content: space-between;
                 width: 100%;
 
-                .left-wrapper {
-                    width: 100%;
-                    display: flex;
-                    align-items: stretch;
+                .search {
+                    width: 240px;
+                    flex-grow: 0;
+                    flex-shrink: 0;
 
-                    & > * {
-                        margin-right: ${theme.spacing(1)};
-                    }
-
-                    .search {
-                        width: 200px;
+                    &.full-width {
+                        width: initial;
+                        min-width: 240px;
+                        flex-grow: 1;
                     }
                 }
             }
@@ -152,6 +149,7 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
     clientId,
     width,
     height,
+    headerSlot,
     onSelectChannel = _.noop,
 }) => {
     const channelService = declarations.get<ChannelService>(ChannelService);
@@ -316,21 +314,16 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
         <ChannelListContainer className="channel-list-container">
             <Box className="header" ref={headerRef}>
                 <Box className="search-wrapper">
-                    <Box className="left-wrapper">
-                        <TextField
-                            classes={{
-                                root: 'search',
-                            }}
-                            placeholder={getLocaleText('searchPlaceholder')}
-                            onChange={(event) => setSearchValue(event.target.value)}
-                        />
-                        <Button
-                            startIcon={<Icon className="icon-import" />}
-                        >{getLocaleText('install')}</Button>
-                    </Box>
-                    <Button
-                        startIcon={<Icon className="icon-plus" />}
-                    >{getLocaleText('create')}</Button>
+                    <TextField
+                        classes={{
+                            root: clsx('search', {
+                                'full-width': !headerSlot,
+                            }),
+                        }}
+                        placeholder={getLocaleText('searchPlaceholder')}
+                        onChange={(event) => setSearchValue(event.target.value)}
+                    />
+                    {headerSlot}
                 </Box>
             </Box>
             <SimpleBar

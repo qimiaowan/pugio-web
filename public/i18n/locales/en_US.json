@@ -33,7 +33,9 @@
                 "title": "Client Offline",
                 "subTitle": "The client is currently offline, please check the client status and retry later"
             },
-            "createTab": "Create a Tab"
+            "createTab": "Create a Tab",
+            "createChannel": "Create",
+            "installChannel": "Install"
         },
         "clientMembers": {
             "tabs": {
@@ -84,8 +86,6 @@
                 "official": "Official",
                 "fromMarket": "From Market"
             },
-            "create": "Create",
-            "install": "Install",
             "searchPlaceholder": "Type to search...",
             "loadMore": "Load More",
             "loading": "Loading...",
