@@ -560,10 +560,8 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
 
     useEffect(
         () => {
-            // @ts-ignore
-            if (window.workstationBus) {
-                // @ts-ignore
-                window.workstationBus.emit({
+            if (window['__PUGIO_WORKSTATION_BUS__']) {
+                window['__PUGIO_WORKSTATION_BUS__'].emit({
                     width: headerWidth,
                     height: panelHeight,
                     locale,
@@ -581,8 +579,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
 
     useEffect(() => {
         const bus = utilsService.createEventBus();
-        // @ts-ignore
-        window.workstationBus = bus;
+        window['__PUGIO_WORKSTATION_BUS__'] = bus;
     }, []);
 
     return (

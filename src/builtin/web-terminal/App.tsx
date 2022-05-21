@@ -135,6 +135,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     const [terminalHeight, setTerminalHeight] = useState<number>(0);
     const [terminalWidth, setTerminalWidth] = useState<number>(0);
     const [terminalFitAddon, setTerminalFitAddon] = useState<FitAddon>(null);
+    const [handleRemoveBusListener, setHandleRemoveBusListener] = useState<Function>(() => _.noop);
 
     const calculateTerminalSize = (
         width: number,
@@ -231,6 +232,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                 dataSocket.removeEventListener('message', clientDataHandler);
                 closeSocket.removeEventListener('message', clientCloseHandler);
                 tab.closeTab();
+                handleRemoveBusListener();
 
                 if (dataSocket) {
                     dataSocket.close();
@@ -411,15 +413,18 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     }, [containerRef.current, controlsWrapperRef.current]);
 
     useEffect(() => {
-        // @ts-ignore
-        const dispose = window.workstationBus.onData((data) => {
-            // TODO example
-            console.log(data);
-        });
+        if (window['__PUGIO_WORKSTATION_BUS__']) {
+            const dispose = window['__PUGIO_WORKSTATION_BUS__'].onData((data) => {
+                // TODO example
+                console.log(data);
+            });
 
-        return () => {
-            dispose();
-        };
+            setHandleRemoveBusListener(() => dispose);
+
+            return () => {
+                dispose();
+            };
+        }
     }, []);
 
     return (
