@@ -26,6 +26,32 @@ import {
     ConfirmOptions,
 } from 'react-mui-confirm';
 import { LocaleService } from '@modules/locale/locale.service';
+import EventEmitter, {
+    Emitter,
+    EventListener,
+} from 'event-emitter';
+
+class EventBus {
+    public constructor(private readonly emitter: Emitter) {}
+
+    public onData(callbackFn: EventListener) {
+        if (_.isFunction(callbackFn)) {
+            this.emitter.on('data', callbackFn);
+        }
+
+        return {
+            dispose: this.createDispose(callbackFn),
+        };
+    }
+
+    private createDispose(callbackFn: EventListener) {
+        const dispose = () => {
+            this.emitter.off('data', callbackFn);
+        };
+
+        return dispose.bind(this);
+    }
+}
 
 @Injectable()
 export class UtilsService extends CaseTransformerService {
@@ -240,5 +266,11 @@ export class UtilsService extends CaseTransformerService {
         }, [getConfirmLocaleText, createConfirm]);
 
         return confirm;
+    }
+
+    public createEventBus() {
+        const emitter = EventEmitter();
+        const eventBus = new EventBus(emitter);
+        return eventBus;
     }
 }
