@@ -26,7 +26,8 @@ export interface ChannelConfig {
     metadata: ChannelMetadata;
     width: number;
     height: number;
-    basename: string;
+    locale: string;
+    mode: 'dark' | 'light';
 }
 
 type TabTitleSetter = (previousTitle: string) => string;

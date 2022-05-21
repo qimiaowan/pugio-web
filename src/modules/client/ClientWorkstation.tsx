@@ -319,7 +319,8 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                     width={headerWidth}
                                                     height={panelHeight}
                                                     metadata={metadata}
-                                                    basename={`/client/${clientId}/workstation`}
+                                                    locale={locale}
+                                                    mode={theme.palette.mode}
                                                     setup={(lifecycle = {}) => {
                                                         updateTab(clientId, tabId, {
                                                             lifecycle,
@@ -555,6 +556,16 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             clearInterval(intervalId);
         };
     }, []);
+
+    useEffect(
+        () => {},
+        [
+            locale,
+            theme.palette.mode,
+            panelHeight,
+            headerWidth,
+        ],
+    );
 
     return (
         clientOffline
