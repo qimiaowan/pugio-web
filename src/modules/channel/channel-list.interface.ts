@@ -3,7 +3,6 @@ import { BoxProps } from '@mui/material/Box';
 import { ReactNode } from 'react';
 
 export interface ChannelListProps {
-    tabId: string;
     clientId: string;
     width: number;
     height: number;

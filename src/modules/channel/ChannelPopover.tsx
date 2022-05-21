@@ -13,7 +13,6 @@ import { ChannelListComponent } from '@modules/channel/channel-list.component';
 
 const ChannelPopover: FC<InjectedComponentProps<ChannelPopoverProps>> = ({
     trigger,
-    children,
     declarations,
     channelListProps,
     onClick,
