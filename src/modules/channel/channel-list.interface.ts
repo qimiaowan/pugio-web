@@ -1,19 +1,16 @@
-import { Channel } from '@modules/channel/channel.interface';
+import { TextFieldProps } from '@mui/material/TextField';
 import { BoxProps } from '@mui/material/Box';
+import { ReactNode } from 'react';
 
 export interface ChannelListProps {
     tabId: string;
     clientId: string;
     width: number;
     height: number;
+    headerSlot?: ReactNode;
+    headerProps?: BoxProps;
+    searchProps?: TextFieldProps;
     onSelectChannel?: (channelId: string) => void;
-}
-
-export interface ChannelListItemProps extends BoxProps {
-    data: Channel;
-    width: number;
-    builtIn?: boolean;
-    onDelete?: (data: Channel) => void;
 }
 
 export interface ChannelListCategory extends Required<ChannelListCategoryPatch> {

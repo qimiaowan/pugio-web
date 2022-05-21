@@ -21,8 +21,8 @@
         "details": "Details"
     },
     "pages": {
-        "client_workstation": {
-            "all_channels": "All Channels",
+        "clientWorkstation": {
+            "allChannels": "All Channels",
             "create": "New",
             "switch": "Switch",
             "welcome": {
@@ -32,7 +32,8 @@
             "offline": {
                 "title": "Client Offline",
                 "subTitle": "The client is currently offline, please check the client status and retry later"
-            }
+            },
+            "createTab": "Create a Tab"
         },
         "clientMembers": {
             "tabs": {
@@ -88,7 +89,9 @@
             "searchPlaceholder": "Type to search...",
             "loadMore": "Load More",
             "loading": "Loading...",
-            "noMore": "No More"
+            "noMore": "No More",
+            "info": "Information",
+            "delete": "Delete"
         },
         "confirm": {
             "confirm": "Confirm",

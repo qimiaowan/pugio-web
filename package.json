@@ -9,6 +9,7 @@
         "@mui/icons-material": "^5.5.1",
         "@mui/material": "5.2.5",
         "@mui/styles": "^5.7.0",
+        "@mui/utils": "^5.8.0",
         "@pugio/case-transformer": "^2.1.0",
         "@pugio/request": "^2.1.0",
         "@pugio/types": "^2.1.0",

@@ -8,7 +8,30 @@ import { ExceptionComponent } from '@modules/brand/exception.component';
 import { ExceptionProps } from '@modules/brand/exception.interface';
 import { LocaleService } from '@modules/locale/locale.service';
 import { KeepAlive } from 'react-activation';
-import '@modules/channel/channel-panel.component.less';
+import styled from '@mui/material/styles/styled';
+
+const ChannelPanelWrapper = styled(Box)(() => {
+    return `
+        flex-grow: 1;
+        flex-shrink: 1;
+
+        &.errored,
+        &.loading-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ka-wrapper,
+        .ka-content {
+            height: 100%;
+        }
+
+        .ka-wrapper {
+            width: 100%;
+        }
+    `;
+});
 
 const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
     children,
@@ -32,7 +55,7 @@ const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
     const getLocaleText = localeService.useLocaleContext('components.channelPanel');
 
     return (
-        <Box
+        <ChannelPanelWrapper
             {...props}
             className={clsx(
                 'channel-panel',
@@ -62,7 +85,7 @@ const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
                                 />
                                 : null
             }
-        </Box>
+        </ChannelPanelWrapper>
     );
 };
 

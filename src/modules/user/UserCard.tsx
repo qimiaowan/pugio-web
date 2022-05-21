@@ -17,10 +17,91 @@ import {
     UserCardMenuProps,
 } from '@modules/user/user-card.interface';
 import clsx from 'clsx';
-import '@modules/user/user-card.component.less';
 import { InjectedComponentProps } from 'khamsa';
 import { UtilsService } from '@modules/utils/utils.service';
 import _ from 'lodash';
+import styled from '@mui/material/styles/styled';
+
+const UserCardWrapper = styled(Box)(({ theme }) => {
+    const mode = theme.palette.mode;
+
+    return `
+        display: flex;
+        align-items: stretch;
+        box-sizing: border-box;
+        padding: ${theme.spacing(1)};
+        align-items: center;
+        border-bottom: 1px solid ${theme.palette.divider};
+        cursor: pointer;
+
+        &, * {
+            user-select: none;
+        }
+
+        &:hover, &.checked:hover {
+            background-color: ${mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[100]};
+        }
+
+        &:active:focus,
+        &:active:not(:focus):not(:focus-within) {
+            background-color: ${mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[200]};
+        }
+
+        &.checked {
+            background-color: ${mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[200]};
+        }
+
+        .avatar {
+            flex-grow: 0;
+            flex-shrink: 0;
+            pointer-events: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            margin-right: ${theme.spacing(1)};
+        }
+
+        .description {
+            flex-grow: 1;
+            flex-shrink: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+
+            .title, .subtitle {
+                max-width: 480px;
+            }
+
+            .title {
+                padding-right: 0;
+                padding-left: 0;
+            }
+        }
+
+        .controls-button-wrapper {
+            flex-grow: 0;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+
+            & > * {
+                margin-right: ${theme.spacing(1)};
+
+                &:last-child {
+                    margin-right: 0;
+                }
+            }
+        }
+
+        .checkbox-wrapper {
+            width: 50px;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    `;
+});
 
 const UserCardMenu: FC<UserCardMenuProps> = ({
     menu = [],
@@ -101,9 +182,9 @@ const UserCard: FC<InjectedComponentProps<UserCardProps>> = ({
     const [controlsVisible, setControlsVisible] = useState<boolean>(false);
 
     return (
-        <Box
+        <UserCardWrapper
             {...props}
-            className={clsx('user-card', { checked }, className)}
+            className={clsx({ checked }, className)}
             onMouseEnter={() => setControlsVisible(true)}
             onMouseLeave={() => setControlsVisible(false)}
             onClick={(event) => {
@@ -172,7 +253,7 @@ const UserCard: FC<InjectedComponentProps<UserCardProps>> = ({
                     </Box>
                 )
             }
-        </Box>
+        </UserCardWrapper>
     );
 };
 

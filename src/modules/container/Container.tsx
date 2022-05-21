@@ -14,6 +14,7 @@ import {
 import { LocaleService } from '@modules/locale/locale.service';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
 import { StyledEngineProvider } from '@mui/material/styles';
+import styled from '@mui/material/styles/styled';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Icon from '@mui/material/Icon';
@@ -31,9 +32,77 @@ import { ClientsDropdownProps } from '@modules/clients/clients-dropdown.interfac
 import shallow from 'zustand/shallow';
 import { ContainerProps } from '@modules/container/container.interface';
 import _ from 'lodash';
-import '@modules/container/container.component.less';
 import { SnackbarProvider } from 'notistack';
 import { ConfirmDialogProvider } from 'react-mui-confirm';
+import Color from 'color';
+
+const ContainerWrapper = styled(Box)(({ theme }) => {
+    const mode = theme.palette.mode;
+
+    return `
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        background-color: ${mode === 'dark' ? 'black' : 'white'};
+        position: relative;
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            background-color: ${mode === 'dark' ? theme.palette.grey[900] : theme.palette.grey[50]};
+            border-bottom: 1px solid ${theme.palette.divider};
+
+            .logo {
+                width: 36px;
+                height: 36px;
+                border-radius: 6px;
+                pointer-events: none;
+            }
+
+            .wrapper {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                padding: 0 calc(${theme.spacing(1)} / 2);
+
+                &.avatar-and-locales > * {
+                    margin: 0 calc(${theme.spacing(1)} / 2);
+                }
+
+                &.logo-and-nav > * {
+                    margin: 0 ${theme.spacing(1)};
+                }
+
+                .navlink {
+                    text-decoration: none;
+                }
+
+                .link {
+                    font-size: 14px;
+                    color: ${theme.palette.text.primary};
+                    text-decoration: none;
+                    background-color: transparent;
+
+                    &:hover {
+                        color: ${Color(theme.palette.text.primary)[mode === 'dark' ? 'lighten' : 'darken'](0.2).alpha(0.8)};
+                    }
+                }
+            }
+
+            * {
+                user-select: none;
+            }
+        }
+
+        .content-layer {
+            height: 100%;
+        }
+    `;
+});
 
 const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> = ({
     declarations,
@@ -96,7 +165,7 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
                 }}
             >
                 <SnackbarProvider autoHideDuration={5000}>
-                    <Box className="app-container" style={{ paddingTop: appNavbarHeight }}>
+                    <ContainerWrapper style={{ paddingTop: appNavbarHeight }}>
                         <Box className="navbar" style={{ height: appNavbarHeight }}>
                             <Box className="wrapper logo-and-nav">
                                 <Box
@@ -162,7 +231,7 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
                         <Box className="content-layer">
                             <Outlet />
                         </Box>
-                    </Box>
+                    </ContainerWrapper>
                 </SnackbarProvider>
             </ConfirmDialogProvider>
         </StyledEngineProvider>,

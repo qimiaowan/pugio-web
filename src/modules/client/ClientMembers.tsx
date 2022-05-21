@@ -24,7 +24,6 @@ import Divider from '@mui/material/Divider';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { ClientMemberTab } from '@modules/client/client-members.interface';
-import '@modules/client/client-members.component.less';
 import { LocaleService } from '@modules/locale/locale.service';
 import { LoadingComponent } from '@modules/brand/loading.component';
 import { ExceptionProps } from '@modules/brand/exception.interface';
@@ -37,6 +36,81 @@ import { UserSelectorProps } from '@modules/user/user-selector.interface';
 import { UserSelectorComponent } from '@modules/user/user-selector.component';
 import { StoreService } from '@modules/store/store.service';
 import SimpleBar from 'simplebar-react';
+import styled from '@mui/material/styles/styled';
+
+const ClientMembersWrapper = styled(Box)(({ theme }) => {
+    const mode = theme.palette.mode;
+
+    return `
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .header {
+            width: 100%;
+            padding: ${theme.spacing(1)};
+            display: flex;
+            justify-content: space-between;
+            background-color: ${mode === 'dark' ? theme.palette.grey[900] : theme.palette.grey[50]};
+
+            .header-controls-wrapper {
+                display: flex;
+
+                & > * {
+                    margin-right: ${theme.spacing(1)};
+
+                    &:last-child {
+                        margin-right: 0;
+                    }
+                }
+
+                .search {
+                    width: 240px;
+                    background-color: white;
+                }
+            }
+        }
+
+        .client-members-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: stretch;
+            align-items: center;
+
+            .exception {
+                height: 100%;
+            }
+
+            .members-wrapper {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                box-sizing: border-box;
+
+                &.loading-wrapper {
+                    justify-content: center;
+                    align-items: center;
+                }
+
+                .simplebar-content {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-start;
+                    align-items: stretch;
+                }
+            }
+
+            .load-more-button {
+                align-self: center;
+                margin-top: ${theme.spacing(1)};
+            }
+        }
+    `;
+});
 
 const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
     className = '',
@@ -218,9 +292,9 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
     ]);
 
     return (
-        <Box
+        <ClientMembersWrapper
             {...props}
-            className={clsx('client-members', className)}
+            className={clsx(className)}
         >
             <Box className="header" ref={controlsWrapperRef}>
                 <Box className="header-controls-wrapper">
@@ -347,7 +421,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                 open={userSelectorOpen}
                 onClose={() => setUserSelectorOpen(false)}
             />
-        </Box>
+        </ClientMembersWrapper>
     );
 };
 

@@ -23,6 +23,84 @@ import { LoadingComponent } from '@modules/brand/loading.component';
 import SimpleBar from 'simplebar-react';
 import clsx from 'clsx';
 import { useDebounceEffect } from 'ahooks';
+import styled from '@mui/material/styles/styled';
+
+const AppWrapper = styled(Box)(({ theme }) => {
+    return `
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+
+        &, * {
+            box-sizing: border-box;
+        }
+
+        &.loading {
+            position: relative;
+        }
+
+        .loading-wrapper {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(255, 255, 255, .3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9;
+        }
+
+        .controls-wrapper {
+            padding: 0 ${theme.spacing(1)};
+
+            .simplebar-content {
+                box-sizing: border-box;
+                height: 50px;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                .divider {
+                    margin: 0 calc(${theme.spacing(1)} / 2);
+                }
+
+                & > button {
+                    margin: 0 calc(${theme.spacing(1)} / 2);
+
+                    &:first-of-type {
+                        margin-left: 0;
+                    }
+
+                    &:last-child {
+                        margin-right: 0;
+                    }
+                }
+            }
+        }
+
+        .terminal-wrapper {
+            flex-grow: 1;
+            flex-shrink: 1;
+            background-color: black;
+        }
+    `;
+});
+
+const ResizeDetector = styled(Box)(() => {
+    return `
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: -99;
+        background-color: transparent;
+    `;
+});
 
 const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     const {
@@ -334,7 +412,7 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
 
     return (
         <>
-            <Box className={clsx('container', { loading })}>
+            <AppWrapper className={clsx({ loading })}>
                 <SimpleBar style={{ width: terminalWidth }} className="controls-wrapper" ref={controlsWrapperRef}>
                     {
                         headerControlItems.map((item, index) => {
@@ -383,8 +461,8 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
                         </Box>
                     )
                 }
-            </Box>
-            <Box className="resize-detector" ref={containerRef} />
+            </AppWrapper>
+            <ResizeDetector ref={containerRef} />
         </>
     );
 };

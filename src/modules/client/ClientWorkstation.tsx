@@ -34,14 +34,119 @@ import { ChannelService } from '@modules/channel/channel.service';
 import { UtilsService } from '@modules/utils/utils.service';
 import { useParams } from 'react-router-dom';
 import { List } from 'immutable';
-import { useDebounce, useRequest } from 'ahooks';
+import { useDebounce } from 'ahooks';
 import { ExceptionProps } from '@modules/brand/exception.interface';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { AppComponent as WebTerminalAppComponent } from '@builtin:web-terminal/app.component';
 import { ChannelListComponent } from '@modules/channel/channel-list.component';
 import { ChannelListProps } from '@modules/channel/channel-list.interface';
 import { BrandService } from '@modules/brand/brand.service';
-import '@modules/client/client-workstation.component.less';
+import styled from '@mui/material/styles/styled';
+
+const ClientWorkstationWrapper = styled(Box)(({ theme }) => {
+    const mode = theme.palette.mode;
+
+    return `
+        position: relative;
+
+        &.offline {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .header-container {
+            background-color: ${mode === 'dark' ? theme.palette.grey[900] : theme.palette.grey[50]};
+            border-top: 1px solid ${theme.palette.divider};
+
+            .tabs {
+                display: flex;
+
+                .tabs-wrapper {
+                    flex-grow: 1;
+                    flex-shrink: 1;
+
+                    .simplebar-content {
+                        display: flex;
+                        align-items: stretch;
+                        flex-grow: 1;
+                        display: flex;
+                    }
+                }
+
+                .buttons-wrapper {
+                    box-sizing: border-box;
+                    flex-grow: 0;
+                    flex-shrink: 1;
+                    border-bottom: 1px solid ${theme.palette.divider};
+                    border-left: 1px solid ${theme.palette.divider};
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    &.floating {
+                        justify-content: flex-start;
+                        padding-left: ${theme.spacing(1)};
+                        border-left: 0;
+                    }
+
+                    &.placeholder {
+                        flex-grow: 1;
+                        min-width: 0;
+                        border: 0;
+                        border-bottom: 1px solid ${theme.palette.divider};
+                    }
+                }
+
+                .tabs-cursor {
+                    width: 0;
+                }
+            }
+        }
+
+        .panel-wrapper {
+            .simplebar-content {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .channel-not-selected {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        }
+
+        .empty-tabs {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .exception.welcome {
+                img {
+                    width: 120px;
+                    height: 120px;
+                }
+
+                .title {
+                    margin-top: 50px;
+                    font-size: 18px;
+                }
+
+                .subtitle {
+                    margin-top: 15px;
+                    margin-bottom: 50px;
+                }
+            }
+        }
+    `;
+});
 
 const ClientWorkstation: FC<InjectedComponentProps> = ({
     declarations,
@@ -128,23 +233,10 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             updateTabsScrollOffset,
         };
     }, shallow);
-    const getLocaleText = localeService.useLocaleContext('pages.client_workstation');
+    const getLocaleText = localeService.useLocaleContext('pages.clientWorkstation');
     const [selectedTabId, setSelectedTabId] = useState<string>(null);
     const [selectedTabMetadata, setSelectedTabMetadata] = useState<string[]>([]);
-    const {
-        run: runFirstGetClientCurrentStatus,
-        data: clientCurrentStatusResponseData,
-    } = useRequest(
-        () => {
-            return clientService.getClientCurrentStatus({
-                clientId,
-            });
-        },
-        {
-            refreshDeps: [clientId],
-            pollingInterval: 30000,
-        },
-    );
+    const [clientOffline, setClientOffline] = useState<boolean>(false);
 
     const handleCreateTab = (clientId: string, data: TabData = {}) => {
         const tabId = createTab(clientId, data);
@@ -453,19 +545,27 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     }, [tabsScrollRef.current]);
 
     useEffect(() => {
-        runFirstGetClientCurrentStatus();
+        const intervalId = setInterval(() => {
+            clientService.getClientCurrentStatus({ clientId }).then((response) => {
+                setClientOffline(response?.response?.offline);
+            });
+        }, 30000);
+
+        return () => {
+            clearInterval(intervalId);
+        };
     }, []);
 
     return (
-        clientCurrentStatusResponseData?.response?.offline
-            ? <Box className="page client-workstation-page offline">
+        clientOffline
+            ? <ClientWorkstationWrapper className="page offline">
                 <Exception
                     imageSrc="/static/images/error.svg"
                     title={getLocaleText('offline.title')}
                     subTitle={getLocaleText('offline.subTitle')}
                 />
-            </Box>
-            : <Box className="page client-workstation-page">
+            </ClientWorkstationWrapper>
+            : <ClientWorkstationWrapper className="page">
                 {
                     clientTabsMap.get(clientId)?.size > 0 && (
                         <Box className="header-container">
@@ -511,10 +611,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                                 }
                                                             },
                                                             onClose: () => {
-                                                                if (
-                                                                    typeof lifecycle.onBeforeDestroy === 'function' &&
-                                                                !lifecycle.onBeforeDestroy()
-                                                                ) {
+                                                                if (typeof lifecycle.onBeforeDestroy === 'function' && !lifecycle.onBeforeDestroy()) {
                                                                     return;
                                                                 }
 
@@ -563,14 +660,25 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                 imageSrc="/static/images/welcome.svg"
                                 title={getLocaleText('welcome.title')}
                                 subTitle={getLocaleText('welcome.subTitle')}
-                                className="welcome"
+                                sx={{
+                                    '.title': {
+                                        fontSize: 18,
+                                    },
+                                    'img': {
+                                        width: 120,
+                                        height: 120,
+                                    },
+                                }}
                             >
                                 <Button
                                     variant="contained"
                                     color="primary"
                                     startIcon={<Icon className="icon-plus" />}
+                                    sx={{
+                                        marginTop: '30px',
+                                    }}
                                     onClick={() => handleCreateTab(clientId)}
-                                >Create a Tab</Button>
+                                >{getLocaleText('createTab')}</Button>
                             </Exception>
                         </Box>
                         : <SimpleBar
@@ -601,7 +709,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                             </ChannelPanel>
                         </SimpleBar>
                 }
-            </Box>
+            </ClientWorkstationWrapper>
     );
 };
 

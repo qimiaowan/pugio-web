@@ -10,14 +10,20 @@ export class BrandService {
         return logo;
     }
 
-    public getTheme() {
+    public getTheme(mode: 'light' | 'dark' = 'light') {
         const pugioTheme = createTheme(
             createMuiTheme({
                 variants: {
                     primary: '#4b768b',
                 },
+                mode,
             }),
             {
+                palette: {
+                    divider: mode === 'light'
+                        ? '#e6e6e6'
+                        : '#424242',
+                },
                 components: {
                     MuiIcon: {
                         defaultProps: {
@@ -127,10 +133,20 @@ export class BrandService {
                     },
                     MuiListItemButton: {
                         defaultProps: {
-                            classes: {
-                                root: 'pugio-list-item-button',
-                                selected: 'pugio-list-item-button-selected',
-                            },
+                            sx: (theme) => ({
+                                borderRadius: 0,
+
+                                '&:hover, &.Mui-selected': {
+                                    color: theme.palette.mode === 'dark'
+                                        ? 'white'
+                                        : theme.palette.grey[900],
+                                    '& *': {
+                                        color: theme.palette.mode === 'dark'
+                                            ? 'white'
+                                            : theme.palette.grey[900],
+                                    },
+                                },
+                            }),
                         },
                     },
                 },

@@ -53,6 +53,7 @@ const LocaleMenu: FC<LocaleMenuProps> = ({
                             return (
                                 <ListItemButton
                                     key={id}
+                                    selected={selectedLocaleId === id}
                                     onClick={() => {
                                         onLocaleChange(localeItem);
                                         handleClose();

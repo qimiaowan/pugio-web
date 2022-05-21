@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import Box, { BoxProps } from '@mui/material/Box';
-import '@modules/brand/loading.component.less';
 import clsx from 'clsx';
 
 const Loading: FC<BoxProps> = ({
@@ -9,6 +8,9 @@ const Loading: FC<BoxProps> = ({
 }) => {
     return (
         <Box
+            sx={{
+                width: '32px',
+            }}
             className={clsx('loading', className)}
             {...props}
         >
