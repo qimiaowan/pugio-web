@@ -410,6 +410,18 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
         };
     }, [containerRef.current, controlsWrapperRef.current]);
 
+    useEffect(() => {
+        // @ts-ignore
+        const dispose = window.workstationBus.onData((data) => {
+            // TODO example
+            console.log(data);
+        });
+
+        return () => {
+            dispose();
+        };
+    }, []);
+
     return (
         <>
             <AppWrapper className={clsx({ loading })}>

@@ -22,12 +22,15 @@ export interface Lifecycle {
     onBeforeDestroy?: () => boolean;
 }
 
-export interface ChannelConfig {
-    metadata: ChannelMetadata;
+export interface ObservableChannelConfig {
     width: number;
     height: number;
     locale: string;
     mode: 'dark' | 'light';
+}
+
+export interface ChannelConfig extends ObservableChannelConfig {
+    metadata: ChannelMetadata;
 }
 
 type TabTitleSetter = (previousTitle: string) => string;

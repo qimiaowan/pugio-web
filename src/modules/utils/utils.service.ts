@@ -26,27 +26,44 @@ import {
     ConfirmOptions,
 } from 'react-mui-confirm';
 import { LocaleService } from '@modules/locale/locale.service';
-import EventEmitter, {
-    Emitter,
-    EventListener,
-} from 'event-emitter';
 
-class EventBus {
-    public constructor(private readonly emitter: Emitter) {}
+type EventListener = (data: any) => void;
 
-    public onData(callbackFn: EventListener) {
-        if (_.isFunction(callbackFn)) {
-            this.emitter.on('data', callbackFn);
-        }
+export abstract class AbstractEventBus {
+    public abstract onData(callbackFn: EventListener): Function;
+    public abstract emit(data: any): void;
+}
 
-        return {
-            dispose: this.createDispose(callbackFn),
-        };
+class EventBus extends AbstractEventBus implements AbstractEventBus  {
+    private listeners: EventListener[] = [];
+
+    public constructor() {
+        super();
     }
 
-    private createDispose(callbackFn: EventListener) {
+    public onData(listener: EventListener) {
+        if (_.isFunction(listener)) {
+            this.listeners.push(listener);
+        }
+
+        return this.createDispose(listener);
+    }
+
+    public emit(data: any) {
+        this.listeners.forEach((listener) => {
+            if (_.isFunction(listener)) {
+                listener(data);
+            }
+        });
+    }
+
+    private createDispose(listener: EventListener) {
         const dispose = () => {
-            this.emitter.off('data', callbackFn);
+            const listenerIndex = this.listeners.findIndex((currentListener) => currentListener === listener);
+
+            if (listenerIndex > -1) {
+                this.listeners.splice(listenerIndex, 1);
+            }
         };
 
         return dispose.bind(this);
@@ -269,8 +286,6 @@ export class UtilsService extends CaseTransformerService {
     }
 
     public createEventBus() {
-        const emitter = EventEmitter();
-        const eventBus = new EventBus(emitter);
-        return eventBus;
+        return new EventBus();
     }
 }

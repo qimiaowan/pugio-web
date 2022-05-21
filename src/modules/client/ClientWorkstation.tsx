@@ -19,7 +19,10 @@ import { ChannelPanelProps } from '@modules/channel/channel.interface';
 import { LocaleService } from '@modules/locale/locale.service';
 import { StoreService } from '@modules/store/store.service';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
-import { StyledEngineProvider } from '@mui/material/styles';
+import {
+    StyledEngineProvider,
+    useTheme,
+} from '@mui/material/styles';
 import _ from 'lodash';
 import shallow from 'zustand/shallow';
 import SimpleBar from 'simplebar-react';
@@ -40,7 +43,6 @@ import { ExceptionComponent } from '@modules/brand/exception.component';
 import { AppComponent as WebTerminalAppComponent } from '@builtin:web-terminal/app.component';
 import { ChannelListComponent } from '@modules/channel/channel-list.component';
 import { ChannelListProps } from '@modules/channel/channel-list.interface';
-import { BrandService } from '@modules/brand/brand.service';
 import styled from '@mui/material/styles/styled';
 
 const ClientWorkstationWrapper = styled(Box)(({ theme }) => {
@@ -158,16 +160,15 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const clientService = declarations.get<ClientService>(ClientService);
     const channelService = declarations.get<ChannelService>(ChannelService);
     const utilsService = declarations.get<UtilsService>(UtilsService);
-    const brandService = declarations.get<BrandService>(BrandService);
     const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
     const ChannelList = declarations.get<FC<ChannelListProps>>(ChannelListComponent);
 
     const internalChannelMap = {
         'pugio.web-terminal': WebTerminalAppComponent,
     };
-    const theme = brandService.getTheme();
     const LocaleContext = localeService.getContext();
 
+    const theme = useTheme();
     const { client_id: clientId } = useParams();
     const locale = localeService.useContextLocale();
     const localeMap = localeService.useLocaleMap(locale);
@@ -558,7 +559,18 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     }, []);
 
     useEffect(
-        () => {},
+        () => {
+            // @ts-ignore
+            if (window.workstationBus) {
+                // @ts-ignore
+                window.workstationBus.emit({
+                    width: headerWidth,
+                    height: panelHeight,
+                    locale,
+                    mode: theme.palette.mode,
+                });
+            }
+        },
         [
             locale,
             theme.palette.mode,
@@ -566,6 +578,12 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             headerWidth,
         ],
     );
+
+    useEffect(() => {
+        const bus = utilsService.createEventBus();
+        // @ts-ignore
+        window.workstationBus = bus;
+    }, []);
 
     return (
         clientOffline
