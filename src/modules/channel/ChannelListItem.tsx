@@ -83,7 +83,7 @@ const ChannelListItemWrapper = styled('div')(({ theme }) => {
             bottom: 0;
             left: 0;
             padding: 5px;
-            background-color: ${mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)'};
+            background-color: ${mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)'};
             cursor: default;
 
             .control-button {

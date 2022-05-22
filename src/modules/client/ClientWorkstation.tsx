@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
     createElement,
     FC,
@@ -384,13 +383,62 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
 
     const tabsControlButtons = (
         <>
-            <IconButton
-                onClick={() => {
-                    handleCreateTab(clientId);
-                }}
-            >
-                <Icon className="icon-plus" />
-            </IconButton>
+            {
+                createElement(
+                    ChannelPopover,
+                    {
+                        trigger: (
+                            <IconButton><Icon className="icon-plus" /></IconButton>
+                        ),
+                        channelListProps: ({ handleClose }) => ({
+                            clientId,
+                            width: 320,
+                            height: 360,
+                            listItemProps: {
+                                mode: 'list-item',
+                                menu: [],
+                            },
+                            headerSlot: (
+                                <Box
+                                    sx={{
+                                        flexGrow: 1,
+                                        flexShrink: 0,
+                                        alignSelf: 'stretch',
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        padding: `0 ${theme.spacing(1)}`,
+                                    }}
+                                >
+                                    <IconButton
+                                        title={getLocaleText('installChannel')}
+                                    >
+                                        <Icon className="icon icon-import" />
+                                    </IconButton>
+                                    <IconButton
+                                        title={getLocaleText('createChannel')}
+                                    >
+                                        <Icon className="icon icon-plus" />
+                                    </IconButton>
+                                </Box>
+                            ),
+                            onSelectChannel: (channel) => {
+                                handleCreateTab(clientId, { channelId: channel.id });
+                                handleClose();
+                            },
+                        }),
+                        popoverProps: {
+                            PaperProps: {
+                                sx: {
+                                    backgroundColor: theme.palette.mode === 'dark'
+                                        ? 'black'
+                                        : 'white',
+                                },
+                            },
+                        },
+                    },
+                )
+            }
             <IconButton>
                 <Icon className="icon-more-horizontal" />
             </IconButton>
@@ -738,7 +786,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                     display: 'flex',
                                                     justifyContent: 'space-between',
                                                     alignItems: 'center',
-                                                    padding: `0 ${theme.spacing(1)}`,
+                                                    paddingLeft: theme.spacing(1),
                                                 }}
                                             >
                                                 <Button
@@ -749,8 +797,8 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                 >{getLocaleText('createChannel')}</Button>
                                             </Box>
                                         }
-                                        onSelectChannel={(channelId) => {
-                                            handleSelectChannel(clientId, selectedTabId, channelId);
+                                        onSelectChannel={(channel) => {
+                                            handleSelectChannel(clientId, selectedTabId, channel.id);
                                         }}
                                     />
                                 </Box>

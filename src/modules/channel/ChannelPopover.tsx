@@ -52,7 +52,15 @@ const ChannelPopover: FC<InjectedComponentProps<ChannelPopoverProps>> = ({
                     horizontal: 'left',
                 }}
             >
-                <ChannelList {...channelListProps}  />
+                <ChannelList
+                    {
+                        ...(
+                            _.isFunction(channelListProps)
+                                ? channelListProps({ handleClose })
+                                : channelListProps
+                        )
+                    }
+                />
             </Popover>
         </>
     );

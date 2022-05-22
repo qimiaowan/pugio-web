@@ -144,16 +144,19 @@ const ChannelListContainer = styled(Box)(({ theme }) => {
     `;
 });
 
-const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
-    declarations,
-    clientId,
-    width,
-    height,
-    headerSlot,
-    headerProps = {},
-    searchProps = {},
-    onSelectChannel = _.noop,
-}) => {
+const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = (listProps) => {
+    const {
+        declarations,
+        clientId,
+        width,
+        height,
+        headerSlot,
+        listItemProps,
+        headerProps = {},
+        searchProps = {},
+        onSelectChannel = _.noop,
+    } = listProps;
+
     const channelService = declarations.get<ChannelService>(ChannelService);
     const utilsService = declarations.get<UtilsService>(UtilsService);
     const localeService = declarations.get<LocaleService>(LocaleService);
@@ -313,7 +316,7 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
     }, [debouncedSearchValue]);
 
     return (
-        <ChannelListContainer className="channel-list-container">
+        <ChannelListContainer className="channel-list-container" style={{ width }}>
             <Box className="header" {...headerProps} ref={headerRef}>
                 <Box className="search-wrapper">
                     <TextField
@@ -332,7 +335,6 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
             <SimpleBar
                 className="list-wrapper"
                 style={{
-                    width,
                     height: height - headerHeight,
                 }}
             >
@@ -372,32 +374,42 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = ({
                                         >
                                             {
                                                 (channelList?.list || []).map((item) => {
+                                                    const props = {
+                                                        key: item?.id,
+                                                        builtIn: category?.query?.builtIn === 1,
+                                                        data: item?.channel,
+                                                        width: utilsService.calculateItemWidth(width, 120),
+                                                        menu: [
+                                                            {
+                                                                icon: 'icon-info',
+                                                                title: getLocaleText('info'),
+                                                            },
+                                                            ...(
+                                                                category?.query?.builtIn !== 1
+                                                                    ? [
+                                                                        {
+                                                                            icon: 'icon-delete',
+                                                                            title: getLocaleText('delete'),
+                                                                        },
+                                                                    ]
+                                                                    : []
+                                                            ),
+                                                        ],
+                                                        onClick: () => {
+                                                            onSelectChannel(item.channel);
+                                                        },
+                                                    } as ChannelListItemProps;
                                                     return createElement(
                                                         ChannelListItem,
                                                         {
-                                                            key: item?.id,
-                                                            builtIn: category?.query?.builtIn === 1,
-                                                            data: item?.channel,
-                                                            width: utilsService.calculateItemWidth(width, 120),
-                                                            menu: [
-                                                                {
-                                                                    icon: 'icon-info',
-                                                                    title: getLocaleText('info'),
-                                                                },
-                                                                ...(
-                                                                    category?.query?.builtIn !== 1
-                                                                        ? [
-                                                                            {
-                                                                                icon: 'icon-delete',
-                                                                                title: getLocaleText('delete'),
-                                                                            },
-                                                                        ]
-                                                                        : []
-                                                                ),
-                                                            ],
-                                                            onClick: () => {
-                                                                onSelectChannel(item.channel.id);
-                                                            },
+                                                            ...props,
+                                                            ...(
+                                                                listItemProps
+                                                                    ? _.isFunction(listItemProps)
+                                                                        ? (listItemProps(props, listProps) || {})
+                                                                        : listItemProps
+                                                                    : {}
+                                                            ),
                                                         },
                                                     );
                                                 })
