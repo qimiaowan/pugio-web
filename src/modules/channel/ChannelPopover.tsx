@@ -15,6 +15,7 @@ const ChannelPopover: FC<InjectedComponentProps<ChannelPopoverProps>> = ({
     trigger,
     declarations,
     channelListProps,
+    popoverProps = {},
     onClick,
 }) => {
     const ChannelList = declarations.get<FC<ChannelListProps>>(ChannelListComponent);
@@ -34,7 +35,7 @@ const ChannelPopover: FC<InjectedComponentProps<ChannelPopoverProps>> = ({
     return (
         <>
             {
-                cloneElement(trigger, {
+                cloneElement(_.isFunction(trigger) ? trigger(open) : trigger, {
                     onClick: (event) => {
                         if (_.isFunction(onClick)) {
                             onClick(event);
@@ -51,6 +52,7 @@ const ChannelPopover: FC<InjectedComponentProps<ChannelPopoverProps>> = ({
                     vertical: 'bottom',
                     horizontal: 'left',
                 }}
+                {...popoverProps}
             >
                 <ChannelList
                     {

@@ -11,9 +11,10 @@ interface ChannelPopoverUtils {
 }
 
 type ChannelListPropsCreator = (utils: ChannelPopoverUtils) => ChannelListProps;
+type ChannelTriggerCreator = (open: boolean) => ReactElement;
 
 export type ChannelPopoverProps = PropsWithChildren<{
-    trigger: ReactElement;
+    trigger: ReactElement | ChannelTriggerCreator;
     channelListProps: ChannelListProps | ChannelListPropsCreator;
     popoverProps?: Partial<PopoverProps>;
     onClick?: (event: MouseEvent<any>) => void;

@@ -66,6 +66,13 @@ const ClientDashboardContainer = styled(Box)(({ theme }) => {
                 flex-grow: 1;
                 overflow-y: auto;
 
+                .start-button-wrapper {
+                    width: 100%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+
                 .sidebar-link {
                     display: block;
                     text-decoration: none;
@@ -253,14 +260,35 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
         <ClientDashboardContainer>
             <Box className="sidebar" ref={sidebarRef}>
                 <Box className="menu-container">
-                    <Box>
+                    <Box className="start-button-wrapper">
                         <ChannelPopover
-                            trigger={<IconButton><Icon className="icon-plus" /></IconButton>}
+                            trigger={(open) => {
+                                return (
+                                    <IconButton
+                                        sx={{
+                                            margin: `${theme.spacing(2)} 0`,
+                                            padding: 1,
+                                            background: open
+                                                ? theme.palette.mode === 'dark'
+                                                    ? theme.palette.grey[600]
+                                                    : theme.palette.grey[300]
+                                                : 'transparent',
+
+                                            '& > img': {
+                                                width: 26,
+                                                height: 26,
+                                            },
+                                        }}
+                                    >
+                                        <Box component="img" src="/static/images/channel_avatar_fallback.svg" />
+                                    </IconButton>
+                                );
+                            }}
                             channelListProps={
                                 ({ handleClose }) => ({
                                     clientId,
-                                    width: 1440,
-                                    height: 960,
+                                    width: 768,
+                                    height: 560,
                                     headerSlot: (
                                         <Box
                                             sx={{
@@ -288,6 +316,14 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
                                 })
                             }
                             popoverProps={{
+                                anchorOrigin: {
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                },
+                                transformOrigin: {
+                                    vertical: 'top',
+                                    horizontal: 'left',
+                                },
                                 PaperProps: {
                                     sx: {
                                         backgroundColor: theme.palette.mode === 'dark'
