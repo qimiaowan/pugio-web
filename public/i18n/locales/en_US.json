@@ -84,7 +84,7 @@
         "channelList": {
             "tabs": {
                 "official": "Official",
-                "fromMarket": "From Market"
+                "fromMarket": "Market"
             },
             "searchPlaceholder": "Type to search...",
             "loadMore": "Load More",
