@@ -1,6 +1,5 @@
 import { InjectedComponentProps } from 'khamsa';
 import {
-    createElement,
     FC,
     PropsWithChildren,
     useEffect,
@@ -155,86 +154,86 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
         }
     }, [logo]);
 
-    return createElement(
-        ThemeProvider,
-        { theme },
-        <StyledEngineProvider injectFirst={true}>
-            <ConfirmDialogProvider
-                cancelButtonProps={{
-                    color: 'secondary',
-                }}
-            >
-                <SnackbarProvider autoHideDuration={5000}>
-                    <ContainerWrapper style={{ paddingTop: appNavbarHeight }}>
-                        <Box className="navbar" style={{ height: appNavbarHeight }}>
-                            <Box className="wrapper logo-and-nav">
-                                <Box
-                                    className="logo"
-                                    component="img"
-                                    src={logo}
-                                />
-                                <ClientsDropdown
-                                    open={clientsDropdownOpen}
-                                    onOpen={() => switchClientsDropdownVisibility(true)}
-                                    onClose={() => switchClientsDropdownVisibility(false)}
-                                />
-                                <NavLink to="/explore" className="navlink">
-                                    {
-                                        <Button
-                                            classes={{
-                                                root: 'link',
-                                            }}
-                                        >{getLocaleText('app.navbar.explore')}</Button>
-                                    }
-                                </NavLink>
-                                <NavLink to="/development" className="navlink">
-                                    {
-                                        <Button
-                                            classes={{
-                                                root: 'link',
-                                            }}
-                                        >{getLocaleText('app.navbar.development')}</Button>
-                                    }
-                                </NavLink>
-                                <a target="_blank" href="https://github.com/pugiojs/pugio-web/issues" className="navlink">
-                                    {
-                                        <Button
-                                            classes={{
-                                                root: 'link',
-                                            }}
-                                        >{getLocaleText('app.navbar.issues')}</Button>
-                                    }
-                                </a>
+    return (
+        <ThemeProvider theme={theme}>
+            <StyledEngineProvider injectFirst={true}>
+                <ConfirmDialogProvider
+                    cancelButtonProps={{
+                        color: 'secondary',
+                    }}
+                >
+                    <SnackbarProvider autoHideDuration={5000}>
+                        <ContainerWrapper style={{ paddingTop: appNavbarHeight }}>
+                            <Box className="navbar" style={{ height: appNavbarHeight }}>
+                                <Box className="wrapper logo-and-nav">
+                                    <Box
+                                        className="logo"
+                                        component="img"
+                                        src={logo}
+                                    />
+                                    <ClientsDropdown
+                                        open={clientsDropdownOpen}
+                                        onOpen={() => switchClientsDropdownVisibility(true)}
+                                        onClose={() => switchClientsDropdownVisibility(false)}
+                                    />
+                                    <NavLink to="/explore" className="navlink">
+                                        {
+                                            <Button
+                                                classes={{
+                                                    root: 'link',
+                                                }}
+                                            >{getLocaleText('app.navbar.explore')}</Button>
+                                        }
+                                    </NavLink>
+                                    <NavLink to="/development" className="navlink">
+                                        {
+                                            <Button
+                                                classes={{
+                                                    root: 'link',
+                                                }}
+                                            >{getLocaleText('app.navbar.development')}</Button>
+                                        }
+                                    </NavLink>
+                                    <a target="_blank" href="https://github.com/pugiojs/pugio-web/issues" className="navlink">
+                                        {
+                                            <Button
+                                                classes={{
+                                                    root: 'link',
+                                                }}
+                                            >{getLocaleText('app.navbar.issues')}</Button>
+                                        }
+                                    </a>
+                                </Box>
+                                <Box className="wrapper avatar-and-locales">
+                                    <Button
+                                        size="small"
+                                        variant="contained"
+                                        color="primary"
+                                        classes={{ sizeSmall: 'control-button' }}
+                                        startIcon={<Icon className="icon-plus" />}
+                                        onClick={() => navigate('/clients/create')}
+                                    >{getLocaleText('app.createClient')}</Button>
+                                    <NavLink to="/settings" className="navlink">
+                                        <IconButton>
+                                            <Icon className="icon-settings" />
+                                        </IconButton>
+                                    </NavLink>
+                                    <LocaleMenu
+                                        locales={locales}
+                                        selectedLocaleId={locale}
+                                        onLocaleChange={(localeItem) => setLocale(localeItem.id)}
+                                    />
+                                    <ProfileMenu />
+                                </Box>
                             </Box>
-                            <Box className="wrapper avatar-and-locales">
-                                <Button
-                                    size="small"
-                                    variant="contained"
-                                    color="primary"
-                                    classes={{ sizeSmall: 'control-button' }}
-                                    startIcon={<Icon className="icon-plus" />}
-                                    onClick={() => navigate('/clients/create')}
-                                >{getLocaleText('app.createClient')}</Button>
-                                <NavLink to="/settings" className="navlink">
-                                    <IconButton>
-                                        <Icon className="icon-settings" />
-                                    </IconButton>
-                                </NavLink>
-                                <LocaleMenu
-                                    locales={locales}
-                                    selectedLocaleId={locale}
-                                    onLocaleChange={(localeItem) => setLocale(localeItem.id)}
-                                />
-                                <ProfileMenu />
+                            <Box className="content-layer">
+                                <Outlet />
                             </Box>
-                        </Box>
-                        <Box className="content-layer">
-                            <Outlet />
-                        </Box>
-                    </ContainerWrapper>
-                </SnackbarProvider>
-            </ConfirmDialogProvider>
-        </StyledEngineProvider>,
+                        </ContainerWrapper>
+                    </SnackbarProvider>
+                </ConfirmDialogProvider>
+            </StyledEngineProvider>
+        </ThemeProvider>
     );
 };
 

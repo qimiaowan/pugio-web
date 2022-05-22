@@ -1,5 +1,4 @@
 import {
-    createElement,
     FC,
     useEffect,
     useRef,
@@ -308,58 +307,58 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                         if (typeof ChannelEntry === 'function') {
                             resolve({
                                 data,
-                                nodes: createElement(
-                                    ThemeProvider,
-                                    { theme },
-                                    <StyledEngineProvider injectFirst={true}>
-                                        <LocaleContext.Provider
-                                            value={{
-                                                locale,
-                                                localeTextMap: localeMap,
-                                            }}
-                                        >
-                                            <Suspense fallback={null}>
-                                                <ChannelEntry
-                                                    width={headerWidth}
-                                                    height={panelHeight}
-                                                    metadata={metadata}
-                                                    locale={locale}
-                                                    mode={theme.palette.mode}
-                                                    setup={(lifecycle = {}) => {
-                                                        updateTab(clientId, tabId, {
-                                                            lifecycle,
-                                                            loading: false,
-                                                        });
-                                                    }}
-                                                    tab={{
-                                                        closeTab: () => destroyTab(clientId, tabId),
-                                                        createNewTab: (focus, channelId) => {
-                                                            if (focus) {
-                                                                handleCreateTab(clientId, { channelId });
-                                                            } else {
-                                                                createTab(clientId, { channelId });
-                                                            }
-                                                        },
-                                                        setTitle: (setterOrString) => {
-                                                            let newTitle: string;
-                                                            if (_.isString(setterOrString)) {
-                                                                newTitle = setterOrString;
-                                                            } else if (_.isFunction(setterOrString)) {
-                                                                try {
-                                                                    const tab = tabs.find((currentTab) => currentTab.tabId === tabId);
-                                                                    newTitle = setterOrString(tab.title || tab.data.name);
-                                                                } catch (e) {}
-                                                            }
+                                nodes: (
+                                    <ThemeProvider theme={theme}>
+                                        <StyledEngineProvider injectFirst={true}>
+                                            <LocaleContext.Provider
+                                                value={{
+                                                    locale,
+                                                    localeTextMap: localeMap,
+                                                }}
+                                            >
+                                                <Suspense fallback={null}>
+                                                    <ChannelEntry
+                                                        width={headerWidth}
+                                                        height={panelHeight}
+                                                        metadata={metadata}
+                                                        locale={locale}
+                                                        mode={theme.palette.mode}
+                                                        setup={(lifecycle = {}) => {
+                                                            updateTab(clientId, tabId, {
+                                                                lifecycle,
+                                                                loading: false,
+                                                            });
+                                                        }}
+                                                        tab={{
+                                                            closeTab: () => destroyTab(clientId, tabId),
+                                                            createNewTab: (focus, channelId) => {
+                                                                if (focus) {
+                                                                    handleCreateTab(clientId, { channelId });
+                                                                } else {
+                                                                    createTab(clientId, { channelId });
+                                                                }
+                                                            },
+                                                            setTitle: (setterOrString) => {
+                                                                let newTitle: string;
+                                                                if (_.isString(setterOrString)) {
+                                                                    newTitle = setterOrString;
+                                                                } else if (_.isFunction(setterOrString)) {
+                                                                    try {
+                                                                        const tab = tabs.find((currentTab) => currentTab.tabId === tabId);
+                                                                        newTitle = setterOrString(tab.title || tab.data.name);
+                                                                    } catch (e) {}
+                                                                }
 
-                                                            if (newTitle) {
-                                                                updateTab(clientId, tabId, { title: newTitle });
-                                                            }
-                                                        },
-                                                    }}
-                                                />
-                                            </Suspense>
-                                        </LocaleContext.Provider>
-                                    </StyledEngineProvider>,
+                                                                if (newTitle) {
+                                                                    updateTab(clientId, tabId, { title: newTitle });
+                                                                }
+                                                            },
+                                                        }}
+                                                    />
+                                                </Suspense>
+                                            </LocaleContext.Provider>
+                                        </StyledEngineProvider>
+                                    </ThemeProvider>
                                 ),
                             });
                         } else {
@@ -383,62 +382,57 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
 
     const tabsControlButtons = (
         <>
-            {
-                createElement(
-                    ChannelPopover,
-                    {
-                        trigger: (
-                            <IconButton><Icon className="icon-plus" /></IconButton>
-                        ),
-                        channelListProps: ({ handleClose }) => ({
-                            clientId,
-                            width: 320,
-                            height: 360,
-                            listItemProps: {
-                                mode: 'list-item',
-                                menu: [],
-                            },
-                            headerSlot: (
-                                <Box
-                                    sx={{
-                                        flexGrow: 1,
-                                        flexShrink: 0,
-                                        alignSelf: 'stretch',
-                                        display: 'flex',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center',
-                                        padding: `0 ${theme.spacing(1)}`,
-                                    }}
+            <ChannelPopover
+                trigger={<IconButton><Icon className="icon-plus" /></IconButton>}
+                channelListProps={
+                    ({ handleClose }) => ({
+                        clientId,
+                        width: 320,
+                        height: 360,
+                        listItemProps: {
+                            mode: 'list-item',
+                            menu: [],
+                        },
+                        headerSlot: (
+                            <Box
+                                sx={{
+                                    flexGrow: 1,
+                                    flexShrink: 0,
+                                    alignSelf: 'stretch',
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    padding: `0 ${theme.spacing(1)}`,
+                                }}
+                            >
+                                <IconButton
+                                    title={getLocaleText('installChannel')}
                                 >
-                                    <IconButton
-                                        title={getLocaleText('installChannel')}
-                                    >
-                                        <Icon className="icon icon-import" />
-                                    </IconButton>
-                                    <IconButton
-                                        title={getLocaleText('createChannel')}
-                                    >
-                                        <Icon className="icon icon-plus" />
-                                    </IconButton>
-                                </Box>
-                            ),
-                            onSelectChannel: (channel) => {
-                                handleCreateTab(clientId, { channelId: channel.id });
-                                handleClose();
-                            },
-                        }),
-                        popoverProps: {
-                            PaperProps: {
-                                sx: {
-                                    backgroundColor: theme.palette.mode === 'dark'
-                                        ? 'black'
-                                        : 'white',
-                                },
-                            },
+                                    <Icon className="icon icon-import" />
+                                </IconButton>
+                                <IconButton
+                                    title={getLocaleText('createChannel')}
+                                >
+                                    <Icon className="icon icon-plus" />
+                                </IconButton>
+                            </Box>
+                        ),
+                        onSelectChannel: (channel) => {
+                            handleCreateTab(clientId, { channelId: channel.id });
+                            handleClose();
+                        },
+                    })
+                }
+                popoverProps={{
+                    PaperProps: {
+                        sx: {
+                            backgroundColor: theme.palette.mode === 'dark'
+                                ? 'black'
+                                : 'white',
                         },
                     },
-                )
-            }
+                }}
+            />
             <IconButton>
                 <Icon className="icon-more-horizontal" />
             </IconButton>
@@ -671,36 +665,37 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                         nodes,
                                                     } = tab;
 
-                                                    return createElement(
-                                                        Tab,
-                                                        {
-                                                            key: tabId,
-                                                            loading,
-                                                            errored,
-                                                            channelId,
-                                                            title: title || data?.name,
-                                                            avatar: data?.avatar || '/static/images/channel_avatar_fallback.svg',
-                                                            active: selectedTabId === tabId,
-                                                            metadata: selectedTabMetadata,
-                                                            onClick: () => setSelectedTab(clientId, tabId),
-                                                            onDataLoad: (channelId) => {
-                                                                if (!nodes) {
-                                                                    handleLoadChannel(channelId, clientId, tabId);
+                                                    return (
+                                                        <Tab
+                                                            key={tabId}
+                                                            loading={loading}
+                                                            errored={errored}
+                                                            channelId={channelId}
+                                                            title={title || data?.name}
+                                                            avatar={data?.avatar || '/static/images/channel_avatar_fallback.svg'}
+                                                            active={selectedTabId === tabId}
+                                                            metadata={selectedTabMetadata}
+                                                            onClick={() => setSelectedTab(clientId, tabId)}
+                                                            onDataLoad={
+                                                                (channelId) => {
+                                                                    if (!nodes) {
+                                                                        handleLoadChannel(channelId, clientId, tabId);
+                                                                    }
                                                                 }
-                                                            },
-                                                            onClose: () => {
+                                                            }
+                                                            onClose={() => {
                                                                 if (typeof lifecycle.onBeforeDestroy === 'function' && !lifecycle.onBeforeDestroy()) {
                                                                     return;
                                                                 }
 
                                                                 destroyTab(clientId, tabId);
-                                                            },
-                                                            onTitleChange: () => setTabTitleChangeCount(tabTitleChangeCount + 1),
-                                                            onSelectedScroll: (offsetLeft, clientWidth) => {
+                                                            }}
+                                                            onTitleChange={() => setTabTitleChangeCount(tabTitleChangeCount + 1)}
+                                                            onSelectedScroll={(offsetLeft, clientWidth) => {
                                                                 const scrollOffset = offsetLeft - (headerWidth - clientWidth) / 2;
                                                                 scrollTabs(scrollOffset <= 0 ? 0 : scrollOffset);
-                                                            },
-                                                        },
+                                                            }}
+                                                        />
                                                     );
                                                 })
                                             }

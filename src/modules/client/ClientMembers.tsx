@@ -1,5 +1,4 @@
 import {
-    createElement,
     FC,
     useEffect,
     useState,
@@ -375,27 +374,26 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                                                 user,
                                             } = listItem;
 
-                                            return createElement(
-                                                UserCard,
-                                                {
-                                                    key: id,
-                                                    profile: user,
-                                                    menu: [
+                                            return (
+                                                <UserCard
+                                                    key={id}
+                                                    profile={user}
+                                                    menu={[
                                                         {
                                                             icon: 'icon-delete',
                                                             title: getPageLocaleText('userCardMenu.delete'),
                                                             onActive: () => handleDeleteSelectedMembers(role, [user.id]),
                                                         },
-                                                    ],
-                                                    checked: (selectedMembersMap.get(role) || []).indexOf(user.id) !== -1,
-                                                    onCheckStatusChange: (checked) => {
+                                                    ]}
+                                                    checked={(selectedMembersMap.get(role) || []).indexOf(user.id) !== -1}
+                                                    onCheckStatusChange={(checked) => {
                                                         if (checked) {
                                                             handleAddSelectedMembersToList(role, [user.id]);
                                                         } else {
                                                             handleDeleteSelectedMembersFromList(role, [user.id]);
                                                         }
-                                                    },
-                                                },
+                                                    }}
+                                                />
                                             );
                                         })
                                     }

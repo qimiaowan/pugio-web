@@ -15,7 +15,7 @@ const Loading: FC<BoxProps> = ({
             {...props}
         >
             <svg version="1.1" id="L5" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
-                viewBox="0 0 100 100" enable-background="new 0 0 0 0">
+                viewBox="0 0 100 100" enableBackground="new 0 0 0 0">
                 <circle fill="#b5b5b5" stroke="none" cx="32" cy="50" r="6">
                     <animateTransform
                         attributeName="transform"

@@ -53,8 +53,6 @@ module.exports = {
         removeModuleScopePlugin(),
         addWebpackExternals({
             lodash: '_',
-            'react': 'React',
-            'react-dom': 'ReactDOM',
             'moment': 'moment',
         }),
         ...addBabelPlugins(

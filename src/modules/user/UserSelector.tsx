@@ -1,5 +1,4 @@
 import {
-    createElement,
     FC,
     useEffect,
     useState,
@@ -155,20 +154,19 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                         : <SimpleBar style={{ maxHeight: dialogContentHeight - 1 || 720 }}>
                             {
                                 (_.isArray(queryUsersResponseData?.list)) && queryUsersResponseData.list.map((item) => {
-                                    return createElement(
-                                        UserCard,
-                                        {
-                                            key: item.id,
-                                            profile: item,
-                                            checked: selectedUserList.some((selectedUser) => selectedUser.id === item.id),
-                                            onCheckStatusChange: (checked) => {
+                                    return (
+                                        <UserCard
+                                            key={item.id}
+                                            profile={item}
+                                            checked={selectedUserList.some((selectedUser) => selectedUser.id === item.id)}
+                                            onCheckStatusChange={(checked) => {
                                                 if (checked) {
                                                     setSelectedUserList(_.uniq(selectedUserList.concat(item)));
                                                 } else {
                                                     setSelectedUserList(selectedUserList.filter((user) => user.id !== item.id));
                                                 }
-                                            },
-                                        },
+                                            }}
+                                        />
                                     );
                                 })
                             }
@@ -208,13 +206,12 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                         : <SimpleBar style={{ maxHeight: dialogContentHeight - 1 || 720 }}>
                             {
                                 selectedUserList.map((selectedUser) => {
-                                    return createElement(
-                                        UserCard,
-                                        {
-                                            key: selectedUser.id,
-                                            profile: selectedUser,
-                                            checked: selectedSelectedUserIdList.indexOf(selectedUser.id) !== -1,
-                                            menu: [
+                                    return (
+                                        <UserCard
+                                            key={selectedUser.id}
+                                            profile={selectedUser}
+                                            checked={selectedSelectedUserIdList.indexOf(selectedUser.id) !== -1}
+                                            menu={[
                                                 {
                                                     icon: 'icon-close',
                                                     title: getComponentLocaleText('clearSelected'),
@@ -224,8 +221,8 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                                                         }));
                                                     },
                                                 },
-                                            ],
-                                            onCheckStatusChange: (checked) => {
+                                            ]}
+                                            onCheckStatusChange={(checked) => {
                                                 if (checked) {
                                                     setSelectedSelectedUserIdList(_.uniq(selectedSelectedUserIdList.concat(selectedUser.id)));
                                                 } else {
@@ -233,8 +230,8 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                                                         return userId !== selectedUser.id;
                                                     }));
                                                 }
-                                            },
-                                        },
+                                            }}
+                                        />
                                     );
                                 })
                             }

@@ -1,5 +1,4 @@
 import {
-    createElement,
     FC,
     useEffect,
     useState,
@@ -399,18 +398,20 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = (listProps) =>
                                                             onSelectChannel(item.channel);
                                                         },
                                                     } as ChannelListItemProps;
-                                                    return createElement(
-                                                        ChannelListItem,
-                                                        {
-                                                            ...props,
-                                                            ...(
-                                                                listItemProps
-                                                                    ? _.isFunction(listItemProps)
-                                                                        ? (listItemProps(props, listProps) || {})
-                                                                        : listItemProps
-                                                                    : {}
-                                                            ),
-                                                        },
+
+                                                    return (
+                                                        <ChannelListItem
+                                                            {...props}
+                                                            {
+                                                                ...(
+                                                                    listItemProps
+                                                                        ? _.isFunction(listItemProps)
+                                                                            ? (listItemProps(props, listProps) || {})
+                                                                            : listItemProps
+                                                                        : {}
+                                                                )
+                                                            }
+                                                        />
                                                     );
                                                 })
                                             }
