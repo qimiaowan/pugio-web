@@ -33,9 +33,10 @@
                 "title": "Client Offline",
                 "subTitle": "The client is currently offline, please check the client status and retry later"
             },
-            "createTab": "Create a Tab",
+            "goToStartup": "Go to Startup",
             "createChannel": "Create",
-            "installChannel": "Install"
+            "installChannel": "Install",
+            "startup": "Startup"
         },
         "clientMembers": {
             "tabs": {
@@ -79,7 +80,7 @@
         },
         "tab": {
             "errored": "Error",
-            "newInstance": "New Channel Instance"
+            "startup": "Startup"
         },
         "channelList": {
             "tabs": {

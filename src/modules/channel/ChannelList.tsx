@@ -155,6 +155,14 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = (listProps) =>
         searchProps = {},
         onSelectChannel = _.noop,
     } = listProps;
+    const {
+        className: headerClassName,
+        ...otherHeaderProps
+    } = headerProps;
+    const {
+        className: searchClassName,
+        ...otherSearchProps
+    } = searchProps;
 
     const channelService = declarations.get<ChannelService>(ChannelService);
     const utilsService = declarations.get<UtilsService>(UtilsService);
@@ -316,16 +324,20 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = (listProps) =>
 
     return (
         <ChannelListContainer className="channel-list-container" style={{ width }}>
-            <Box className="header" {...headerProps} ref={headerRef}>
+            <Box className={clsx('header', headerClassName)} {...otherHeaderProps} ref={headerRef}>
                 <Box className="search-wrapper">
                     <TextField
-                        {...searchProps}
                         classes={{
-                            root: clsx('search', {
-                                'full-width': !headerSlot,
-                            }),
+                            root: clsx(
+                                'search',
+                                {
+                                    'full-width': !headerSlot,
+                                },
+                                searchClassName,
+                            ),
                         }}
                         placeholder={getLocaleText('searchPlaceholder')}
+                        {...otherSearchProps}
                         onChange={(event) => setSearchValue(event.target.value)}
                     />
                     {headerSlot}

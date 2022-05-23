@@ -1,6 +1,5 @@
 import Popover from '@mui/material/Popover';
 import {
-    cloneElement,
     FC,
     useState,
     MouseEvent,
@@ -17,7 +16,6 @@ const ChannelPopover: FC<InjectedComponentProps<ChannelPopoverProps>> = ({
     declarations,
     channelListProps,
     popoverProps = {},
-    onClick,
 }) => {
     const ChannelList = declarations.get<FC<ChannelListProps>>(ChannelListComponent);
 
@@ -36,20 +34,11 @@ const ChannelPopover: FC<InjectedComponentProps<ChannelPopoverProps>> = ({
 
     return (
         <Box>
-            {
-                cloneElement(_.isFunction(trigger) ? trigger(open) : trigger, {
-                    onClick: (event) => {
-                        if (_.isFunction(onClick)) {
-                            onClick(event);
-                        }
-                        handleClick(event);
-                    },
-                })
-            }
+            {_.isFunction(trigger) && trigger({ open, handleOpen: handleClick })}
             <Popover
                 id={id}
                 open={open}
-                anchorEl={anchorEl}
+                anchorEl={() => anchorEl}
                 onClose={handleClose}
                 anchorOrigin={{
                     vertical: 'bottom',

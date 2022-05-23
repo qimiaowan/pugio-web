@@ -84,7 +84,7 @@ const TabWrapper = styled(Box)(({ theme }) => {
             .avatar {
                 width: 15px;
                 height: 15px;
-                margin-right: 5px;
+                margin-right: ${theme.spacing(1)};
                 pointer-events: none;
             }
 
@@ -110,7 +110,7 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
     closable = true,
     slotElement = false,
     active = false,
-    avatar = '/static/images/channel_avatar_fallback.svg',
+    avatar = '/static/images/startup.svg',
     loading = false,
     declarations,
     errored = false,
@@ -142,7 +142,7 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
         if (title && channelId) {
             setTabTitle(title);
         } else {
-            setTabTitle(getLocaleText('newInstance'));
+            setTabTitle(getLocaleText('startup'));
         }
     }, [getLocaleText, title, channelId]);
 
@@ -178,7 +178,7 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
                         ? children
                         : (
                             <Box className="content-wrapper">
-                                <Box className="avatar" component="img" src={avatar} />
+                                <Box className="avatar" component="img" src={!errored ? avatar : '/static/images/error_avatar.svg'} />
                                 <Typography className="text" noWrap={true}>
                                     {
                                         errored

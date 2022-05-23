@@ -1,8 +1,8 @@
 import { PopoverProps } from '@mui/material/Popover';
 import {
     PropsWithChildren,
-    ReactElement,
     MouseEvent,
+    ReactNode,
 } from 'react';
 import { ChannelListProps } from '@modules/channel/channel-list.interface';
 
@@ -11,11 +11,13 @@ interface ChannelPopoverUtils {
 }
 
 type ChannelListPropsCreator = (utils: ChannelPopoverUtils) => ChannelListProps;
-type ChannelTriggerCreator = (open: boolean) => ReactElement;
+type ChannelTriggerCreator = (data: {
+    open: boolean;
+    handleOpen: (event: MouseEvent<any>) => void;
+}) => ReactNode;
 
 export type ChannelPopoverProps = PropsWithChildren<{
-    trigger: ReactElement | ChannelTriggerCreator;
+    trigger: ChannelTriggerCreator;
     channelListProps: ChannelListProps | ChannelListPropsCreator;
     popoverProps?: Partial<PopoverProps>;
-    onClick?: (event: MouseEvent<any>) => void;
 }>;

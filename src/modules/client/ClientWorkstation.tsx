@@ -121,6 +121,15 @@ const ClientWorkstationWrapper = styled(Box)(({ theme }) => {
                 display: flex;
                 justify-content: center;
                 align-items: center;
+
+                .startup-search {
+                    flex-grow: 0 !important;
+                    width: 280px !important;
+                }
+
+                .startup-header {
+                    border-bottom: 0;
+                }
             }
         }
 
@@ -383,7 +392,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const tabsControlButtons = (
         <>
             <ChannelPopover
-                trigger={(open) => {
+                trigger={({ open, handleOpen }) => {
                     return (
                         <IconButton
                             sx={{
@@ -393,6 +402,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                         : theme.palette.grey[300]
                                     : 'transparent',
                             }}
+                            onClick={handleOpen}
                         ><Icon className="icon-plus" /></IconButton>
                     );
                 }}
@@ -684,7 +694,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                             errored={errored}
                                                             channelId={channelId}
                                                             title={title || data?.name}
-                                                            avatar={data?.avatar || '/static/images/channel_avatar_fallback.svg'}
+                                                            avatar={data?.avatar}
                                                             active={selectedTabId === tabId}
                                                             metadata={selectedTabMetadata}
                                                             onClick={() => setSelectedTab(clientId, tabId)}
@@ -731,6 +741,36 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                         >{tabsControlButtons}</Box>
                                     )
                                 }
+                                <Box
+                                    sx={{
+                                        flexGrow: 0,
+                                        flexShrink: 0,
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        paddingLeft: theme.spacing(1),
+                                        borderBottom: `1px solid ${theme.palette.divider}`,
+
+                                        '& > *': {
+                                            marginRight: `${theme.spacing(1)} !important`,
+                                        },
+                                    }}
+                                >
+                                    <Button
+                                        size="small"
+                                        color="primary"
+                                        startIcon={<Icon className="icon-rocket" />}
+                                        onClick={() => handleCreateTab(clientId)}
+                                    >{getLocaleText('startup')}</Button>
+                                    <Button
+                                        size="small"
+                                        startIcon={<Icon className="icon-import" />}
+                                    >{getLocaleText('installChannel')}</Button>
+                                    <Button
+                                        size="small"
+                                        startIcon={<Icon className="icon-plus" />}
+                                    >{getLocaleText('createChannel')}</Button>
+                                </Box>
                             </Box>
                         </Box>
                     )
@@ -758,12 +798,12 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                 <Button
                                     variant="contained"
                                     color="primary"
-                                    startIcon={<Icon className="icon-plus" />}
+                                    startIcon={<Icon className="icon-rocket" />}
                                     sx={{
                                         marginTop: '30px',
                                     }}
                                     onClick={() => handleCreateTab(clientId)}
-                                >{getLocaleText('createTab')}</Button>
+                                >{getLocaleText('goToStartup')}</Button>
                             </Exception>
                         </Box>
                         : <SimpleBar
@@ -785,25 +825,12 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                         clientId={clientId}
                                         width={headerWidth}
                                         height={panelHeight}
-                                        headerSlot={
-                                            <Box
-                                                sx={{
-                                                    flexGrow: 1,
-                                                    flexShrink: 1,
-                                                    display: 'flex',
-                                                    justifyContent: 'space-between',
-                                                    alignItems: 'center',
-                                                    paddingLeft: theme.spacing(1),
-                                                }}
-                                            >
-                                                <Button
-                                                    startIcon={<Icon className="icon-import" />}
-                                                >{getLocaleText('installChannel')}</Button>
-                                                <Button
-                                                    startIcon={<Icon className="icon-plus" />}
-                                                >{getLocaleText('createChannel')}</Button>
-                                            </Box>
-                                        }
+                                        searchProps={{
+                                            className: 'startup-search',
+                                        }}
+                                        headerProps={{
+                                            className: 'startup-header',
+                                        }}
                                         onSelectChannel={(channel) => {
                                             handleSelectChannel(clientId, selectedTabId, channel.id);
                                         }}

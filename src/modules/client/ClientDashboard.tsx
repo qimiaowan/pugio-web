@@ -23,10 +23,6 @@ import _ from 'lodash';
 import { useRequest } from 'ahooks';
 import { UserClientRelationResponseData } from '@modules/client/client.interface';
 import styled from '@mui/material/styles/styled';
-import { ChannelPopoverProps } from '@modules/channel/channel-popover.interface';
-import { ChannelPopoverComponent } from '@modules/channel/channel-popover.component';
-import { useTheme } from '@mui/material/styles';
-import Button from '@mui/material/Button';
 import shallow from 'zustand/shallow';
 
 interface MenuMetadataItem {
@@ -72,13 +68,6 @@ const ClientDashboardContainer = styled(Box)(({ theme }) => {
                     text-decoration: none;
                     user-select: none;
                 }
-            }
-
-            .start-button-wrapper {
-                width: 100%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
             }
 
             .expand-collapse-container {
@@ -133,23 +122,17 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
     const localeService = declarations.get<LocaleService>(LocaleService);
     const storeService = declarations.get<StoreService>(StoreService);
     const clientService = declarations.get<ClientService>(ClientService);
-    const ChannelPopover = declarations.get<FC<ChannelPopoverProps>>(ChannelPopoverComponent);
 
-    const theme = useTheme();
     const { client_id: clientId } = useParams();
     const sidebarRef = useRef<HTMLDivElement>(null);
     const getLocaleText = localeService.useLocaleContext();
     const [fullWidthMenu, setFullWidthMenu] = useState<boolean>(false);
     const [menuMetadataItems, setMenuMetadataItems] = useState<MenuMetadataItem[]>([]);
     const {
-        createTab,
-        setSelectedTab,
         setSidebarWidth,
         changeSelectedClientId,
     } = storeService.useStore((state) => {
         const {
-            createTab,
-            setSelectedTab,
             setClientSidebarWidth,
             changeSelectedClientId,
         } = state;
@@ -157,8 +140,6 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
         return {
             setSidebarWidth: setClientSidebarWidth,
             changeSelectedClientId,
-            createTab,
-            setSelectedTab,
         };
     }, shallow);
     const {
@@ -170,81 +151,6 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
         {
             refreshDeps: [clientId],
         },
-    );
-
-    const dashboardStartPopover = (
-        <ChannelPopover
-            trigger={(open) => {
-                return (
-                    <IconButton
-                        sx={{
-                            margin: `${theme.spacing(2)} 0`,
-                            padding: 1,
-                            background: open
-                                ? theme.palette.mode === 'dark'
-                                    ? theme.palette.grey[600]
-                                    : theme.palette.grey[300]
-                                : 'transparent',
-
-                            '& > img': {
-                                width: 26,
-                                height: 26,
-                            },
-                        }}
-                    >
-                        <Box component="img" src="/static/images/channel_avatar_fallback.svg" />
-                    </IconButton>
-                );
-            }}
-            channelListProps={
-                ({ handleClose }) => ({
-                    clientId,
-                    width: 768,
-                    height: 560,
-                    headerSlot: (
-                        <Box
-                            sx={{
-                                flexGrow: 1,
-                                flexShrink: 1,
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                paddingLeft: theme.spacing(1),
-                            }}
-                        >
-                            <Button
-                                startIcon={<Icon className="icon-import" />}
-                            >{getLocaleText('pages.clientWorkstation.installChannel')}</Button>
-                            <Button
-                                startIcon={<Icon className="icon-plus" />}
-                            >{getLocaleText('pages.clientWorkstation.createChannel')}</Button>
-                        </Box>
-                    ),
-                    onSelectChannel: (channel) => {
-                        const tabId = createTab(clientId, { channelId: channel.id });
-                        setSelectedTab(clientId, `${tabId}:scroll`);
-                        handleClose();
-                    },
-                })
-            }
-            popoverProps={{
-                anchorOrigin: {
-                    vertical: 'top',
-                    horizontal: 'right',
-                },
-                transformOrigin: {
-                    vertical: 'top',
-                    horizontal: 'left',
-                },
-                PaperProps: {
-                    sx: {
-                        backgroundColor: theme.palette.mode === 'dark'
-                            ? 'black'
-                            : 'white',
-                    },
-                },
-            }}
-        />
     );
 
     const generateFullWidthMenuKey = (id: string) => {
@@ -335,8 +241,6 @@ const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
     return (
         <ClientDashboardContainer>
             <Box className="sidebar" ref={sidebarRef}>
-                <Box className="start-button-wrapper">{dashboardStartPopover}</Box>
-
                 <Box className="menu-container">
                     {
                         menuMetadataItems.map((menuMetadataItem) => {
