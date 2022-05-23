@@ -10,6 +10,7 @@ import _ from 'lodash';
 import { InjectedComponentProps } from 'khamsa';
 import { ChannelListProps } from '@modules/channel/channel-list.interface';
 import { ChannelListComponent } from '@modules/channel/channel-list.component';
+import Box from '@mui/material/Box';
 
 const ChannelPopover: FC<InjectedComponentProps<ChannelPopoverProps>> = ({
     trigger,
@@ -22,6 +23,9 @@ const ChannelPopover: FC<InjectedComponentProps<ChannelPopoverProps>> = ({
 
     const [anchorEl, setAnchorEl] = useState<any | null>(null);
 
+    const open = Boolean(anchorEl);
+    const id = open ? Math.random().toString(32).slice(2) : undefined;
+
     const handleClick = (event: MouseEvent<any>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -30,10 +34,8 @@ const ChannelPopover: FC<InjectedComponentProps<ChannelPopoverProps>> = ({
         setAnchorEl(null);
     };
 
-    const open = Boolean(anchorEl);
-
     return (
-        <>
+        <Box>
             {
                 cloneElement(_.isFunction(trigger) ? trigger(open) : trigger, {
                     onClick: (event) => {
@@ -45,6 +47,7 @@ const ChannelPopover: FC<InjectedComponentProps<ChannelPopoverProps>> = ({
                 })
             }
             <Popover
+                id={id}
                 open={open}
                 anchorEl={anchorEl}
                 onClose={handleClose}
@@ -64,7 +67,7 @@ const ChannelPopover: FC<InjectedComponentProps<ChannelPopoverProps>> = ({
                     }
                 />
             </Popover>
-        </>
+        </Box>
     );
 };
 

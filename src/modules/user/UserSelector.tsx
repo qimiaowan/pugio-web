@@ -1,7 +1,9 @@
+/* eslint-disable no-unused-vars */
 import {
     FC,
     useEffect,
     useState,
+    MouseEvent,
 } from 'react';
 import { UserSelectorProps } from '@modules/user/user-selector.interface';
 import Box, { BoxProps } from '@mui/material/Box';
@@ -10,10 +12,14 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Button from '@mui/material/Button';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import Popover from '@mui/material/Popover';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import TextField from '@mui/material/TextField';
 import { InjectedComponentProps } from 'khamsa';
 import { LocaleService } from '@modules/locale/locale.service';
@@ -85,6 +91,36 @@ const UserSelectorWrapper = styled(Dialog)(({ theme }) => {
                 margin-left: ${theme.spacing(1)};
             }
         }
+
+        .add-users-popover {
+            width: 360px;
+
+            .users-list-item {
+                padding: ${theme.spacing(0.5)} ${theme.spacing(1)};
+
+                .avatar {
+                    width: 28px;
+                    height: 28px;
+                    border-radius: ${theme.spacing(0.5)};
+                    margin-right: ${theme.spacing(1)};
+                }
+
+                &-text {
+                    display: flex;
+                    align-items: center;
+                }
+            }
+
+            .search-users-wrapper {
+                display: flex;
+                box-sizing: border-box;
+                padding: ${theme.spacing(1)};
+
+                & > * {
+                    flex-grow: 1;
+                }
+            }
+        }
     `;
 });
 
@@ -102,7 +138,15 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
     const Exception = declarations.get<FC<ExceptionComponentProps>>(ExceptionComponent);
 
-    const [mode, setMode] = useState<string>('search');
+    const handleOpenPopover = (event: MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClosePopover = () => {
+        setAnchorEl(null);
+    };
+
+    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const [searchValue, setSearchValue] = useState<string>('');
     const debouncedSearchValue = useDebounce(searchValue, { wait: 300 });
     const [selectedUserList, setSelectedUserList] = useState<Profile[]>([]);
@@ -130,73 +174,156 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
         },
     );
 
+    const popoverOpen = Boolean(anchorEl);
+
     const handleCloseSelector = (event = {}, reason = null) => {
         if (reason === 'backdropClick' || reason !== null) {
             return;
         }
 
         onClose(event, reason);
-        setMode('search');
         setSearchValue('');
         setSelectedUserList([]);
         setSelectedSelectedUserIdList([]);
     };
 
-    const generateSelectorContent = (mode = 'search') => {
-        switch (mode) {
-            case 'search': {
-                return (
-                    queryUsersLoading
-                        ? <Box
-                            className="loading-wrapper"
-                            style={{ height: dialogContentHeight - 1 || 720 }}
-                        ><Loading /></Box>
-                        : <SimpleBar style={{ maxHeight: dialogContentHeight - 1 || 720 }}>
-                            {
-                                (_.isArray(queryUsersResponseData?.list)) && queryUsersResponseData.list.map((item) => {
-                                    return (
-                                        <UserCard
-                                            key={item.id}
-                                            profile={item}
-                                            checked={selectedUserList.some((selectedUser) => selectedUser.id === item.id)}
-                                            onCheckStatusChange={(checked) => {
-                                                if (checked) {
-                                                    setSelectedUserList(_.uniq(selectedUserList.concat(item)));
-                                                } else {
-                                                    setSelectedUserList(selectedUserList.filter((user) => user.id !== item.id));
-                                                }
-                                            }}
-                                        />
-                                    );
-                                })
-                            }
-                            {
-                                !queryUsersLoading && (
-                                    <Box className="load-more-wrapper">
-                                        <Button
-                                            variant="text"
-                                            classes={{ root: 'load-more-button' }}
-                                            disabled={queryUsersLoadingMore || queryUsersResponseData?.remains === 0}
-                                            onClick={queryMoreUsers}
-                                        >
-                                            {
-                                                getComponentLocaleText(
-                                                    queryUsersLoadingMore
-                                                        ? 'loading'
-                                                        : queryUsersResponseData?.remains === 0
-                                                            ? 'noMore'
-                                                            : 'loadMore',
-                                                )
-                                            }
-                                        </Button>
-                                    </Box>
-                                )
-                            }
-                        </SimpleBar>
-                );
+    useEffect(() => {
+        const observer = new ResizeObserver((entries) => {
+            const [observationData] = entries;
+
+            if (observationData) {
+                const blockSize = _.get(observationData, 'borderBoxSize[0].blockSize');
+
+                if (_.isNumber(blockSize)) {
+                    setDialogContentHeight(blockSize);
+                }
             }
-            case 'selected': {
-                return (
+        });
+
+        if (dialogContentElement) {
+            observer.observe(dialogContentElement);
+        }
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [dialogContentElement]);
+
+    return (
+        <UserSelectorWrapper
+            {...props}
+            disableEscapeKeyDown={true}
+            maxWidth="sm"
+            fullWidth={true}
+            className={clsx('user-selector', className)}
+            onClose={handleCloseSelector}
+        >
+            <DialogTitle classes={{ root: 'title' }}>
+                <Button
+                    color="primary"
+                    startIcon={<Icon className="icon icon-account-add" />}
+                    onClick={handleOpenPopover}
+                >{getComponentLocaleText('addUsers')}</Button>
+                <Popover
+                    open={popoverOpen}
+                    disablePortal={true}
+                    classes={{
+                        paper: 'add-users-popover',
+                    }}
+                    anchorEl={anchorEl}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    onClose={handleClosePopover}
+                >
+                    <Box className="search-users-wrapper">
+                        <TextField
+                            placeholder={getAppLocaleText('searchPlaceholder')}
+                            onChange={(event) => setSearchValue(event.target.value)}
+                        />
+                    </Box>
+                    {
+                        queryUsersLoading
+                            ? <Box
+                                className="loading-wrapper"
+                                style={{ height: dialogContentHeight - 1 || 320 }}
+                            ><Loading /></Box>
+                            : <SimpleBar style={{ maxHeight: dialogContentHeight - 1 || 320 }}>
+                                <List
+                                    sx={{
+                                        width: '100%',
+                                        height: '100%',
+                                        padding: 0,
+                                    }}
+                                >
+                                    {
+                                        (_.isArray(queryUsersResponseData?.list)) && queryUsersResponseData.list.map((item) => {
+                                            const {
+                                                id,
+                                                fullName,
+                                                email,
+                                                picture = '/static/images/profile_avatar_fallback.svg',
+                                            } = item;
+
+                                            return (
+                                                <ListItemButton
+                                                    key={item.id}
+                                                    title={id}
+                                                    classes={{
+                                                        root: 'users-list-item',
+                                                    }}
+                                                >
+                                                    <ListItemIcon>
+                                                        {
+                                                            selectedUserList.some((selectedUser) => selectedUser.id === item.id) && (
+                                                                <Icon className="icon icon-check" />
+                                                            )
+                                                        }
+                                                    </ListItemIcon>
+                                                    <ListItemText className="users-list-item-text">
+                                                        <Box className="avatar" component="img" src={picture} />
+                                                        <Typography noWrap={true}>{fullName} ({email})</Typography>
+                                                    </ListItemText>
+                                                </ListItemButton>
+                                            );
+                                        })
+                                    }
+                                    {
+                                        !queryUsersLoading && (
+                                            <Box className="load-more-wrapper">
+                                                <Button
+                                                    variant="text"
+                                                    classes={{ root: 'load-more-button' }}
+                                                    disabled={queryUsersLoadingMore || queryUsersResponseData?.remains === 0}
+                                                    onClick={queryMoreUsers}
+                                                >
+                                                    {
+                                                        getComponentLocaleText(
+                                                            queryUsersLoadingMore
+                                                                ? 'loading'
+                                                                : queryUsersResponseData?.remains === 0
+                                                                    ? 'noMore'
+                                                                    : 'loadMore',
+                                                        )
+                                                    }
+                                                </Button>
+                                            </Box>
+                                        )
+                                    }
+                                </List>
+                            </SimpleBar>
+                    }
+                </Popover>
+                <IconButton onClick={() => handleCloseSelector()}><Icon className="icon-close" /></IconButton>
+            </DialogTitle>
+            <DialogContent
+                classes={{
+                    root: 'content',
+                }}
+                ref={(ref) => setDialogContentElement(ref as unknown as HTMLDivElement)}
+            >
+                {
                     selectedUserList.length === 0
                         ? <Exception
                             imageSrc="/static/images/empty.svg"
@@ -236,128 +363,8 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                                 })
                             }
                         </SimpleBar>
-                );
-            }
-            default:
-                return null;
-        }
-    };
-
-    const generateSelectorTitle = (mode = 'search') => {
-        switch (mode) {
-            case 'search': {
-                return (
-                    <TextField
-                        classes={{ root: 'search' }}
-                        placeholder={getAppLocaleText('searchPlaceholder')}
-                        onChange={(event) => setSearchValue(event.target.value)}
-                    />
-                );
-            }
-            case 'selected': {
-                return (
-                    <Box className="selected-controls-wrapper">
-                        {
-                            selectedSelectedUserIdList.length > 0 && (
-                                <Button
-                                    variant="outlined"
-                                    color="error"
-                                    startIcon={<Icon className="icon-delete" />}
-                                    onClick={() => {
-                                        setSelectedUserList(
-                                            selectedUserList.filter((selectedUser) => {
-                                                return selectedSelectedUserIdList.indexOf(selectedUser.id) === -1;
-                                            }),
-                                        );
-                                        setSelectedSelectedUserIdList([]);
-                                    }}
-                                >{getComponentLocaleText('clearSelected')} ({selectedSelectedUserIdList.length})</Button>
-                            )
-                        }
-                        {
-                            selectedUserList.length > 0 && (
-                                <Button
-                                    variant="outlined"
-                                    color="error"
-                                    startIcon={<Icon className="icon-delete" />}
-                                    onClick={() => {
-                                        setSelectedUserList([]);
-                                        setSelectedSelectedUserIdList([]);
-                                    }}
-                                >{getComponentLocaleText('clearAll')}</Button>
-                            )
-                        }
-                    </Box>
-                );
-            }
-            default:
-                return null;
-        }
-    };
-
-    useEffect(() => {
-        const observer = new ResizeObserver((entries) => {
-            const [observationData] = entries;
-
-            if (observationData) {
-                const blockSize = _.get(observationData, 'borderBoxSize[0].blockSize');
-
-                if (_.isNumber(blockSize)) {
-                    setDialogContentHeight(blockSize);
                 }
-            }
-        });
-
-        if (dialogContentElement) {
-            observer.observe(dialogContentElement);
-        }
-
-        return () => {
-            observer.disconnect();
-        };
-    }, [dialogContentElement]);
-
-    return (
-        <UserSelectorWrapper
-            {...props}
-            disableEscapeKeyDown={true}
-            maxWidth="sm"
-            fullWidth={true}
-            className={clsx('user-selector', className)}
-            onClose={handleCloseSelector}
-        >
-            <DialogTitle classes={{ root: 'title' }}>
-                <Box>
-                    <ToggleButtonGroup value={mode}>
-                        {
-                            ['search', 'selected'].map((mode) => {
-                                return (
-                                    <ToggleButton
-                                        key={mode}
-                                        value={mode}
-                                        onClick={() => setMode(mode)}
-                                    >
-                                        {getComponentLocaleText(mode)}
-                                        {
-                                            (mode === 'selected' && selectedUserList.length > 0) && ` (${selectedUserList.length})`
-                                        }
-                                    </ToggleButton>
-                                );
-                            })
-                        }
-                    </ToggleButtonGroup>
-                </Box>
-                {generateSelectorTitle(mode)}
-                <Box>
-                    <IconButton onClick={() => handleCloseSelector()}><Icon className="icon-close" /></IconButton>
-                </Box>
-            </DialogTitle>
-            <DialogContent
-                classes={{
-                    root: 'content',
-                }}
-                ref={(ref) => setDialogContentElement(ref as unknown as HTMLDivElement)}
-            >{generateSelectorContent(mode)}</DialogContent>
+            </DialogContent>
             <DialogActions>
                 <Button onClick={() => handleCloseSelector()}>{getComponentLocaleText('cancel')}</Button>
                 <Button

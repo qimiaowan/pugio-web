@@ -1,5 +1,7 @@
 import { BoxProps } from '@mui/material/Box';
 import { Profile } from '@modules/profile/profile.interface';
+import { CheckboxProps } from '@mui/material/Checkbox';
+import { ReactElement } from 'react';
 
 export interface UserCardMenuItem {
     icon: string;
@@ -10,9 +12,11 @@ export interface UserCardMenuItem {
 
 export interface UserCardProps extends BoxProps {
     profile: Profile;
+    controlSlot?: ReactElement;
     checkable?: boolean;
     checked?: boolean;
     menu?: UserCardMenuItem[];
+    checkboxProps?: CheckboxProps;
     onCheckStatusChange?: (checked: boolean) => void;
 }
 

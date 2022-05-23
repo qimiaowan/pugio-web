@@ -1,4 +1,5 @@
 import {
+    cloneElement,
     FC,
     useState,
     MouseEvent,
@@ -164,6 +165,8 @@ const UserCard: FC<InjectedComponentProps<UserCardProps>> = ({
     declarations,
     checkable = true,
     checked = false,
+    controlSlot,
+    checkboxProps = {},
     onCheckStatusChange = _.noop,
     onClick = _.noop,
     ...props
@@ -198,6 +201,7 @@ const UserCard: FC<InjectedComponentProps<UserCardProps>> = ({
                         {
                             (controlsVisible || checked) && (
                                 <Checkbox
+                                    {...checkboxProps}
                                     checked={checked}
                                     onChange={(event) => onCheckStatusChange(event.target.checked)}
                                 />
@@ -225,6 +229,9 @@ const UserCard: FC<InjectedComponentProps<UserCardProps>> = ({
             {
                 (menu.length > 0 && controlsVisible) && (
                     <Box className="controls-button-wrapper">
+                        {
+                            controlSlot && cloneElement(controlSlot)
+                        }
                         {
                             iconButtons.map((iconButton, index) => {
                                 const {

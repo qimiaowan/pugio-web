@@ -110,8 +110,9 @@
             "clearSelected": "Clear Selected",
             "noSelected": {
                 "title": "No Selected Users",
-                "subTitle": "No users selected, you can select some users in the 'Search' pad"
-            }
+                "subTitle": "No users selected, you can select some users by selecting from \"Add Users\" popover"
+            },
+            "addUsers": "Add Users"
         }
     },
     "builtin": {

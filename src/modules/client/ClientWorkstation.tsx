@@ -383,7 +383,19 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const tabsControlButtons = (
         <>
             <ChannelPopover
-                trigger={<IconButton><Icon className="icon-plus" /></IconButton>}
+                trigger={(open) => {
+                    return (
+                        <IconButton
+                            sx={{
+                                background: open
+                                    ? theme.palette.mode === 'dark'
+                                        ? theme.palette.grey[600]
+                                        : theme.palette.grey[300]
+                                    : 'transparent',
+                            }}
+                        ><Icon className="icon-plus" /></IconButton>
+                    );
+                }}
                 channelListProps={
                     ({ handleClose }) => ({
                         clientId,
