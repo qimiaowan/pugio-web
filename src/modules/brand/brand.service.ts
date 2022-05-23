@@ -121,7 +121,7 @@ export class BrandService {
                             iconSizeSmall: {
                                 '.pugio-icons': {
                                     fontSize: 6,
-                                    lineHeight: '10px',
+                                    lineHeight: '12px',
                                 },
                             },
                             iconSizeLarge: {

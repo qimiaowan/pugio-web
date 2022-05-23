@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
     FC,
     useEffect,
@@ -87,10 +88,10 @@ const ClientWorkstationWrapper = styled(Box)(({ theme }) => {
                     display: flex;
                     justify-content: center;
                     align-items: center;
+                    padding-left: ${theme.spacing(1)};
 
                     &.floating {
                         justify-content: flex-start;
-                        padding-left: ${theme.spacing(1)};
                         border-left: 0;
                     }
 
@@ -99,6 +100,7 @@ const ClientWorkstationWrapper = styled(Box)(({ theme }) => {
                         min-width: 0;
                         border: 0;
                         border-bottom: 1px solid ${theme.palette.divider};
+                        padding-left: 0;
                     }
                 }
 
@@ -183,11 +185,12 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const { client_id: clientId } = useParams();
     const locale = localeService.useContextLocale();
     const localeMap = localeService.useLocaleMap(locale);
+    const buttonsWrapperRef = useRef<HTMLDivElement>(null);
     const [tabsScrollOffset, setTabsScrollOffset] = useState<number>(null);
     const debouncedTabsScrollOffset = useDebounce(tabsScrollOffset, { wait: 300 });
     const [tabTitleChangeCount, setTabTitleChangeCount] = useState<number>(0);
     const [buttonsWrapperSticked, setButtonsWrapperSticked] = useState<boolean>(false);
-    const [buttonsWrapperWidth] = useState<number>(70);
+    const [buttonsWrapperWidth, setButtonsWrapperWidth] = useState<number>(120);
     const [placeholderWidth, setPlaceholderWidth] = useState<number>(0);
     const tabsWrapperRef = useRef<HTMLDivElement>(null);
     const placeholderRef = useRef<HTMLDivElement>(null);
@@ -260,6 +263,21 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             channelId,
         });
     };
+
+    const handleCreateOrFocusStartupTab = useCallback((clientId: string) => {
+        const currentTabs = clientTabsMap.get(clientId) || List([] as ChannelTab[]);
+
+        if (currentTabs.size > 0) {
+            const startupTabIndex = currentTabs.findIndex((tab) => !tab?.channelId);
+            if (startupTabIndex !== -1) {
+                setSelectedTab(clientId, `${currentTabs.get(startupTabIndex).tabId}:scroll`);
+            } else {
+                handleCreateTab(clientId);
+            }
+        } else {
+            handleCreateTab(clientId);
+        }
+    }, [clientTabsMap]);
 
     const handleLoadChannel = useCallback((channelId: string, clientId: string, tabId: string) => {
         updateTab(clientId, tabId, {
@@ -390,7 +408,16 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     }, [tabs]);
 
     const tabsControlButtons = (
-        <>
+        <Box
+            sx={{
+                display: 'flex',
+                alignItems: 'center',
+
+                '& > *': {
+                    marginRight: theme.spacing(1),
+                },
+            }}
+        >
             <ChannelPopover
                 trigger={({ open, handleOpen }) => {
                     return (
@@ -455,10 +482,13 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                     },
                 }}
             />
+            <IconButton
+                onClick={() => handleCreateOrFocusStartupTab(clientId)}
+            ><Icon className="icon-rocket" /></IconButton>
             <IconButton>
                 <Icon className="icon-more-horizontal" />
             </IconButton>
-        </>
+        </Box>
     );
 
     useEffect(() => {
@@ -650,6 +680,12 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
         window['__PUGIO_WORKSTATION_BUS__'] = bus;
     }, []);
 
+    useEffect(() => {
+        if (buttonsWrapperRef.current) {
+            setButtonsWrapperWidth(buttonsWrapperRef.current.clientWidth);
+        }
+    }, [buttonsWrapperRef.current]);
+
     return (
         clientOffline
             ? <ClientWorkstationWrapper className="page offline">
@@ -675,7 +711,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                             ref={tabsScrollRef}
                                         >
                                             {
-                                                _.isArray(tabs) && tabs.map((tab, index) => {
+                                                _.isArray(tabs) && tabs.map((tab) => {
                                                     const {
                                                         tabId,
                                                         channelId,
@@ -724,8 +760,8 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                             {
                                                 !buttonsWrapperSticked && (
                                                     <Box
+                                                        ref={buttonsWrapperRef}
                                                         className="buttons-wrapper floating"
-                                                        style={{ width: buttonsWrapperWidth }}
                                                     >{tabsControlButtons}</Box>
                                                 )
                                             }
@@ -736,8 +772,8 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                 {
                                     buttonsWrapperSticked && (
                                         <Box
+                                            ref={buttonsWrapperRef}
                                             className="buttons-wrapper"
-                                            style={{ width: buttonsWrapperWidth }}
                                         >{tabsControlButtons}</Box>
                                     )
                                 }
@@ -758,16 +794,12 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                 >
                                     <Button
                                         size="small"
-                                        color="primary"
-                                        startIcon={<Icon className="icon-rocket" />}
-                                        onClick={() => handleCreateTab(clientId)}
-                                    >{getLocaleText('startup')}</Button>
-                                    <Button
-                                        size="small"
+                                        sx={{ fontWeight: 700 }}
                                         startIcon={<Icon className="icon-import" />}
                                     >{getLocaleText('installChannel')}</Button>
                                     <Button
                                         size="small"
+                                        sx={{ fontWeight: 700 }}
                                         startIcon={<Icon className="icon-plus" />}
                                     >{getLocaleText('createChannel')}</Button>
                                 </Box>
@@ -797,7 +829,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                             >
                                 <Button
                                     variant="contained"
-                                    color="primary"
                                     startIcon={<Icon className="icon-rocket" />}
                                     sx={{
                                         marginTop: '30px',

@@ -34,7 +34,7 @@
                 "subTitle": "The client is currently offline, please check the client status and retry later"
             },
             "goToStartup": "Go to Startup",
-            "createChannel": "Create",
+            "createChannel": "Channel",
             "installChannel": "Install",
             "startup": "Startup"
         },
