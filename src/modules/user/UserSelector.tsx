@@ -152,6 +152,8 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
     const [selectedSelectedUserIdList, setSelectedSelectedUserIdList] = useState<string[]>([]);
     const [dialogContentHeight, setDialogContentHeight] = useState<number>(0);
     const [dialogContentElement, setDialogContentElement] = useState<HTMLDivElement>(null);
+    const [popoverContentElement, setPopoverContentElement] = useState<HTMLElement>(null);
+    const [popoverContentHeight, setPopoverContentHeight] = useState<number>(0);
     const getComponentLocaleText = localeService.useLocaleContext('components.userSelector');
     const getAppLocaleText = localeService.useLocaleContext('app');
     const {
@@ -208,6 +210,29 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
         };
     }, [dialogContentElement]);
 
+    useEffect(() => {
+        const observer = new ResizeObserver((entries) => {
+            const [observationData] = entries;
+
+            if (observationData) {
+                const blockSize = _.get(observationData, 'borderBoxSize[0].blockSize');
+
+                if (_.isNumber(blockSize)) {
+                    setPopoverContentHeight(blockSize);
+                }
+            }
+        });
+
+        if (popoverContentElement) {
+            console.log(111);
+            observer.observe(popoverContentElement);
+        }
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [popoverContentElement]);
+
     return (
         <UserSelectorWrapper
             {...props}
@@ -252,71 +277,75 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                         queryUsersLoading
                             ? <Box
                                 className="loading-wrapper"
-                                style={{ height: dialogContentHeight - 1 || 320 }}
+                                style={{ height: popoverContentHeight || 320 }}
                             ><Loading /></Box>
                             : <SimpleBar style={{ maxHeight: dialogContentHeight - 1 || 320 }}>
-                                <List
-                                    sx={{
-                                        width: '100%',
-                                        height: '100%',
-                                        padding: 0,
-                                    }}
+                                <Box
+                                    ref={(element) => setPopoverContentElement(element as unknown as HTMLElement)}
                                 >
-                                    {
-                                        (_.isArray(queryUsersResponseData?.list)) && queryUsersResponseData.list.map((item) => {
-                                            const {
-                                                id,
-                                                fullName,
-                                                email,
-                                                picture = '/static/images/profile_avatar_fallback.svg',
-                                            } = item;
+                                    <List
+                                        sx={{
+                                            width: '100%',
+                                            height: '100%',
+                                            padding: 0,
+                                        }}
+                                    >
+                                        {
+                                            (_.isArray(queryUsersResponseData?.list)) && queryUsersResponseData.list.map((item) => {
+                                                const {
+                                                    id,
+                                                    fullName,
+                                                    email,
+                                                    picture = '/static/images/profile_avatar_fallback.svg',
+                                                } = item;
 
-                                            return (
-                                                <ListItemButton
-                                                    key={item.id}
-                                                    title={id}
-                                                    classes={{
-                                                        root: 'users-list-item',
-                                                    }}
-                                                >
-                                                    <ListItemIcon>
+                                                return (
+                                                    <ListItemButton
+                                                        key={item.id}
+                                                        title={id}
+                                                        classes={{
+                                                            root: 'users-list-item',
+                                                        }}
+                                                    >
+                                                        <ListItemIcon>
+                                                            {
+                                                                selectedUserList.some((selectedUser) => selectedUser.id === item.id) && (
+                                                                    <Icon className="icon icon-check" />
+                                                                )
+                                                            }
+                                                        </ListItemIcon>
+                                                        <ListItemText className="users-list-item-text">
+                                                            <Box className="avatar" component="img" src={picture} />
+                                                            <Typography noWrap={true}>{fullName} ({email})</Typography>
+                                                        </ListItemText>
+                                                    </ListItemButton>
+                                                );
+                                            })
+                                        }
+                                        {
+                                            !queryUsersLoading && (
+                                                <Box className="load-more-wrapper">
+                                                    <Button
+                                                        variant="text"
+                                                        classes={{ root: 'load-more-button' }}
+                                                        disabled={queryUsersLoadingMore || queryUsersResponseData?.remains === 0}
+                                                        onClick={queryMoreUsers}
+                                                    >
                                                         {
-                                                            selectedUserList.some((selectedUser) => selectedUser.id === item.id) && (
-                                                                <Icon className="icon icon-check" />
+                                                            getComponentLocaleText(
+                                                                queryUsersLoadingMore
+                                                                    ? 'loading'
+                                                                    : queryUsersResponseData?.remains === 0
+                                                                        ? 'noMore'
+                                                                        : 'loadMore',
                                                             )
                                                         }
-                                                    </ListItemIcon>
-                                                    <ListItemText className="users-list-item-text">
-                                                        <Box className="avatar" component="img" src={picture} />
-                                                        <Typography noWrap={true}>{fullName} ({email})</Typography>
-                                                    </ListItemText>
-                                                </ListItemButton>
-                                            );
-                                        })
-                                    }
-                                    {
-                                        !queryUsersLoading && (
-                                            <Box className="load-more-wrapper">
-                                                <Button
-                                                    variant="text"
-                                                    classes={{ root: 'load-more-button' }}
-                                                    disabled={queryUsersLoadingMore || queryUsersResponseData?.remains === 0}
-                                                    onClick={queryMoreUsers}
-                                                >
-                                                    {
-                                                        getComponentLocaleText(
-                                                            queryUsersLoadingMore
-                                                                ? 'loading'
-                                                                : queryUsersResponseData?.remains === 0
-                                                                    ? 'noMore'
-                                                                    : 'loadMore',
-                                                        )
-                                                    }
-                                                </Button>
-                                            </Box>
-                                        )
-                                    }
-                                </List>
+                                                    </Button>
+                                                </Box>
+                                            )
+                                        }
+                                    </List>
+                                </Box>
                             </SimpleBar>
                     }
                 </Popover>
