@@ -47,6 +47,8 @@ import styled from '@mui/material/styles/styled';
 import { ChannelPopoverProps } from '@modules/channel/channel-popover.interface';
 import { ChannelPopoverComponent } from '@modules/channel/channel-popover.component';
 
+const STARTUP_TAB_ID = '@@startup';
+
 const ClientWorkstationWrapper = styled(Box)(({ theme }) => {
     const mode = theme.palette.mode;
 
@@ -66,6 +68,21 @@ const ClientWorkstationWrapper = styled(Box)(({ theme }) => {
 
             .tabs {
                 display: flex;
+
+                .startup-wrapper {
+                    height: 45px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    box-sizing: border-box;
+                    padding: 0 ${theme.spacing(1)};
+                    border-bottom: 1px solid ${theme.palette.divider};
+
+                    .startup-avatar {
+                        width: 18px;
+                        height: 18px;
+                    }
+                }
 
                 .tabs-wrapper {
                     flex-grow: 1;
@@ -186,11 +203,13 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const locale = localeService.useContextLocale();
     const localeMap = localeService.useLocaleMap(locale);
     const buttonsWrapperRef = useRef<HTMLDivElement>(null);
+    const startupWrapperRef = useRef<HTMLDivElement>(null);
     const [tabsScrollOffset, setTabsScrollOffset] = useState<number>(null);
     const debouncedTabsScrollOffset = useDebounce(tabsScrollOffset, { wait: 300 });
     const [tabTitleChangeCount, setTabTitleChangeCount] = useState<number>(0);
     const [buttonsWrapperSticked, setButtonsWrapperSticked] = useState<boolean>(false);
     const [buttonsWrapperWidth, setButtonsWrapperWidth] = useState<number>(120);
+    const [startupWrapperWidth, setStartupWrapperWidth] = useState<number>(0);
     const [placeholderWidth, setPlaceholderWidth] = useState<number>(0);
     const tabsWrapperRef = useRef<HTMLDivElement>(null);
     const placeholderRef = useRef<HTMLDivElement>(null);
@@ -482,9 +501,9 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                     },
                 }}
             />
-            <IconButton
-                onClick={() => handleCreateOrFocusStartupTab(clientId)}
-            ><Icon className="icon-rocket" /></IconButton>
+            <IconButton onClick={() => setSelectedTab(clientId, STARTUP_TAB_ID)}>
+                <Icon className="icon-rocket" />
+            </IconButton>
             <IconButton>
                 <Icon className="icon-more-horizontal" />
             </IconButton>
@@ -684,7 +703,14 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
         if (buttonsWrapperRef.current) {
             setButtonsWrapperWidth(buttonsWrapperRef.current.clientWidth);
         }
-    }, [buttonsWrapperRef.current]);
+
+        if (startupWrapperRef.current) {
+            setStartupWrapperWidth(startupWrapperRef.current.clientWidth);
+        }
+    }, [
+        buttonsWrapperRef.current,
+        startupWrapperRef.current,
+    ]);
 
     return (
         clientOffline
@@ -697,16 +723,43 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             </ClientWorkstationWrapper>
             : <ClientWorkstationWrapper className="page">
                 {
-                    clientTabsMap.get(clientId)?.size > 0 && (
+                    (clientTabsMap.get(clientId)?.size > 0 || selectedTabId === STARTUP_TAB_ID) && (
                         <Box className="header-container">
                             <Box className="tabs" style={{ width: headerWidth }} ref={tabsWrapperRef}>
+                                <Box
+                                    className="startup-wrapper"
+                                    ref={startupWrapperRef}
+                                    sx={{
+                                        borderRight: clientTabsMap.get(clientId)?.size > 0
+                                            ? `1px solid ${theme.palette.divider}`
+                                            : 0,
+                                    }}
+                                >
+                                    <IconButton
+                                        sx={{
+                                            padding: theme.spacing(1.2),
+                                            ...(
+                                                selectedTabId === STARTUP_TAB_ID
+                                                    ? {
+                                                        backgroundColor: theme.palette.mode === 'dark'
+                                                            ? theme.palette.grey[700]
+                                                            : theme.palette.grey[300],
+                                                    }
+                                                    : {}
+                                            ),
+                                        }}
+                                        onClick={() => setSelectedTab(clientId, STARTUP_TAB_ID)}
+                                    >
+                                        <Box component="img" src="/static/images/startup.svg" className="startup-avatar" />
+                                    </IconButton>
+                                </Box>
                                 {
-                                    _.isNumber(headerWidth) && (
+                                    clientTabsMap.get(clientId)?.size > 0 && (
                                         <SimpleBar
                                             className="tabs-wrapper"
                                             autoHide={true}
                                             style={{
-                                                maxWidth: headerWidth - (buttonsWrapperSticked ? buttonsWrapperWidth : 0),
+                                                maxWidth: headerWidth - (buttonsWrapperSticked ? buttonsWrapperWidth : 0) - startupWrapperWidth,
                                             }}
                                             ref={tabsScrollRef}
                                         >
@@ -779,10 +832,10 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                 }
                                 <Box
                                     sx={{
-                                        flexGrow: 0,
+                                        flexGrow: clientTabsMap.get(clientId)?.size > 0 ? 0 : 1,
                                         flexShrink: 0,
                                         display: 'flex',
-                                        justifyContent: 'space-between',
+                                        justifyContent: clientTabsMap.get(clientId)?.size > 0 ? 'space-between' : 'flex-end',
                                         alignItems: 'center',
                                         paddingLeft: theme.spacing(1),
                                         borderBottom: `1px solid ${theme.palette.divider}`,
@@ -833,42 +886,39 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                     sx={{
                                         marginTop: '30px',
                                     }}
-                                    onClick={() => handleCreateTab(clientId)}
+                                    onClick={() => setSelectedTab(clientId, STARTUP_TAB_ID)}
                                 >{getLocaleText('goToStartup')}</Button>
                             </Exception>
                         </Box>
-                        : <SimpleBar
-                            style={{
-                                width: '100%',
-                                height: panelHeight,
-                            }}
-                            className="panel-wrapper"
-                        >
-                            <ChannelPanel
-                                tabId={selectedTabId}
-                                channelTab={
-                                    (clientTabsMap.get(clientId) || List<ChannelTab>([]))
-                                        .find((channelTab) => channelTab.tabId === selectedTabId)
-                                }
+                        : selectedTabId === STARTUP_TAB_ID
+                            ? <Box className="channel-not-selected">
+                                <ChannelList
+                                    clientId={clientId}
+                                    width={headerWidth}
+                                    height={panelHeight}
+                                    searchProps={{
+                                        className: 'startup-search',
+                                    }}
+                                    headerProps={{
+                                        className: 'startup-header',
+                                    }}
+                                    onSelectChannel={(channel) => {
+                                        handleCreateTab(clientId, { channelId: channel.id });
+                                    }}
+                                />
+                            </Box>
+                            : <SimpleBar
+                                style={{
+                                    width: '100%',
+                                    height: panelHeight,
+                                }}
+                                className="panel-wrapper"
                             >
-                                <Box className="channel-not-selected">
-                                    <ChannelList
-                                        clientId={clientId}
-                                        width={headerWidth}
-                                        height={panelHeight}
-                                        searchProps={{
-                                            className: 'startup-search',
-                                        }}
-                                        headerProps={{
-                                            className: 'startup-header',
-                                        }}
-                                        onSelectChannel={(channel) => {
-                                            handleSelectChannel(clientId, selectedTabId, channel.id);
-                                        }}
-                                    />
-                                </Box>
-                            </ChannelPanel>
-                        </SimpleBar>
+                                <ChannelPanel
+                                    tabId={selectedTabId}
+                                    channelTab={(clientTabsMap.get(clientId) || List<ChannelTab>([])).find((tab) => tab.tabId === selectedTabId)}
+                                />
+                            </SimpleBar>
                 }
             </ClientWorkstationWrapper>
     );
