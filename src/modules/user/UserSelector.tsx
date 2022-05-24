@@ -113,7 +113,7 @@ const UserSelectorWrapper = styled(Dialog)(({ theme }) => {
             .search-users-wrapper {
                 display: flex;
                 box-sizing: border-box;
-                padding: ${theme.spacing(1)};
+                border-bottom: 1px solid ${theme.palette.divider};
 
                 & > * {
                     flex-grow: 1;
@@ -239,6 +239,12 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                     <Box className="search-users-wrapper">
                         <TextField
                             placeholder={getAppLocaleText('searchPlaceholder')}
+                            InputProps={{
+                                startAdornment: <Icon className="icon-search" />,
+                                sx: {
+                                    border: 0,
+                                },
+                            }}
                             onChange={(event) => setSearchValue(event.target.value)}
                         />
                     </Box>

@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
     FC,
     useEffect,
@@ -75,12 +74,12 @@ const ClientWorkstationWrapper = styled(Box)(({ theme }) => {
                     justify-content: center;
                     align-items: center;
                     box-sizing: border-box;
-                    padding: 0 ${theme.spacing(1)};
+                    padding: 0 ${theme.spacing(0.8)};
                     border-bottom: 1px solid ${theme.palette.divider};
 
                     .startup-avatar {
-                        width: 18px;
-                        height: 18px;
+                        width: 16px;
+                        height: 16px;
                     }
                 }
 
@@ -133,22 +132,22 @@ const ClientWorkstationWrapper = styled(Box)(({ theme }) => {
                 display: flex;
                 flex-direction: column;
             }
+        }
 
-            .channel-not-selected {
-                width: 100%;
-                height: 100%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
+        .channel-not-selected {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
-                .startup-search {
-                    flex-grow: 0 !important;
-                    width: 280px !important;
-                }
+            .startup-search {
+                flex-grow: 0 !important;
+                width: 280px !important;
+            }
 
-                .startup-header {
-                    border-bottom: 0;
-                }
+            .startup-header {
+                border-bottom: 0;
             }
         }
 
@@ -276,27 +275,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
         const tabId = createTab(clientId, data);
         setSelectedTab(clientId, `${tabId}:scroll`);
     };
-
-    const handleSelectChannel = (clientId: string, tabId: string, channelId: string) => {
-        updateTab(clientId, tabId, {
-            channelId,
-        });
-    };
-
-    const handleCreateOrFocusStartupTab = useCallback((clientId: string) => {
-        const currentTabs = clientTabsMap.get(clientId) || List([] as ChannelTab[]);
-
-        if (currentTabs.size > 0) {
-            const startupTabIndex = currentTabs.findIndex((tab) => !tab?.channelId);
-            if (startupTabIndex !== -1) {
-                setSelectedTab(clientId, `${currentTabs.get(startupTabIndex).tabId}:scroll`);
-            } else {
-                handleCreateTab(clientId);
-            }
-        } else {
-            handleCreateTab(clientId);
-        }
-    }, [clientTabsMap]);
 
     const handleLoadChannel = useCallback((channelId: string, clientId: string, tabId: string) => {
         updateTab(clientId, tabId, {

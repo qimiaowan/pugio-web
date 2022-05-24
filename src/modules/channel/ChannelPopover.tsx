@@ -10,6 +10,16 @@ import { InjectedComponentProps } from 'khamsa';
 import { ChannelListProps } from '@modules/channel/channel-list.interface';
 import { ChannelListComponent } from '@modules/channel/channel-list.component';
 import Box from '@mui/material/Box';
+import Icon from '@mui/material/Icon';
+import styled from '@mui/material/styles/styled';
+
+const ChannelPopoverWrapper = styled(Popover)(() => {
+    return `
+        .popover-header {
+            padding: 0;
+        }
+    `;
+});
 
 const ChannelPopover: FC<InjectedComponentProps<ChannelPopoverProps>> = ({
     trigger,
@@ -35,7 +45,7 @@ const ChannelPopover: FC<InjectedComponentProps<ChannelPopoverProps>> = ({
     return (
         <Box>
             {_.isFunction(trigger) && trigger({ open, handleOpen: handleClick })}
-            <Popover
+            <ChannelPopoverWrapper
                 id={id}
                 open={open}
                 anchorEl={() => anchorEl}
@@ -54,8 +64,19 @@ const ChannelPopover: FC<InjectedComponentProps<ChannelPopoverProps>> = ({
                                 : channelListProps
                         )
                     }
+                    searchProps={{
+                        InputProps: {
+                            startAdornment: <Icon className="icon-search" />,
+                            sx: {
+                                border: 0,
+                            },
+                        },
+                    }}
+                    headerProps={{
+                        className: 'popover-header',
+                    }}
                 />
-            </Popover>
+            </ChannelPopoverWrapper>
         </Box>
     );
 };
