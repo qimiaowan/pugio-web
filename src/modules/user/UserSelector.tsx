@@ -36,16 +36,18 @@ import { Profile } from '@modules/profile/profile.interface';
 import { ExceptionComponentProps } from '@modules/brand/exception.interface';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import styled from '@mui/material/styles/styled';
+import useTheme from '@mui/material/styles/useTheme';
 
 const UserSelectorWrapper = styled(Dialog)(({ theme }) => {
     return `
-        .title {
+        .dialog-title {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background-color: transparent;
             padding-left: ${theme.spacing(1)};
             padding-right: ${theme.spacing(1)};
+            border-bottom: 1px solid ${theme.palette.divider};
 
             .search {
                 flex-grow: 1;
@@ -59,6 +61,10 @@ const UserSelectorWrapper = styled(Dialog)(({ theme }) => {
             padding: 0;
             border-top: 0;
             padding-top: 0 !important;
+
+            .select-controls-wrapper {
+                padding: ${theme.spacing(1)};
+            }
         }
 
         .loading-wrapper {
@@ -146,6 +152,7 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
         setAnchorEl(null);
     };
 
+    const theme = useTheme();
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const [searchValue, setSearchValue] = useState<string>('');
     const debouncedSearchValue = useDebounce(searchValue, { wait: 300 });
@@ -242,7 +249,7 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
             className={clsx('user-selector', className)}
             onClose={handleCloseSelector}
         >
-            <DialogTitle classes={{ root: 'title' }}>
+            <DialogTitle classes={{ root: 'dialog-title' }}>
                 <Button
                     color="primary"
                     startIcon={<Icon className="icon icon-account-add" />}
@@ -368,39 +375,78 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                             title={getComponentLocaleText('noSelected.title')}
                             subTitle={getComponentLocaleText('noSelected.subTitle')}
                         />
-                        : <SimpleBar style={{ maxHeight: dialogContentHeight - 1 || 720 }}>
-                            {
-                                selectedUserList.map((selectedUser) => {
-                                    return (
-                                        <UserCard
-                                            key={selectedUser.id}
-                                            profile={selectedUser}
-                                            checked={selectedSelectedUserIdList.indexOf(selectedUser.id) !== -1}
-                                            menu={[
-                                                {
-                                                    icon: 'icon-close',
-                                                    title: getComponentLocaleText('clearSelected'),
-                                                    onActive: () => {
-                                                        setSelectedUserList(selectedUserList.filter((user) => {
-                                                            return user.id !== selectedUser.id;
-                                                        }));
+                        : <Box>
+                            <Box className="select-controls-wrapper">
+                                <Button
+                                    size="small"
+                                    color={selectedUserList.length === selectedSelectedUserIdList.length ? 'info' : 'secondary'}
+                                    startIcon={<Icon className="icon-select-all" />}
+                                    sx={{
+                                        marginRight: theme.spacing(1),
+                                    }}
+                                    onClick={() => {
+                                        if (selectedUserList.length === selectedSelectedUserIdList.length) {
+                                            setSelectedSelectedUserIdList([]);
+                                        } else {
+                                            setSelectedSelectedUserIdList(
+                                                _.uniq(selectedSelectedUserIdList.concat(
+                                                    selectedUserList.map((user) => user.id),
+                                                )),
+                                            );
+                                        }
+                                    }}
+                                >
+                                    {
+                                        selectedUserList.length === selectedSelectedUserIdList.length
+                                            ? getComponentLocaleText('unselectAll')
+                                            : getComponentLocaleText('selectAll')
+                                    }
+                                </Button>
+                                <Button
+                                    size="small"
+                                    color="error"
+                                    startIcon={<Icon className="icon-delete" />}
+                                    disabled={selectedSelectedUserIdList.length === 0}
+                                    onClick={() => {
+                                        setSelectedUserList([]);
+                                        setSelectedSelectedUserIdList([]);
+                                    }}
+                                >{getComponentLocaleText('delete')}</Button>
+                            </Box>
+                            <SimpleBar style={{ maxHeight: dialogContentHeight - 1 || 720 }}>
+                                {
+                                    selectedUserList.map((selectedUser) => {
+                                        return (
+                                            <UserCard
+                                                key={selectedUser.id}
+                                                profile={selectedUser}
+                                                checked={selectedSelectedUserIdList.indexOf(selectedUser.id) !== -1}
+                                                menu={[
+                                                    {
+                                                        icon: 'icon-close',
+                                                        title: getComponentLocaleText('clearSelected'),
+                                                        onActive: () => {
+                                                            setSelectedUserList(selectedUserList.filter((user) => {
+                                                                return user.id !== selectedUser.id;
+                                                            }));
+                                                        },
                                                     },
-                                                },
-                                            ]}
-                                            onCheckStatusChange={(checked) => {
-                                                if (checked) {
-                                                    setSelectedSelectedUserIdList(_.uniq(selectedSelectedUserIdList.concat(selectedUser.id)));
-                                                } else {
-                                                    setSelectedSelectedUserIdList(selectedSelectedUserIdList.filter((userId) => {
-                                                        return userId !== selectedUser.id;
-                                                    }));
-                                                }
-                                            }}
-                                        />
-                                    );
-                                })
-                            }
-                        </SimpleBar>
+                                                ]}
+                                                onCheckStatusChange={(checked) => {
+                                                    if (checked) {
+                                                        setSelectedSelectedUserIdList(_.uniq(selectedSelectedUserIdList.concat(selectedUser.id)));
+                                                    } else {
+                                                        setSelectedSelectedUserIdList(selectedSelectedUserIdList.filter((userId) => {
+                                                            return userId !== selectedUser.id;
+                                                        }));
+                                                    }
+                                                }}
+                                            />
+                                        );
+                                    })
+                                }
+                            </SimpleBar>
+                        </Box>
                 }
             </DialogContent>
             <DialogActions>

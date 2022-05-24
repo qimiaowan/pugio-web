@@ -107,13 +107,15 @@
             "loadMore": "Load More",
             "loading": "Loading...",
             "noMore": "No More",
-            "clearAll": "Clear All",
+            "delete": "Delete",
             "clearSelected": "Clear Selected",
             "noSelected": {
                 "title": "No Selected Users",
                 "subTitle": "No users selected, you can select some users by selecting from \"Add Users\" popover"
             },
-            "addUsers": "Add Users"
+            "addUsers": "Add Users",
+            "selectAll": "Select All",
+            "unselectAll": "Unselect All"
         }
     },
     "builtin": {
