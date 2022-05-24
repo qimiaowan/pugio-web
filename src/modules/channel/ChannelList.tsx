@@ -61,6 +61,7 @@ const ChannelListContainer = styled(Box)(({ theme }) => {
                 display: flex;
                 align-items: stretch;
                 width: 100%;
+                min-height: 32px;
 
                 .search {
                     width: 240px;

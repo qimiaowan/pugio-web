@@ -58,6 +58,7 @@ const UserSelectorWrapper = styled(Dialog)(({ theme }) => {
             min-height: 320px;
             padding: 0;
             border-top: 0;
+            padding-top: 0 !important;
         }
 
         .loading-wrapper {
@@ -224,7 +225,6 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
         });
 
         if (popoverContentElement) {
-            console.log(111);
             observer.observe(popoverContentElement);
         }
 
@@ -280,9 +280,7 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                                 style={{ height: popoverContentHeight || 320 }}
                             ><Loading /></Box>
                             : <SimpleBar style={{ maxHeight: dialogContentHeight - 1 || 320 }}>
-                                <Box
-                                    ref={(element) => setPopoverContentElement(element as unknown as HTMLElement)}
-                                >
+                                <Box ref={(element) => setPopoverContentElement(element as unknown as HTMLElement)}>
                                     <List
                                         sx={{
                                             width: '100%',
@@ -305,6 +303,14 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                                                         title={id}
                                                         classes={{
                                                             root: 'users-list-item',
+                                                        }}
+                                                        selected={selectedUserList.some((user) => user.id === id)}
+                                                        onClick={() => {
+                                                            if (!selectedUserList.some((user) => user.id === id)) {
+                                                                setSelectedUserList([item].concat(selectedUserList));
+                                                            } else {
+                                                                setSelectedUserList(selectedUserList.filter((user) => user.id !== id));
+                                                            }
                                                         }}
                                                     >
                                                         <ListItemIcon>
@@ -352,9 +358,7 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                 <IconButton onClick={() => handleCloseSelector()}><Icon className="icon-close" /></IconButton>
             </DialogTitle>
             <DialogContent
-                classes={{
-                    root: 'content',
-                }}
+                classes={{ root: 'content' }}
                 ref={(ref) => setDialogContentElement(ref as unknown as HTMLDivElement)}
             >
                 {
