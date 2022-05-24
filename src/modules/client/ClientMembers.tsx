@@ -11,7 +11,10 @@ import TextField from '@mui/material/TextField';
 import clsx from 'clsx';
 import { InjectedComponentProps } from 'khamsa';
 import { UtilsService } from '@modules/utils/utils.service';
-import { QueryClientMembersResponseDataItem } from '@modules/client/client.interface';
+import {
+    ClientMembership,
+    QueryClientMembersResponseDataItem,
+} from '@modules/client/client.interface';
 import { ClientService } from '@modules/client/client.service';
 import _ from 'lodash';
 import {
@@ -29,7 +32,6 @@ import { ExceptionProps } from '@modules/brand/exception.interface';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { UserCardProps } from '@modules/user/user-card.interface';
 import { UserCardComponent } from '@modules/user/user-card.component';
-import { Map } from 'immutable';
 import { useSnackbar } from 'notistack';
 import { UserSelectorProps } from '@modules/user/user-selector.interface';
 import { UserSelectorComponent } from '@modules/user/user-selector.component';
@@ -70,6 +72,10 @@ const ClientMembersWrapper = styled(Box)(({ theme }) => {
                 .search {
                     width: 240px;
                     background-color: white;
+                }
+
+                .toggle-button {
+                    min-width: 64px;
                 }
             }
         }
@@ -130,7 +136,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
     const getPageLocaleText = localeService.useLocaleContext('pages.clientMembers');
     const getComponentLocaleText = localeService.useLocaleContext('components');
     const [searchValue, setSearchValue] = useState<string>('');
-    const [role, setRole] = useState<number>(2);
+    const [role, setRole] = useState<string>(undefined);
     const [tabs, setTabs] = useState<ClientMemberTab[]>([]);
     const [controlsWrapperHeight, setControlsWrapperHeight] = useState<number>(0);
     const [membersContainerHeight, setMembersContainerHeight] = useState<number>(0);
@@ -144,18 +150,21 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
         loadingMore: queryClientMembersLoadingMore,
         reload: reloadQueryClientMembers,
     } = utilsService.useLoadMore<QueryClientMembersResponseDataItem> (
-        (data) => clientService.queryClientMembers(
-            {
+        (data) => {
+            if (role === undefined) {
+                return null;
+            }
+
+            return clientService.queryClientMembers({
                 clientId,
-                role,
+                role: role === '@@all' ? [1, 2] : [parseInt(role, 10)],
                 ..._.pick(data, ['lastCursor', 'size']),
                 search: debouncedSearchValue,
-            },
-        ),
+            });
+        },
         {
             reloadDeps: [
                 clientId,
-                role,
                 debouncedSearchValue,
             ],
         },
@@ -168,11 +177,11 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                 clientId,
             });
         },
+        {
+            refreshDeps: [],
+        },
     );
-    const [
-        selectedMembersMap,
-        setSelectedMembersMap,
-    ] = useState<Map<number, string[]>>(Map<number, string[]>());
+    const [selectedMemberships, setSelectedMemberships] = useState<ClientMembership[]>([]);
     const confirm = utilsService.useConfirm();
     const { enqueueSnackbar } = useSnackbar();
     const [userSelectorOpen, setUserSelectorOpen] = useState<boolean>(false);
@@ -197,49 +206,37 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
         };
     });
 
-    const handleAddSelectedMembersToList = (role: number, memberIdList: string[]) => {
-        setSelectedMembersMap(
-            selectedMembersMap.set(
-                role,
-                _.uniq((selectedMembersMap.get(role) || []).concat(memberIdList)),
-            ),
-        );
-    };
-
-    const handleDeleteSelectedMembersFromList = (role: number, memberIdList: string[]) => {
-        if (!_.isArray(selectedMembersMap.get(role))) {
-            setSelectedMembersMap(selectedMembersMap.set(role, []));
+    const handleAddSelectedMemberships = (membership: ClientMembership) => {
+        if (selectedMemberships.some((selectedMemberships) => selectedMemberships.userId === membership.userId)) {
             return;
         }
 
-        setSelectedMembersMap(
-            selectedMembersMap.set(
-                role,
-                selectedMembersMap.get(role).filter((memberId) => {
-                    return memberIdList.indexOf(memberId) === -1;
-                }),
-            ),
+        setSelectedMemberships(selectedMemberships.concat(membership));
+    };
+
+    const handleDeleteSelectedMemberships = (memberships: ClientMembership[]) => {
+        setSelectedMemberships(
+            selectedMemberships.filter((selectedMembership) => {
+                return !memberships.some((membership) => membership?.userId === selectedMembership.userId);
+            }),
         );
     };
 
-    const handleDeleteSelectedMembers = (role: number, memberIdList: string[]) => {
+    const handleDeleteSelectedMembers = (memberships: ClientMembership[]) => {
         confirm({
             title: getComponentLocaleText('confirm.confirm'),
-            description: getPageLocaleText('deleteConfirm', { count: memberIdList.length }),
+            description: getPageLocaleText('deleteConfirm', { count: memberships.length }),
             onConfirm: () => {
                 clientService.deleteClientMembers({
                     clientId,
-                    users: memberIdList,
+                    users: memberships.map((membership) => membership.userId),
                 })
                     .then((response) => {
                         const deletedUsers = response?.response || [];
-                        setSelectedMembersMap(
-                            selectedMembersMap.set(
-                                role,
-                                selectedMembersMap.get(role).filter((userId) => {
-                                    return !deletedUsers.some((selectedMembership) => selectedMembership?.user.id === userId);
-                                }),
-                            ),
+                        setSelectedMemberships(
+                            selectedMemberships.filter((selectedMembership) => {
+                                return !deletedUsers.some((deletedMembership) => selectedMembership?.userId === deletedMembership?.user.id);
+                            }),
                         );
                         reloadQueryClientMembers();
                     })
@@ -257,18 +254,25 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
             if (roleType === 0) {
                 setTabs([
                     {
+                        title: 'tabs.all',
+                        query: {
+                            role: '@@all',
+                        },
+                    },
+                    {
                         title: 'tabs.members',
                         query: {
-                            role: 2,
+                            role: '2',
                         },
                     },
                     {
                         title: 'tabs.admins',
                         query: {
-                            role: 1,
+                            role: '1',
                         },
                     },
                 ]);
+                setRole('@@all');
             }
         }
     }, [userClientRelationResponseData]);
@@ -289,6 +293,10 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
         appNavbarHeight,
         clientSidebarWidth,
     ]);
+
+    useEffect(() => {
+        reloadQueryClientMembers();
+    }, [role]);
 
     return (
         <ClientMembersWrapper
@@ -311,11 +319,10 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                                             <ToggleButton
                                                 value={query?.role}
                                                 key={title}
-                                                onClick={() => {
-                                                    if (typeof query?.role === 'number') {
-                                                        setRole(query.role);
-                                                    }
+                                                classes={{
+                                                    root: 'toggle-button',
                                                 }}
+                                                onClick={() => setRole(query?.role)}
                                             >{getPageLocaleText(title)}</ToggleButton>
                                         );
                                     })
@@ -332,14 +339,13 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                         }}
                     />
                     {
-                        (_.isArray(selectedMembersMap.get(role)) && selectedMembersMap.get(role).length > 0) && (
+                        selectedMemberships.length > 0 && (
                             <Button
                                 color="error"
-                                variant="outlined"
                                 startIcon={<Icon className="icon-delete" />}
-                                title={getPageLocaleText('delete', { count: selectedMembersMap.get(role).length })}
-                                onClick={() => handleDeleteSelectedMembers(role, selectedMembersMap.get(role))}
-                            >{getPageLocaleText('delete', { count: selectedMembersMap.get(role).length })}</Button>
+                                title={getPageLocaleText('delete', { count: selectedMemberships.length })}
+                                onClick={() => handleDeleteSelectedMembers(selectedMemberships)}
+                            >{getPageLocaleText('delete', { count: selectedMemberships.length })}</Button>
                         )
                     }
                 </Box>
@@ -372,7 +378,13 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                                             const {
                                                 id,
                                                 user,
+                                                roleType,
                                             } = listItem;
+
+                                            const membership: ClientMembership = {
+                                                userId: user.id,
+                                                roleType,
+                                            };
 
                                             return (
                                                 <UserCard
@@ -382,15 +394,15 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                                                         {
                                                             icon: 'icon-delete',
                                                             title: getPageLocaleText('userCardMenu.delete'),
-                                                            onActive: () => handleDeleteSelectedMembers(role, [user.id]),
+                                                            onActive: () => handleDeleteSelectedMembers([membership]),
                                                         },
                                                     ]}
-                                                    checked={(selectedMembersMap.get(role) || []).indexOf(user.id) !== -1}
+                                                    checked={selectedMemberships.some((membership) => membership?.userId === user.id)}
                                                     onCheckStatusChange={(checked) => {
                                                         if (checked) {
-                                                            handleAddSelectedMembersToList(role, [user.id]);
+                                                            handleAddSelectedMemberships(membership);
                                                         } else {
-                                                            handleDeleteSelectedMembersFromList(role, [user.id]);
+                                                            handleDeleteSelectedMemberships([membership]);
                                                         }
                                                     }}
                                                 />

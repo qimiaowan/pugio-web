@@ -2,5 +2,5 @@ import { QueryClientMembersRequestOptions } from '@modules/client/client.interfa
 
 export interface ClientMemberTab {
     title: string;
-    query?: Partial<QueryClientMembersRequestOptions>;
+    query?: Partial<Omit<QueryClientMembersRequestOptions, 'role'> & { role: string }>;
 }

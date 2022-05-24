@@ -78,7 +78,12 @@ export class ClientService {
             .request({
                 method: 'get',
                 url: `/client/${clientId}/membership`,
-                query,
+                query: {
+                    ...query,
+                    ...(query.role ? {
+                        role: query.role.join(','),
+                    } : {}),
+                },
             });
     }
 

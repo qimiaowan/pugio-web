@@ -31,10 +31,15 @@ export interface GetClientCurrentStatusResponseData {
 
 export interface QueryClientMembersRequestOptions extends PaginationRequestOptions {
     clientId: string;
-    role: number;
+    role: number[];
 }
 
 export type QueryClientMembersResponseDataItem = Omit<UserClientRelationResponseData, 'client'>;
+
+export interface ClientMembership {
+    userId: string;
+    roleType: number;
+}
 
 export interface DeleteClientMembersRequestOptions {
     clientId: string;
