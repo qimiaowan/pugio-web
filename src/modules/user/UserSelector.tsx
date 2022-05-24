@@ -408,10 +408,12 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                                     startIcon={<Icon className="icon-delete" />}
                                     disabled={selectedSelectedUserIdList.length === 0}
                                     onClick={() => {
-                                        setSelectedUserList([]);
+                                        setSelectedUserList(selectedUserList.filter((user) => {
+                                            return !selectedSelectedUserIdList.some((userId) => userId === user.id);
+                                        }));
                                         setSelectedSelectedUserIdList([]);
                                     }}
-                                >{getComponentLocaleText('delete')}</Button>
+                                >{getComponentLocaleText('delete')}{selectedSelectedUserIdList.length > 0 ? ` (${selectedSelectedUserIdList.length})` : ''}</Button>
                             </Box>
                             <SimpleBar style={{ maxHeight: dialogContentHeight - 1 || 720 }}>
                                 {
