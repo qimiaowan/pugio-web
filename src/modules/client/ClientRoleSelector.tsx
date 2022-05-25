@@ -43,8 +43,9 @@ const ClientRoleSelector: FC<InjectedComponentProps<ClientRoleSelectorProps>> = 
             <Menu
                 {...menuProps}
                 anchorEl={anchorEl}
-                onBackdropClick={(event) => event.stopPropagation()}
                 open={open}
+                onBackdropClick={(event) => event.stopPropagation()}
+                onClick={(event) => event.stopPropagation()}
                 onClose={() => setAnchorEl(null)}
             >
                 {
@@ -54,6 +55,7 @@ const ClientRoleSelector: FC<InjectedComponentProps<ClientRoleSelectorProps>> = 
                         return (
                             <ListItemButton
                                 key={index}
+                                dense={true}
                                 selected={currentRole === role}
                                 {
                                     ...(
@@ -76,7 +78,11 @@ const ClientRoleSelector: FC<InjectedComponentProps<ClientRoleSelectorProps>> = 
                                     }
                                 </ListItemIcon>
                                 <ListItemText>
-                                    <Typography noWrap={true} sx={{ minWidth: 180, maxWidth: 240 }}>{getLocaleText(`roles[${currentRole}]`)}</Typography>
+                                    <Typography
+                                        variant="subtitle2"
+                                        noWrap={true}
+                                        sx={{ minWidth: 64, maxWidth: 120 }}
+                                    >{getLocaleText(`roles[${currentRole}]`)}</Typography>
                                 </ListItemText>
                             </ListItemButton>
                         );
