@@ -117,6 +117,13 @@
             "addUsers": "Add Users",
             "selectAll": "Select All",
             "unselectAll": "Unselect All"
+        },
+        "clientRoleSelector": {
+            "roles": {
+                "1": "Admin",
+                "2": "Member"
+            },
+            "unknown": "Unknown"
         }
     },
     "builtin": {

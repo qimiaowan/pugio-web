@@ -9,6 +9,7 @@ import { LoadingComponent } from '@modules/brand/loading.component';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { UserCardComponent } from '@modules/user/user-card.component';
 import { ConfigService } from '@modules/config/config.service';
+import { ClientRoleSelectorComponent } from '@modules/client/client-role-selector.component';
 
 @Component({
     component: lazy(() => import('@modules/client/ClientMembers')),
@@ -22,6 +23,7 @@ import { ConfigService } from '@modules/config/config.service';
         ExceptionComponent,
         UserCardComponent,
         ConfigService,
+        ClientRoleSelectorComponent,
     ],
 })
 export class ClientMembersComponent {}

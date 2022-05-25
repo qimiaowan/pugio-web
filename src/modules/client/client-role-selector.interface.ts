@@ -7,7 +7,7 @@ type ListItemButtonsPropsCreator = (role: number, checked: boolean) => ListItemB
 export interface ClientRoleSelectorProps {
     role: number;
     triggerProps?: ButtonProps;
-    menuProps?: MenuProps;
+    menuProps?: Partial<MenuProps>;
     listItemButtonProps?: ListItemButtonProps | ListItemButtonsPropsCreator;
     onRoleChange?: (role: number) => void;
 }

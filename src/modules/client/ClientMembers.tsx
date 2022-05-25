@@ -39,6 +39,8 @@ import { StoreService } from '@modules/store/store.service';
 import SimpleBar from 'simplebar-react';
 import styled from '@mui/material/styles/styled';
 import { ConfigService } from '@modules/config/config.service';
+import { ClientRoleSelectorProps } from '@modules/client/client-role-selector.interface';
+import { ClientRoleSelectorComponent } from '@modules/client/client-role-selector.component';
 
 const ClientMembersWrapper = styled(Box)(({ theme }) => {
     const mode = theme.palette.mode;
@@ -132,6 +134,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
     const UserCard = declarations.get<FC<UserCardProps>>(UserCardComponent);
     const UserSelector = declarations.get<FC<UserSelectorProps>>(UserSelectorComponent);
     const configService = declarations.get<ConfigService>(ConfigService);
+    const ClientRoleSelector = declarations.get<FC<ClientRoleSelectorProps>>(ClientRoleSelectorComponent);
 
     const { client_id: clientId } = useParams();
     const getLocaleText = localeService.useLocaleContext();
@@ -399,6 +402,15 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                                                             onActive: () => handleDeleteSelectedMembers([membership]),
                                                         },
                                                     ]}
+                                                    controlSlot={
+                                                        <ClientRoleSelector
+                                                            role={roleType}
+                                                            triggerProps={{
+                                                                disabled: userClientRelationResponseData?.response?.roleType >= roleType,
+                                                            }}
+                                                            // TODO onRoleChange handler
+                                                        />
+                                                    }
                                                     checked={selectedMemberships.some((membership) => membership?.userId === user.id)}
                                                     onCheckStatusChange={(checked) => {
                                                         if (checked) {
@@ -432,6 +444,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
             <UserSelector
                 open={userSelectorOpen}
                 onClose={() => setUserSelectorOpen(false)}
+                // TODO onSelectUsers handler
             />
         </ClientMembersWrapper>
     );
