@@ -3,7 +3,10 @@ import {
     Client,
     QueryClientsResponseDataItem,
 } from '@modules/clients/clients.interface';
-import { PaginationRequestOptions } from '@modules/request/request.interface';
+import {
+    BaseResponseData,
+    PaginationRequestOptions,
+} from '@modules/request/request.interface';
 
 export interface UserClientRelationRequestOptions {
     clientId: string;
@@ -47,3 +50,23 @@ export interface DeleteClientMembersRequestOptions {
 }
 
 export type DeleteClientMembersResponseData = UserClientRelationResponseData[];
+
+export interface AddClientMembersRequestOptions {
+    clientId: string;
+    memberships: ClientMembership[];
+}
+
+export interface AddClientMembersResponseDataItem extends BaseResponseData {
+    id: string;
+    roleType: number;
+    user: Partial<Profile>;
+    client: Partial<Client>;
+}
+
+export type AddClientMembersResponseData = AddClientMembersResponseDataItem[];
+
+export type ChangeClientMembershipRequestOptions = AddClientMembersRequestOptions;
+
+export type ChangeClientMembershipResponseDataItem = AddClientMembersResponseDataItem;
+
+export type ChangeClientMembershipResponseData = ChangeClientMembershipResponseDataItem[];

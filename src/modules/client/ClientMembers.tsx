@@ -210,6 +210,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
             clientSidebarWidth,
         };
     });
+    const [clientMembers, setClientMembers] = useState<QueryClientMembersResponseDataItem[]>([]);
 
     const handleAddSelectedMemberships = (membership: ClientMembership) => {
         if (selectedMemberships.some((selectedMemberships) => selectedMemberships.userId === membership.userId)) {
@@ -303,6 +304,10 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
         reloadQueryClientMembers();
     }, [role]);
 
+    useEffect(() => {
+        setClientMembers(queryClientMembersResponseData?.list || []);
+    }, [queryClientMembersResponseData]);
+
     return (
         <ClientMembersWrapper
             {...props}
@@ -371,7 +376,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                     {
                         queryClientMembersLoading
                             ? <Loading />
-                            : queryClientMembersResponseData?.list.length === 0
+                            : clientMembers.length === 0
                                 ? <Exception
                                     imageSrc="/static/images/empty.svg"
                                     title={getPageLocaleText('empty.title')}
@@ -379,7 +384,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                                 />
                                 : <SimpleBar style={{ width: membersContainerWidth, height: membersContainerHeight }}>
                                     {
-                                        queryClientMembersResponseData.list.map((listItem) => {
+                                        clientMembers.map((listItem) => {
                                             const {
                                                 id,
                                                 user,
@@ -408,7 +413,31 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                                                             triggerProps={{
                                                                 disabled: userClientRelationResponseData?.response?.roleType >= roleType,
                                                             }}
-                                                            // TODO onRoleChange handler
+                                                            onRoleChange={(role) => {
+                                                                clientService.changeClientMembership({
+                                                                    clientId,
+                                                                    memberships: [
+                                                                        {
+                                                                            userId: user.id,
+                                                                            roleType: role,
+                                                                        },
+                                                                    ],
+                                                                });
+
+                                                                const index = clientMembers.findIndex((membership) => {
+                                                                    return membership.user.id === user.id;
+                                                                });
+
+                                                                if (index !== -1) {
+                                                                    setClientMembers(
+                                                                        clientMembers.splice(
+                                                                            index,
+                                                                            1,
+                                                                            _.set(clientMembers[index], 'roleType', role),
+                                                                        ),
+                                                                    );
+                                                                }
+                                                            }}
                                                         />
                                                     }
                                                     checked={selectedMemberships.some((membership) => membership?.userId === user.id)}
@@ -444,7 +473,14 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
             <UserSelector
                 open={userSelectorOpen}
                 onClose={() => setUserSelectorOpen(false)}
-                // TODO onSelectUsers handler
+                onSelectUsers={(memberships) => {
+                    clientService.addClientMembers({
+                        clientId,
+                        memberships,
+                    }).then(() => {
+                        reloadQueryClientMembers();
+                    });
+                }}
             />
         </ClientMembersWrapper>
     );

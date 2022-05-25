@@ -15,6 +15,10 @@ import {
     UserClientRelationResponseData,
     DeleteClientMembersRequestOptions,
     DeleteClientMembersResponseData,
+    AddClientMembersRequestOptions,
+    AddClientMembersResponseData,
+    ChangeClientMembershipRequestOptions,
+    ChangeClientMembershipResponseData,
 } from '@modules/client/client.interface';
 
 @Injectable()
@@ -103,5 +107,34 @@ export class ClientService {
             });
     }
 
-    public async addClientMembers() {}
+    public async addClientMembers(
+        options: AddClientMembersRequestOptions,
+    ): Promise<Response<AddClientMembersResponseData>> {
+        const {
+            clientId,
+            memberships,
+        } = options;
+
+        return await this.requestService.getInstance()
+            .request({
+                method: 'post',
+                url: `/client/${clientId}/membership`,
+                data: { memberships },
+            });
+    }
+
+    public async changeClientMembership(
+        options: ChangeClientMembershipRequestOptions,
+    ): Promise<Response<ChangeClientMembershipResponseData>> {
+        const {
+            clientId,
+            memberships,
+        } = options;
+
+        return await this.requestService.getInstance()
+            .request({
+                method: 'post',
+                url: `/client/${clientId}/membership`,
+                data: { memberships },
+            });    }
 }
