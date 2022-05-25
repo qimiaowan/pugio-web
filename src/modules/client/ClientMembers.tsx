@@ -38,6 +38,7 @@ import { UserSelectorComponent } from '@modules/user/user-selector.component';
 import { StoreService } from '@modules/store/store.service';
 import SimpleBar from 'simplebar-react';
 import styled from '@mui/material/styles/styled';
+import { ConfigService } from '@modules/config/config.service';
 
 const ClientMembersWrapper = styled(Box)(({ theme }) => {
     const mode = theme.palette.mode;
@@ -130,6 +131,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
     const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
     const UserCard = declarations.get<FC<UserCardProps>>(UserCardComponent);
     const UserSelector = declarations.get<FC<UserSelectorProps>>(UserSelectorComponent);
+    const configService = declarations.get<ConfigService>(ConfigService);
 
     const { client_id: clientId } = useParams();
     const getLocaleText = localeService.useLocaleContext();
@@ -157,7 +159,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
 
             return clientService.queryClientMembers({
                 clientId,
-                role: role === '@@all' ? [1, 2] : [parseInt(role, 10)],
+                role: role === configService.CLIENT_MEMBER_ALL_ROLE_TYPE ? [1, 2] : [parseInt(role, 10)],
                 ..._.pick(data, ['lastCursor', 'size']),
                 search: debouncedSearchValue,
             });
@@ -256,7 +258,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                     {
                         title: 'tabs.all',
                         query: {
-                            role: '@@all',
+                            role: configService.CLIENT_MEMBER_ALL_ROLE_TYPE,
                         },
                     },
                     {
@@ -272,7 +274,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                         },
                     },
                 ]);
-                setRole('@@all');
+                setRole(configService.CLIENT_MEMBER_ALL_ROLE_TYPE);
             }
         }
     }, [userClientRelationResponseData]);

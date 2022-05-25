@@ -20,7 +20,7 @@ import { useRequest } from 'ahooks';
 import { LoadingComponent } from '@modules/brand/loading.component';
 import { StoreService } from '@modules/store/store.service';
 import shallow from 'zustand/shallow';
-import { DEFAULT_PICTURE_URL } from '@/constants';
+import { ConfigService } from '@modules/config/config.service';
 
 const ProfileMenu: FC<InjectedComponentProps> = ({
     declarations,
@@ -28,10 +28,11 @@ const ProfileMenu: FC<InjectedComponentProps> = ({
     const localeService = declarations.get<LocaleService>(LocaleService);
     const storeService = declarations.get<StoreService>(StoreService);
     const profileService = declarations.get<ProfileService>(ProfileService);
+    const configService = declarations.get<ConfigService>(ConfigService);
 
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
 
-    const [avatarUrl, setAvatarUrl] = useState<string>(DEFAULT_PICTURE_URL);
+    const [avatarUrl, setAvatarUrl] = useState<string>(configService.DEFAULT_PICTURE_URL);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const getLocaleText = localeService.useLocaleContext();
     const {
@@ -73,7 +74,7 @@ const ProfileMenu: FC<InjectedComponentProps> = ({
 
     useEffect(() => {
         if (userProfile) {
-            setAvatarUrl(userProfile.picture || DEFAULT_PICTURE_URL);
+            setAvatarUrl(userProfile.picture || configService.DEFAULT_PICTURE_URL);
         }
     }, [userProfile]);
 
@@ -95,8 +96,8 @@ const ProfileMenu: FC<InjectedComponentProps> = ({
                         src={avatarUrl}
                         imgProps={{
                             onError: () => {
-                                if (avatarUrl !== DEFAULT_PICTURE_URL) {
-                                    setAvatarUrl(DEFAULT_PICTURE_URL);
+                                if (avatarUrl !== configService.DEFAULT_PICTURE_URL) {
+                                    setAvatarUrl(configService.DEFAULT_PICTURE_URL);
                                 }
                             },
                         }}

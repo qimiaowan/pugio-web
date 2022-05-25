@@ -2,11 +2,6 @@ import { Injectable } from 'khamsa';
 import { CaseTransformerService } from '@pugio/case-transformer';
 import _ from 'lodash';
 import {
-    ORIGIN,
-    clientId,
-    DEFAULT_PICTURE_URL,
-} from '@/constants';
-import {
     InfiniteScrollHookData,
     PaginationResponseData,
     TDateRange,
@@ -26,6 +21,7 @@ import {
     ConfirmOptions,
 } from 'react-mui-confirm';
 import { LocaleService } from '@modules/locale/locale.service';
+import { ConfigService } from '@modules/config/config.service';
 
 type EventListener = (data: any) => void;
 
@@ -74,15 +70,16 @@ class EventBus extends AbstractEventBus implements AbstractEventBus  {
 export class UtilsService extends CaseTransformerService {
     public constructor(
         private readonly localeService: LocaleService,
+        private readonly configService: ConfigService,
     ) {
         super();
     }
 
     public generateOAuthState(redirectPath = '/') {
         const stateData = {
-            clientId,
+            clientId: this.configService.ACCOUNT_CENTER_OAUTH2_CLIENT_ID,
             vendor: {
-                origin: ORIGIN,
+                origin: this.configService.ORIGIN,
                 checked_in_redirect_path: redirectPath,
             },
         };
@@ -94,7 +91,7 @@ export class UtilsService extends CaseTransformerService {
         const locationHref = window.location.href;
         const params = new URLSearchParams();
         params.append('response_type', 'code');
-        params.append('client_id', clientId);
+        params.append('client_id', this.configService.ACCOUNT_CENTER_OAUTH2_CLIENT_ID);
         params.append('redirect_uri', 'https://account.lenconda.top/api/v1/auth/callback');
         params.append('scope', 'offline_access');
         params.append('state', this.generateOAuthState(locationHref));
@@ -244,7 +241,7 @@ export class UtilsService extends CaseTransformerService {
             middleName,
             lastName,
             email,
-            picture = DEFAULT_PICTURE_URL,
+            picture = this.configService.DEFAULT_PICTURE_URL,
         } = profile;
 
         const result = {

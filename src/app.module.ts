@@ -2,6 +2,7 @@ import { Module } from 'khamsa';
 import { AppComponent } from '@/app.component';
 import { RequestModule } from '@modules/request/request.module';
 import { UtilsModule } from '@modules/utils/utils.module';
+import { ConfigModule } from '@modules/config/config.module';
 
 const LocaleModule = import('@modules/locale/locale.module').then(({ LocaleModule }) => LocaleModule);
 const BrandModule = import('@modules/brand/brand.module').then(({ BrandModule }) => BrandModule);
@@ -18,6 +19,7 @@ const UserModule = import('@modules/user/user.module').then(({ UserModule }) => 
     imports: [
         UtilsModule,
         RequestModule,
+        ConfigModule,
         BrandModule,
         LocaleModule,
         StoreModule,

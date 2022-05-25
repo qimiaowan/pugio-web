@@ -4,6 +4,7 @@ import { ProfileService } from '@modules/profile/profile.service';
 import ProfileMenu from '@modules/profile/ProfileMenu';
 import { LoadingComponent } from '@modules/brand/loading.component';
 import { StoreService } from '@modules/store/store.service';
+import { ConfigService } from '@modules/config/config.service';
 
 @Component({
     component: ProfileMenu,
@@ -12,6 +13,7 @@ import { StoreService } from '@modules/store/store.service';
         ProfileService,
         LoadingComponent,
         StoreService,
+        ConfigService,
     ],
 })
 export class ProfileMenuComponent {}

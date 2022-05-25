@@ -11,6 +11,7 @@ import { ExceptionComponent } from '@modules/brand/exception.component';
 import { AppComponent as WebTerminalAppComponent } from '@builtin:web-terminal/app.component';
 import { ChannelListComponent } from '@modules/channel/channel-list.component';
 import { ChannelPopoverComponent } from '@modules/channel/channel-popover.component';
+import { ConfigService } from '@modules/config/config.service';
 
 @Component({
     component: lazy(() => import('@modules/client/ClientWorkstation')),
@@ -26,6 +27,7 @@ import { ChannelPopoverComponent } from '@modules/channel/channel-popover.compon
         WebTerminalAppComponent,
         ChannelListComponent,
         ChannelPopoverComponent,
+        ConfigService,
     ],
 })
 export class ClientWorkstationComponent {}

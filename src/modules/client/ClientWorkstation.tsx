@@ -45,8 +45,7 @@ import { ChannelListProps } from '@modules/channel/channel-list.interface';
 import styled from '@mui/material/styles/styled';
 import { ChannelPopoverProps } from '@modules/channel/channel-popover.interface';
 import { ChannelPopoverComponent } from '@modules/channel/channel-popover.component';
-
-const STARTUP_TAB_ID = '@@startup';
+import { ConfigService } from '@modules/config/config.service';
 
 const ClientWorkstationWrapper = styled(Box)(({ theme }) => {
     const mode = theme.palette.mode;
@@ -191,6 +190,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
     const ChannelList = declarations.get<FC<ChannelListProps>>(ChannelListComponent);
     const ChannelPopover = declarations.get<FC<ChannelPopoverProps>>(ChannelPopoverComponent);
+    const configService = declarations.get<ConfigService>(ConfigService);
 
     const internalChannelMap = {
         'pugio.web-terminal': WebTerminalAppComponent,
@@ -479,7 +479,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                     },
                 }}
             />
-            <IconButton onClick={() => setSelectedTab(clientId, STARTUP_TAB_ID)}>
+            <IconButton onClick={() => setSelectedTab(clientId, configService.STARTUP_TAB_ID)}>
                 <Icon className="icon-rocket" />
             </IconButton>
             <IconButton>
@@ -701,7 +701,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             </ClientWorkstationWrapper>
             : <ClientWorkstationWrapper className="page">
                 {
-                    (clientTabsMap.get(clientId)?.size > 0 || selectedTabId === STARTUP_TAB_ID) && (
+                    (clientTabsMap.get(clientId)?.size > 0 || selectedTabId === configService.STARTUP_TAB_ID) && (
                         <Box className="header-container">
                             <Box className="tabs" style={{ width: headerWidth }} ref={tabsWrapperRef}>
                                 <Box
@@ -717,7 +717,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                         sx={{
                                             padding: theme.spacing(1.2),
                                             ...(
-                                                selectedTabId === STARTUP_TAB_ID
+                                                selectedTabId === configService.STARTUP_TAB_ID
                                                     ? {
                                                         backgroundColor: theme.palette.mode === 'dark'
                                                             ? theme.palette.grey[700]
@@ -726,7 +726,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                                     : {}
                                             ),
                                         }}
-                                        onClick={() => setSelectedTab(clientId, STARTUP_TAB_ID)}
+                                        onClick={() => setSelectedTab(clientId, configService.STARTUP_TAB_ID)}
                                     >
                                         <Box component="img" src="/static/images/startup.svg" className="startup-avatar" />
                                     </IconButton>
@@ -864,11 +864,11 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                     sx={{
                                         marginTop: '30px',
                                     }}
-                                    onClick={() => setSelectedTab(clientId, STARTUP_TAB_ID)}
+                                    onClick={() => setSelectedTab(clientId, configService.STARTUP_TAB_ID)}
                                 >{getLocaleText('goToStartup')}</Button>
                             </Exception>
                         </Box>
-                        : selectedTabId === STARTUP_TAB_ID
+                        : selectedTabId === configService.STARTUP_TAB_ID
                             ? <Box className="channel-not-selected">
                                 <ChannelList
                                     clientId={clientId}

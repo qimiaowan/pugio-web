@@ -13,6 +13,7 @@ import {
 } from '@modules/store/store.interface';
 import { Profile } from '@modules/profile/profile.interface';
 import { UtilsService } from '@modules/utils/utils.service';
+import { ConfigService } from '@modules/config/config.service';
 
 @Injectable()
 export class StoreService {
@@ -106,7 +107,7 @@ export class StoreService {
                     if (!tabs) {
                         return {
                             channelTabs: state.channelTabs,
-                            selectedTabMap: state.selectedTabMap.set(clientId, '@@startup'),
+                            selectedTabMap: state.selectedTabMap.set(clientId, this.configService.STARTUP_TAB_ID),
                         };
                     }
 
@@ -119,7 +120,7 @@ export class StoreService {
                         ),
                         selectedTabMap: state.selectedTabMap.set(
                             clientId,
-                            newTabs?.last()?.tabId || '@@startup',
+                            newTabs?.last()?.tabId || this.configService.STARTUP_TAB_ID,
                         ),
                     };
                 });
@@ -203,5 +204,6 @@ export class StoreService {
 
     public constructor(
         private readonly utilsService: UtilsService,
+        private readonly configService: ConfigService,
     ) {}
 }

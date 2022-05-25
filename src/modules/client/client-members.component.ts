@@ -8,6 +8,7 @@ import { UtilsService } from '@modules/utils/utils.service';
 import { LoadingComponent } from '@modules/brand/loading.component';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { UserCardComponent } from '@modules/user/user-card.component';
+import { ConfigService } from '@modules/config/config.service';
 
 @Component({
     component: lazy(() => import('@modules/client/ClientMembers')),
@@ -20,6 +21,7 @@ import { UserCardComponent } from '@modules/user/user-card.component';
         LoadingComponent,
         ExceptionComponent,
         UserCardComponent,
+        ConfigService,
     ],
 })
 export class ClientMembersComponent {}
