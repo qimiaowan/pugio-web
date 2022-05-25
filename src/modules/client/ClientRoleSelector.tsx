@@ -67,6 +67,7 @@ const ClientRoleSelector: FC<InjectedComponentProps<ClientRoleSelectorProps>> = 
                                 onClick={(event) => {
                                     event.stopPropagation();
                                     onRoleChange(currentRole);
+                                    setAnchorEl(null);
                                 }}
                             >
                                 <ListItemIcon>

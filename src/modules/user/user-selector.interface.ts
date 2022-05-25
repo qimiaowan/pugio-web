@@ -1,6 +1,6 @@
 import { DialogProps } from '@mui/material/Dialog';
-import { Profile } from '@modules/profile/profile.interface';
+import { ClientMembership } from '@modules/client/client.interface';
 
 export interface UserSelectorProps extends DialogProps {
-    onSelectUsers?: (users: Profile[]) => void;
+    onSelectUsers?: (memberships: ClientMembership[]) => void;
 }

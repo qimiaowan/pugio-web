@@ -17,6 +17,7 @@ export interface UserCardProps extends BoxProps {
     checked?: boolean;
     menu?: UserCardMenuItem[];
     checkboxProps?: CheckboxProps;
+    autoHide?: boolean;
     onCheckStatusChange?: (checked: boolean) => void;
 }
 

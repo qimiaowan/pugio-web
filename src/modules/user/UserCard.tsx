@@ -167,6 +167,7 @@ const UserCard: FC<InjectedComponentProps<UserCardProps>> = ({
     checked = false,
     controlSlot,
     checkboxProps = {},
+    autoHide = true,
     onCheckStatusChange = _.noop,
     onClick = _.noop,
     ...props
@@ -227,7 +228,7 @@ const UserCard: FC<InjectedComponentProps<UserCardProps>> = ({
                 >{subTitle}</Typography>
             </Box>
             {
-                (menu.length > 0 && controlsVisible) && (
+                (controlsVisible || !autoHide) && (
                     <Box className="controls-button-wrapper">
                         {
                             controlSlot && cloneElement(controlSlot)

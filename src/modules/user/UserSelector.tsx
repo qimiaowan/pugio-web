@@ -37,6 +37,9 @@ import { ExceptionComponentProps } from '@modules/brand/exception.interface';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import styled from '@mui/material/styles/styled';
 import useTheme from '@mui/material/styles/useTheme';
+import { ClientRoleSelectorProps } from '@modules/client/client-role-selector.interface';
+import { ClientRoleSelectorComponent } from '@modules/client/client-role-selector.component';
+import { ClientMembership } from '@modules/client/client.interface';
 
 const UserSelectorWrapper = styled(Dialog)(({ theme }) => {
     return `
@@ -133,7 +136,7 @@ const UserSelectorWrapper = styled(Dialog)(({ theme }) => {
 const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
     declarations,
     className,
-    onSelectUsers,
+    onSelectUsers = _.noop,
     onClose = _.noop,
     ...props
 }) => {
@@ -143,6 +146,7 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
     const UserCard = declarations.get<FC<UserCardProps>>(UserCardComponent);
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
     const Exception = declarations.get<FC<ExceptionComponentProps>>(ExceptionComponent);
+    const ClientRoleSelector = declarations.get<FC<ClientRoleSelectorProps>>(ClientRoleSelectorComponent);
 
     const handleOpenPopover = (event: MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -156,7 +160,7 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const [searchValue, setSearchValue] = useState<string>('');
     const debouncedSearchValue = useDebounce(searchValue, { wait: 300 });
-    const [selectedUserList, setSelectedUserList] = useState<Profile[]>([]);
+    const [selectedMembershipList, setSelectedMembershipList] = useState<(Omit<ClientMembership, 'userId'> & { profile: Profile })[]>([]);
     const [selectedSelectedUserIdList, setSelectedSelectedUserIdList] = useState<string[]>([]);
     const [dialogContentHeight, setDialogContentHeight] = useState<number>(0);
     const [dialogContentElement, setDialogContentElement] = useState<HTMLDivElement>(null);
@@ -192,7 +196,7 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
 
         onClose(event, reason);
         setSearchValue('');
-        setSelectedUserList([]);
+        setSelectedMembershipList([]);
         setSelectedSelectedUserIdList([]);
     };
 
@@ -311,18 +315,29 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                                                         classes={{
                                                             root: 'users-list-item',
                                                         }}
-                                                        selected={selectedUserList.some((user) => user.id === id)}
+                                                        selected={selectedMembershipList.some((membership) => membership.profile.id === id)}
                                                         onClick={() => {
-                                                            if (!selectedUserList.some((user) => user.id === id)) {
-                                                                setSelectedUserList([item].concat(selectedUserList));
+                                                            if (!selectedMembershipList.some((membership) => membership.profile.id === id)) {
+                                                                setSelectedMembershipList(
+                                                                    [
+                                                                        {
+                                                                            profile: item,
+                                                                            roleType: 2,
+                                                                        },
+                                                                    ].concat(selectedMembershipList),
+                                                                );
                                                             } else {
-                                                                setSelectedUserList(selectedUserList.filter((user) => user.id !== id));
+                                                                setSelectedMembershipList(
+                                                                    selectedMembershipList.filter((membership) => {
+                                                                        return membership.profile.id !== id;
+                                                                    }),
+                                                                );
                                                             }
                                                         }}
                                                     >
                                                         <ListItemIcon>
                                                             {
-                                                                selectedUserList.some((selectedUser) => selectedUser.id === item.id) && (
+                                                                selectedMembershipList.some((membership) => membership.profile.id === item.id) && (
                                                                     <Icon className="icon icon-check" />
                                                                 )
                                                             }
@@ -369,7 +384,7 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                 ref={(ref) => setDialogContentElement(ref as unknown as HTMLDivElement)}
             >
                 {
-                    selectedUserList.length === 0
+                    selectedMembershipList.length === 0
                         ? <Exception
                             imageSrc="/static/images/empty.svg"
                             title={getComponentLocaleText('noSelected.title')}
@@ -379,25 +394,25 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                             <Box className="select-controls-wrapper">
                                 <Button
                                     size="small"
-                                    color={selectedUserList.length === selectedSelectedUserIdList.length ? 'info' : 'secondary'}
+                                    color={selectedMembershipList.length === selectedSelectedUserIdList.length ? 'info' : 'secondary'}
                                     startIcon={<Icon className="icon-select-all" />}
                                     sx={{
                                         marginRight: theme.spacing(1),
                                     }}
                                     onClick={() => {
-                                        if (selectedUserList.length === selectedSelectedUserIdList.length) {
+                                        if (selectedMembershipList.length === selectedSelectedUserIdList.length) {
                                             setSelectedSelectedUserIdList([]);
                                         } else {
                                             setSelectedSelectedUserIdList(
                                                 _.uniq(selectedSelectedUserIdList.concat(
-                                                    selectedUserList.map((user) => user.id),
+                                                    selectedMembershipList.map((membership) => membership.profile.id),
                                                 )),
                                             );
                                         }
                                     }}
                                 >
                                     {
-                                        selectedUserList.length === selectedSelectedUserIdList.length
+                                        selectedMembershipList.length === selectedSelectedUserIdList.length
                                             ? getComponentLocaleText('unselectAll')
                                             : getComponentLocaleText('selectAll')
                                     }
@@ -408,8 +423,8 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                                     startIcon={<Icon className="icon-delete" />}
                                     disabled={selectedSelectedUserIdList.length === 0}
                                     onClick={() => {
-                                        setSelectedUserList(selectedUserList.filter((user) => {
-                                            return !selectedSelectedUserIdList.some((userId) => userId === user.id);
+                                        setSelectedMembershipList(selectedMembershipList.filter((membership) => {
+                                            return !selectedSelectedUserIdList.some((userId) => userId === membership.profile.id);
                                         }));
                                         setSelectedSelectedUserIdList([]);
                                     }}
@@ -417,30 +432,50 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                             </Box>
                             <SimpleBar style={{ maxHeight: dialogContentHeight - 1 || 720 }}>
                                 {
-                                    selectedUserList.map((selectedUser) => {
+                                    selectedMembershipList.map((membership) => {
                                         return (
                                             <UserCard
-                                                key={selectedUser.id}
-                                                profile={selectedUser}
-                                                checked={selectedSelectedUserIdList.indexOf(selectedUser.id) !== -1}
+                                                key={membership.profile.id}
+                                                profile={membership.profile}
+                                                autoHide={false}
+                                                checked={selectedSelectedUserIdList.indexOf(membership.profile.id) !== -1}
                                                 menu={[
                                                     {
                                                         icon: 'icon-close',
                                                         title: getComponentLocaleText('clearSelected'),
                                                         onActive: () => {
-                                                            setSelectedUserList(selectedUserList.filter((user) => {
-                                                                return user.id !== selectedUser.id;
+                                                            setSelectedMembershipList(selectedMembershipList.filter((selectedMembership) => {
+                                                                return membership.profile.id !== selectedMembership.profile.id;
                                                             }));
                                                         },
                                                     },
                                                 ]}
+                                                controlSlot={
+                                                    <ClientRoleSelector
+                                                        role={membership.roleType}
+                                                        onRoleChange={(role) => {
+                                                            setSelectedMembershipList(
+                                                                selectedMembershipList.map((selectedMembership) => {
+                                                                    if (membership.profile.id !== selectedMembership.profile.id) {
+                                                                        return selectedMembership;
+                                                                    }
+                                                                    return _.set(selectedMembership, 'roleType', role);
+                                                                }),
+                                                            );
+                                                        }}
+                                                    />
+                                                }
                                                 onCheckStatusChange={(checked) => {
                                                     if (checked) {
-                                                        setSelectedSelectedUserIdList(_.uniq(selectedSelectedUserIdList.concat(selectedUser.id)));
+                                                        setSelectedSelectedUserIdList(
+                                                            _.uniq(selectedSelectedUserIdList.concat(membership.profile.id)),
+                                                        );
                                                     } else {
-                                                        setSelectedSelectedUserIdList(selectedSelectedUserIdList.filter((userId) => {
-                                                            return userId !== selectedUser.id;
-                                                        }));
+                                                        setSelectedSelectedUserIdList(
+                                                            selectedSelectedUserIdList.filter((userId) => {
+                                                                return userId !== membership.profile.id;
+                                                            }),
+                                                        );
                                                     }
                                                 }}
                                             />
@@ -455,9 +490,14 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                 <Button onClick={() => handleCloseSelector()}>{getComponentLocaleText('cancel')}</Button>
                 <Button
                     color="primary"
-                    disabled={selectedUserList.length === 0}
+                    disabled={selectedMembershipList.length === 0}
                     onClick={() => {
-                        onSelectUsers(selectedUserList);
+                        onSelectUsers(selectedMembershipList.map((membership) => {
+                            return {
+                                userId: membership.profile.id,
+                                roleType: membership.roleType,
+                            };
+                        }));
                         handleCloseSelector();
                     }}
                 >{getComponentLocaleText('ok')}</Button>
