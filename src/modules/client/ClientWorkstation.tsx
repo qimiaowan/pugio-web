@@ -708,9 +708,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             </ClientWorkstationWrapper>
             : <ClientWorkstationWrapper className="page">
                 {/* FIXME temporarily prevent flash popover */}
-                <Box style={{ width: 0, height: 0, overflow: 'hidden' }}>
-                    <ChannelList clientId={clientId} width={10} height={10} />
-                </Box>
+                <ChannelList />
                 {
                     selectedTabId && (
                         <Box className="header-container">

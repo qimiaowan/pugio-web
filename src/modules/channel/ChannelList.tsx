@@ -171,6 +171,10 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = (listProps) =>
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
     const ChannelListItem = declarations.get<FC<ChannelListItemProps>>(ChannelListItemComponent);
 
+    if (!_.isNumber(width) || !_.isNumber(height) || !clientId) {
+        return <></>;
+    }
+
     const getLocaleText = localeService.useLocaleContext('components.channelList');
     const [searchValue, setSearchValue] = useState<string>('');
     const debouncedSearchValue = useDebounce(searchValue, { wait: 500 });

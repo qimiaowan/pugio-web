@@ -7,9 +7,9 @@ import { ChannelListItemProps } from '@modules/channel/channel-list-item.interfa
 type ChannelListItemPropsCreator = (itemProps: ChannelListItemProps, listProps: ChannelListProps) => Partial<ChannelListItemProps>;
 
 export interface ChannelListProps {
-    clientId: string;
-    width: number;
-    height: number;
+    clientId?: string;
+    width?: number;
+    height?: number;
     listItemProps?: Partial<ChannelListItemProps> | ChannelListItemPropsCreator;
     headerSlot?: ReactNode;
     headerProps?: BoxProps;
