@@ -417,7 +417,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             }}
         >
             <ChannelPopover
-                trigger={({ open, handleOpen }) => {
+                Trigger={({ open, handleOpen }) => {
                     return (
                         <IconButton
                             sx={{
@@ -819,10 +819,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                         '& > *': {
                                             marginRight: `${theme.spacing(1)} !important`,
                                         },
-
-                                        '& .navigate-buttons': {
-                                            fontWeight: 700,
-                                        },
                                     }}
                                 >
                                     <Button
@@ -885,14 +881,18 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                     }}
                                 >
                                     <Button
-                                        variant="contained"
+                                        variant="text"
+                                        color="primary"
+                                        size="small"
                                         startIcon={<Icon className="icon-rocket" />}
                                         onClick={() => setSelectedTab(clientId, configService.STARTUP_TAB_ID)}
                                     >{getLocaleText('goToStartup')}</Button>
                                     {
                                         lastSelectedTabId && (
                                             <Button
-                                                variant="contained"
+                                                variant="text"
+                                                color="primary"
+                                                size="small"
                                                 startIcon={<Icon className="icon-return" />}
                                                 onClick={() => {
                                                     setSelectedTab(clientId, lastSelectedTabId);

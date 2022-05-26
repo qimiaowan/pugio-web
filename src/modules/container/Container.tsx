@@ -28,7 +28,6 @@ import { ProfileMenuComponent } from '@modules/profile/profile-menu.component';
 import { ClientsDropdownComponent } from '@modules/clients/clients-dropdown.component';
 import { StoreService } from '@modules/store/store.service';
 import { ClientsDropdownProps } from '@modules/clients/clients-dropdown.interface';
-import shallow from 'zustand/shallow';
 import { ContainerProps } from '@modules/container/container.interface';
 import _ from 'lodash';
 import { SnackbarProvider } from 'notistack';
@@ -68,8 +67,14 @@ const ContainerWrapper = styled(Box)(({ theme }) => {
                 align-items: center;
                 padding: 0 calc(${theme.spacing(1)} / 2);
 
-                &.avatar-and-locales > * {
-                    margin: 0 calc(${theme.spacing(1)} / 2);
+                &.avatar-and-locales {
+                    .control-button {
+                        font-weight: 500;
+                    }
+
+                    & > * {
+                        margin: 0 calc(${theme.spacing(1)} / 2);
+                    }
                 }
 
                 &.logo-and-nav > * {
@@ -121,22 +126,6 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
     const [locale, setLocale] = useState(localStorage.getItem('locale') || 'en_US');
     const [logo, setLogo] = useState<string>('');
     const getLocaleText = localeService.useLocaleContext();
-    const {
-        clientsDropdownOpen,
-        switchClientsDropdownVisibility,
-    } = storeService.useStore(
-        (state) => {
-            const {
-                clientsDropdownOpen,
-                switchClientsDropdownVisibility,
-            } = state;
-            return {
-                clientsDropdownOpen,
-                switchClientsDropdownVisibility,
-            };
-        },
-        shallow,
-    );
     const appNavbarHeight = storeService.useStore((state) => state.appNavbarHeight);
 
     useEffect(() => {
@@ -171,12 +160,8 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
                                         component="img"
                                         src={logo}
                                     />
-                                    <ClientsDropdown
-                                        open={clientsDropdownOpen}
-                                        onOpen={() => switchClientsDropdownVisibility(true)}
-                                        onClose={() => switchClientsDropdownVisibility(false)}
-                                    />
-                                    <NavLink to="/explore" className="navlink">
+                                    <ClientsDropdown />
+                                    {/* <NavLink to="/explore" className="navlink">
                                         {
                                             <Button
                                                 classes={{
@@ -193,7 +178,7 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
                                                 }}
                                             >{getLocaleText('app.navbar.development')}</Button>
                                         }
-                                    </NavLink>
+                                    </NavLink> */}
                                     <a target="_blank" href="https://github.com/pugiojs/pugio-web/issues" className="navlink">
                                         {
                                             <Button

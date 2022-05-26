@@ -1,8 +1,9 @@
 import Popover from '@mui/material/Popover';
 import {
+    createElement,
     FC,
     useState,
-    MouseEvent,
+    useRef,
 } from 'react';
 import { ChannelPopoverProps } from '@modules/channel/channel-popover.interface';
 import _ from 'lodash';
@@ -22,33 +23,35 @@ const ChannelPopoverWrapper = styled(Popover)(() => {
 });
 
 const ChannelPopover: FC<InjectedComponentProps<ChannelPopoverProps>> = ({
-    trigger,
+    Trigger,
     declarations,
     channelListProps,
     popoverProps = {},
 }) => {
     const ChannelList = declarations.get<FC<ChannelListProps>>(ChannelListComponent);
 
-    const [anchorEl, setAnchorEl] = useState<any | null>(null);
+    const anchorEl = useRef<HTMLDivElement>(null);
+    const [visible, setVisible] = useState<boolean>(false);
 
-    const open = Boolean(anchorEl);
-    const id = open ? Math.random().toString(32).slice(2) : undefined;
-
-    const handleClick = (event: MouseEvent<any>) => {
-        setAnchorEl(event.currentTarget);
+    const handleClick = () => {
+        setVisible(true);
     };
 
     const handleClose = () => {
-        setAnchorEl(null);
+        setVisible(false);
     };
 
     return (
-        <Box>
-            {_.isFunction(trigger) && trigger({ open, handleOpen: handleClick })}
+        <Box ref={anchorEl}>
+            {
+                createElement(Trigger, {
+                    open: visible,
+                    handleOpen: handleClick,
+                })
+            }
             <ChannelPopoverWrapper
-                id={id}
-                open={open}
-                anchorEl={() => anchorEl}
+                open={visible}
+                anchorEl={anchorEl.current}
                 onClose={handleClose}
                 anchorOrigin={{
                     vertical: 'bottom',
@@ -73,7 +76,9 @@ const ChannelPopover: FC<InjectedComponentProps<ChannelPopoverProps>> = ({
                         },
                     }}
                     headerProps={{
-                        className: 'popover-header',
+                        style: {
+                            padding: 0,
+                        },
                     }}
                 />
             </ChannelPopoverWrapper>

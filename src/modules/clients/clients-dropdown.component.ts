@@ -6,6 +6,7 @@ import { LoadingComponent } from '@modules/brand/loading.component';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { UtilsService } from '@modules/utils/utils.service';
 import { ClientService } from '@modules/client/client.service';
+import { StoreService } from '@modules/store/store.service';
 
 @Component({
     component: ClientsDropdown,
@@ -16,6 +17,7 @@ import { ClientService } from '@modules/client/client.service';
         ExceptionComponent,
         UtilsService,
         ClientService,
+        StoreService,
     ],
 })
 export class ClientsDropdownComponent {}

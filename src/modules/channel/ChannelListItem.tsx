@@ -161,6 +161,7 @@ const ChannelListItemMenu: FC<ChannelListItemMenuProps> = ({
                                 <ListItemButton
                                     key={index}
                                     style={{ minWidth: 180 }}
+                                    dense={true}
                                     onClick={(event) => {
                                         if (_.isFunction(onClick)) {
                                             onClick(event);
