@@ -155,7 +155,7 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
                                         src={logo}
                                     />
                                     <ClientsDropdown />
-                                    <NavLink to="/explore" className="navlink">
+                                    {/* <NavLink to="/explore" className="navlink">
                                         {
                                             <Button
                                                 classes={{
@@ -172,7 +172,7 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
                                                 }}
                                             >{getLocaleText('app.navbar.development')}</Button>
                                         }
-                                    </NavLink>
+                                    </NavLink> */}
                                     <a target="_blank" href="https://github.com/pugiojs/pugio-web/issues" className="navlink">
                                         {
                                             <Button
