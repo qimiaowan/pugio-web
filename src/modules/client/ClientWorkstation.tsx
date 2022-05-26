@@ -726,13 +726,19 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                 >
                                     <IconButton
                                         sx={{
-                                            padding: theme.spacing(1.2),
+                                            padding: theme.spacing(0.8),
                                             ...(
                                                 selectedTabId === configService.STARTUP_TAB_ID
                                                     ? {
                                                         backgroundColor: theme.palette.mode === 'dark'
                                                             ? theme.palette.grey[700]
                                                             : theme.palette.grey[300],
+                                                        cursor: 'default',
+                                                        '&:hover': {
+                                                            backgroundColor: theme.palette.mode === 'dark'
+                                                                ? theme.palette.grey[700]
+                                                                : theme.palette.grey[300],
+                                                        },
                                                     }
                                                     : {}
                                             ),
@@ -987,8 +993,17 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                 </Box>
                             </Exception>
                         </Box>
-                        : selectedTabId === configService.STARTUP_TAB_ID
-                            ? <Box className="channel-not-selected">
+                        : <>
+                            <Box
+                                className="channel-not-selected"
+                                style={
+                                    selectedTabId === configService.STARTUP_TAB_ID
+                                        ? {}
+                                        : {
+                                            display: 'none',
+                                        }
+                                }
+                            >
                                 <ChannelList
                                     clientId={clientId}
                                     width={headerWidth}
@@ -1004,18 +1019,23 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                     }}
                                 />
                             </Box>
-                            : <SimpleBar
-                                style={{
-                                    width: '100%',
-                                    height: panelHeight,
-                                }}
-                                className="panel-wrapper"
-                            >
-                                <ChannelPanel
-                                    tabId={selectedTabId}
-                                    channelTab={(clientTabsMap.get(clientId) || List<ChannelTab>([])).find((tab) => tab.tabId === selectedTabId)}
-                                />
-                            </SimpleBar>
+                            {
+                                selectedTabId !== configService.STARTUP_TAB_ID && (
+                                    <SimpleBar
+                                        style={{
+                                            width: '100%',
+                                            height: panelHeight,
+                                        }}
+                                        className="panel-wrapper"
+                                    >
+                                        <ChannelPanel
+                                            tabId={selectedTabId}
+                                            channelTab={(clientTabsMap.get(clientId) || List<ChannelTab>([])).find((tab) => tab.tabId === selectedTabId)}
+                                        />
+                                    </SimpleBar>
+                                )
+                            }
+                        </>
                 }
             </ClientWorkstationWrapper>
     );
