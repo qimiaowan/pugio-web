@@ -43,9 +43,9 @@ import { AppComponent as WebTerminalAppComponent } from '@builtin:web-terminal/a
 import { ChannelListComponent } from '@modules/channel/channel-list.component';
 import { ChannelListProps } from '@modules/channel/channel-list.interface';
 import styled from '@mui/material/styles/styled';
-import { ChannelPopoverProps } from '@modules/channel/channel-popover.interface';
-import { ChannelPopoverComponent } from '@modules/channel/channel-popover.component';
 import { ConfigService } from '@modules/config/config.service';
+import { PopoverProps } from '@modules/common/popover.interface';
+import { PopoverComponent } from '@modules/common/popover.component';
 
 const ClientWorkstationWrapper = styled(Box)(({ theme }) => {
     const mode = theme.palette.mode;
@@ -189,8 +189,8 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const utilsService = declarations.get<UtilsService>(UtilsService);
     const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
     const ChannelList = declarations.get<FC<ChannelListProps>>(ChannelListComponent);
-    const ChannelPopover = declarations.get<FC<ChannelPopoverProps>>(ChannelPopoverComponent);
     const configService = declarations.get<ConfigService>(ConfigService);
+    const Popover = declarations.get<FC<PopoverProps>>(PopoverComponent);
 
     const internalChannelMap = {
         'pugio.web-terminal': WebTerminalAppComponent,
@@ -416,8 +416,8 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                 },
             }}
         >
-            <ChannelPopover
-                Trigger={({ open, handleOpen }) => {
+            <Popover
+                Trigger={({ open, openPopover }) => {
                     return (
                         <IconButton
                             sx={{
@@ -427,59 +427,68 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                         : theme.palette.grey[300]
                                     : 'transparent',
                             }}
-                            onClick={handleOpen}
+                            onClick={openPopover}
                         ><Icon className="icon-plus" /></IconButton>
                     );
                 }}
-                channelListProps={
-                    ({ handleClose }) => ({
-                        clientId,
-                        width: 320,
-                        height: 360,
-                        listItemProps: {
-                            mode: 'list-item',
-                            menu: [],
-                        },
-                        headerSlot: (
-                            <Box
-                                sx={{
-                                    flexGrow: 1,
-                                    flexShrink: 0,
-                                    alignSelf: 'stretch',
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    padding: `0 ${theme.spacing(1)}`,
+            >
+                {
+                    ({ closePopover }) => (
+                        ChannelList
+                            ? <ChannelList
+                                clientId={clientId}
+                                width={320}
+                                height={360}
+                                listItemProps={{
+                                    mode: 'list-item',
+                                    menu: [],
                                 }}
-                            >
-                                <IconButton
-                                    title={getLocaleText('installChannel')}
-                                >
-                                    <Icon className="icon icon-import" />
-                                </IconButton>
-                                <IconButton
-                                    title={getLocaleText('createChannel')}
-                                >
-                                    <Icon className="icon icon-plus" />
-                                </IconButton>
-                            </Box>
-                        ),
-                        onSelectChannel: (channel) => {
-                            handleCreateTab(clientId, { channelId: channel.id });
-                            handleClose();
-                        },
-                    })
+                                searchProps={{
+                                    InputProps: {
+                                        startAdornment: <Icon className="icon-search" />,
+                                        sx: {
+                                            border: 0,
+                                        },
+                                    },
+                                }}
+                                headerProps={{
+                                    style: {
+                                        padding: 0,
+                                    },
+                                }}
+                                headerSlot={
+                                    <Box
+                                        sx={{
+                                            flexGrow: 1,
+                                            flexShrink: 0,
+                                            alignSelf: 'stretch',
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            padding: `0 ${theme.spacing(1)}`,
+                                        }}
+                                    >
+                                        <IconButton
+                                            title={getLocaleText('installChannel')}
+                                        >
+                                            <Icon className="icon icon-import" />
+                                        </IconButton>
+                                        <IconButton
+                                            title={getLocaleText('createChannel')}
+                                        >
+                                            <Icon className="icon icon-plus" />
+                                        </IconButton>
+                                    </Box>
+                                }
+                                onSelectChannel={(channel) => {
+                                    handleCreateTab(clientId, { channelId: channel.id });
+                                    closePopover();
+                                }}
+                            />
+                            : null
+                    )
                 }
-                popoverProps={{
-                    PaperProps: {
-                        sx: {
-                            backgroundColor: theme.palette.mode === 'dark'
-                                ? 'black'
-                                : 'white',
-                        },
-                    },
-                }}
-            />
+            </Popover>
             <IconButton>
                 <Icon className="icon-more-horizontal" />
             </IconButton>
@@ -698,6 +707,10 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                 />
             </ClientWorkstationWrapper>
             : <ClientWorkstationWrapper className="page">
+                {/* FIXME temporarily prevent flash popover */}
+                <Box style={{ width: 0, height: 0, overflow: 'hidden' }}>
+                    <ChannelList clientId={clientId} width={10} height={10} />
+                </Box>
                 {
                     selectedTabId && (
                         <Box className="header-container">
@@ -901,6 +914,76 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                             >{getLocaleText('goBack')}</Button>
                                         )
                                     }
+                                    <Popover
+                                        Trigger={({ openPopover }) => {
+                                            return (
+                                                <Button
+                                                    variant="text"
+                                                    color="primary"
+                                                    size="small"
+                                                    startIcon={<Icon className="icon-plus" />}
+                                                    onClick={openPopover}
+                                                >{getLocaleText('createTab')}</Button>
+                                            );
+                                        }}
+                                    >
+                                        {
+                                            ({ closePopover }) => (
+                                                ChannelList
+                                                    ? <ChannelList
+                                                        clientId={clientId}
+                                                        width={320}
+                                                        height={360}
+                                                        listItemProps={{
+                                                            mode: 'list-item',
+                                                            menu: [],
+                                                        }}
+                                                        searchProps={{
+                                                            InputProps: {
+                                                                startAdornment: <Icon className="icon-search" />,
+                                                                sx: {
+                                                                    border: 0,
+                                                                },
+                                                            },
+                                                        }}
+                                                        headerProps={{
+                                                            style: {
+                                                                padding: 0,
+                                                            },
+                                                        }}
+                                                        headerSlot={
+                                                            <Box
+                                                                sx={{
+                                                                    flexGrow: 1,
+                                                                    flexShrink: 0,
+                                                                    alignSelf: 'stretch',
+                                                                    display: 'flex',
+                                                                    justifyContent: 'space-between',
+                                                                    alignItems: 'center',
+                                                                    padding: `0 ${theme.spacing(1)}`,
+                                                                }}
+                                                            >
+                                                                <IconButton
+                                                                    title={getLocaleText('installChannel')}
+                                                                >
+                                                                    <Icon className="icon icon-import" />
+                                                                </IconButton>
+                                                                <IconButton
+                                                                    title={getLocaleText('createChannel')}
+                                                                >
+                                                                    <Icon className="icon icon-plus" />
+                                                                </IconButton>
+                                                            </Box>
+                                                        }
+                                                        onSelectChannel={(channel) => {
+                                                            handleCreateTab(clientId, { channelId: channel.id });
+                                                            closePopover();
+                                                        }}
+                                                    />
+                                                    : null
+                                            )
+                                        }
+                                    </Popover>
                                 </Box>
                             </Exception>
                         </Box>

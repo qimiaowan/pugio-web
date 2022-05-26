@@ -38,7 +38,8 @@
             "installChannel": "Install",
             "startup": "Startup",
             "home": "Home",
-            "goBack": "Go Back"
+            "goBack": "Go Back",
+            "createTab": "Create a Tab"
         },
         "clientMembers": {
             "tabs": {

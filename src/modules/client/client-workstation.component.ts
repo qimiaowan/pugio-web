@@ -10,8 +10,8 @@ import { UtilsService } from '@modules/utils/utils.service';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { AppComponent as WebTerminalAppComponent } from '@builtin:web-terminal/app.component';
 import { ChannelListComponent } from '@modules/channel/channel-list.component';
-import { ChannelPopoverComponent } from '@modules/channel/channel-popover.component';
 import { ConfigService } from '@modules/config/config.service';
+import { PopoverComponent } from '@modules/common/popover.component';
 
 @Component({
     component: lazy(() => import('@modules/client/ClientWorkstation')),
@@ -26,8 +26,8 @@ import { ConfigService } from '@modules/config/config.service';
         ExceptionComponent,
         WebTerminalAppComponent,
         ChannelListComponent,
-        ChannelPopoverComponent,
         ConfigService,
+        PopoverComponent,
     ],
 })
 export class ClientWorkstationComponent {}

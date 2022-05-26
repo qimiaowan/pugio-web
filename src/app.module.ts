@@ -3,6 +3,7 @@ import { AppComponent } from '@/app.component';
 import { RequestModule } from '@modules/request/request.module';
 import { UtilsModule } from '@modules/utils/utils.module';
 import { ConfigModule } from '@modules/config/config.module';
+import { CommonModule } from '@modules/common/common.module';
 
 const LocaleModule = import('@modules/locale/locale.module').then(({ LocaleModule }) => LocaleModule);
 const BrandModule = import('@modules/brand/brand.module').then(({ BrandModule }) => BrandModule);
@@ -20,6 +21,7 @@ const UserModule = import('@modules/user/user.module').then(({ UserModule }) => 
         UtilsModule,
         RequestModule,
         ConfigModule,
+        CommonModule,
         BrandModule,
         LocaleModule,
         StoreModule,
