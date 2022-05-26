@@ -417,7 +417,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             }}
         >
             <ChannelPopover
-                trigger={({ open, handleOpen }) => {
+                Trigger={({ open, handleOpen }) => {
                     return (
                         <IconButton
                             sx={{
@@ -889,6 +889,70 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                         startIcon={<Icon className="icon-rocket" />}
                                         onClick={() => setSelectedTab(clientId, configService.STARTUP_TAB_ID)}
                                     >{getLocaleText('goToStartup')}</Button>
+                                    <ChannelPopover
+                                        Trigger={({ open, handleOpen }) => {
+                                            return (
+                                                <IconButton
+                                                    sx={{
+                                                        background: open
+                                                            ? theme.palette.mode === 'dark'
+                                                                ? theme.palette.grey[600]
+                                                                : theme.palette.grey[300]
+                                                            : 'transparent',
+                                                    }}
+                                                    onClick={handleOpen}
+                                                ><Icon className="icon-plus" /></IconButton>
+                                            );
+                                        }}
+                                        channelListProps={
+                                            ({ handleClose }) => ({
+                                                clientId,
+                                                width: 320,
+                                                height: 360,
+                                                listItemProps: {
+                                                    mode: 'list-item',
+                                                    menu: [],
+                                                },
+                                                headerSlot: (
+                                                    <Box
+                                                        sx={{
+                                                            flexGrow: 1,
+                                                            flexShrink: 0,
+                                                            alignSelf: 'stretch',
+                                                            display: 'flex',
+                                                            justifyContent: 'space-between',
+                                                            alignItems: 'center',
+                                                            padding: `0 ${theme.spacing(1)}`,
+                                                        }}
+                                                    >
+                                                        <IconButton
+                                                            title={getLocaleText('installChannel')}
+                                                        >
+                                                            <Icon className="icon icon-import" />
+                                                        </IconButton>
+                                                        <IconButton
+                                                            title={getLocaleText('createChannel')}
+                                                        >
+                                                            <Icon className="icon icon-plus" />
+                                                        </IconButton>
+                                                    </Box>
+                                                ),
+                                                onSelectChannel: (channel) => {
+                                                    handleCreateTab(clientId, { channelId: channel.id });
+                                                    handleClose();
+                                                },
+                                            })
+                                        }
+                                        popoverProps={{
+                                            PaperProps: {
+                                                sx: {
+                                                    backgroundColor: theme.palette.mode === 'dark'
+                                                        ? 'black'
+                                                        : 'white',
+                                                },
+                                            },
+                                        }}
+                                    />
                                     {
                                         lastSelectedTabId && (
                                             <Button

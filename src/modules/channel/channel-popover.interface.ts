@@ -1,8 +1,11 @@
+/* eslint-disable no-unused-vars */
 import { PopoverProps } from '@mui/material/Popover';
 import {
     PropsWithChildren,
     MouseEvent,
     ReactNode,
+    ReactElement,
+    FC,
 } from 'react';
 import { ChannelListProps } from '@modules/channel/channel-list.interface';
 
@@ -14,10 +17,15 @@ type ChannelListPropsCreator = (utils: ChannelPopoverUtils) => ChannelListProps;
 type ChannelTriggerCreator = (data: {
     open: boolean;
     handleOpen: (event: MouseEvent<any>) => void;
-}) => ReactNode;
+}) => ReactElement;
+
+interface TriggerProps {
+    open: boolean;
+    handleOpen: (event: MouseEvent<any>) => void;
+}
 
 export type ChannelPopoverProps = PropsWithChildren<{
-    trigger: ChannelTriggerCreator;
+    Trigger: FC<TriggerProps>;
     channelListProps: ChannelListProps | ChannelListPropsCreator;
     popoverProps?: Partial<PopoverProps>;
 }>;
