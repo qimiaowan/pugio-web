@@ -138,6 +138,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
     const debouncedSearchValue = useDebounce(searchValue, { wait: 500 });
     const { client_id: selectedClientId } = useParams();
     const buttonRef = useRef<HTMLButtonElement>(null);
+    const searchRef = useRef<HTMLInputElement>(null);
     const getLocaleText = localeService.useLocaleContext();
     const getComponentLocaleText = localeService.useLocaleContext('components.clientsDropdown');
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement>(null);
@@ -207,6 +208,12 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
         }
     }, [queryClientsResponseData]);
 
+    useEffect(() => {
+        if (_.isFunction(searchRef?.current?.focus)) {
+            searchRef.current.focus();
+        }
+    }, [clients, searchRef.current]);
+
     return (
         <ClientsDropdownWrapper>
             <Button
@@ -249,9 +256,11 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                 <PopoverContent>
                     <Box className="header-wrapper">
                         <TextField
+                            inputRef={searchRef}
                             classes={{
                                 root: 'search-text-field',
                             }}
+                            autoFocus={true}
                             placeholder={getComponentLocaleText('searchPlaceholder')}
                             disabled={queryClientsLoading || queryClientsLoadingMore}
                             value={searchValue}
