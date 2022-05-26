@@ -67,7 +67,7 @@ const PopoverContent = styled(Paper)(({ theme }) => {
         background-color: ${mode === 'dark' ? theme.palette.grey[900] : 'white'};
 
         .header-wrapper {
-            padding: ${theme.spacing(1)};
+            padding: 0 ${theme.spacing(1)};
             display: flex;
             align-items: center;
             border-bottom: 1px solid ${theme.palette.divider};
