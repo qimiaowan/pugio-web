@@ -36,7 +36,9 @@
             "goToStartup": "Go to Startup",
             "createChannel": "Channel",
             "installChannel": "Install",
-            "startup": "Startup"
+            "startup": "Startup",
+            "home": "Home",
+            "goBack": "Go Back"
         },
         "clientMembers": {
             "tabs": {

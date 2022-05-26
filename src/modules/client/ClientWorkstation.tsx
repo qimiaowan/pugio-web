@@ -270,6 +270,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const [selectedTabId, setSelectedTabId] = useState<string>(null);
     const [selectedTabMetadata, setSelectedTabMetadata] = useState<string[]>([]);
     const [clientOffline, setClientOffline] = useState<boolean>(false);
+    const [lastSelectedTabId, setLastSelectedTabId] = useState<string>(null);
 
     const handleCreateTab = (clientId: string, data: TabData = {}) => {
         const tabId = createTab(clientId, data);
@@ -479,9 +480,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                     },
                 }}
             />
-            <IconButton onClick={() => setSelectedTab(clientId, configService.STARTUP_TAB_ID)}>
-                <Icon className="icon-rocket" />
-            </IconButton>
             <IconButton>
                 <Icon className="icon-more-horizontal" />
             </IconButton>
@@ -701,7 +699,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             </ClientWorkstationWrapper>
             : <ClientWorkstationWrapper className="page">
                 {
-                    (clientTabsMap.get(clientId)?.size > 0 || selectedTabId === configService.STARTUP_TAB_ID) && (
+                    selectedTabId && (
                         <Box className="header-container">
                             <Box className="tabs" style={{ width: headerWidth }} ref={tabsWrapperRef}>
                                 <Box
@@ -821,16 +819,31 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                         '& > *': {
                                             marginRight: `${theme.spacing(1)} !important`,
                                         },
+
+                                        '& .navigate-buttons': {
+                                            fontWeight: 700,
+                                        },
                                     }}
                                 >
                                     <Button
                                         size="small"
-                                        sx={{ fontWeight: 700 }}
+                                        classes={{ root: 'navigate-buttons' }}
+                                        startIcon={<Icon className="icon-home" />}
+                                        onClick={() => {
+                                            setSelectedTab(clientId, null);
+                                            setLastSelectedTabId(selectedTabId);
+                                        }}
+                                    >{getLocaleText('home')}</Button>
+                                    <Button
+                                        size="small"
+                                        classes={{ root: 'navigate-buttons' }}
+                                        disabled={true}
                                         startIcon={<Icon className="icon-import" />}
                                     >{getLocaleText('installChannel')}</Button>
                                     <Button
                                         size="small"
-                                        sx={{ fontWeight: 700 }}
+                                        classes={{ root: 'navigate-buttons' }}
+                                        disabled={true}
                                         startIcon={<Icon className="icon-plus" />}
                                     >{getLocaleText('createChannel')}</Button>
                                 </Box>
@@ -858,14 +871,37 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                     },
                                 }}
                             >
-                                <Button
-                                    variant="contained"
-                                    startIcon={<Icon className="icon-rocket" />}
+                                <Box
                                     sx={{
-                                        marginTop: '30px',
+                                        width: '100%',
+                                        marginTop: 4,
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+
+                                        '& button': {
+                                            margin: `0 ${theme.spacing(0.5)}`,
+                                        },
                                     }}
-                                    onClick={() => setSelectedTab(clientId, configService.STARTUP_TAB_ID)}
-                                >{getLocaleText('goToStartup')}</Button>
+                                >
+                                    <Button
+                                        variant="contained"
+                                        startIcon={<Icon className="icon-rocket" />}
+                                        onClick={() => setSelectedTab(clientId, configService.STARTUP_TAB_ID)}
+                                    >{getLocaleText('goToStartup')}</Button>
+                                    {
+                                        lastSelectedTabId && (
+                                            <Button
+                                                variant="contained"
+                                                startIcon={<Icon className="icon-return" />}
+                                                onClick={() => {
+                                                    setSelectedTab(clientId, lastSelectedTabId);
+                                                    setLastSelectedTabId(null);
+                                                }}
+                                            >{getLocaleText('goBack')}</Button>
+                                        )
+                                    }
+                                </Box>
                             </Exception>
                         </Box>
                         : selectedTabId === configService.STARTUP_TAB_ID
