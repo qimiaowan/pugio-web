@@ -37,6 +37,8 @@ import { ClientService } from '@modules/client/client.service';
 import clsx from 'clsx';
 import styled from '@mui/material/styles/styled';
 import Paper from '@mui/material/Paper';
+import { StoreService } from '@modules/store/store.service';
+import shallow from 'zustand/shallow';
 
 const ClientsDropdownWrapper = styled(Box)(() => {
     return `
@@ -112,9 +114,6 @@ const PopoverContent = styled(Paper)(({ theme }) => {
 
 const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
     declarations,
-    open = false,
-    onOpen = _.noop,
-    onClose = _.noop,
     onClientChange = _.noop,
 }) => {
     const typographyProps: TypographyProps = {
@@ -124,6 +123,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
         },
     };
 
+    const storeService = declarations.get<StoreService>(StoreService);
     const localeService = declarations.get<LocaleService>(LocaleService);
     const clientsService = declarations.get<ClientsService>(ClientsService);
     const utilsService = declarations.get<UtilsService>(UtilsService);
@@ -168,11 +168,27 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
             refreshDeps: [selectedClientId],
         },
     );
+    const {
+        clientsDropdownOpen,
+        switchClientsDropdownVisibility,
+    } = storeService.useStore(
+        (state) => {
+            const {
+                clientsDropdownOpen,
+                switchClientsDropdownVisibility,
+            } = state;
+            return {
+                clientsDropdownOpen,
+                switchClientsDropdownVisibility,
+            };
+        },
+        shallow,
+    );
 
     const handleSelectClient = (clientId: string) => {
         navigate(`/client/${clientId}/workstation`);
         onClientChange(clientId);
-        onClose();
+        switchClientsDropdownVisibility(false);
     };
 
     useEffect(() => {
@@ -201,7 +217,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                         : null
                 }
                 ref={buttonRef}
-                onClick={onOpen}
+                onClick={() => switchClientsDropdownVisibility(true)}
             >
                 <Typography
                     noWrap={true}
@@ -219,9 +235,9 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                 </Typography>
             </Button>
             <Popover
-                open={Boolean(anchorEl)}
+                open={Boolean(anchorEl) && clientsDropdownOpen}
                 anchorEl={anchorEl}
-                onClose={onClose}
+                onClose={() => switchClientsDropdownVisibility(false)}
                 anchorOrigin={{
                     vertical: 'bottom',
                     horizontal: 'left',

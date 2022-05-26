@@ -28,7 +28,6 @@ import { ProfileMenuComponent } from '@modules/profile/profile-menu.component';
 import { ClientsDropdownComponent } from '@modules/clients/clients-dropdown.component';
 import { StoreService } from '@modules/store/store.service';
 import { ClientsDropdownProps } from '@modules/clients/clients-dropdown.interface';
-import shallow from 'zustand/shallow';
 import { ContainerProps } from '@modules/container/container.interface';
 import _ from 'lodash';
 import { SnackbarProvider } from 'notistack';
@@ -121,22 +120,6 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
     const [locale, setLocale] = useState(localStorage.getItem('locale') || 'en_US');
     const [logo, setLogo] = useState<string>('');
     const getLocaleText = localeService.useLocaleContext();
-    const {
-        clientsDropdownOpen,
-        switchClientsDropdownVisibility,
-    } = storeService.useStore(
-        (state) => {
-            const {
-                clientsDropdownOpen,
-                switchClientsDropdownVisibility,
-            } = state;
-            return {
-                clientsDropdownOpen,
-                switchClientsDropdownVisibility,
-            };
-        },
-        shallow,
-    );
     const appNavbarHeight = storeService.useStore((state) => state.appNavbarHeight);
 
     useEffect(() => {
@@ -171,11 +154,7 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
                                         component="img"
                                         src={logo}
                                     />
-                                    <ClientsDropdown
-                                        open={clientsDropdownOpen}
-                                        onOpen={() => switchClientsDropdownVisibility(true)}
-                                        onClose={() => switchClientsDropdownVisibility(false)}
-                                    />
+                                    <ClientsDropdown />
                                     <NavLink to="/explore" className="navlink">
                                         {
                                             <Button

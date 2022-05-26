@@ -1,14 +1,8 @@
-/* eslint-disable no-unused-vars */
 import Popover from '@mui/material/Popover';
 import {
     createElement,
     FC,
-    useCallback,
     useState,
-    memo,
-    MouseEvent,
-    ReactNode,
-    ReactElement,
     useRef,
 } from 'react';
 import { ChannelPopoverProps } from '@modules/channel/channel-popover.interface';
@@ -82,7 +76,9 @@ const ChannelPopover: FC<InjectedComponentProps<ChannelPopoverProps>> = ({
                         },
                     }}
                     headerProps={{
-                        className: 'popover-header',
+                        style: {
+                            padding: 0,
+                        },
                     }}
                 />
             </ChannelPopoverWrapper>
@@ -90,7 +86,4 @@ const ChannelPopover: FC<InjectedComponentProps<ChannelPopoverProps>> = ({
     );
 };
 
-export default memo(ChannelPopover, (prevProps, nextProps) => {
-    console.log(prevProps, nextProps);
-    return true;
-});
+export default ChannelPopover;
