@@ -74,7 +74,6 @@ const PopoverContent = styled(Paper)(({ theme }) => {
 
             .create-button {
                 margin-left: 5px;
-                font-weight: 700;
             }
 
             .search-text-field {
@@ -291,13 +290,12 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                                     subTitle={getComponentLocaleText('empty.subTitle')}
                                 >
                                     <Button
-                                        variant="contained"
                                         size="small"
+                                        variant="text"
+                                        color="primary"
                                         startIcon={<Icon className="icon-plus" />}
                                         onClick={() => navigate('/clients/create')}
-                                    >
-                                        {getComponentLocaleText('create')}
-                                    </Button>
+                                    >{getComponentLocaleText('create')}</Button>
                                 </Exception>
                                 : <SimpleBar autoHide={true} style={{ height: 360, width: '100%' }}>
                                     {

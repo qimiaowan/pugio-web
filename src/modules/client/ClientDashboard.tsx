@@ -105,10 +105,6 @@ const ClientDashboardContainer = styled(Box)(({ theme }) => {
                     max-width: 120px;
                 }
 
-                .control-button {
-                    font-weight: 700;
-                }
-
                 & > * {
                     margin-right: 10px;
                 }

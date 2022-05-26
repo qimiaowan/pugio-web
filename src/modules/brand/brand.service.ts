@@ -105,6 +105,7 @@ export class BrandService {
                                 paddingRight: 10,
                                 paddingBottom: 7,
                                 paddingLeft: 10,
+                                fontWeight: 700,
                             },
                             sizeLarge: {
                                 fontSize: 14,

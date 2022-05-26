@@ -67,8 +67,14 @@ const ContainerWrapper = styled(Box)(({ theme }) => {
                 align-items: center;
                 padding: 0 calc(${theme.spacing(1)} / 2);
 
-                &.avatar-and-locales > * {
-                    margin: 0 calc(${theme.spacing(1)} / 2);
+                &.avatar-and-locales {
+                    .control-button {
+                        font-weight: 500;
+                    }
+
+                    & > * {
+                        margin: 0 calc(${theme.spacing(1)} / 2);
+                    }
                 }
 
                 &.logo-and-nav > * {
