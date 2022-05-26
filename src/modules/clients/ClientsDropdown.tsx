@@ -67,12 +67,14 @@ const PopoverContent = styled(Paper)(({ theme }) => {
         background-color: ${mode === 'dark' ? theme.palette.grey[900] : 'white'};
 
         .header-wrapper {
-            padding: 15px 10px;
+            padding: ${theme.spacing(1)};
             display: flex;
             align-items: center;
+            border-bottom: 1px solid ${theme.palette.divider};
 
             .create-button {
                 margin-left: 5px;
+                font-weight: 700;
             }
 
             .search-text-field {
@@ -253,9 +255,16 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                             placeholder={getComponentLocaleText('searchPlaceholder')}
                             disabled={queryClientsLoading || queryClientsLoadingMore}
                             value={searchValue}
+                            InputProps={{
+                                sx: {
+                                    border: 0,
+                                },
+                                startAdornment: <Icon className="icon-search" />,
+                            }}
                             onChange={(event) => setSearchValue(event.target.value)}
                         />
                         <Button
+                            size="small"
                             startIcon={<Icon className="icon-plus" />}
                             classes={{ root: 'create-button' }}
                             onClick={() => navigate('/clients/create')}
