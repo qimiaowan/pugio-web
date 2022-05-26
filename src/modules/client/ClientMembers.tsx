@@ -413,39 +413,37 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                                                             onActive: () => handleDeleteSelectedMembers([membership]),
                                                         },
                                                     ]}
-                                                    controlSlot={
-                                                        <ClientRoleSelector
-                                                            role={roleType}
-                                                            triggerProps={{
-                                                                disabled: userClientRelationResponseData?.response?.roleType >= roleType,
-                                                            }}
-                                                            onRoleChange={(role) => {
-                                                                clientService.changeClientMembership({
-                                                                    clientId,
-                                                                    memberships: [
-                                                                        {
-                                                                            userId: user.id,
-                                                                            roleType: role,
-                                                                        },
-                                                                    ],
-                                                                });
+                                                    controlSlot={role === configService.CLIENT_MEMBER_ALL_ROLE_TYPE && <ClientRoleSelector
+                                                        role={roleType}
+                                                        triggerProps={{
+                                                            disabled: userClientRelationResponseData?.response?.roleType >= roleType,
+                                                        }}
+                                                        onRoleChange={(role) => {
+                                                            clientService.changeClientMembership({
+                                                                clientId,
+                                                                memberships: [
+                                                                    {
+                                                                        userId: user.id,
+                                                                        roleType: role,
+                                                                    },
+                                                                ],
+                                                            });
 
-                                                                const index = clientMembers.findIndex((membership) => {
-                                                                    return membership.user.id === user.id;
-                                                                });
+                                                            const index = clientMembers.findIndex((membership) => {
+                                                                return membership.user.id === user.id;
+                                                            });
 
-                                                                if (index !== -1) {
-                                                                    setClientMembers(
-                                                                        clientMembers.splice(
-                                                                            index,
-                                                                            1,
-                                                                            _.set(clientMembers[index], 'roleType', role),
-                                                                        ),
-                                                                    );
-                                                                }
-                                                            }}
-                                                        />
-                                                    }
+                                                            if (index !== -1) {
+                                                                setClientMembers(
+                                                                    clientMembers.splice(
+                                                                        index,
+                                                                        1,
+                                                                        _.set(clientMembers[index], 'roleType', role),
+                                                                    ),
+                                                                );
+                                                            }
+                                                        }}
+                                                    />}
                                                     checked={selectedMemberships.some((membership) => membership?.userId === user.id)}
                                                     onCheckStatusChange={(checked) => {
                                                         if (checked) {
