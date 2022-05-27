@@ -18,12 +18,11 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
-import {
-    LocaleListItem,
-    LocaleMenuProps,
-} from '@modules/locale/locale.interface';
+import { LocaleListItem } from '@modules/locale/locale.interface';
 import { BrandService } from '@modules/brand/brand.service';
-import { LocaleMenuComponent } from '@modules/locale/locale-menu.component';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import { ProfileMenuComponent } from '@modules/profile/profile-menu.component';
 import { ClientsDropdownComponent } from '@modules/clients/clients-dropdown.component';
 import { StoreService } from '@modules/store/store.service';
@@ -33,6 +32,8 @@ import _ from 'lodash';
 import { SnackbarProvider } from 'notistack';
 import { ConfirmDialogProvider } from 'react-mui-confirm';
 import Color from 'color';
+import { PopoverProps } from '@modules/common/popover.interface';
+import { PopoverComponent } from '@modules/common/popover.component';
 
 const ContainerWrapper = styled(Box)(({ theme }) => {
     const mode = theme.palette.mode;
@@ -115,9 +116,9 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
     const brandService = declarations.get<BrandService>(BrandService);
     const localeService = declarations.get<LocaleService>(LocaleService);
     const storeService = declarations.get<StoreService>(StoreService);
-    const LocaleMenu = declarations.get<FC<LocaleMenuProps>>(LocaleMenuComponent);
     const ProfileMenu = declarations.get<FC>(ProfileMenuComponent);
     const ClientsDropdown = declarations.get<FC<ClientsDropdownProps>>(ClientsDropdownComponent);
+    const Popover = declarations.get<FC<PopoverProps>>(PopoverComponent);
 
     const theme = brandService.getTheme();
 
@@ -203,11 +204,48 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
                                             <Icon className="icon-settings" />
                                         </IconButton>
                                     </NavLink>
-                                    <LocaleMenu
-                                        locales={locales}
-                                        selectedLocaleId={locale}
-                                        onLocaleChange={(localeItem) => setLocale(localeItem.id)}
-                                    />
+                                    <Popover
+                                        variant="menu"
+                                        Trigger={({ open, openPopover }) => {
+                                            return (
+                                                <IconButton
+                                                    aria-haspopup="true"
+                                                    aria-expanded={open ? 'true' : undefined}
+                                                    onClick={openPopover}
+                                                ><Icon className="icon-language" /></IconButton>
+                                            );
+                                        }}
+                                    >
+                                        {({ closePopover }) => {
+                                            return (
+                                                <>
+                                                    {
+                                                        locales.map((localeItem) => {
+                                                            const { title, id } = localeItem;
+
+                                                            return (
+                                                                <ListItemButton
+                                                                    key={id}
+                                                                    selected={locale === id}
+                                                                    onClick={() => {
+                                                                        setLocale(id);
+                                                                        closePopover();
+                                                                    }}
+                                                                >
+                                                                    <ListItemIcon>
+                                                                        {
+                                                                            locale === id && <Icon className="icon-check" />
+                                                                        }
+                                                                    </ListItemIcon>
+                                                                    <ListItemText>{title}</ListItemText>
+                                                                </ListItemButton>
+                                                            );
+                                                        })
+                                                    }
+                                                </>
+                                            );
+                                        }}
+                                    </Popover>
                                     <ProfileMenu />
                                 </Box>
                             </Box>

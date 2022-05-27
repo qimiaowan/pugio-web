@@ -1,15 +1,13 @@
 import {
     FC,
     useState,
-    MouseEvent,
     useEffect,
 } from 'react';
 import Avatar from '@mui/material/Avatar';
-import Box, { BoxProps } from '@mui/material/Box';
+import { BoxProps } from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -21,6 +19,8 @@ import { LoadingComponent } from '@modules/brand/loading.component';
 import { StoreService } from '@modules/store/store.service';
 import shallow from 'zustand/shallow';
 import { ConfigService } from '@modules/config/config.service';
+import { PopoverComponent } from '@modules/common/popover.component';
+import { PopoverProps } from '@modules/common/popover.interface';
 
 const ProfileMenu: FC<InjectedComponentProps> = ({
     declarations,
@@ -29,11 +29,11 @@ const ProfileMenu: FC<InjectedComponentProps> = ({
     const storeService = declarations.get<StoreService>(StoreService);
     const profileService = declarations.get<ProfileService>(ProfileService);
     const configService = declarations.get<ConfigService>(ConfigService);
+    const Popover = declarations.get<FC<PopoverProps>>(PopoverComponent);
 
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
 
     const [avatarUrl, setAvatarUrl] = useState<string>(configService.DEFAULT_PICTURE_URL);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const getLocaleText = localeService.useLocaleContext();
     const {
         data: userProfileResponseData,
@@ -56,16 +56,6 @@ const ProfileMenu: FC<InjectedComponentProps> = ({
         };
     }, shallow);
 
-    const open = Boolean(anchorEl);
-
-    const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
     useEffect(() => {
         if (userProfileResponseData?.response) {
             setUserProfile(userProfileResponseData.response);
@@ -81,51 +71,56 @@ const ProfileMenu: FC<InjectedComponentProps> = ({
     return (
         getProfileLoading
             ? <Loading style={{ width: 31, height: '31px !important' }} />
-            : <Box>
-                <IconButton
-                    aria-haspopup="true"
-                    aria-expanded={open ? 'true' : undefined}
-                    onClick={handleClick}
-                >
-                    <Avatar
-                        sx={{
-                            width: '21px',
-                            height: '21px',
-                            pointerEvents: 'none',
-                        }}
-                        src={avatarUrl}
-                        imgProps={{
-                            onError: () => {
-                                if (avatarUrl !== configService.DEFAULT_PICTURE_URL) {
-                                    setAvatarUrl(configService.DEFAULT_PICTURE_URL);
-                                }
-                            },
-                        }}
-                    />
-                </IconButton>
-                <Menu
-                    anchorEl={anchorEl}
-                    open={open}
-                    onClose={handleClose}
-                    MenuListProps={{
-                        'aria-labelledby': 'basic-button',
-                    }}
-                >
-                    <ListItemButton>
-                        <ListItemIcon><Icon className="icon-account" /></ListItemIcon>
-                        <ListItemText>{getLocaleText('app.avatarDropdown.settings')}</ListItemText>
-                    </ListItemButton>
-                    <ListItemButton>
-                        <ListItemIcon><Icon className="icon-logout" /></ListItemIcon>
-                        <ListItemText>{getLocaleText('app.avatarDropdown.signout')}</ListItemText>
-                    </ListItemButton>
-                    <Divider />
-                    <ListItemButton>
-                        <ListItemIcon><Icon className="icon-account-add" /></ListItemIcon>
-                        <ListItemText>{getLocaleText('app.avatarDropdown.create')}</ListItemText>
-                    </ListItemButton>
-                </Menu>
-            </Box>
+            : <Popover
+                variant="menu"
+                Trigger={({ open, openPopover }) => {
+                    return (
+                        <IconButton
+                            aria-haspopup="true"
+                            aria-expanded={open ? 'true' : undefined}
+                            onClick={openPopover}
+                        >
+                            <Avatar
+                                sx={{
+                                    width: '21px',
+                                    height: '21px',
+                                    pointerEvents: 'none',
+                                }}
+                                src={avatarUrl}
+                                imgProps={{
+                                    onError: () => {
+                                        if (avatarUrl !== configService.DEFAULT_PICTURE_URL) {
+                                            setAvatarUrl(configService.DEFAULT_PICTURE_URL);
+                                        }
+                                    },
+                                }}
+                            />
+                        </IconButton>
+                    );
+                }}
+            >
+                {
+                    ({ closePopover }) => {
+                        return (
+                            <>
+                                <ListItemButton>
+                                    <ListItemIcon><Icon className="icon-account" /></ListItemIcon>
+                                    <ListItemText>{getLocaleText('app.avatarDropdown.settings')}</ListItemText>
+                                </ListItemButton>
+                                <ListItemButton>
+                                    <ListItemIcon><Icon className="icon-logout" /></ListItemIcon>
+                                    <ListItemText>{getLocaleText('app.avatarDropdown.signout')}</ListItemText>
+                                </ListItemButton>
+                                <Divider />
+                                <ListItemButton>
+                                    <ListItemIcon><Icon className="icon-account-add" /></ListItemIcon>
+                                    <ListItemText>{getLocaleText('app.avatarDropdown.create')}</ListItemText>
+                                </ListItemButton>
+                            </>
+                        );
+                    }
+                }
+            </Popover>
     );
 };
 

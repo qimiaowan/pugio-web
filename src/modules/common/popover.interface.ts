@@ -16,7 +16,9 @@ export interface PopoverChildrenCreatorData {
     closePopover: ClosePopoverFunction;
 }
 
-export interface PopoverProps extends Partial<MuiPopoverProps> {
+export interface PopoverProps {
     Trigger: FC<TriggerProps>;
     children: (data: PopoverChildrenCreatorData) => ReactNode;
+    variant?: 'menu' | 'popover';
+    muiPopoverProps?: Partial<MuiPopoverProps>;
 }
