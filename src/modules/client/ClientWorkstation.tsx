@@ -46,6 +46,7 @@ import styled from '@mui/material/styles/styled';
 import { ConfigService } from '@modules/config/config.service';
 import { PopoverProps } from '@modules/common/popover.interface';
 import { PopoverComponent } from '@modules/common/popover.component';
+import Color from 'color';
 
 const ClientWorkstationWrapper = styled(Box)(({ theme }) => {
     const mode = theme.palette.mode;
@@ -919,13 +920,18 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                         )
                                     }
                                     <Popover
-                                        Trigger={({ openPopover }) => {
+                                        Trigger={({ open, openPopover }) => {
                                             return (
                                                 <Button
                                                     variant="text"
                                                     color="primary"
                                                     size="small"
                                                     startIcon={<Icon className="icon-plus" />}
+                                                    sx={{
+                                                        ...(open ? {
+                                                            backgroundColor: Color(theme.palette.primary.main).alpha(0.2).toString(),
+                                                        } : {}),
+                                                    }}
                                                     onClick={openPopover}
                                                 >{getLocaleText('createTab')}</Button>
                                             );
