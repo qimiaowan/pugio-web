@@ -74,7 +74,11 @@ const ContainerWrapper = styled(Box)(({ theme }) => {
                     }
 
                     & > * {
-                        margin: 0 calc(${theme.spacing(1)} / 2);
+                        margin: 0 ${theme.spacing(1)};
+                    }
+
+                    .right-button {
+                        padding: ${theme.spacing(1)};
                     }
                 }
 
@@ -200,7 +204,9 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
                                         onClick={() => navigate('/clients/create')}
                                     >{getLocaleText('app.createClient')}</Button>
                                     <NavLink to="/settings" className="navlink">
-                                        <IconButton>
+                                        <IconButton
+                                            classes={{ root: 'right-button' }}
+                                        >
                                             <Icon className="icon-settings" />
                                         </IconButton>
                                     </NavLink>
@@ -211,6 +217,14 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
                                                 <IconButton
                                                     aria-haspopup="true"
                                                     aria-expanded={open ? 'true' : undefined}
+                                                    classes={{ root: 'right-button' }}
+                                                    sx={{
+                                                        ...(open ? {
+                                                            backgroundColor: theme.palette.mode === 'dark'
+                                                                ? theme.palette.grey[700]
+                                                                : theme.palette.grey[300],
+                                                        } : {}),
+                                                    }}
                                                     onClick={openPopover}
                                                 ><Icon className="icon-language" /></IconButton>
                                             );

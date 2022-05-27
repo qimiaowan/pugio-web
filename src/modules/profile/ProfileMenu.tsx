@@ -21,6 +21,7 @@ import shallow from 'zustand/shallow';
 import { ConfigService } from '@modules/config/config.service';
 import { PopoverComponent } from '@modules/common/popover.component';
 import { PopoverProps } from '@modules/common/popover.interface';
+import useTheme from '@mui/material/styles/useTheme';
 
 const ProfileMenu: FC<InjectedComponentProps> = ({
     declarations,
@@ -33,6 +34,7 @@ const ProfileMenu: FC<InjectedComponentProps> = ({
 
     const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
 
+    const theme = useTheme();
     const [avatarUrl, setAvatarUrl] = useState<string>(configService.DEFAULT_PICTURE_URL);
     const getLocaleText = localeService.useLocaleContext();
     const {
@@ -78,6 +80,13 @@ const ProfileMenu: FC<InjectedComponentProps> = ({
                         <IconButton
                             aria-haspopup="true"
                             aria-expanded={open ? 'true' : undefined}
+                            sx={{
+                                ...(open ? {
+                                    backgroundColor: theme.palette.mode === 'dark'
+                                        ? theme.palette.grey[700]
+                                        : theme.palette.grey[300],
+                                } : {}),
+                            }}
                             onClick={openPopover}
                         >
                             <Avatar

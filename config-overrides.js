@@ -54,6 +54,7 @@ module.exports = {
         addWebpackExternals({
             lodash: '_',
             'moment': 'moment',
+            '@antv/g2': 'G2',
         }),
         ...addBabelPlugins(
             'react-activation/babel',

@@ -40,7 +40,7 @@ import Paper from '@mui/material/Paper';
 import { StoreService } from '@modules/store/store.service';
 import shallow from 'zustand/shallow';
 
-const ClientsDropdownWrapper = styled(Box)(() => {
+const ClientsDropdownWrapper = styled(Box)(({ theme }) => {
     return `
         .link {
             .icon-server {
@@ -52,6 +52,10 @@ const ClientsDropdownWrapper = styled(Box)(() => {
                     font-weight: 700;
                     max-width: 200px;
                 }
+            }
+
+            &.active {
+                color: ${theme.palette.mode === 'dark' ? 'white' : 'black'} !important;
             }
         }
     `;
@@ -194,12 +198,12 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
     };
 
     useEffect(() => {
-        if (open && buttonRef.current) {
+        if (buttonRef.current) {
             setAnchorEl(buttonRef.current);
         } else {
             setAnchorEl(null);
         }
-    }, [open, buttonRef]);
+    }, [buttonRef]);
 
     useEffect(() => {
         if (_.isArray(queryClientsResponseData?.list)) {
@@ -216,7 +220,11 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
     return (
         <ClientsDropdownWrapper>
             <Button
-                classes={{ root: 'link' }}
+                classes={{
+                    root: clsx('link', {
+                        active: Boolean(anchorEl) && clientsDropdownOpen,
+                    }),
+                }}
                 variant="text"
                 endIcon={<Icon className="dropdown-icon icon-keyboard-arrow-down" />}
                 startIcon={

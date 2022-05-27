@@ -1,13 +1,13 @@
 import { ListItemButtonProps } from '@mui/material/ListItemButton';
 import { ButtonProps } from '@mui/material/Button';
-import { MenuProps } from '@mui/material/Menu';
+import { PopoverProps } from '@mui/material/Popover';
 
 type ListItemButtonsPropsCreator = (role: number, checked: boolean) => ListItemButtonProps;
 
 export interface ClientRoleSelectorProps {
     role: number;
     triggerProps?: ButtonProps;
-    menuProps?: Partial<MenuProps>;
+    popoverProps?: Partial<PopoverProps>;
     listItemButtonProps?: ListItemButtonProps | ListItemButtonsPropsCreator;
     onRoleChange?: (role: number) => void;
 }
