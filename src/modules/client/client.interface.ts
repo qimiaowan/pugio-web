@@ -70,3 +70,10 @@ export type ChangeClientMembershipRequestOptions = AddClientMembersRequestOption
 export type ChangeClientMembershipResponseDataItem = AddClientMembersResponseDataItem;
 
 export type ChangeClientMembershipResponseData = ChangeClientMembershipResponseDataItem[];
+
+export interface GetSystemStatusRequestOptions {
+    clientId: string;
+    pathname: string;
+    dateRange: [Date, Date];
+    count?: number;
+}

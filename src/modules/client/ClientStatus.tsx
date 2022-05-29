@@ -62,6 +62,7 @@ const ClientStatus: FC<InjectedComponentProps> = ({
     const charts = [
         {
             title: 'chart.memoryUsage',
+            pathname: 'mem',
             lines: () => {
                 return [
                     {
@@ -78,6 +79,7 @@ const ClientStatus: FC<InjectedComponentProps> = ({
         },
         {
             title: 'chart.swapMemoryUsage',
+            pathname: 'mem',
             lines: () => {
                 return [
                     {
@@ -94,9 +96,20 @@ const ClientStatus: FC<InjectedComponentProps> = ({
         },
         {
             title: 'chart.cpuLoad',
+            pathname: 'currentLoad.cpus',
             lines: (data) => {
                 if (_.isArray(data)) {
-
+                    return data.map((dataItem, index) => {
+                        return {
+                            yAxis: 'load',
+                            dataFormatter: (currentDataItem) => {
+                                return currentDataItem[index];
+                            },
+                            tooltipValueFormatter: (value: string) => {
+                                return `${value}%`;
+                            },
+                        };
+                    });
                 } else {
                     return [{
                         yAxis: 'load',
@@ -113,6 +126,17 @@ const ClientStatus: FC<InjectedComponentProps> = ({
         },
         {
             title: 'chart.disksIO',
+            pathname: 'disksIO',
+            lines: () => {
+                return [
+                    {
+                        yAxis: 'tIoSec',
+                        tooltipValueFormatter: (value: string) => {
+                            return `${value} r/s`;
+                        },
+                    },
+                ];
+            },
         },
     ];
 
@@ -174,6 +198,12 @@ const ClientStatus: FC<InjectedComponentProps> = ({
         }
     }, [dateRangeIndex]);
 
+    useEffect(() => {
+        if (getLocaleText !== _.noop && dateRange[0] !== null && dateRange[1] !== null) {
+
+        }
+    }, [getLocaleText, dateRange]);
+
     return (
         <StyledBox>
             <Box className="header" ref={headerRef}>
@@ -195,7 +225,15 @@ const ClientStatus: FC<InjectedComponentProps> = ({
                     width: '100%',
                     height: windowInnerHeight - - appNavbarHeight * 2 - headerHeight,
                 }}
-            ></SimpleBar>
+            >
+                {
+                    charts.map((chartConfig, index) => {
+                        return (
+                            <Box id={chartConfig.title} key={index} />
+                        );
+                    })
+                }
+            </SimpleBar>
         </StyledBox>
     );
 };

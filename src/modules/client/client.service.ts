@@ -136,5 +136,8 @@ export class ClientService {
                 method: 'post',
                 url: `/client/${clientId}/membership`,
                 data: { memberships },
-            });    }
+            });
+    }
+
+    public async getSystemStatus() {}
 }
