@@ -19,6 +19,8 @@ import {
     AddClientMembersResponseData,
     ChangeClientMembershipRequestOptions,
     ChangeClientMembershipResponseData,
+    GetSystemStatusRequestOptions,
+    GetSystemStatusResponseData,
 } from '@modules/client/client.interface';
 
 @Injectable()
@@ -139,5 +141,25 @@ export class ClientService {
             });
     }
 
-    public async getSystemStatus() {}
+    public async getSystemStatus(
+        options: GetSystemStatusRequestOptions,
+    ): Promise<Response<GetSystemStatusResponseData>> {
+        const {
+            clientId,
+            dateRange,
+            pathname,
+            count = 30,
+        } = options;
+
+        return await this.requestService.getInstance()
+            .request({
+                method: 'get',
+                url: `/client_status/${clientId}/system`,
+                query: {
+                    pathname,
+                    count,
+                    dateRange: dateRange.map((dateRangeItem) => dateRangeItem.toISOString()).join('--'),
+                },
+            });
+    }
 }

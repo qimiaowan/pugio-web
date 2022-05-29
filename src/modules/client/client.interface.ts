@@ -77,3 +77,30 @@ export interface GetSystemStatusRequestOptions {
     dateRange: [Date, Date];
     count?: number;
 }
+
+export interface SystemOSInfo {
+    platform: string;
+    distro: string;
+    release: string;
+    codename: string;
+    kernel: string;
+    arch: string;
+    hostname: string;
+    fqdn: string;
+    codepage: string;
+    logofile: string;
+    serial: string;
+    build: string;
+    servicepack: string;
+    uefi: boolean;
+}
+
+export interface SystemStatistic extends BaseResponseData {
+    data: any;
+}
+
+export interface GetSystemStatusResponseData {
+    os: SystemOSInfo;
+    count: number;
+    statistics: SystemStatistic[];
+}

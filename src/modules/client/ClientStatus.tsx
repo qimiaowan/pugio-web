@@ -16,6 +16,10 @@ import { useParams } from 'react-router-dom';
 import { StoreService } from '@modules/store/store.service';
 import _ from 'lodash';
 import SimpleBar from 'simplebar-react';
+import { ClientService } from '@modules/client/client.service';
+import { Chart } from '@antv/g2';
+import { SystemStatistic } from '@modules/client/client.interface';
+import useTheme from '@mui/material/styles/useTheme';
 
 const StyledBox = styled(Box)(({ theme }) => {
     return `
@@ -63,63 +67,59 @@ const ClientStatus: FC<InjectedComponentProps> = ({
         {
             title: 'chart.memoryUsage',
             pathname: 'mem',
-            lines: () => {
-                return [
-                    {
-                        yAxis: 'used',
-                        yAxisFormatter: (value: string) => {
-                            return parseInt(value, 10) / (1000 * 1000 * 1000);
-                        },
-                        tooltipValueFormatter: (value: string) => {
-                            return `${parseInt(value, 10) / (1000 * 1000 * 1000)} GB`;
-                        },
-                    },
-                ];
+            yAxis: 'used',
+            yAxisFormatter: (value: string) => {
+                return parseInt(value, 10) / (1000 * 1000 * 1000);
+            },
+            tooltipValueFormatter: (value: string) => {
+                return `${parseInt(value, 10) / (1000 * 1000 * 1000)} GB`;
             },
         },
         {
             title: 'chart.swapMemoryUsage',
             pathname: 'mem',
-            lines: () => {
-                return [
-                    {
-                        yAxis: 'swapused',
-                        yAxisFormatter: (value: string) => {
-                            return parseInt(value, 10) / (1000 * 1000 * 1000);
-                        },
-                        tooltipValueFormatter: (value: string) => {
-                            return `${parseInt(value, 10) / (1000 * 1000 * 1000)} GB`;
-                        },
-                    },
-                ];
+            yAxis: 'swapused',
+            yAxisFormatter: (value: string) => {
+                return parseInt(value, 10) / (1000 * 1000 * 1000);
+            },
+            tooltipValueFormatter: (value: string) => {
+                return `${parseInt(value, 10) / (1000 * 1000 * 1000)} GB`;
             },
         },
         {
             title: 'chart.cpuLoad',
             pathname: 'currentLoad.cpus',
-            lines: (data) => {
-                if (_.isArray(data)) {
-                    return data.map((dataItem, index) => {
-                        return {
-                            yAxis: 'load',
-                            dataFormatter: (currentDataItem) => {
-                                return currentDataItem[index];
-                            },
-                            tooltipValueFormatter: (value: string) => {
-                                return `${value}%`;
-                            },
-                        };
-                    });
-                } else {
-                    return [{
-                        yAxis: 'load',
-                        tooltipValueFormatter: (value: string) => {
-                            return `${value}%`;
-                        },
-                    }];
-                };
-            },
             yAxis: 'load',
+            group: 'cpuName',
+            dataFormatter: (statistics: SystemStatistic[]) => {
+                return statistics.reduce((result, statistic) => {
+                    const {
+                        data,
+                        createdAt,
+                        updatedAt,
+                    } = statistic;
+
+                    if (_.isArray(data)) {
+                        const currentStatisticItems = data.map((dataItem, index) => {
+                            return {
+                                ...dataItem,
+                                createdAt,
+                                updatedAt,
+                                cpuName: `CPU ${index + 1}`,
+                            };
+                        });
+
+                        return result.concat(currentStatisticItems);
+                    } else {
+                        return result.concat({
+                            ...data,
+                            cpuName: 'CPU 1',
+                            createdAt,
+                            updatedAt,
+                        });
+                    };
+                }, [] as Record<string, any>[]);
+            },
             tooltipValueFormatter: (value: string) => {
                 return `${value}%`;
             },
@@ -127,15 +127,9 @@ const ClientStatus: FC<InjectedComponentProps> = ({
         {
             title: 'chart.disksIO',
             pathname: 'disksIO',
-            lines: () => {
-                return [
-                    {
-                        yAxis: 'tIoSec',
-                        tooltipValueFormatter: (value: string) => {
-                            return `${value} r/s`;
-                        },
-                    },
-                ];
+            yAxis: 'tIoSec',
+            tooltipValueFormatter: (value: string) => {
+                return `${value} time/second`;
             },
         },
     ];
@@ -143,7 +137,9 @@ const ClientStatus: FC<InjectedComponentProps> = ({
     // const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
     const localeService = declarations.get<LocaleService>(LocaleService);
     const storeService = declarations.get<StoreService>(StoreService);
+    const clientService = declarations.get<ClientService>(ClientService);
 
+    const theme = useTheme();
     const headerRef = useRef<HTMLDivElement>(null);
     const { client_id: clientId } = useParams();
     const getLocaleText = localeService.useLocaleContext('pages.clientStatus');
@@ -189,7 +185,7 @@ const ClientStatus: FC<InjectedComponentProps> = ({
 
     useEffect(() => {
         const endDate = new Date();
-        const milliseconds = dateRanges[dateRangeIndex];
+        const { milliseconds } = dateRanges[dateRangeIndex];
 
         if (_.isNumber(milliseconds)) {
             const startTimestamp = endDate.getTime() - milliseconds;
@@ -200,7 +196,87 @@ const ClientStatus: FC<InjectedComponentProps> = ({
 
     useEffect(() => {
         if (getLocaleText !== _.noop && dateRange[0] !== null && dateRange[1] !== null) {
+            Promise.all(charts.map((chart, index) => {
+                return clientService.getSystemStatus({
+                    clientId,
+                    pathname: chart.pathname,
+                    count: 20,
+                    dateRange,
+                });
+            })).then((dataList) => {
+                for (const [index, data] of dataList.entries()) {
+                    const chartConfig = charts[index];
 
+                    if (!chartConfig || !data?.response?.statistics || data.response.statistics.length === 0) {
+                        continue;
+                    }
+
+                    const {
+                        yAxis,
+                        group,
+                        yAxisFormatter,
+                        dataFormatter = (statistics: SystemStatistic[]) => {
+                            return statistics.map((statistic) => {
+                                const {
+                                    data = {},
+                                    createdAt,
+                                    updatedAt,
+                                } = statistic;
+
+                                return {
+                                    ...data,
+                                    createdAt,
+                                    updatedAt,
+                                };
+                            });
+                        },
+                    } = chartConfig;
+
+                    if (!yAxis) {
+                        continue;
+                    }
+
+                    const lineData = dataFormatter(data?.response?.statistics);
+                    const chart = new Chart({
+                        container: chartConfig.title,
+                        autoFit: true,
+                        height: 500,
+                    });
+
+                    chart.data(lineData);
+
+                    chart.axis('created_at', {
+                        label: {
+                            formatter: (value) => {
+                                const date = new Date(value);
+                                const hour = date.getHours();
+                                const minute = date.getMinutes().toString().length === 1
+                                    ? `0${date.getMinutes().toString()}`
+                                    : date.getMinutes().toString();
+                                return `${hour}:${minute}`;
+                            },
+                        },
+                    });
+
+                    const lineConfig = chart.line()
+                        .position(`createdAt*${yAxis}`)
+                        .shape('split-line');
+
+                    if (group) {
+                        lineConfig.color(group);
+                    }
+
+                    if (_.isFunction(yAxisFormatter)) {
+                        chart.axis(yAxis, {
+                            label: {
+                                formatter: yAxisFormatter,
+                            },
+                        });
+                    }
+
+                    chart.render();
+                }
+            }).catch(() => {}).finally(() => {});
         }
     }, [getLocaleText, dateRange]);
 
@@ -212,6 +288,7 @@ const ClientStatus: FC<InjectedComponentProps> = ({
                         dateRanges.map((dateRangeItem, index) => {
                             return (
                                 <ToggleButton
+                                    key={index}
                                     value={index}
                                     onClick={() => setDateRangeIndex(index)}
                                 >{getLocaleText(dateRangeItem.title)}</ToggleButton>
@@ -223,7 +300,9 @@ const ClientStatus: FC<InjectedComponentProps> = ({
             <SimpleBar
                 style={{
                     width: '100%',
-                    height: windowInnerHeight - - appNavbarHeight * 2 - headerHeight,
+                    boxSizing: 'border-box',
+                    padding: theme.spacing(2),
+                    height: windowInnerHeight - appNavbarHeight - headerHeight,
                 }}
             >
                 {

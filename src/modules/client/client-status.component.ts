@@ -3,6 +3,7 @@ import { lazy } from 'react';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { LocaleService } from '@modules/locale/locale.service';
 import { StoreService } from '@modules/store/store.service';
+import { ClientService } from '@modules/client/client.service';
 
 @Component({
     component: lazy(() => import('@modules/client/ClientStatus')),
@@ -10,6 +11,7 @@ import { StoreService } from '@modules/store/store.service';
         ExceptionComponent,
         LocaleService,
         StoreService,
+        ClientService,
     ],
 })
 export class ClientStatusComponent {}
