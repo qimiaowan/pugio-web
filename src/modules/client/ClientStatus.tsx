@@ -3,17 +3,19 @@ import styled from '@mui/material/styles/styled';
 import { InjectedComponentProps } from 'khamsa';
 import {
     FC,
-    useCallback,
+    useEffect,
+    useRef,
+    useState,
 } from 'react';
-import Button from '@mui/material/Button';
-import Icon from '@mui/material/Icon';
-import { ExceptionComponent } from '@modules/brand/exception.component';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+// import { ExceptionComponent } from '@modules/brand/exception.component';
 import { LocaleService } from '@modules/locale/locale.service';
-import { ExceptionProps } from '@modules/brand/exception.interface';
-import {
-    useNavigate,
-    useParams,
-} from 'react-router-dom';
+// import { ExceptionProps } from '@modules/brand/exception.interface';
+import { useParams } from 'react-router-dom';
+import { StoreService } from '@modules/store/store.service';
+import _ from 'lodash';
+import SimpleBar from 'simplebar-react';
 
 const StyledBox = styled(Box)(({ theme }) => {
     return `
@@ -26,38 +28,174 @@ const StyledBox = styled(Box)(({ theme }) => {
             justify-content: center;
             align-items: center;
         }
+
+        .header {
+            width: 100%;
+            box-sizing: border-box;
+            padding: ${theme.spacing(2)};
+        }
     `;
 });
 
 const ClientStatus: FC<InjectedComponentProps> = ({
     declarations,
 }) => {
-    const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
-    const localeService = declarations.get<LocaleService>(LocaleService);
+    const dateRanges = [
+        {
+            title: 'dateRange.halfHour',
+            milliseconds: 30 * 60 * 1000,
+        },
+        {
+            title: 'dateRange.hour',
+            milliseconds: 60 * 60 * 1000,
+        },
+        {
+            title: 'dateRange.day',
+            milliseconds: 24 * 60 * 60 * 1000,
+        },
+        {
+            title: 'dateRange.week',
+            milliseconds: 7 * 24 * 60 * 60 * 1000,
+        },
+    ];
 
-    const navigate = useNavigate();
+    const charts = [
+        {
+            title: 'chart.memoryUsage',
+            lines: () => {
+                return [
+                    {
+                        yAxis: 'used',
+                        yAxisFormatter: (value: string) => {
+                            return parseInt(value, 10) / (1000 * 1000 * 1000);
+                        },
+                        tooltipValueFormatter: (value: string) => {
+                            return `${parseInt(value, 10) / (1000 * 1000 * 1000)} GB`;
+                        },
+                    },
+                ];
+            },
+        },
+        {
+            title: 'chart.swapMemoryUsage',
+            lines: () => {
+                return [
+                    {
+                        yAxis: 'swapused',
+                        yAxisFormatter: (value: string) => {
+                            return parseInt(value, 10) / (1000 * 1000 * 1000);
+                        },
+                        tooltipValueFormatter: (value: string) => {
+                            return `${parseInt(value, 10) / (1000 * 1000 * 1000)} GB`;
+                        },
+                    },
+                ];
+            },
+        },
+        {
+            title: 'chart.cpuLoad',
+            lines: (data) => {
+                if (_.isArray(data)) {
+
+                } else {
+                    return [{
+                        yAxis: 'load',
+                        tooltipValueFormatter: (value: string) => {
+                            return `${value}%`;
+                        },
+                    }];
+                };
+            },
+            yAxis: 'load',
+            tooltipValueFormatter: (value: string) => {
+                return `${value}%`;
+            },
+        },
+        {
+            title: 'chart.disksIO',
+        },
+    ];
+
+    // const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
+    const localeService = declarations.get<LocaleService>(LocaleService);
+    const storeService = declarations.get<StoreService>(StoreService);
+
+    const headerRef = useRef<HTMLDivElement>(null);
     const { client_id: clientId } = useParams();
     const getLocaleText = localeService.useLocaleContext('pages.clientStatus');
+    const [dateRangeIndex, setDateRangeIndex] = useState<number>(0);
+    const [dateRange, setDateRange] = useState<[Date, Date]>([null, null]);
+    const {
+        appNavbarHeight,
+        windowInnerHeight,
+    } = storeService.useStore((state) => {
+        const {
+            appNavbarHeight,
+            windowInnerHeight,
+        } = state;
 
-    const handleUnsupportedNavigate = useCallback(() => {
-        navigate(`/client/${clientId}/workstation`);
-    }, [clientId]);
+        return {
+            appNavbarHeight,
+            windowInnerHeight,
+        };
+    });
+    const [headerHeight, setHeaderHeight] = useState<number>(0);
+
+    useEffect(() => {
+        const observer = new ResizeObserver((entries) => {
+            const [observationData] = entries;
+
+            if (observationData) {
+                const blockSize = _.get(observationData, 'borderBoxSize[0].blockSize');
+
+                if (_.isNumber(blockSize)) {
+                    setHeaderHeight(blockSize);
+                }
+            }
+        });
+
+        if (headerRef.current) {
+            observer.observe(headerRef.current);
+        }
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [headerRef]);
+
+    useEffect(() => {
+        const endDate = new Date();
+        const milliseconds = dateRanges[dateRangeIndex];
+
+        if (_.isNumber(milliseconds)) {
+            const startTimestamp = endDate.getTime() - milliseconds;
+            const startDate = new Date(startTimestamp);
+            setDateRange([startDate, endDate]);
+        }
+    }, [dateRangeIndex]);
 
     return (
-        <StyledBox className="exception">
-            <Exception
-                imageSrc="/static/images/not_supported.svg"
-                title={getLocaleText('unsupported.title')}
-                subTitle={getLocaleText('unsupported.subTitle')}
-            >
-                <Button
-                    variant="text"
-                    color="primary"
-                    size="small"
-                    startIcon={<Icon className="icon-apps" />}
-                    onClick={handleUnsupportedNavigate}
-                >{getLocaleText('unsupported.goToWorkstation')}</Button>
-            </Exception>
+        <StyledBox>
+            <Box className="header" ref={headerRef}>
+                <ToggleButtonGroup value={dateRangeIndex}>
+                    {
+                        dateRanges.map((dateRangeItem, index) => {
+                            return (
+                                <ToggleButton
+                                    value={index}
+                                    onClick={() => setDateRangeIndex(index)}
+                                >{getLocaleText(dateRangeItem.title)}</ToggleButton>
+                            );
+                        })
+                    }
+                </ToggleButtonGroup>
+            </Box>
+            <SimpleBar
+                style={{
+                    width: '100%',
+                    height: windowInnerHeight - - appNavbarHeight * 2 - headerHeight,
+                }}
+            ></SimpleBar>
         </StyledBox>
     );
 };

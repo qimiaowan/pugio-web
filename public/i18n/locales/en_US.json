@@ -67,6 +67,18 @@
                 "title": "Currently not Supported",
                 "subTitle": "So sorry about this, maybe in the next future updates, it will be supported",
                 "goToWorkstation": "Back to Workstation"
+            },
+            "dateRange": {
+                "halfHour": "Half an Hour",
+                "hour": "One Hour",
+                "day": "One Day",
+                "week": "One Week"
+            },
+            "chart": {
+                "memoryUsage": "Memory Usage",
+                "swapMemoryUsage": "Swap Memory Usage",
+                "cpuLoad": "CPU Load",
+                "disksIO": "Disks IO"
             }
         }
     },
