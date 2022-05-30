@@ -59,10 +59,6 @@ const ClientStatus: FC<InjectedComponentProps> = ({
             title: 'dateRange.day',
             milliseconds: 24 * 60 * 60 * 1000,
         },
-        {
-            title: 'dateRange.week',
-            milliseconds: 7 * 24 * 60 * 60 * 1000,
-        },
     ];
 
     const chartConfigList = [
@@ -70,22 +66,37 @@ const ClientStatus: FC<InjectedComponentProps> = ({
             title: 'chart.memoryUsage',
             pathname: 'mem',
             yAxis: 'used',
+            group: 'type',
             yAxisFormatter: (value: string) => {
                 return parseInt(value, 10) / (1000 * 1000 * 1000);
             },
             tooltipValueFormatter: (value: string) => {
                 return `${parseInt(value, 10) / (1000 * 1000 * 1000)} GB`;
             },
-        },
-        {
-            title: 'chart.swapMemoryUsage',
-            pathname: 'mem',
-            yAxis: 'swapused',
-            yAxisFormatter: (value: string) => {
-                return parseInt(value, 10) / (1000 * 1000 * 1000);
-            },
-            tooltipValueFormatter: (value: string) => {
-                return `${parseInt(value, 10) / (1000 * 1000 * 1000)} GB`;
+            dataFormatter: (statistics: SystemStatistic[]) => {
+                return statistics.reduce((result, statistic) => {
+                    const {
+                        data,
+                        createdAt,
+                        updatedAt,
+                    } = statistic;
+                    const {
+                        used,
+                        swapused,
+                    } = data;
+
+                    return result.concat({
+                        used,
+                        type: 'chart.memUsage.mem',
+                        createdAt,
+                        updatedAt,
+                    }).concat({
+                        used: swapused,
+                        type: 'chart.memUsage.swapmem',
+                        createdAt,
+                        updatedAt,
+                    });
+                }, [] as Record<string, any>);
             },
         },
         {
@@ -366,7 +377,7 @@ const ClientStatus: FC<InjectedComponentProps> = ({
                 style={{
                     width: '100%',
                     boxSizing: 'border-box',
-                    padding: theme.spacing(5),
+                    padding: theme.spacing(3),
                     height: windowInnerHeight - appNavbarHeight - headerHeight,
                 }}
             >
