@@ -1,8 +1,10 @@
+/* eslint-disable no-unused-vars */
 import Box from '@mui/material/Box';
 import styled from '@mui/material/styles/styled';
 import { InjectedComponentProps } from 'khamsa';
 import {
     FC,
+    useCallback,
     useEffect,
     useRef,
     useState,
@@ -63,7 +65,7 @@ const ClientStatus: FC<InjectedComponentProps> = ({
         },
     ];
 
-    const charts = [
+    const chartConfigList = [
         {
             title: 'chart.memoryUsage',
             pathname: 'mem',
@@ -160,6 +162,25 @@ const ClientStatus: FC<InjectedComponentProps> = ({
         };
     });
     const [headerHeight, setHeaderHeight] = useState<number>(0);
+    const [chartContainers, setChartContainers] = useState<HTMLDivElement[]>(chartConfigList.map(() => null));
+    const [charts, setCharts] = useState<Chart[]>([]);
+
+    const handleSetChartContainer = useCallback((index: number, container: HTMLDivElement) => {
+        if (!container) {
+            return;
+        }
+
+        const currentChartContainers = Array.from(chartContainers);
+
+        if (!currentChartContainers[index]) {
+            currentChartContainers.splice(
+                index,
+                1,
+                container,
+            );
+            setChartContainers(currentChartContainers);
+        }
+    }, [chartContainers]);
 
     useEffect(() => {
         const observer = new ResizeObserver((entries) => {
@@ -195,8 +216,13 @@ const ClientStatus: FC<InjectedComponentProps> = ({
     }, [dateRangeIndex]);
 
     useEffect(() => {
-        if (getLocaleText !== _.noop && dateRange[0] !== null && dateRange[1] !== null) {
-            Promise.all(charts.map((chart, index) => {
+        if (
+            getLocaleText !== _.noop &&
+            dateRange[0] !== null &&
+            dateRange[1] !== null &&
+            charts.length === chartConfigList.length
+        ) {
+            Promise.all(chartConfigList.map((chart, index) => {
                 return clientService.getSystemStatus({
                     clientId,
                     pathname: chart.pathname,
@@ -205,16 +231,18 @@ const ClientStatus: FC<InjectedComponentProps> = ({
                 });
             })).then((dataList) => {
                 for (const [index, data] of dataList.entries()) {
-                    const chartConfig = charts[index];
+                    const chartConfig = chartConfigList[index];
 
                     if (!chartConfig || !data?.response?.statistics || data.response.statistics.length === 0) {
                         continue;
                     }
 
                     const {
+                        title,
                         yAxis,
                         group,
                         yAxisFormatter,
+                        tooltipValueFormatter = (value: string) => value,
                         dataFormatter = (statistics: SystemStatistic[]) => {
                             return statistics.map((statistic) => {
                                 const {
@@ -237,15 +265,15 @@ const ClientStatus: FC<InjectedComponentProps> = ({
                     }
 
                     const lineData = dataFormatter(data?.response?.statistics);
-                    const chart = new Chart({
-                        container: chartConfig.title,
-                        autoFit: true,
-                        height: 500,
-                    });
+                    const chart = charts[index];
+
+                    if (!chart) {
+                        continue;
+                    }
 
                     chart.data(lineData);
 
-                    chart.axis('created_at', {
+                    chart.axis('createdAt', {
                         label: {
                             formatter: (value) => {
                                 const date = new Date(value);
@@ -274,11 +302,48 @@ const ClientStatus: FC<InjectedComponentProps> = ({
                         });
                     }
 
+                    lineConfig.tooltip(`createdAt*${yAxis}`, (name, value) => {
+                        const date = new Date(name);
+                        const year = date.getFullYear();
+                        const month = date.getMonth();
+                        const day = date.getDate();
+                        const hour = date.getHours();
+                        const minute = date.getMinutes().toString().length === 1
+                            ? `0${date.getMinutes().toString()}`
+                            : date.getMinutes().toString();
+
+                        return {
+                            title: getLocaleText(title),
+                            name: `${year}-${month + 1}-${day} ${hour}:${minute}`,
+                            value: tooltipValueFormatter(value),
+                        };
+                    });
+
                     chart.render();
                 }
             }).catch(() => {}).finally(() => {});
+
+            return () => {
+                charts.forEach((chart) => {
+                    if (chart) {
+                        chart.clear();
+                    }
+                });
+            };
         }
-    }, [getLocaleText, dateRange]);
+    }, [getLocaleText, dateRange, charts]);
+
+    useEffect(() => {
+        if (chartContainers.every((chartContainer) => Boolean(chartContainer))) {
+            setCharts(chartConfigList.map((chartConfig, index) => {
+                return new Chart({
+                    container: chartContainers[index],
+                    autoFit: true,
+                    height: 360,
+                });
+            }));
+        }
+    }, [chartContainers]);
 
     return (
         <StyledBox>
@@ -301,14 +366,22 @@ const ClientStatus: FC<InjectedComponentProps> = ({
                 style={{
                     width: '100%',
                     boxSizing: 'border-box',
-                    padding: theme.spacing(2),
+                    padding: theme.spacing(5),
                     height: windowInnerHeight - appNavbarHeight - headerHeight,
                 }}
             >
                 {
-                    charts.map((chartConfig, index) => {
+                    chartConfigList.map((chartConfig, index) => {
                         return (
-                            <Box id={chartConfig.title} key={index} />
+                            <Box
+                                key={index}
+                                id={chartConfig.title}
+                                ref={(ref) => {
+                                    if (ref) {
+                                        handleSetChartContainer(index, ref as unknown as HTMLDivElement);
+                                    }
+                                }}
+                            />
                         );
                     })
                 }
