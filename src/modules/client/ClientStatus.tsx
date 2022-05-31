@@ -75,6 +75,7 @@ const StyledBox = styled(Box)(({ theme }) => {
                     width: 36px;
                     height: 36px;
                     margin-right: ${theme.spacing(1)};
+                    pointer-events: none;
                 }
 
                 .system-info-title {
