@@ -538,6 +538,8 @@ const ClientStatus: FC<InjectedComponentProps> = ({
                                 })
                             }
                         </ToggleButtonGroup>
+                    </Box>
+                    <Box>
                         <Button
                             variant="text"
                             startIcon={<Icon className="icon-refresh" />}
@@ -546,7 +548,7 @@ const ClientStatus: FC<InjectedComponentProps> = ({
                         >{getLocaleText('refresh')}</Button>
                     </Box>
                 </Box>
-                <Divider sx={{ marginTop: theme.spacing(1) }} />
+                <Divider />
             </Box>
             <SimpleBar
                 style={{
