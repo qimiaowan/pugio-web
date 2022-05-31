@@ -76,7 +76,10 @@
             },
             "chart": {
                 "memoryUsage": "Memory Usage",
-                "swapMemoryUsage": "Swap Memory Usage",
+                "memUsage": {
+                    "mem": "Memory",
+                    "swapmem": "Swap Memory"
+                },
                 "cpuLoad": "CPU Load",
                 "disksIO": "Disks IO"
             }
