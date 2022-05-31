@@ -9,6 +9,8 @@ import {
     useRef,
     useState,
 } from 'react';
+import Button from '@mui/material/Button';
+import Icon from '@mui/material/Icon';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 // import { ExceptionComponent } from '@modules/brand/exception.component';
@@ -43,6 +45,15 @@ const StyledBox = styled(Box)(({ theme }) => {
             width: 100%;
             box-sizing: border-box;
             padding: ${theme.spacing(2)};
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .left-wrapper {
+                & > * {
+                    margin-right: ${theme.spacing(1)};
+                }
+            }
         }
     `;
 });
@@ -95,6 +106,8 @@ const ClientStatus: FC<InjectedComponentProps> = ({
     const [charts, setCharts] = useState<Chart[]>([]);
     const [chartConfigList, setChartConfigList] = useState<ChartConfigItem[]>([]);
     const [systemStatusDataList, setSystemStatusDataList] = useState<GetSystemStatusResponseData[]>([]);
+    const [chartsLoading, setChartsLoading] = useState<boolean>(false);
+    const [chartsErrored, setChartsErrored] = useState<boolean>(false);
 
     const handleSetChartContainer = useCallback((index: number, container: HTMLDivElement) => {
         if (!container) {
@@ -117,6 +130,8 @@ const ClientStatus: FC<InjectedComponentProps> = ({
             chartConfigList.length === charts.length &&
             charts.every((chart) => Boolean(chart))
         ) {
+            setChartsLoading(true);
+            setChartsErrored(false);
             Promise.all(chartConfigList.map((chart) => {
                 return clientService.getSystemStatus({
                     clientId,
@@ -126,7 +141,11 @@ const ClientStatus: FC<InjectedComponentProps> = ({
                 });
             })).then((dataList) => {
                 setSystemStatusDataList(dataList.map((dataListItem) => dataListItem?.response));
-            }).catch(() => {}).finally(() => {});
+            }).catch(() => {
+                setChartsErrored(true);
+            }).finally(() => {
+                setChartsLoading(false);
+            });
         }
     }, [
         chartConfigList,
@@ -396,22 +415,38 @@ const ClientStatus: FC<InjectedComponentProps> = ({
         }
     }, [chartContainers]);
 
+    useEffect(() => {
+        if (!chartsLoading) {
+            const intervalId = setInterval(handleLoadDataList, 60000);
+            return () => clearInterval(intervalId);
+        }
+    }, [chartsLoading]);
+
     return (
         <StyledBox>
             <Box className="header" ref={headerRef}>
-                <ToggleButtonGroup value={dateRangeIndex}>
-                    {
-                        dateRanges.map((dateRangeItem, index) => {
-                            return (
-                                <ToggleButton
-                                    key={index}
-                                    value={index}
-                                    onClick={() => setDateRangeIndex(index)}
-                                >{getLocaleText(dateRangeItem.title)}</ToggleButton>
-                            );
-                        })
-                    }
-                </ToggleButtonGroup>
+                <Box className="left-wrapper">
+                    <ToggleButtonGroup value={dateRangeIndex}>
+                        {
+                            dateRanges.map((dateRangeItem, index) => {
+                                return (
+                                    <ToggleButton
+                                        key={index}
+                                        value={index}
+                                        onClick={() => setDateRangeIndex(index)}
+                                    >{getLocaleText(dateRangeItem.title)}</ToggleButton>
+                                );
+                            })
+                        }
+                    </ToggleButtonGroup>
+                    <Button
+                        variant="text"
+                        color="primary"
+                        startIcon={<Icon className="icon-refresh" />}
+                        disabled={chartsLoading}
+                        onClick={handleLoadDataList}
+                    >{getLocaleText('refresh')}</Button>
+                </Box>
             </Box>
             <SimpleBar
                 style={{

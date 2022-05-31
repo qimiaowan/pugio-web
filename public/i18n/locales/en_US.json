@@ -82,7 +82,8 @@
                 },
                 "cpuLoad": "CPU Load",
                 "disksIO": "Disks IO"
-            }
+            },
+            "refresh": "Refresh"
         }
     },
     "components": {
