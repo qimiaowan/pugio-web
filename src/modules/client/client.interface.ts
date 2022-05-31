@@ -30,6 +30,7 @@ export interface GetClientCurrentStatusRequestOptions {
 export interface GetClientCurrentStatusResponseData {
     offline: boolean;
     statusCode: number;
+    systemInfo: SystemOSInfo;
 }
 
 export interface QueryClientMembersRequestOptions extends PaginationRequestOptions {

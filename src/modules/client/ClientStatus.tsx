@@ -13,6 +13,7 @@ import Icon from '@mui/material/Icon';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
 import { ExceptionComponent } from '@modules/brand/exception.component';
 import { LocaleService } from '@modules/locale/locale.service';
 import { ExceptionProps } from '@modules/brand/exception.interface';
@@ -30,6 +31,7 @@ import useTheme from '@mui/material/styles/useTheme';
 import { ChartConfigItem } from '@modules/client/client-status.interface';
 import clsx from 'clsx';
 import { LoadingComponent } from '../brand/loading.component';
+import { useRequest } from 'ahooks';
 
 const StyledBox = styled(Box)(({ theme }) => {
     return `
@@ -46,14 +48,48 @@ const StyledBox = styled(Box)(({ theme }) => {
         .header {
             width: 100%;
             box-sizing: border-box;
-            padding: ${theme.spacing(2)};
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            align-items: stretch;
 
-            .left-wrapper {
-                & > * {
+            .date-range-and-controls-wrapper {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: ${theme.spacing(1)} ${theme.spacing(2)};
+
+                .left-wrapper {
+                    & > * {
+                        margin-right: ${theme.spacing(1)};
+                    }
+                }
+            }
+
+            .system-info {
+                display: flex;
+                align-items: center;
+                padding: ${theme.spacing(1)} ${theme.spacing(2)};
+                user-select: none;
+
+                & > img {
+                    width: 36px;
+                    height: 36px;
                     margin-right: ${theme.spacing(1)};
+                }
+
+                .system-info-title {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: flex-start;
+
+                    .subtitle1 {
+                        color: ${theme.palette.text.primary};
+                    }
+
+                    .subtitle2 {
+                        color: ${theme.palette.text.secondary};
+                    }
                 }
             }
         }
@@ -135,6 +171,14 @@ const ClientStatus: FC<InjectedComponentProps> = ({
     const [systemStatusDataList, setSystemStatusDataList] = useState<GetSystemStatusResponseData[]>([]);
     const [chartsLoading, setChartsLoading] = useState<boolean>(false);
     const [chartsErrored, setChartsErrored] = useState<boolean>(false);
+    const {
+        data: systemCurrentStatus,
+    } = useRequest(
+        () => clientService.getClientCurrentStatus({ clientId }),
+        {
+            refreshDeps: [],
+        },
+    );
 
     const handleSetChartContainer = useCallback((index: number, container: HTMLDivElement) => {
         if (!container) {
@@ -455,27 +499,54 @@ const ClientStatus: FC<InjectedComponentProps> = ({
     return (
         <StyledBox>
             <Box className="header" ref={headerRef}>
-                <Box className="left-wrapper">
-                    <ToggleButtonGroup value={dateRangeIndex}>
-                        {
-                            dateRanges.map((dateRangeItem, index) => {
-                                return (
-                                    <ToggleButton
-                                        key={index}
-                                        value={index}
-                                        onClick={() => setDateRangeIndex(index)}
-                                    >{getLocaleText(dateRangeItem.title)}</ToggleButton>
-                                );
-                            })
-                        }
-                    </ToggleButtonGroup>
-                    <Button
-                        variant="text"
-                        startIcon={<Icon className="icon-refresh" />}
-                        disabled={chartsLoading}
-                        onClick={handleChangeDateRange}
-                    >{getLocaleText('refresh')}</Button>
+                {
+                    systemCurrentStatus && (
+                        <Box className="system-info">
+                            {
+                                systemCurrentStatus?.response?.systemInfo?.platform && (
+                                    <Box
+                                        component="img"
+                                        src={`/static/images/os/${systemCurrentStatus.response.systemInfo.platform}.svg`}
+                                    />
+                                )
+                            }
+                            <Box className="system-info-title">
+                                <Typography
+                                    variant="subtitle1"
+                                    className="subtitle1"
+                                >{systemCurrentStatus?.response?.systemInfo?.distro}</Typography>
+                                <Typography
+                                    variant="subtitle2"
+                                    className="subtitle2"
+                                >{systemCurrentStatus?.response?.systemInfo?.kernel}</Typography>
+                            </Box>
+                        </Box>
+                    )
+                }
+                <Box className="date-range-and-controls-wrapper">
+                    <Box className="left-wrapper">
+                        <ToggleButtonGroup value={dateRangeIndex}>
+                            {
+                                dateRanges.map((dateRangeItem, index) => {
+                                    return (
+                                        <ToggleButton
+                                            key={index}
+                                            value={index}
+                                            onClick={() => setDateRangeIndex(index)}
+                                        >{getLocaleText(dateRangeItem.title)}</ToggleButton>
+                                    );
+                                })
+                            }
+                        </ToggleButtonGroup>
+                        <Button
+                            variant="text"
+                            startIcon={<Icon className="icon-refresh" />}
+                            disabled={chartsLoading}
+                            onClick={handleChangeDateRange}
+                        >{getLocaleText('refresh')}</Button>
+                    </Box>
                 </Box>
+                <Divider sx={{ marginTop: theme.spacing(1) }} />
             </Box>
             <SimpleBar
                 style={{
