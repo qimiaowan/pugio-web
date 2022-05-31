@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import Box from '@mui/material/Box';
 import styled from '@mui/material/styles/styled';
 import { InjectedComponentProps } from 'khamsa';
@@ -13,9 +12,10 @@ import Button from '@mui/material/Button';
 import Icon from '@mui/material/Icon';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-// import { ExceptionComponent } from '@modules/brand/exception.component';
+import Typography from '@mui/material/Typography';
+import { ExceptionComponent } from '@modules/brand/exception.component';
 import { LocaleService } from '@modules/locale/locale.service';
-// import { ExceptionProps } from '@modules/brand/exception.interface';
+import { ExceptionProps } from '@modules/brand/exception.interface';
 import { useParams } from 'react-router-dom';
 import { StoreService } from '@modules/store/store.service';
 import _ from 'lodash';
@@ -28,6 +28,8 @@ import {
 } from '@modules/client/client.interface';
 import useTheme from '@mui/material/styles/useTheme';
 import { ChartConfigItem } from '@modules/client/client-status.interface';
+import clsx from 'clsx';
+import { LoadingComponent } from '../brand/loading.component';
 
 const StyledBox = styled(Box)(({ theme }) => {
     return `
@@ -55,6 +57,30 @@ const StyledBox = styled(Box)(({ theme }) => {
                 }
             }
         }
+
+        .chart-container {
+            &.covered {
+                position: relative;
+            }
+
+            .cover {
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: ${theme.palette.mode === 'light' ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'};
+            }
+
+            .chart-title {
+                color: ${theme.palette.text.primary};
+                padding: ${theme.spacing(3)};
+                user-select: none;
+            }
+        }
     `;
 });
 
@@ -76,7 +102,8 @@ const ClientStatus: FC<InjectedComponentProps> = ({
         },
     ];
 
-    // const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
+    const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
+    const Loading = declarations.get<FC>(LoadingComponent);
     const localeService = declarations.get<LocaleService>(LocaleService);
     const storeService = declarations.get<StoreService>(StoreService);
     const clientService = declarations.get<ClientService>(ClientService);
@@ -141,6 +168,7 @@ const ClientStatus: FC<InjectedComponentProps> = ({
                 });
             })).then((dataList) => {
                 setSystemStatusDataList(dataList.map((dataListItem) => dataListItem?.response));
+                setChartsErrored(false);
             }).catch(() => {
                 setChartsErrored(true);
             }).finally(() => {
@@ -441,7 +469,6 @@ const ClientStatus: FC<InjectedComponentProps> = ({
                     </ToggleButtonGroup>
                     <Button
                         variant="text"
-                        color="primary"
                         startIcon={<Icon className="icon-refresh" />}
                         disabled={chartsLoading}
                         onClick={handleLoadDataList}
@@ -452,7 +479,6 @@ const ClientStatus: FC<InjectedComponentProps> = ({
                 style={{
                     width: '100%',
                     boxSizing: 'border-box',
-                    padding: theme.spacing(3),
                     height: windowInnerHeight - appNavbarHeight - headerHeight,
                 }}
             >
@@ -461,13 +487,44 @@ const ClientStatus: FC<InjectedComponentProps> = ({
                         return (
                             <Box
                                 key={index}
-                                id={chartConfig.title}
-                                ref={(ref) => {
-                                    if (ref) {
-                                        handleSetChartContainer(index, ref as unknown as HTMLDivElement);
-                                    }
-                                }}
-                            />
+                                className={clsx('chart-container', {
+                                    covered: chartsLoading || chartsErrored,
+                                })}
+                            >
+                                <Typography
+                                    variant="subtitle1"
+                                    classes={{ root: 'chart-title' }}
+                                >{chartConfig.title}</Typography>
+                                <Box
+                                    id={chartConfig.title}
+                                    style={{
+                                        padding: theme.spacing(3),
+                                    }}
+                                    ref={(ref) => {
+                                        if (ref) {
+                                            handleSetChartContainer(index, ref as unknown as HTMLDivElement);
+                                        }
+                                    }}
+                                />
+                                {
+                                    chartsErrored && (
+                                        <Box className="cover">
+                                            <Exception
+                                                title={getLocaleText('chartsError.title', {
+                                                    chartName: chartConfig.title,
+                                                })}
+                                                subTitle={getLocaleText('chartsError.subTitle')}
+                                                imageSrc="/static/images/error.svg"
+                                            />
+                                        </Box>
+                                    )
+                                }
+                                {
+                                    chartsLoading && (
+                                        <Box className="cover"><Loading /></Box>
+                                    )
+                                }
+                            </Box>
                         );
                     })
                 }

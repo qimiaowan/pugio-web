@@ -83,7 +83,11 @@
                 "cpuLoad": "CPU Load",
                 "disksIO": "Disks IO"
             },
-            "refresh": "Refresh"
+            "refresh": "Refresh",
+            "chartsError": {
+                "title": "Failed to load chart {{ chartName }}",
+                "subTitle": "Refresh to reload"
+            }
         }
     },
     "components": {
