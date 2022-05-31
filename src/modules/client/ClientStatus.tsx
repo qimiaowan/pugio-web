@@ -181,6 +181,17 @@ const ClientStatus: FC<InjectedComponentProps> = ({
         dateRange,
     ]);
 
+    const handleChangeDateRange = useCallback(() => {
+        const endDate = new Date();
+        const { milliseconds } = dateRanges[dateRangeIndex];
+
+        if (_.isNumber(milliseconds)) {
+            const startTimestamp = endDate.getTime() - milliseconds;
+            const startDate = new Date(startTimestamp);
+            setDateRange([startDate, endDate]);
+        }
+    }, [dateRangeIndex]);
+
     useEffect(() => {
         const observer = new ResizeObserver((entries) => {
             const [observationData] = entries;
@@ -299,16 +310,7 @@ const ClientStatus: FC<InjectedComponentProps> = ({
         }
     }, [getLocaleText]);
 
-    useEffect(() => {
-        const endDate = new Date();
-        const { milliseconds } = dateRanges[dateRangeIndex];
-
-        if (_.isNumber(milliseconds)) {
-            const startTimestamp = endDate.getTime() - milliseconds;
-            const startDate = new Date(startTimestamp);
-            setDateRange([startDate, endDate]);
-        }
-    }, [dateRangeIndex]);
+    useEffect(handleChangeDateRange, [dateRangeIndex]);
 
     useEffect(() => {
         if (
@@ -445,9 +447,7 @@ const ClientStatus: FC<InjectedComponentProps> = ({
 
     useEffect(() => {
         if (!chartsLoading) {
-            const intervalId = setInterval(() => {
-                setDateRangeIndex(dateRangeIndex);
-            }, 60000);
+            const intervalId = setInterval(handleChangeDateRange, 60000);
             return () => clearInterval(intervalId);
         }
     }, [chartsLoading, dateRangeIndex]);
@@ -473,7 +473,7 @@ const ClientStatus: FC<InjectedComponentProps> = ({
                         variant="text"
                         startIcon={<Icon className="icon-refresh" />}
                         disabled={chartsLoading}
-                        onClick={handleLoadDataList}
+                        onClick={handleChangeDateRange}
                     >{getLocaleText('refresh')}</Button>
                 </Box>
             </Box>
