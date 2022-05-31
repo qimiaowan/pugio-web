@@ -445,10 +445,12 @@ const ClientStatus: FC<InjectedComponentProps> = ({
 
     useEffect(() => {
         if (!chartsLoading) {
-            const intervalId = setInterval(handleLoadDataList, 60000);
+            const intervalId = setInterval(() => {
+                setDateRangeIndex(dateRangeIndex);
+            }, 60000);
             return () => clearInterval(intervalId);
         }
-    }, [chartsLoading]);
+    }, [chartsLoading, dateRangeIndex]);
 
     return (
         <StyledBox>
