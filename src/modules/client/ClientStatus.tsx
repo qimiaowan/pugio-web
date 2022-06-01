@@ -8,6 +8,7 @@ import {
     useRef,
     useState,
 } from 'react';
+import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Icon from '@mui/material/Icon';
 import ToggleButton from '@mui/material/ToggleButton';
@@ -70,13 +71,6 @@ const StyledBox = styled(Box)(({ theme }) => {
                 align-items: center;
                 padding: ${theme.spacing(1)} ${theme.spacing(2)};
                 user-select: none;
-
-                & > img {
-                    width: 36px;
-                    height: 36px;
-                    margin-right: ${theme.spacing(1)};
-                    pointer-events: none;
-                }
 
                 .system-info-title {
                     display: flex;
@@ -505,10 +499,27 @@ const ClientStatus: FC<InjectedComponentProps> = ({
                         <Box className="system-info">
                             {
                                 systemCurrentStatus?.response?.systemInfo?.platform && (
-                                    <Box
-                                        component="img"
+                                    <Avatar
+                                        sx={{
+                                            height: 'auto',
+                                            width: 'auto',
+                                            backgroundColor: 'transparent',
+                                            marginRight: 1,
+                                        }}
+                                        imgProps={{
+                                            style: {
+                                                height: '36px',
+                                            },
+                                        }}
+                                        variant="square"
                                         src={`/static/images/os/${systemCurrentStatus.response.systemInfo.platform}.svg`}
-                                    />
+                                    >
+                                        <Box
+                                            height="36px"
+                                            component="img"
+                                            src="/static/images/os_fallback_avatar.svg"
+                                        />
+                                    </Avatar>
                                 )
                             }
                             <Box className="system-info-title">

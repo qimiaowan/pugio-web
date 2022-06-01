@@ -3,9 +3,16 @@ import logo from '@modules/brand/logo.svg';
 import { ThemeOptions } from '@mui/material/styles';
 import createTheme from '@mui/material/styles/createTheme';
 import { createMuiTheme } from '@lenconda/shuffle-mui-theme';
+import { createElement } from 'react';
+import Box from '@mui/material/Box';
+import { ConfigService } from '@modules/config/config.service';
 
 @Injectable()
 export class BrandService {
+    public constructor(
+        private readonly configService: ConfigService,
+    ) {}
+
     public getLogo() {
         return logo;
     }
@@ -148,6 +155,29 @@ export class BrandService {
                                     },
                                 },
                             }),
+                        },
+                    },
+                    MuiAvatar: {
+                        defaultProps: {
+                            children: createElement(
+                                Box,
+                                {
+                                    component: 'img',
+                                    // @ts-ignore
+                                    src: this.configService.DEFAULT_PICTURE_URL,
+                                    width: '100%',
+                                    height: '100%',
+                                },
+                            ),
+                        },
+                        styleOverrides: {
+                            root: {
+                                width: 'auto',
+                                height: 'auto',
+                                '&, & img': {
+                                    pointerEvents: 'none',
+                                },
+                            },
                         },
                     },
                 },

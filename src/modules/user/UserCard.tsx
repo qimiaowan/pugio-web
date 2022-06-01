@@ -4,6 +4,7 @@ import {
     useState,
     MouseEvent,
 } from 'react';
+import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
@@ -58,7 +59,6 @@ const UserCardWrapper = styled(Box)(({ theme }) => {
             pointer-events: none;
             width: 50px;
             height: 50px;
-            border-radius: 10px;
             margin-right: ${theme.spacing(1)};
         }
 
@@ -211,7 +211,11 @@ const UserCard: FC<InjectedComponentProps<UserCardProps>> = ({
                     </Box>
                 )
             }
-            <Box className="avatar" component="img" src={avatar} />
+            <Avatar
+                variant="rounded"
+                classes={{ root: 'avatar' }}
+                src={avatar}
+            />
             <Box className="description">
                 <Typography
                     variant="subtitle1"

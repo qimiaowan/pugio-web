@@ -96,13 +96,6 @@ const ProfileMenu: FC<InjectedComponentProps> = ({
                                     pointerEvents: 'none',
                                 }}
                                 src={avatarUrl}
-                                imgProps={{
-                                    onError: () => {
-                                        if (avatarUrl !== configService.DEFAULT_PICTURE_URL) {
-                                            setAvatarUrl(configService.DEFAULT_PICTURE_URL);
-                                        }
-                                    },
-                                }}
                             />
                         </IconButton>
                     );

@@ -5,6 +5,7 @@ import {
     MouseEvent,
 } from 'react';
 import { UserSelectorProps } from '@modules/user/user-selector.interface';
+import Avatar from '@mui/material/Avatar';
 import Box, { BoxProps } from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -110,7 +111,6 @@ const UserSelectorWrapper = styled(Dialog)(({ theme }) => {
                 .avatar {
                     width: 28px;
                     height: 28px;
-                    border-radius: ${theme.spacing(0.5)};
                     margin-right: ${theme.spacing(1)};
                 }
 
@@ -343,7 +343,11 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                                                             }
                                                         </ListItemIcon>
                                                         <ListItemText className="users-list-item-text">
-                                                            <Box className="avatar" component="img" src={picture} />
+                                                            <Avatar
+                                                                classes={{ root: 'avatar' }}
+                                                                src={picture}
+                                                                variant="rounded"
+                                                            />
                                                             <Typography noWrap={true}>{fullName} ({email})</Typography>
                                                         </ListItemText>
                                                     </ListItemButton>

@@ -9,6 +9,7 @@ import {
     ChannelListItemMode,
     ChannelListItemProps,
 } from '@modules/channel/channel-list-item.interface';
+import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -301,14 +302,26 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
                 )
             }
             <Box className="content-wrapper">
-                <Box
-                    component="img"
-                    style={{
-                        width: width * 0.3,
-                        height: width * 0.3,
+                <Avatar
+                    variant="rounded"
+                    imgProps={{
+                        style: {
+                            width: width * 0.3,
+                            height: width * 0.3,
+                        },
+                    }}
+                    sx={{
+                        height: 'auto',
                     }}
                     src={avatar || '/static/images/channel_avatar_fallback.svg'}
-                />
+                >
+                    <Box
+                        width="100%"
+                        height="100%"
+                        component="img"
+                        src="/static/images/channel_avatar_fallback.svg"
+                    />
+                </Avatar>
                 <Typography classes={{ root: 'text' }} variant="subtitle2">{name}</Typography>
             </Box>
         </ChannelListItemWrapper>
