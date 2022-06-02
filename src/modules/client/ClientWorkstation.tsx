@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
     FC,
     useEffect,
@@ -192,6 +193,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const [clientOffline, setClientOffline] = useState<boolean>(false);
     const [lastSelectedTabId, setLastSelectedTabId] = useState<string>(null);
     const [selectedTabMetadata, setSelectedTabMetadata] = useState<string[]>([]);
+    const [tabs, setTabs] = useState<ChannelTab[]>([]);
 
     const handleCreateTab = (clientId: string, data: TabData = {}) => {
         const tabId = createTab(clientId, data);
@@ -209,6 +211,13 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
             clearInterval(intervalId);
         };
     }, []);
+
+    useEffect(() => {
+        if (clientId && clientTabsMap) {
+            const currentClientTabs = (clientTabsMap.get(clientId) || List<ChannelTab>([])).toArray();
+            setTabs(currentClientTabs);
+        }
+    }, [clientId, clientTabsMap]);
 
     useEffect(
         () => {
@@ -282,18 +291,18 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                 {
                     selectedTabId && (
                         <Box className="header-container">
-
+                            <ClientWorkstationTabs
+                                tabs={tabs}
+                                selectedTabId={selectedTabId}
+                                selectedTabMetadata={selectedTabMetadata}
+                                headerWidth={headerWidth}
+                                panelHeight={panelHeight}
+                                onGoHome={setLastSelectedTabId}
+                                onSelectedTabIdChange={setSelectedTabId}
+                            />
                         </Box>
                     )
                 }
-                <ClientWorkstationTabs
-                    selectedTabId={selectedTabId}
-                    selectedTabMetadata={selectedTabMetadata}
-                    headerWidth={headerWidth}
-                    panelHeight={panelHeight}
-                    onGoHome={setLastSelectedTabId}
-                    onSelectedTabIdChange={setSelectedTabId}
-                />
                 {
                     !selectedTabId
                         ? <Box

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
     FC,
     useEffect,
@@ -47,9 +48,11 @@ const ClientWorkstationTabs: FC<InjectedComponentProps<ClientWorkstationTabsProp
     panelHeight,
     headerWidth,
     selectedTabId,
-    selectedTabMetadata,
+    selectedTabMetadata = [],
+    tabs = [],
     onGoHome = _.noop,
     onSelectedTabIdChange = _.noop,
+    onCreateTab = _.noop,
 }) => {
     const Tab = declarations.get<FC<TabProps>>(TabComponent);
     const localeService = declarations.get<LocaleService>(LocaleService);
@@ -80,9 +83,7 @@ const ClientWorkstationTabs: FC<InjectedComponentProps<ClientWorkstationTabsProp
     const tabsWrapperRef = useRef<HTMLDivElement>(null);
     const placeholderRef = useRef<HTMLDivElement>(null);
     const tabsScrollRef = useRef<SimpleBar>(null);
-    const [tabs, setTabs] = useState<ChannelTab[]>([]);
     const {
-        clientTabsMap,
         tabsScrollMap,
         setSelectedTab,
         updateTab,
@@ -92,12 +93,7 @@ const ClientWorkstationTabs: FC<InjectedComponentProps<ClientWorkstationTabsProp
         updateTabsScrollOffset,
     } = storeService.useStore((state) => {
         const {
-            appNavbarHeight,
-            tabsWrapperHeight,
-            channelTabs: clientTabsMap,
-            selectedTabMap,
             tabsScrollMap,
-            windowInnerHeight,
             setSelectedTab,
             updateTab,
             createTab,
@@ -107,12 +103,7 @@ const ClientWorkstationTabs: FC<InjectedComponentProps<ClientWorkstationTabsProp
         } = state;
 
         return {
-            appNavbarHeight,
-            tabsWrapperHeight,
-            clientTabsMap,
-            selectedTabMap,
             tabsScrollMap,
-            windowInnerHeight,
             setSelectedTab,
             updateTab,
             createTab,
@@ -122,17 +113,12 @@ const ClientWorkstationTabs: FC<InjectedComponentProps<ClientWorkstationTabsProp
         };
     }, shallow);
     const getLocaleText = localeService.useLocaleContext('pages.clientWorkstation');
-    // const [selectedTabMetadata, setSelectedTabMetadata] = useState<string[]>([]);
-
-    const handleCreateTab = (clientId: string, data: TabData = {}) => {
-        const tabId = createTab(clientId, data);
-        setSelectedTab(clientId, `${tabId}:scroll`);
-    };
 
     const handleLoadChannel = useCallback((channelId: string, clientId: string, tabId: string) => {
-        updateTab(clientId, tabId, {
-            loading: true,
-        });
+        console.log(111);
+        // updateTab(clientId, tabId, {
+        //     loading: true,
+        // });
 
         Promise
             .all([
@@ -210,7 +196,7 @@ const ClientWorkstationTabs: FC<InjectedComponentProps<ClientWorkstationTabsProp
                                                             closeTab: () => destroyTab(clientId, tabId),
                                                             createNewTab: (focus, channelId) => {
                                                                 if (focus) {
-                                                                    handleCreateTab(clientId, { channelId });
+                                                                    onCreateTab(clientId, { channelId });
                                                                 } else {
                                                                     createTab(clientId, { channelId });
                                                                 }
@@ -333,7 +319,7 @@ const ClientWorkstationTabs: FC<InjectedComponentProps<ClientWorkstationTabsProp
                                     </Box>
                                 }
                                 onSelectChannel={(channel) => {
-                                    handleCreateTab(clientId, { channelId: channel.id });
+                                    onCreateTab(clientId, { channelId: channel.id });
                                     closePopover();
                                 }}
                             />
@@ -392,17 +378,6 @@ const ClientWorkstationTabs: FC<InjectedComponentProps<ClientWorkstationTabsProp
             observer.disconnect();
         };
     }, [placeholderRef.current]);
-
-    useEffect(() => {
-        if (clientId && clientTabsMap) {
-            const currentClientTabs = (clientTabsMap.get(clientId) || List<ChannelTab>([])).toArray();
-            setTabs(currentClientTabs);
-        }
-    }, [clientId, clientTabsMap]);
-
-    useEffect(() => {
-        onSelectedTabIdChange(selectedTabId);
-    }, [selectedTabId]);
 
     useEffect(() => {
         setButtonsWrapperSticked(placeholderWidth === 0);
@@ -480,7 +455,7 @@ const ClientWorkstationTabs: FC<InjectedComponentProps<ClientWorkstationTabsProp
             {/* FIXME temporarily prevent flash popover */}
             <ChannelList />
             {
-                (clientTabsMap.get(clientId)?.size > 0 && selectedTabId !== null) && (
+                (tabs.length > 0 && selectedTabId !== null) && (
                     <SimpleBar
                         className="tabs-wrapper"
                         autoHide={true}
@@ -499,7 +474,7 @@ const ClientWorkstationTabs: FC<InjectedComponentProps<ClientWorkstationTabsProp
                                     loading,
                                     errored,
                                     lifecycle = {},
-                                    // nodes,
+                                    nodes,
                                 } = tab;
 
                                 return (
@@ -515,9 +490,9 @@ const ClientWorkstationTabs: FC<InjectedComponentProps<ClientWorkstationTabsProp
                                         onClick={() => setSelectedTab(clientId, tabId)}
                                         onDataLoad={
                                             (channelId) => {
-                                                // if (!nodes) {
-                                                handleLoadChannel(channelId, clientId, tabId);
-                                                // }
+                                                if (!nodes) {
+                                                    handleLoadChannel(channelId, clientId, tabId);
+                                                }
                                             }
                                         }
                                         onClose={() => {
@@ -558,10 +533,10 @@ const ClientWorkstationTabs: FC<InjectedComponentProps<ClientWorkstationTabsProp
             }
             <Box
                 sx={{
-                    flexGrow: clientTabsMap.get(clientId)?.size > 0 ? 0 : 1,
+                    flexGrow: tabs.length > 0 ? 0 : 1,
                     flexShrink: 0,
                     display: 'flex',
-                    justifyContent: clientTabsMap.get(clientId)?.size > 0 ? 'space-between' : 'flex-end',
+                    justifyContent: tabs.length > 0 ? 'space-between' : 'flex-end',
                     alignItems: 'center',
                     paddingLeft: theme.spacing(1),
                     borderBottom: `1px solid ${theme.palette.divider}`,
