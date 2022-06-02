@@ -9,4 +9,5 @@ export class ConfigService {
     public ORIGIN = ORIGIN;
     public ACCOUNT_CENTER_OAUTH2_CLIENT_ID = 'deef165b-9e97-4eda-ae4e-cfcc9480b1ea';
     public DEFAULT_PICTURE_URL = '/static/images/profile_avatar_fallback.svg';
+    public WORKSTATION_BUS_ID = '__PUGIO_WORKSTATION_BUS__';
 }

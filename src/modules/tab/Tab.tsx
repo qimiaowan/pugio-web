@@ -37,7 +37,7 @@ const TabWrapper = styled(Box)(({ theme }) => {
         min-width: 150px;
 
         &:last-child {
-            border-right-color: transparent;
+            border-right: 0;
         }
 
         &:not(.placeholder) {

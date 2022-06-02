@@ -46,6 +46,7 @@ import styled from '@mui/material/styles/styled';
 import { PopoverProps } from '@modules/common/popover.interface';
 import { PopoverComponent } from '@modules/common/popover.component';
 import Color from 'color';
+import { ConfigService } from '@modules/config/config.service';
 
 const ClientWorkstationWrapper = styled(Box)(({ theme }) => {
     const mode = theme.palette.mode;
@@ -157,7 +158,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const utilsService = declarations.get<UtilsService>(UtilsService);
     const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
     const ChannelList = declarations.get<FC<ChannelListProps>>(ChannelListComponent);
-    // const configService = declarations.get<ConfigService>(ConfigService);
+    const configService = declarations.get<ConfigService>(ConfigService);
     const Popover = declarations.get<FC<PopoverProps>>(PopoverComponent);
 
     const internalChannelMap = {
@@ -630,8 +631,8 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
 
     useEffect(
         () => {
-            if (window['__PUGIO_WORKSTATION_BUS__']) {
-                window['__PUGIO_WORKSTATION_BUS__'].emit({
+            if (window[configService.WORKSTATION_BUS_ID]) {
+                window[configService.WORKSTATION_BUS_ID].emit({
                     width: headerWidth,
                     height: panelHeight,
                     locale,
@@ -649,7 +650,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
 
     useEffect(() => {
         const bus = utilsService.createEventBus();
-        window['__PUGIO_WORKSTATION_BUS__'] = bus;
+        window[configService.WORKSTATION_BUS_ID] = bus;
     }, []);
 
     useEffect(() => {
