@@ -7,6 +7,7 @@ import { ClientComponent } from '@modules/client/client.component';
 import { ClientMembersComponent } from '@modules/client/client-members.component';
 import { ClientRoleSelectorComponent } from '@modules/client/client-role-selector.component';
 import { ClientStatusComponent } from '@modules/client/client-status.component';
+import { ClientWorkstationTabsComponent } from '@modules/client/client-workstation-tabs.component';
 
 const TabModule = import('@modules/tab/tab.module').then(({ TabModule }) => TabModule);
 const StoreModule = import('@modules/store/store.module').then(({ StoreModule }) => StoreModule);
@@ -29,6 +30,7 @@ const ChannelModule = import('@modules/channel/channel.module').then(({ ChannelM
         ClientMembersComponent,
         ClientRoleSelectorComponent,
         ClientStatusComponent,
+        ClientWorkstationTabsComponent,
     ],
     routes: [
         {
