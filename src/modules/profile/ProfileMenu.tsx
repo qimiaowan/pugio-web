@@ -72,7 +72,7 @@ const ProfileMenu: FC<InjectedComponentProps> = ({
 
     return (
         getProfileLoading
-            ? <Loading style={{ width: 31, height: '31px !important' }} />
+            ? <Loading style={{ width: 31, height: 31 }} />
             : <Popover
                 variant="menu"
                 Trigger={({ open, openPopover }) => {

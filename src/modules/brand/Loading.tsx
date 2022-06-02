@@ -1,50 +1,45 @@
 import { FC } from 'react';
 import Box, { BoxProps } from '@mui/material/Box';
 import clsx from 'clsx';
+import styled from '@mui/material/styles/styled';
+import useTheme from '@mui/material/styles/useTheme';
+
+const StyledBox = styled(Box)(() => {
+    return '';
+});
 
 const Loading: FC<BoxProps> = ({
     className = '',
+    style,
     ...props
 }) => {
+    const theme = useTheme();
+
     return (
-        <Box
+        <StyledBox
             sx={{
                 width: '32px',
             }}
             className={clsx('loading', className)}
             {...props}
         >
-            <svg version="1.1" id="L5" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
-                viewBox="0 0 100 100" enableBackground="new 0 0 0 0">
-                <circle fill="#b5b5b5" stroke="none" cx="32" cy="50" r="6">
-                    <animateTransform
-                        attributeName="transform"
-                        dur="1s"
-                        type="translate"
-                        values="0 15 ; 0 -15; 0 15"
-                        repeatCount="indefinite"
-                        begin="0.1"/>
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 32 32"
+                style={style}
+                fill={theme.palette.mode === 'dark' ? theme.palette.grey[600] : theme.palette.grey[400]}
+            >
+                <circle transform="translate(8 0)" cx="0" cy="16" r="0">
+                    <animate attributeName="r" values="0; 4; 0; 0" dur="1.2s" repeatCount="indefinite" begin="0" keyTimes="0;0.2;0.7;1" keySplines="0.2 0.2 0.4 0.8;0.2 0.6 0.4 0.8;0.2 0.6 0.4 0.8" calcMode="spline"/>
                 </circle>
-                <circle fill="#b5b5b5" stroke="none" cx="50" cy="50" r="6">
-                    <animateTransform
-                        attributeName="transform"
-                        dur="1s"
-                        type="translate"
-                        values="0 10 ; 0 -10; 0 10"
-                        repeatCount="indefinite"
-                        begin="0.2"/>
+                <circle transform="translate(16 0)" cx="0" cy="16" r="0">
+                    <animate attributeName="r" values="0; 4; 0; 0" dur="1.2s" repeatCount="indefinite" begin="0.3" keyTimes="0;0.2;0.7;1" keySplines="0.2 0.2 0.4 0.8;0.2 0.6 0.4 0.8;0.2 0.6 0.4 0.8" calcMode="spline"/>
                 </circle>
-                <circle fill="#b5b5b5" stroke="none" cx="68" cy="50" r="6">
-                    <animateTransform
-                        attributeName="transform"
-                        dur="1s"
-                        type="translate"
-                        values="0 5 ; 0 -5; 0 5"
-                        repeatCount="indefinite"
-                        begin="0.3"/>
+                <circle transform="translate(24 0)" cx="0" cy="16" r="0">
+                    <animate attributeName="r" values="0; 4; 0; 0" dur="1.2s" repeatCount="indefinite" begin="0.6" keyTimes="0;0.2;0.7;1" keySplines="0.2 0.2 0.4 0.8;0.2 0.6 0.4 0.8;0.2 0.6 0.4 0.8" calcMode="spline"/>
                 </circle>
             </svg>
-        </Box>
+        </StyledBox>
     );
 };
 
