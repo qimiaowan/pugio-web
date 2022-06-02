@@ -35,6 +35,8 @@ import { LoadingComponent } from '../brand/loading.component';
 import { useRequest } from 'ahooks';
 
 const StyledBox = styled(Box)(({ theme }) => {
+    const mode = theme.palette.mode;
+
     return `
         width: 100%;
         height: 100%;
@@ -52,6 +54,7 @@ const StyledBox = styled(Box)(({ theme }) => {
             display: flex;
             flex-direction: column;
             align-items: stretch;
+            background-color: ${mode === 'dark' ? theme.palette.grey[900] : theme.palette.grey[50]};
 
             .date-range-and-controls-wrapper {
                 display: flex;

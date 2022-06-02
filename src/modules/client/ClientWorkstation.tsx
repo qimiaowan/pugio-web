@@ -43,7 +43,6 @@ import { AppComponent as WebTerminalAppComponent } from '@builtin:web-terminal/a
 import { ChannelListComponent } from '@modules/channel/channel-list.component';
 import { ChannelListProps } from '@modules/channel/channel-list.interface';
 import styled from '@mui/material/styles/styled';
-import { ConfigService } from '@modules/config/config.service';
 import { PopoverProps } from '@modules/common/popover.interface';
 import { PopoverComponent } from '@modules/common/popover.component';
 import Color from 'color';
@@ -67,21 +66,6 @@ const ClientWorkstationWrapper = styled(Box)(({ theme }) => {
 
             .tabs {
                 display: flex;
-
-                .startup-wrapper {
-                    height: 45px;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    box-sizing: border-box;
-                    padding: 0 ${theme.spacing(0.8)};
-                    border-bottom: 1px solid ${theme.palette.divider};
-
-                    .startup-avatar {
-                        width: 16px;
-                        height: 16px;
-                    }
-                }
 
                 .tabs-wrapper {
                     flex-grow: 1;
@@ -134,23 +118,6 @@ const ClientWorkstationWrapper = styled(Box)(({ theme }) => {
             }
         }
 
-        .channel-not-selected {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            .startup-search {
-                flex-grow: 0 !important;
-                width: 280px !important;
-            }
-
-            .startup-header {
-                border-bottom: 0;
-            }
-        }
-
         .empty-tabs {
             width: 100%;
             height: 100%;
@@ -190,7 +157,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
     const utilsService = declarations.get<UtilsService>(UtilsService);
     const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
     const ChannelList = declarations.get<FC<ChannelListProps>>(ChannelListComponent);
-    const configService = declarations.get<ConfigService>(ConfigService);
+    // const configService = declarations.get<ConfigService>(ConfigService);
     const Popover = declarations.get<FC<PopoverProps>>(PopoverComponent);
 
     const internalChannelMap = {
@@ -714,41 +681,8 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                     selectedTabId && (
                         <Box className="header-container">
                             <Box className="tabs" style={{ width: headerWidth }} ref={tabsWrapperRef}>
-                                <Box
-                                    className="startup-wrapper"
-                                    ref={startupWrapperRef}
-                                    sx={{
-                                        borderRight: clientTabsMap.get(clientId)?.size > 0
-                                            ? `1px solid ${theme.palette.divider}`
-                                            : 0,
-                                    }}
-                                >
-                                    <IconButton
-                                        sx={{
-                                            padding: theme.spacing(0.8),
-                                            ...(
-                                                selectedTabId === configService.STARTUP_TAB_ID
-                                                    ? {
-                                                        backgroundColor: theme.palette.mode === 'dark'
-                                                            ? theme.palette.grey[700]
-                                                            : theme.palette.grey[300],
-                                                        cursor: 'default',
-                                                        '&:hover': {
-                                                            backgroundColor: theme.palette.mode === 'dark'
-                                                                ? theme.palette.grey[700]
-                                                                : theme.palette.grey[300],
-                                                        },
-                                                    }
-                                                    : {}
-                                            ),
-                                        }}
-                                        onClick={() => setSelectedTab(clientId, configService.STARTUP_TAB_ID)}
-                                    >
-                                        <Box component="img" src="/static/images/startup.svg" className="startup-avatar" />
-                                    </IconButton>
-                                </Box>
                                 {
-                                    clientTabsMap.get(clientId)?.size > 0 && (
+                                    (clientTabsMap.get(clientId)?.size > 0 && selectedTabId !== null) && (
                                         <SimpleBar
                                             className="tabs-wrapper"
                                             autoHide={true}
@@ -898,13 +832,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                                         },
                                     }}
                                 >
-                                    <Button
-                                        variant="text"
-                                        color="primary"
-                                        size="small"
-                                        startIcon={<Icon className="icon-rocket" />}
-                                        onClick={() => setSelectedTab(clientId, configService.STARTUP_TAB_ID)}
-                                    >{getLocaleText('goToStartup')}</Button>
                                     {
                                         lastSelectedTabId && (
                                             <Button
@@ -998,33 +925,8 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                             </Exception>
                         </Box>
                         : <>
-                            <Box
-                                className="channel-not-selected"
-                                style={
-                                    selectedTabId === configService.STARTUP_TAB_ID
-                                        ? {}
-                                        : {
-                                            display: 'none',
-                                        }
-                                }
-                            >
-                                <ChannelList
-                                    clientId={clientId}
-                                    width={headerWidth}
-                                    height={panelHeight}
-                                    searchProps={{
-                                        className: 'startup-search',
-                                    }}
-                                    headerProps={{
-                                        className: 'startup-header',
-                                    }}
-                                    onSelectChannel={(channel) => {
-                                        handleCreateTab(clientId, { channelId: channel.id });
-                                    }}
-                                />
-                            </Box>
                             {
-                                selectedTabId !== configService.STARTUP_TAB_ID && (
+                                selectedTabId && (
                                     <SimpleBar
                                         style={{
                                             width: '100%',

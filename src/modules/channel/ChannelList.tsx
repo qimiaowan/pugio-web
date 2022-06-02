@@ -29,7 +29,6 @@ import IconButton from '@mui/material/IconButton';
 import Icon from '@mui/material/Icon';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 import { LocaleService } from '@modules/locale/locale.service';
 import { LoadingComponent } from '@modules/brand/loading.component';
 import clsx from 'clsx';
@@ -93,6 +92,11 @@ const ChannelListContainer = styled(Box)(({ theme }) => {
 
             .channel-list-group-wrapper {
                 width: 100%;
+                border-bottom: 1px solid ${theme.palette.divider};
+
+                &:last-child {
+                    border-bottom-color: transparent;
+                }
 
                 .switch-wrapper {
                     box-sizing: border-box;
@@ -186,14 +190,6 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = (listProps) =>
             title: 'tabs.official',
             query: {
                 builtIn: 1,
-            },
-            expanded: true,
-            loading: false,
-            loadingMore: false,
-        },
-        {
-            title: 'tabs.fromMarket',
-            query: {
             },
             expanded: true,
             loading: false,
@@ -456,7 +452,6 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = (listProps) =>
                                             }
                                         </Box>
                                 }
-                                <Divider />
                             </Box>
                         );
                     })

@@ -27,7 +27,7 @@
             "switch": "Switch",
             "welcome": {
                 "title": "Welcome to Pugio",
-                "subTitle": "There is no tabs created, you can click the button below to create a new tab to run a channel"
+                "subTitle": "There is no connections created, you can click the button below to create a new tab to run a channel"
             },
             "offline": {
                 "title": "Client Offline",
@@ -39,7 +39,7 @@
             "startup": "Startup",
             "home": "Home",
             "goBack": "Go Back",
-            "createTab": "Create a Tab"
+            "createTab": "Create a Connection"
         },
         "clientMembers": {
             "tabs": {

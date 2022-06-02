@@ -107,7 +107,7 @@ export class StoreService {
                     if (!tabs) {
                         return {
                             channelTabs: state.channelTabs,
-                            selectedTabMap: state.selectedTabMap.set(clientId, this.configService.STARTUP_TAB_ID),
+                            selectedTabMap: state.selectedTabMap.set(clientId, null),
                         };
                     }
 
@@ -120,7 +120,7 @@ export class StoreService {
                         ),
                         selectedTabMap: state.selectedTabMap.set(
                             clientId,
-                            newTabs?.last()?.tabId || this.configService.STARTUP_TAB_ID,
+                            newTabs?.last()?.tabId || null,
                         ),
                     };
                 });
