@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="120px" height="120px" viewBox="0 0 120 120" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60.1 (88133) - https://sketch.com -->
+    <title>welcome</title>
+    <desc>Created with Sketch.</desc>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="welcome" fill="#999999" fill-rule="nonzero">
+            <rect id="矩形" fill-opacity="0.2" x="0" y="0" width="120" height="120" rx="10"></rect>
+            <path d="M37.601979,55.1194347 C39.3387988,56.8562545 39.3387988,59.4614842 37.601979,61.198304 L22.1877034,76.6125796 C20.4508836,78.3493994 17.8456539,78.3493994 16.1088341,76.6125796 L13.0693995,73.573145 C11.3325797,71.8363252 11.3325797,69.2310955 13.0693995,67.4942757 L28.4836751,52.0800001 C30.2204949,50.3431803 32.8257246,50.3431803 34.5625444,52.0800001 L37.601979,55.1194347 L37.601979,55.1194347 Z" id="svg_1" opacity="0.3" transform="translate(25.335689, 64.346290) rotate(45.000000) translate(-25.335689, -64.346290) "></path>
+            <path d="M93.1988693,26.1837452 C105.139505,38.1243812 105.139505,57.2293989 93.1988693,69.1700349 L68.6662898,93.7026144 L47.1731449,72.2094696 L93.1988693,26.1837452 Z" id="svg_2" transform="translate(74.663745, 59.943180) rotate(45.000000) translate(-74.663745, -59.943180) "></path>
+        </g>
+    </g>
+</svg>

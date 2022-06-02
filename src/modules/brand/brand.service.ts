@@ -1,11 +1,11 @@
 import { Injectable } from 'khamsa';
-import logo from '@modules/brand/logo.svg';
 import { ThemeOptions } from '@mui/material/styles';
 import createTheme from '@mui/material/styles/createTheme';
 import { createMuiTheme } from '@lenconda/shuffle-mui-theme';
 import { createElement } from 'react';
 import Box from '@mui/material/Box';
 import { ConfigService } from '@modules/config/config.service';
+import * as vectors from '@modules/brand/vectors';
 
 @Injectable()
 export class BrandService {
@@ -13,8 +13,8 @@ export class BrandService {
         private readonly configService: ConfigService,
     ) {}
 
-    public getLogo() {
-        return logo;
+    public getVectors(type: string) {
+        return vectors[type];
     }
 
     public getTheme(mode: 'light' | 'dark' = 'light') {

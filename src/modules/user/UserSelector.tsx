@@ -390,7 +390,7 @@ const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
                 {
                     selectedMembershipList.length === 0
                         ? <Exception
-                            imageSrc="/static/images/empty.svg"
+                            type="empty"
                             title={getComponentLocaleText('noSelected.title')}
                             subTitle={getComponentLocaleText('noSelected.subTitle')}
                         />

@@ -5,6 +5,7 @@ const {
     addWebpackAlias,
     addWebpackExternals,
     overrideDevServer,
+    addWebpackModuleRule,
 } = require('customize-cra');
 const addLessLoader = require('customize-cra-less-loader');
 const path = require('path');
@@ -114,5 +115,9 @@ module.exports = {
             );
             return config;
         },
+        addWebpackModuleRule({
+            test: /\.svg$/,
+            use: 'svg-inline-loader',
+        }),
     ),
 };

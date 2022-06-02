@@ -384,7 +384,7 @@ const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
                             ? <Loading />
                             : clientMembers.length === 0
                                 ? <Exception
-                                    imageSrc="/static/images/empty.svg"
+                                    type="empty"
                                     title={getPageLocaleText('empty.title')}
                                     subTitle={getPageLocaleText('empty.subTitle')}
                                 />

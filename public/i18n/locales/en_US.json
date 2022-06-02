@@ -3,6 +3,7 @@
         "navbar": {
             "clients": "Clients",
             "explore": "Explore",
+            "home": "Home",
             "development": "Developing",
             "issues": "Issues"
         },

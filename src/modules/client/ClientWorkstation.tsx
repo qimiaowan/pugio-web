@@ -669,7 +669,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
         clientOffline
             ? <ClientWorkstationWrapper className="page offline">
                 <Exception
-                    imageSrc="/static/images/error.svg"
+                    type="error"
                     title={getLocaleText('offline.title')}
                     subTitle={getLocaleText('offline.subTitle')}
                 />
@@ -806,7 +806,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                             style={{ width: headerWidth, height: panelHeight }}
                         >
                             <Exception
-                                imageSrc="/static/images/welcome.svg"
+                                type="welcome"
                                 title={getLocaleText('welcome.title')}
                                 subTitle={getLocaleText('welcome.subTitle')}
                                 sx={{

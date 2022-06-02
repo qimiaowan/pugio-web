@@ -604,7 +604,7 @@ const ClientStatus: FC<InjectedComponentProps> = ({
                                                     chartName: chartConfig.title,
                                                 })}
                                                 subTitle={getLocaleText('chartsError.subTitle')}
-                                                imageSrc="/static/images/error.svg"
+                                                type="error"
                                             />
                                         </Box>
                                     )

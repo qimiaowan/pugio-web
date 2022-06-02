@@ -58,8 +58,11 @@ const ContainerWrapper = styled(Box)(({ theme }) => {
             .logo {
                 width: 36px;
                 height: 36px;
-                border-radius: 6px;
                 pointer-events: none;
+
+                svg {
+                    border-radius: 6px;
+                }
             }
 
             .wrapper {
@@ -144,7 +147,7 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
 
     useEffect(() => {
         if (!logo) {
-            setLogo(brandService.getLogo());
+            setLogo(brandService.getVectors('logo'));
         }
     }, [logo]);
 
@@ -162,10 +165,18 @@ const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> =
                                 <Box className="wrapper logo-and-nav">
                                     <Box
                                         className="logo"
-                                        component="img"
-                                        src={logo}
+                                        dangerouslySetInnerHTML={{ __html: logo }}
                                     />
                                     <ClientsDropdown />
+                                    <NavLink to="/home" className="navlink">
+                                        {
+                                            <Button
+                                                classes={{
+                                                    root: 'link',
+                                                }}
+                                            >{getLocaleText('app.navbar.home')}</Button>
+                                        }
+                                    </NavLink>
                                     {/* <NavLink to="/explore" className="navlink">
                                         {
                                             <Button

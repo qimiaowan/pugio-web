@@ -4,6 +4,8 @@ import clsx from 'clsx';
 import { ExceptionProps } from '@modules/brand/exception.interface';
 import Typography from '@mui/material/Typography';
 import styled from '@mui/material/styles/styled';
+import { InjectedComponentProps } from 'khamsa';
+import { BrandService } from '@modules/brand/brand.service';
 
 const ExceptionWrapper = styled(Box)(({ theme }) => {
     return `
@@ -19,7 +21,8 @@ const ExceptionWrapper = styled(Box)(({ theme }) => {
             user-select: none;
         }
 
-        img {
+        .img {
+            width: 81px;
             height: 81px;
             pointer-events: none;
         }
@@ -40,22 +43,27 @@ const ExceptionWrapper = styled(Box)(({ theme }) => {
     `;
 });
 
-const Exception: FC<ExceptionProps> = ({
-    imageSrc = '',
+const Exception: FC<InjectedComponentProps<ExceptionProps>> = ({
+    type = 'error',
     title = '',
     subTitle = '',
+    imageClassName = '',
+    imageProps = {},
+    declarations,
     ...props
 }) => {
+    const brandService = declarations.get<BrandService>(BrandService);
+
     return (
         <ExceptionWrapper
             {...props}
             className={clsx(props.className || '')}
         >
-            {
-                imageSrc && (
-                    <Box component="img" src={imageSrc} />
-                )
-            }
+            <Box
+                {...imageProps}
+                className={clsx('img', imageClassName)}
+                dangerouslySetInnerHTML={{ __html: brandService.getVectors(type) }}
+            />
             {
                 title && (
                     <Typography classes={{ root: 'title' }} variant="subtitle2">{title}</Typography>

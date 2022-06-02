@@ -293,7 +293,7 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
                             </Box>
                             : clients.length === 0
                                 ? <Exception
-                                    imageSrc="/static/images/empty.svg"
+                                    type="empty"
                                     title={getComponentLocaleText('empty.title')}
                                     subTitle={getComponentLocaleText('empty.subTitle')}
                                 >

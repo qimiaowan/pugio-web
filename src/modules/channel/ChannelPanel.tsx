@@ -79,7 +79,7 @@ const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
                             ? <Loading />
                             : errored
                                 ? <Exception
-                                    imageSrc="/static/images/error.svg"
+                                    type="error"
                                     title={getLocaleText('error.title', { channelId })}
                                     subTitle={getLocaleText('error.subTitle')}
                                 />
