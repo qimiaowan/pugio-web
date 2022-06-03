@@ -19,7 +19,7 @@ import {
     UserCardMenuProps,
 } from '@modules/user/user-card.interface';
 import clsx from 'clsx';
-import { InjectedComponentProps } from 'khamsa';
+import { getContainer } from 'khamsa';
 import { UtilsService } from '@modules/utils/utils.service';
 import _ from 'lodash';
 import styled from '@mui/material/styles/styled';
@@ -158,11 +158,10 @@ const UserCardMenu: FC<UserCardMenuProps> = ({
     );
 };
 
-const UserCard: FC<InjectedComponentProps<UserCardProps>> = ({
+const UserCard: FC<UserCardProps> = ({
     profile,
     menu = [],
     className = '',
-    declarations,
     checkable = true,
     checked = false,
     controlSlot,
@@ -172,7 +171,8 @@ const UserCard: FC<InjectedComponentProps<UserCardProps>> = ({
     onClick = _.noop,
     ...props
 }) => {
-    const utilsService = declarations.get<UtilsService>(UtilsService);
+    const container = getContainer(UserCard);
+    const utilsService = container.get<UtilsService>(UtilsService);
 
     const iconButtons = menu.slice(0, 2);
     const menuListItems = menu.slice(2);

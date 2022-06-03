@@ -4,7 +4,7 @@ import Tab from '@modules/tab/Tab';
 import { LoadingComponent } from '@modules/brand/loading.component';
 
 @Component({
-    component: Tab,
+    factory: () => Tab,
     declarations: [
         LocaleService,
         LoadingComponent,

@@ -4,7 +4,7 @@ import { UtilsService } from '@modules/utils/utils.service';
 import Listener from './Listener';
 
 @Component({
-    component: Listener,
+    factory: () => Listener,
     declarations: [
         UtilsService,
         StoreService,

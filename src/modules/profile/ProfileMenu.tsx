@@ -11,7 +11,7 @@ import IconButton from '@mui/material/IconButton';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { InjectedComponentProps } from 'khamsa';
+import { getContainer } from 'khamsa';
 import { LocaleService } from '@modules/locale/locale.service';
 import { ProfileService } from '@modules/profile/profile.service';
 import { useRequest } from 'ahooks';
@@ -23,16 +23,15 @@ import { PopoverComponent } from '@modules/common/popover.component';
 import { PopoverProps } from '@modules/common/popover.interface';
 import useTheme from '@mui/material/styles/useTheme';
 
-const ProfileMenu: FC<InjectedComponentProps> = ({
-    declarations,
-}) => {
-    const localeService = declarations.get<LocaleService>(LocaleService);
-    const storeService = declarations.get<StoreService>(StoreService);
-    const profileService = declarations.get<ProfileService>(ProfileService);
-    const configService = declarations.get<ConfigService>(ConfigService);
-    const Popover = declarations.get<FC<PopoverProps>>(PopoverComponent);
+const ProfileMenu: FC = () => {
+    const container = getContainer(ProfileMenu);
+    const localeService = container.get<LocaleService>(LocaleService);
+    const storeService = container.get<StoreService>(StoreService);
+    const profileService = container.get<ProfileService>(ProfileService);
+    const configService = container.get<ConfigService>(ConfigService);
+    const Popover = container.get<FC<PopoverProps>>(PopoverComponent);
 
-    const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
+    const Loading = container.get<FC<BoxProps>>(LoadingComponent);
 
     const theme = useTheme();
     const [avatarUrl, setAvatarUrl] = useState<string>(configService.DEFAULT_PICTURE_URL);

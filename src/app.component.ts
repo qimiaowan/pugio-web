@@ -5,7 +5,6 @@ import { ContainerComponent } from '@modules/container/container.component';
 import { ListenerComponent } from '@modules/container/listener.component';
 
 @Component({
-    // component: lazy(() => import('@/App')),
     factory: (forwardRef) => {
         return lazy(() => forwardRef(import('@/App')));
     },

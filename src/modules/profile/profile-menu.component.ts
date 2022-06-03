@@ -8,7 +8,7 @@ import { ConfigService } from '@modules/config/config.service';
 import { PopoverComponent } from '@modules/common/popover.component';
 
 @Component({
-    component: ProfileMenu,
+    factory: () => ProfileMenu,
     declarations: [
         LocaleService,
         ProfileService,

@@ -21,7 +21,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import TextField from '@mui/material/TextField';
-import { InjectedComponentProps } from 'khamsa';
+import { getContainer } from 'khamsa';
 import { LocaleService } from '@modules/locale/locale.service';
 import SimpleBar from 'simplebar-react';
 import clsx from 'clsx';
@@ -133,20 +133,20 @@ const UserSelectorWrapper = styled(Dialog)(({ theme }) => {
     `;
 });
 
-const UserSelector: FC<InjectedComponentProps<UserSelectorProps>> = ({
-    declarations,
+const UserSelector: FC<UserSelectorProps> = ({
     className,
     onSelectUsers = _.noop,
     onClose = _.noop,
     ...props
 }) => {
-    const localeService = declarations.get<LocaleService>(LocaleService);
-    const userService = declarations.get<UserService>(UserService);
-    const utilsService = declarations.get<UtilsService>(UtilsService);
-    const UserCard = declarations.get<FC<UserCardProps>>(UserCardComponent);
-    const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
-    const Exception = declarations.get<FC<ExceptionComponentProps>>(ExceptionComponent);
-    const ClientRoleSelector = declarations.get<FC<ClientRoleSelectorProps>>(ClientRoleSelectorComponent);
+    const container = getContainer(UserSelector);
+    const localeService = container.get<LocaleService>(LocaleService);
+    const userService = container.get<UserService>(UserService);
+    const utilsService = container.get<UtilsService>(UtilsService);
+    const UserCard = container.get<FC<UserCardProps>>(UserCardComponent);
+    const Loading = container.get<FC<BoxProps>>(LoadingComponent);
+    const Exception = container.get<FC<ExceptionComponentProps>>(ExceptionComponent);
+    const ClientRoleSelector = container.get<FC<ClientRoleSelectorProps>>(ClientRoleSelectorComponent);
 
     const handleOpenPopover = (event: MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
