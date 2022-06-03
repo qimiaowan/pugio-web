@@ -1,7 +1,6 @@
-import { InjectedComponentProps } from 'khamsa';
+import { getContainer } from 'khamsa';
 import {
     FC,
-    PropsWithChildren,
     useEffect,
     useState,
 } from 'react';
@@ -11,10 +10,11 @@ import { ContainerProps } from '@modules/container/container.interface';
 import { AliveScope } from 'react-activation';
 import { ListenerComponent } from '@modules/container/listener.component';
 
-const App: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) => {
-    const localeService = declarations.get<LocaleService>(LocaleService);
-    const Container = declarations.get<FC<ContainerProps>>(ContainerComponent);
-    const Listener = declarations.get<FC>(ListenerComponent);
+const App: FC = () => {
+    const container = getContainer(App);
+    const localeService = container.get<LocaleService>(LocaleService);
+    const Container = container.get<FC<ContainerProps>>(ContainerComponent);
+    const Listener = container.get<FC>(ListenerComponent);
 
     const [locale, setLocale] = useState(localStorage.getItem('locale') || 'en_US');
     const localeMap = localeService.useLocaleMap(locale);
