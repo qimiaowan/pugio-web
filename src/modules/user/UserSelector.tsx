@@ -424,6 +424,7 @@ const UserSelector: FC<UserSelectorProps> = ({
                                 <Button
                                     size="small"
                                     color="error"
+                                    variant="text"
                                     startIcon={<Icon className="icon-delete" />}
                                     disabled={selectedSelectedUserIdList.length === 0}
                                     onClick={() => {
