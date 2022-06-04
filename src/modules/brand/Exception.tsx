@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { ExceptionProps } from '@modules/brand/exception.interface';
 import Typography from '@mui/material/Typography';
 import styled from '@mui/material/styles/styled';
-import { InjectedComponentProps } from 'khamsa';
+import { getContainer } from 'khamsa';
 import { BrandService } from '@modules/brand/brand.service';
 
 const ExceptionWrapper = styled(Box)(({ theme }) => {
@@ -43,16 +43,16 @@ const ExceptionWrapper = styled(Box)(({ theme }) => {
     `;
 });
 
-const Exception: FC<InjectedComponentProps<ExceptionProps>> = ({
+const Exception: FC<ExceptionProps> = ({
     type = 'error',
     title = '',
     subTitle = '',
     imageClassName = '',
     imageProps = {},
-    declarations,
     ...props
 }) => {
-    const brandService = declarations.get<BrandService>(BrandService);
+    const container = getContainer(Exception);
+    const brandService = container.get<BrandService>(BrandService);
 
     return (
         <ExceptionWrapper

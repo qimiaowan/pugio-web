@@ -3,7 +3,7 @@ import Exception from '@modules/brand/Exception';
 import { BrandService } from '@modules/brand/brand.service';
 
 @Component({
-    component: Exception,
+    factory: () => Exception,
     declarations: [
         BrandService,
     ],

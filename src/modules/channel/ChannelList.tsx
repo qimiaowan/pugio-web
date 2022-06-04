@@ -5,7 +5,7 @@ import {
     useRef,
     useCallback,
 } from 'react';
-import { InjectedComponentProps } from 'khamsa';
+import { getContainer } from 'khamsa';
 import {
     ChannelListProps,
     ChannelListCategory,
@@ -148,9 +148,8 @@ const ChannelListContainer = styled(Box)(({ theme }) => {
     `;
 });
 
-const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = (listProps) => {
+const ChannelList: FC<ChannelListProps> = (listProps) => {
     const {
-        declarations,
         clientId,
         width,
         height,
@@ -168,12 +167,12 @@ const ChannelList: FC<InjectedComponentProps<ChannelListProps>> = (listProps) =>
         className: searchClassName,
         ...otherSearchProps
     } = searchProps;
-
-    const channelService = declarations.get<ChannelService>(ChannelService);
-    const utilsService = declarations.get<UtilsService>(UtilsService);
-    const localeService = declarations.get<LocaleService>(LocaleService);
-    const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
-    const ChannelListItem = declarations.get<FC<ChannelListItemProps>>(ChannelListItemComponent);
+    const container = getContainer(ChannelList);
+    const channelService = container.get<ChannelService>(ChannelService);
+    const utilsService = container.get<UtilsService>(UtilsService);
+    const localeService = container.get<LocaleService>(LocaleService);
+    const Loading = container.get<FC<BoxProps>>(LoadingComponent);
+    const ChannelListItem = container.get<FC<ChannelListItemProps>>(ChannelListItemComponent);
 
     if (!_.isNumber(width) || !_.isNumber(height) || !clientId) {
         return <></>;

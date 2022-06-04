@@ -5,7 +5,7 @@ import { ExceptionComponent } from '@modules/brand/exception.component';
 import { LocaleService } from '@modules/locale/locale.service';
 
 @Component({
-    component: ChannelPanel,
+    factory: () => ChannelPanel,
     declarations: [
         LoadingComponent,
         ExceptionComponent,

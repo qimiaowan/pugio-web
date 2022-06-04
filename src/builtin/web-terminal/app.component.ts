@@ -5,7 +5,11 @@ import { LocaleService } from '@modules/locale/locale.service';
 import { LoadingComponent } from '@modules/brand/loading.component';
 
 @Component({
-    component: lazy(() => import('@builtin:web-terminal/App')),
+    factory: (forwardRef) => {
+        return lazy(() => {
+            return forwardRef(import('@builtin:web-terminal/App'));
+        });
+    },
     declarations: [
         AppService,
         LocaleService,

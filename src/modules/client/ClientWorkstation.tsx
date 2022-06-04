@@ -675,8 +675,6 @@ const ClientWorkstation: FC = () => {
                 />
             </ClientWorkstationWrapper>
             : <ClientWorkstationWrapper className="page">
-                {/* FIXME temporarily prevent flash popover */}
-                <ChannelList />
                 {
                     selectedTabId && (
                         <Box className="header-container">
