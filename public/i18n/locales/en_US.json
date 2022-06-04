@@ -56,8 +56,9 @@
             "userCardMenu": {
                 "delete": "Delete Member"
             },
-            "add": "Add Members",
-            "delete": "Delete {{ count }} Member(s)",
+            "title": "Members in this client",
+            "add": "Add",
+            "delete": "Delete ({{ count }})",
             "deleteConfirm": "Would you want to delete these {{ count }} member(s)?",
             "exceptions": {
                 "deleteMembers": "Failed to delete members"

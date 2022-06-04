@@ -1,5 +1,6 @@
 import {
     FC,
+    useCallback,
     useEffect,
     useState,
     useRef,
@@ -8,6 +9,10 @@ import Box, { BoxProps } from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Icon from '@mui/material/Icon';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import clsx from 'clsx';
 import { getContainer } from 'khamsa';
 import { UtilsService } from '@modules/utils/utils.service';
@@ -22,9 +27,6 @@ import {
     useRequest,
 } from 'ahooks';
 import { useParams } from 'react-router-dom';
-import Divider from '@mui/material/Divider';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { ClientMemberTab } from '@modules/client/client-members.interface';
 import { LocaleService } from '@modules/locale/locale.service';
 import { LoadingComponent } from '@modules/brand/loading.component';
@@ -41,10 +43,10 @@ import styled from '@mui/material/styles/styled';
 import { ConfigService } from '@modules/config/config.service';
 import { ClientRoleSelectorProps } from '@modules/client/client-role-selector.interface';
 import { ClientRoleSelectorComponent } from '@modules/client/client-role-selector.component';
+import { PopoverProps } from '@modules/common/popover.interface';
+import { PopoverComponent } from '@modules/common/popover.component';
 
 const ClientMembersWrapper = styled(Box)(({ theme }) => {
-    const mode = theme.palette.mode;
-
     return `
         display: flex;
         flex-direction: column;
@@ -55,15 +57,18 @@ const ClientMembersWrapper = styled(Box)(({ theme }) => {
         }
 
         .header {
-            width: 100%;
-            padding: ${theme.spacing(1)};
+            width: 720px;
+            padding: ${theme.spacing(1)} 0;
             display: flex;
-            justify-content: space-between;
-            background-color: ${mode === 'dark' ? theme.palette.grey[900] : theme.palette.grey[50]};
+            flex-direction: column;
+            justify-content: stretch;
+            align-self: center;
 
             .header-controls-wrapper {
                 display: flex;
+                justify-content: space-between;
                 align-items: center;
+                padding: ${theme.spacing(1)} 0;
 
                 & > * {
                     margin-right: ${theme.spacing(1)};
@@ -74,12 +79,30 @@ const ClientMembersWrapper = styled(Box)(({ theme }) => {
                 }
 
                 .search {
-                    width: 240px;
+                    flex-grow: 1;
                     background-color: white;
                 }
 
                 .toggle-button {
                     min-width: 64px;
+                }
+
+                .title {
+                    user-select: none;
+                    color: ${theme.palette.text.primary};
+                    font-weight: 700;
+                }
+
+                .control-button {
+                    margin: 0 ${theme.spacing(0.5)};
+
+                    &:first-of-type {
+                        margin-left: 0;
+                    }
+
+                    &:last-child {
+                        margin-right: 0;
+                    }
                 }
             }
         }
@@ -87,7 +110,7 @@ const ClientMembersWrapper = styled(Box)(({ theme }) => {
         .client-members-page {
             display: flex;
             flex-direction: column;
-            justify-content: stretch;
+            justify-content: center;
             align-items: center;
 
             .exception {
@@ -95,7 +118,8 @@ const ClientMembersWrapper = styled(Box)(({ theme }) => {
             }
 
             .members-wrapper {
-                width: 100%;
+                max-width: 720px;
+                min-width: 360px;
                 height: 100%;
                 display: flex;
                 box-sizing: border-box;
@@ -136,6 +160,7 @@ const ClientMembers: FC<BoxProps> = ({
     const UserSelector = container.get<FC<UserSelectorProps>>(UserSelectorComponent);
     const configService = container.get<ConfigService>(ConfigService);
     const ClientRoleSelector = container.get<FC<ClientRoleSelectorProps>>(ClientRoleSelectorComponent);
+    const Popover = container.get<FC<PopoverProps>>(PopoverComponent);
 
     const { client_id: clientId } = useParams();
     const getLocaleText = localeService.useLocaleContext();
@@ -146,7 +171,6 @@ const ClientMembers: FC<BoxProps> = ({
     const [tabs, setTabs] = useState<ClientMemberTab[]>([]);
     const [controlsWrapperHeight, setControlsWrapperHeight] = useState<number>(0);
     const [membersContainerHeight, setMembersContainerHeight] = useState<number>(0);
-    const [membersContainerWidth, setMembersContainerWidth] = useState<number>(0);
     const controlsWrapperRef = useRef<HTMLDivElement>(null);
     const debouncedSearchValue = useDebounce(searchValue);
     const {
@@ -170,7 +194,6 @@ const ClientMembers: FC<BoxProps> = ({
         },
         {
             reloadDeps: [
-                clientId,
                 debouncedSearchValue,
             ],
         },
@@ -193,22 +216,16 @@ const ClientMembers: FC<BoxProps> = ({
     const [userSelectorOpen, setUserSelectorOpen] = useState<boolean>(false);
     const {
         windowInnerHeight,
-        windowInnerWidth,
         appNavbarHeight,
-        clientSidebarWidth,
     } = storeService.useStore((state) => {
         const {
             windowInnerHeight,
-            windowInnerWidth,
             appNavbarHeight,
-            clientSidebarWidth,
         } = state;
 
         return {
             windowInnerHeight,
-            windowInnerWidth,
             appNavbarHeight,
-            clientSidebarWidth,
         };
     });
     const [clientMembers, setClientMembers] = useState<QueryClientMembersResponseDataItem[]>([]);
@@ -254,6 +271,20 @@ const ClientMembers: FC<BoxProps> = ({
         });
     };
 
+    const generateSelectorValue = useCallback((role: string) => {
+        if (!role || !tabs || !Array.isArray(tabs) || tabs.length === 0) {
+            return '';
+        }
+
+        const tab = tabs.find((tab) => tab?.query?.role === role);
+
+        if (!tab) {
+            return '';
+        }
+
+        return getPageLocaleText(tab.title);
+    }, [getPageLocaleText, tabs]);
+
     useEffect(() => {
         if (userClientRelationResponseData?.response) {
             const { roleType } = userClientRelationResponseData.response;
@@ -292,13 +323,10 @@ const ClientMembers: FC<BoxProps> = ({
 
     useEffect(() => {
         setMembersContainerHeight(windowInnerHeight - appNavbarHeight * 2 - controlsWrapperHeight + 2);
-        setMembersContainerWidth(windowInnerWidth - clientSidebarWidth + 1);
     }, [
         controlsWrapperHeight,
         windowInnerHeight,
-        windowInnerWidth,
         appNavbarHeight,
-        clientSidebarWidth,
     ]);
 
     useEffect(() => {
@@ -318,27 +346,65 @@ const ClientMembers: FC<BoxProps> = ({
                 <Box className="header-controls-wrapper">
                     {
                         tabs.length > 0 && (
-                            <ToggleButtonGroup value={role}>
+                            <Popover
+                                variant="menu"
+                                Trigger={({ open, openPopover }) => {
+                                    return (
+                                        <Button
+                                            endIcon={<Icon className={`icon-keyboard-arrow-${open ? 'up' : 'down'}`} />}
+                                            onClick={openPopover}
+                                        >{generateSelectorValue(role)}</Button>
+                                    );
+                                }}
+                            >
                                 {
-                                    tabs.map((tab) => {
-                                        const {
-                                            title,
-                                            query,
-                                        } = tab;
-
+                                    ({ closePopover }) => {
                                         return (
-                                            <ToggleButton
-                                                value={query?.role}
-                                                key={title}
-                                                classes={{
-                                                    root: 'toggle-button',
-                                                }}
-                                                onClick={() => setRole(query?.role)}
-                                            >{getPageLocaleText(title)}</ToggleButton>
+                                            <>
+                                                {
+                                                    tabs.map((tab) => {
+                                                        const {
+                                                            title,
+                                                            query,
+                                                        } = tab;
+
+                                                        return (
+                                                            <ListItemButton
+                                                                key={title}
+                                                                dense={true}
+                                                                classes={{
+                                                                    root: 'toggle-button',
+                                                                }}
+                                                                onClick={() => {
+                                                                    setRole(query?.role);
+                                                                    closePopover();
+                                                                }}
+                                                            >
+                                                                <ListItemIcon>
+                                                                    {
+                                                                        query?.role === role && (
+                                                                            <Icon className="icon-check" />
+                                                                        )
+                                                                    }
+                                                                </ListItemIcon>
+                                                                <ListItemText>
+                                                                    <Typography
+                                                                        sx={{
+                                                                            minWidth: 81,
+                                                                            maxWidth: 100,
+                                                                        }}
+                                                                        noWrap={true}
+                                                                    >{getPageLocaleText(title)}</Typography>
+                                                                </ListItemText>
+                                                            </ListItemButton>
+                                                        );
+                                                    })
+                                                }
+                                            </>
                                         );
-                                    })
+                                    }
                                 }
-                            </ToggleButtonGroup>
+                            </Popover>
                         )
                     }
                     <TextField
@@ -351,28 +417,31 @@ const ClientMembers: FC<BoxProps> = ({
                     />
                 </Box>
                 <Box className="header-controls-wrapper">
-                    {
-                        selectedMemberships.length > 0 && (
-                            <Button
-                                variant="text"
-                                size="small"
-                                color="error"
-                                startIcon={<Icon className="icon-delete" />}
-                                title={getPageLocaleText('delete', { count: selectedMemberships.length })}
-                                onClick={() => handleDeleteSelectedMembers(selectedMemberships)}
-                            >{getPageLocaleText('delete', { count: selectedMemberships.length })}</Button>
-                        )
-                    }
-                    <Button
-                        variant="text"
-                        size="small"
-                        color="primary"
-                        startIcon={<Icon className="icon-account-add" />}
-                        onClick={() => setUserSelectorOpen(true)}
-                    >{getPageLocaleText('add')}</Button>
+                    <Typography classes={{ root: 'title' }} noWrap={true}>{getPageLocaleText('title')}</Typography>
+                    <Box>
+                        {
+                            selectedMemberships.length > 0 && (
+                                <Button
+                                    variant="text"
+                                    size="small"
+                                    color="error"
+                                    startIcon={<Icon className="icon-delete" />}
+                                    classes={{ root: 'control-button' }}
+                                    title={getPageLocaleText('delete', { count: selectedMemberships.length })}
+                                    onClick={() => handleDeleteSelectedMembers(selectedMemberships)}
+                                >{getPageLocaleText('delete', { count: selectedMemberships.length })}</Button>
+                            )
+                        }
+                        <Button
+                            variant="contained"
+                            size="small"
+                            startIcon={<Icon className="icon-account-add" />}
+                            classes={{ root: 'control-button' }}
+                            onClick={() => setUserSelectorOpen(true)}
+                        >{getPageLocaleText('add')}</Button>
+                    </Box>
                 </Box>
             </Box>
-            <Divider />
             <Box className="page client-members-page">
                 <Box
                     className={clsx('members-wrapper', {
@@ -388,7 +457,12 @@ const ClientMembers: FC<BoxProps> = ({
                                     title={getPageLocaleText('empty.title')}
                                     subTitle={getPageLocaleText('empty.subTitle')}
                                 />
-                                : <SimpleBar style={{ width: membersContainerWidth, height: membersContainerHeight }}>
+                                : <SimpleBar
+                                    style={{
+                                        width: 720,
+                                        height: membersContainerHeight,
+                                    }}
+                                >
                                     {
                                         clientMembers.map((listItem) => {
                                             const {

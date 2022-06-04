@@ -10,6 +10,7 @@ import { ExceptionComponent } from '@modules/brand/exception.component';
 import { UserCardComponent } from '@modules/user/user-card.component';
 import { ConfigService } from '@modules/config/config.service';
 import { ClientRoleSelectorComponent } from '@modules/client/client-role-selector.component';
+import { PopoverComponent } from '@modules/common/popover.component';
 
 @Component({
     factory: (forwardRef) => {
@@ -28,6 +29,7 @@ import { ClientRoleSelectorComponent } from '@modules/client/client-role-selecto
         UserCardComponent,
         ConfigService,
         ClientRoleSelectorComponent,
+        PopoverComponent,
     ],
 })
 export class ClientMembersComponent {}
