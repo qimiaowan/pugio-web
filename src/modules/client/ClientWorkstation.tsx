@@ -424,30 +424,6 @@ const ClientWorkstation: FC = () => {
                                         padding: 0,
                                     },
                                 }}
-                                headerSlot={
-                                    <Box
-                                        sx={{
-                                            flexGrow: 1,
-                                            flexShrink: 0,
-                                            alignSelf: 'stretch',
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'center',
-                                            padding: `0 ${theme.spacing(1)}`,
-                                        }}
-                                    >
-                                        <IconButton
-                                            title={getLocaleText('installChannel')}
-                                        >
-                                            <Icon className="icon icon-import" />
-                                        </IconButton>
-                                        <IconButton
-                                            title={getLocaleText('createChannel')}
-                                        >
-                                            <Icon className="icon icon-plus" />
-                                        </IconButton>
-                                    </Box>
-                                }
                                 onSelectChannel={(channel) => {
                                     handleCreateTab(clientId, { channelId: channel.id });
                                     closePopover();
@@ -886,30 +862,6 @@ const ClientWorkstation: FC = () => {
                                                                 padding: 0,
                                                             },
                                                         }}
-                                                        headerSlot={
-                                                            <Box
-                                                                sx={{
-                                                                    flexGrow: 1,
-                                                                    flexShrink: 0,
-                                                                    alignSelf: 'stretch',
-                                                                    display: 'flex',
-                                                                    justifyContent: 'space-between',
-                                                                    alignItems: 'center',
-                                                                    padding: `0 ${theme.spacing(1)}`,
-                                                                }}
-                                                            >
-                                                                <IconButton
-                                                                    title={getLocaleText('installChannel')}
-                                                                >
-                                                                    <Icon className="icon icon-import" />
-                                                                </IconButton>
-                                                                <IconButton
-                                                                    title={getLocaleText('createChannel')}
-                                                                >
-                                                                    <Icon className="icon icon-plus" />
-                                                                </IconButton>
-                                                            </Box>
-                                                        }
                                                         onSelectChannel={(channel) => {
                                                             handleCreateTab(clientId, { channelId: channel.id });
                                                             closePopover();
