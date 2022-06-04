@@ -9,7 +9,7 @@ import Button from '@mui/material/Button';
 import Icon from '@mui/material/Icon';
 import TextField from '@mui/material/TextField';
 import clsx from 'clsx';
-import { InjectedComponentProps } from 'khamsa';
+import { getContainer } from 'khamsa';
 import { UtilsService } from '@modules/utils/utils.service';
 import {
     ClientMembership,
@@ -121,21 +121,21 @@ const ClientMembersWrapper = styled(Box)(({ theme }) => {
     `;
 });
 
-const ClientMembers: FC<InjectedComponentProps<BoxProps>> = ({
+const ClientMembers: FC<BoxProps> = ({
     className = '',
-    declarations,
     ...props
 }) => {
-    const clientService = declarations.get<ClientService>(ClientService);
-    const utilsService = declarations.get<UtilsService>(UtilsService);
-    const localeService = declarations.get<LocaleService>(LocaleService);
-    const storeService = declarations.get<StoreService>(StoreService);
-    const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
-    const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
-    const UserCard = declarations.get<FC<UserCardProps>>(UserCardComponent);
-    const UserSelector = declarations.get<FC<UserSelectorProps>>(UserSelectorComponent);
-    const configService = declarations.get<ConfigService>(ConfigService);
-    const ClientRoleSelector = declarations.get<FC<ClientRoleSelectorProps>>(ClientRoleSelectorComponent);
+    const container = getContainer(ClientMembers);
+    const clientService = container.get<ClientService>(ClientService);
+    const utilsService = container.get<UtilsService>(UtilsService);
+    const localeService = container.get<LocaleService>(LocaleService);
+    const storeService = container.get<StoreService>(StoreService);
+    const Loading = container.get<FC<BoxProps>>(LoadingComponent);
+    const Exception = container.get<FC<ExceptionProps>>(ExceptionComponent);
+    const UserCard = container.get<FC<UserCardProps>>(UserCardComponent);
+    const UserSelector = container.get<FC<UserSelectorProps>>(UserSelectorComponent);
+    const configService = container.get<ConfigService>(ConfigService);
+    const ClientRoleSelector = container.get<FC<ClientRoleSelectorProps>>(ClientRoleSelectorComponent);
 
     const { client_id: clientId } = useParams();
     const getLocaleText = localeService.useLocaleContext();

@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { InjectedComponentProps } from 'khamsa';
+import { getContainer } from 'khamsa';
 import clsx from 'clsx';
 import Box, { BoxProps } from '@mui/material/Box';
 import { ChannelPanelProps } from '@modules/channel/channel.interface';
@@ -33,9 +33,8 @@ const ChannelPanelWrapper = styled(Box)(() => {
     `;
 });
 
-const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
+const ChannelPanel: FC<ChannelPanelProps> = ({
     children,
-    declarations,
     className = '',
     channelTab = {},
     tabId,
@@ -47,10 +46,10 @@ const ChannelPanel: FC<InjectedComponentProps<ChannelPanelProps>> = ({
         channelId,
         nodes,
     } = channelTab;
-
-    const localeService = declarations.get<LocaleService>(LocaleService);
-    const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
-    const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
+    const container = getContainer(ChannelPanel);
+    const localeService = container.get<LocaleService>(LocaleService);
+    const Loading = container.get<FC<BoxProps>>(LoadingComponent);
+    const Exception = container.get<FC<ExceptionProps>>(ExceptionComponent);
 
     const getLocaleText = localeService.useLocaleContext('components.channelPanel');
 

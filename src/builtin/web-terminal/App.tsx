@@ -9,7 +9,7 @@ import Box, { BoxProps } from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
-import { InjectedComponentProps } from 'khamsa';
+import { getContainer } from 'khamsa';
 import { LoadedChannelProps } from '@modules/store/store.interface';
 import { Terminal } from '@pugio/xterm';
 import _ from 'lodash';
@@ -102,12 +102,11 @@ const ResizeDetector = styled(Box)(() => {
     `;
 });
 
-const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
+const App: FC<LoadedChannelProps> = (props) => {
     const {
         metadata,
         width,
         height,
-        declarations,
         tab,
         setup,
     } = props;
@@ -115,9 +114,10 @@ const App: FC<InjectedComponentProps<LoadedChannelProps>> = (props) => {
     const clientId = _.get(metadata, 'client.id');
     const clipboardAvailable = _.isFunction(navigator?.clipboard?.read);
 
-    const appService = declarations.get<AppService>(AppService);
-    const localeService = declarations.get<LocaleService>(LocaleService);
-    const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
+    const container = getContainer(App);
+    const appService = container.get<AppService>(AppService);
+    const localeService = container.get<LocaleService>(LocaleService);
+    const Loading = container.get<FC<BoxProps>>(LoadingComponent);
 
     const terminalRef = useRef<HTMLDivElement>(null);
     const controlsWrapperRef = useRef<SimpleBar>(null);

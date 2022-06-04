@@ -1,4 +1,4 @@
-import { InjectedComponentProps } from 'khamsa';
+import { getContainer } from 'khamsa';
 import {
     FC,
     PropsWithChildren,
@@ -116,16 +116,16 @@ const ContainerWrapper = styled(Box)(({ theme }) => {
     `;
 });
 
-const Container: FC<PropsWithChildren<InjectedComponentProps<ContainerProps>>> = ({
-    declarations,
+const Container: FC<PropsWithChildren<ContainerProps>> = ({
     onLocaleChange = _.noop,
 }) => {
-    const brandService = declarations.get<BrandService>(BrandService);
-    const localeService = declarations.get<LocaleService>(LocaleService);
-    const storeService = declarations.get<StoreService>(StoreService);
-    const ProfileMenu = declarations.get<FC>(ProfileMenuComponent);
-    const ClientsDropdown = declarations.get<FC<ClientsDropdownProps>>(ClientsDropdownComponent);
-    const Popover = declarations.get<FC<PopoverProps>>(PopoverComponent);
+    const container = getContainer(Container);
+    const brandService = container.get<BrandService>(BrandService);
+    const localeService = container.get<LocaleService>(LocaleService);
+    const storeService = container.get<StoreService>(StoreService);
+    const ProfileMenu = container.get<FC>(ProfileMenuComponent);
+    const ClientsDropdown = container.get<FC<ClientsDropdownProps>>(ClientsDropdownComponent);
+    const Popover = container.get<FC<PopoverProps>>(PopoverComponent);
 
     const theme = brandService.getTheme();
 

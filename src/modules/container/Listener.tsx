@@ -1,7 +1,6 @@
-import { InjectedComponentProps } from 'khamsa';
+import { getContainer } from 'khamsa';
 import {
     FC,
-    PropsWithChildren,
     useEffect,
 } from 'react';
 import {
@@ -12,9 +11,10 @@ import { UtilsService } from '@modules/utils/utils.service';
 import { StoreService } from '@modules/store/store.service';
 import shallow from 'zustand/shallow';
 
-const Listener: FC<PropsWithChildren<InjectedComponentProps>> = ({ declarations }) => {
-    const utilsService = declarations.get<UtilsService>(UtilsService);
-    const storeService = declarations.get<StoreService>(StoreService);
+const Listener: FC = () => {
+    const container = getContainer(Listener);
+    const utilsService = container.get<UtilsService>(UtilsService);
+    const storeService = container.get<StoreService>(StoreService);
 
     const location = useLocation();
     const navigate = useNavigate();

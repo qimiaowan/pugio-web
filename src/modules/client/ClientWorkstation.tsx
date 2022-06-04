@@ -10,7 +10,7 @@ import Box from '@mui/material/Box';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
-import { InjectedComponentProps } from 'khamsa';
+import { getContainer } from 'khamsa';
 import { TabProps } from '@modules/tab/tab.interface';
 import { TabComponent } from '@modules/tab/tab.component';
 import { ChannelPanelComponent } from '@modules/channel/channel-panel.component';
@@ -146,20 +146,19 @@ const ClientWorkstationWrapper = styled(Box)(({ theme }) => {
     `;
 });
 
-const ClientWorkstation: FC<InjectedComponentProps> = ({
-    declarations,
-}) => {
-    const Tab = declarations.get<FC<TabProps>>(TabComponent);
-    const ChannelPanel = declarations.get<FC<ChannelPanelProps>>(ChannelPanelComponent);
-    const localeService = declarations.get<LocaleService>(LocaleService);
-    const storeService = declarations.get<StoreService>(StoreService);
-    const clientService = declarations.get<ClientService>(ClientService);
-    const channelService = declarations.get<ChannelService>(ChannelService);
-    const utilsService = declarations.get<UtilsService>(UtilsService);
-    const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
-    const ChannelList = declarations.get<FC<ChannelListProps>>(ChannelListComponent);
-    const configService = declarations.get<ConfigService>(ConfigService);
-    const Popover = declarations.get<FC<PopoverProps>>(PopoverComponent);
+const ClientWorkstation: FC = () => {
+    const container = getContainer(ClientWorkstation);
+    const Tab = container.get<FC<TabProps>>(TabComponent);
+    const ChannelPanel = container.get<FC<ChannelPanelProps>>(ChannelPanelComponent);
+    const localeService = container.get<LocaleService>(LocaleService);
+    const storeService = container.get<StoreService>(StoreService);
+    const clientService = container.get<ClientService>(ClientService);
+    const channelService = container.get<ChannelService>(ChannelService);
+    const utilsService = container.get<UtilsService>(UtilsService);
+    const Exception = container.get<FC<ExceptionProps>>(ExceptionComponent);
+    const ChannelList = container.get<FC<ChannelListProps>>(ChannelListComponent);
+    const configService = container.get<ConfigService>(ConfigService);
+    const Popover = container.get<FC<PopoverProps>>(PopoverComponent);
 
     const internalChannelMap = {
         'pugio.web-terminal': WebTerminalAppComponent,
@@ -294,7 +293,7 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                     } = data;
 
                     const channelEntryPromise = url === '<internal>'
-                        ? Promise.resolve(declarations.get<FC<LoadedChannelProps>>(internalChannelMap[channelId]))
+                        ? Promise.resolve(container.get<FC<LoadedChannelProps>>(internalChannelMap[channelId]))
                         : utilsService.loadChannelBundle(url, channelId);
 
                     channelEntryPromise.then((ChannelEntry) => {
@@ -676,8 +675,6 @@ const ClientWorkstation: FC<InjectedComponentProps> = ({
                 />
             </ClientWorkstationWrapper>
             : <ClientWorkstationWrapper className="page">
-                {/* FIXME temporarily prevent flash popover */}
-                <ChannelList />
                 {
                     selectedTabId && (
                         <Box className="header-container">

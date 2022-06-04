@@ -9,7 +9,7 @@ import { ExceptionComponent } from '@modules/brand/exception.component';
 import { ClientRoleSelectorComponent } from '@modules/client/client-role-selector.component';
 
 @Component({
-    component: lazy(() => import('@modules/user/UserSelector')),
+    factory: (forwardRef) => lazy(() => forwardRef(import('@modules/user/UserSelector'))),
     declarations: [
         UtilsService,
         LocaleService,

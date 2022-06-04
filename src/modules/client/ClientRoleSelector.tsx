@@ -6,23 +6,23 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
-import { InjectedComponentProps } from 'khamsa';
+import { getContainer } from 'khamsa';
 import { LocaleService } from '@modules/locale/locale.service';
 import _ from 'lodash';
 import { PopoverProps } from '@modules/common/popover.interface';
 import { PopoverComponent } from '@modules/common/popover.component';
 import useTheme from '@mui/material/styles/useTheme';
 
-const ClientRoleSelector: FC<InjectedComponentProps<ClientRoleSelectorProps>> = ({
-    declarations,
+const ClientRoleSelector: FC<ClientRoleSelectorProps> = ({
     role,
     triggerProps = {},
     popoverProps = {},
     listItemButtonProps,
     onRoleChange = _.noop,
 }) => {
-    const localeService = declarations.get<LocaleService>(LocaleService);
-    const Popover = declarations.get<FC<PopoverProps>>(PopoverComponent);
+    const container = getContainer(ClientRoleSelector);
+    const localeService = container.get<LocaleService>(LocaleService);
+    const Popover = container.get<FC<PopoverProps>>(PopoverComponent);
 
     const theme = useTheme();
     const getLocaleText = localeService.useLocaleContext('components.clientRoleSelector');

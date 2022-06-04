@@ -8,7 +8,7 @@ import {
 import Box from '@mui/material/Box';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
-import { InjectedComponentProps } from 'khamsa';
+import { getContainer } from 'khamsa';
 import {
     NavLink,
     Outlet,
@@ -113,11 +113,12 @@ const ClientDashboardContainer = styled(Box)(({ theme }) => {
     `;
 });
 
-const ClientDashboard: FC<InjectedComponentProps> = ({ declarations }) => {
-    const ClientMenuItem = declarations.get<FC<ClientMenuItemProps>>(ClientMenuItemComponent);
-    const localeService = declarations.get<LocaleService>(LocaleService);
-    const storeService = declarations.get<StoreService>(StoreService);
-    const clientService = declarations.get<ClientService>(ClientService);
+const ClientDashboard: FC = () => {
+    const container = getContainer(ClientDashboard);
+    const ClientMenuItem = container.get<FC<ClientMenuItemProps>>(ClientMenuItemComponent);
+    const localeService = container.get<LocaleService>(LocaleService);
+    const storeService = container.get<StoreService>(StoreService);
+    const clientService = container.get<ClientService>(ClientService);
 
     const { client_id: clientId } = useParams();
     const sidebarRef = useRef<HTMLDivElement>(null);

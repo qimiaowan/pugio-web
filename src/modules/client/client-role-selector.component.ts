@@ -4,7 +4,7 @@ import { LocaleService } from '@modules/locale/locale.service';
 import { PopoverComponent } from '@modules/common/popover.component';
 
 @Component({
-    component: ClientRoleSelector,
+    factory: () => ClientRoleSelector,
     declarations: [
         LocaleService,
         PopoverComponent,

@@ -6,7 +6,11 @@ import { StoreService } from '@modules/store/store.service';
 import { ClientService } from '@modules/client/client.service';
 
 @Component({
-    component: lazy(() => import('@modules/client/ClientDashboard')),
+    factory: (forwardRef) => {
+        return lazy(() => {
+            return forwardRef(import('@modules/client/ClientDashboard'));
+        });
+    },
     declarations: [
         ClientMenuItemComponent,
         LocaleService,

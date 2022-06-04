@@ -8,7 +8,11 @@ import { StoreService } from '@modules/store/store.service';
 import { PopoverComponent } from '@modules/common/popover.component';
 
 @Component({
-    component: lazy(() => import('@modules/container/Container')),
+    factory: (forwardRef) => {
+        return lazy(() => {
+            return forwardRef(import('@modules/container/Container'));
+        });
+    },
     declarations: [
         LocaleService,
         BrandService,

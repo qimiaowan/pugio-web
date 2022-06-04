@@ -8,7 +8,7 @@ import Box, { BoxProps } from '@mui/material/Box';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { InjectedComponentProps } from 'khamsa';
+import { getContainer } from 'khamsa';
 import { TabProps } from '@modules/tab/tab.interface';
 import { LoadingComponent } from '@modules/brand/loading.component';
 import { LocaleService } from '@modules/locale/locale.service';
@@ -105,14 +105,13 @@ const TabWrapper = styled(Box)(({ theme }) => {
     `;
 });
 
-const Tab: FC<InjectedComponentProps<TabProps>> = ({
+const Tab: FC<TabProps> = ({
     title,
     closable = true,
     slotElement = false,
     active = false,
     avatar = '/static/images/startup.svg',
     loading = false,
-    declarations,
     errored = false,
     startup = false,
     children,
@@ -125,8 +124,9 @@ const Tab: FC<InjectedComponentProps<TabProps>> = ({
     onSelectedScroll = _.noop,
     ...props
 }) => {
-    const localeService = declarations.get<LocaleService>(LocaleService);
-    const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
+    const container = getContainer(Tab);
+    const localeService = container.get<LocaleService>(LocaleService);
+    const Loading = container.get<FC<BoxProps>>(LoadingComponent);
 
     const getLocaleText = localeService.useLocaleContext('components.tab');
     const [tabTitle, setTabTitle] = useState<string>('');
