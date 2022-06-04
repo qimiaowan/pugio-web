@@ -2,6 +2,6 @@ import { Component } from 'khamsa';
 import ClientMenuItem from '@modules/client/ClientMenuItem';
 
 @Component({
-    component: ClientMenuItem,
+    factory: () => ClientMenuItem,
 })
 export class ClientMenuItemComponent {}

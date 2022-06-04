@@ -9,7 +9,7 @@ import { ClientService } from '@modules/client/client.service';
 import { StoreService } from '@modules/store/store.service';
 
 @Component({
-    component: ClientsDropdown,
+    factory: () => ClientsDropdown,
     declarations: [
         LocaleService,
         ClientsService,

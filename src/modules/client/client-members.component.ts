@@ -12,7 +12,11 @@ import { ConfigService } from '@modules/config/config.service';
 import { ClientRoleSelectorComponent } from '@modules/client/client-role-selector.component';
 
 @Component({
-    component: lazy(() => import('@modules/client/ClientMembers')),
+    factory: (forwardRef) => {
+        return lazy(() => {
+            return forwardRef(import('@modules/client/ClientMembers'));
+        });
+    },
     declarations: [
         StoreService,
         LocaleService,

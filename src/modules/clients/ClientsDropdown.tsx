@@ -14,7 +14,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import TextField from '@mui/material/TextField';
 import Typography, { TypographyProps } from '@mui/material/Typography';
-import { InjectedComponentProps } from 'khamsa';
+import { getContainer } from 'khamsa';
 import { LocaleService } from '@modules/locale/locale.service';
 import { ClientsDropdownProps } from '@modules/clients/clients-dropdown.interface';
 import _ from 'lodash';
@@ -117,10 +117,10 @@ const PopoverContent = styled(Paper)(({ theme }) => {
     `;
 });
 
-const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
-    declarations,
+const ClientsDropdown: FC<ClientsDropdownProps> = ({
     onClientChange = _.noop,
 }) => {
+    const container = getContainer(ClientsDropdown);
     const typographyProps: TypographyProps = {
         noWrap: true,
         style: {
@@ -128,13 +128,13 @@ const ClientsDropdown: FC<InjectedComponentProps<ClientsDropdownProps>> = ({
         },
     };
 
-    const storeService = declarations.get<StoreService>(StoreService);
-    const localeService = declarations.get<LocaleService>(LocaleService);
-    const clientsService = declarations.get<ClientsService>(ClientsService);
-    const utilsService = declarations.get<UtilsService>(UtilsService);
-    const clientService = declarations.get<ClientService>(ClientService);
-    const Loading = declarations.get<FC<BoxProps>>(LoadingComponent);
-    const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
+    const storeService = container.get<StoreService>(StoreService);
+    const localeService = container.get<LocaleService>(LocaleService);
+    const clientsService = container.get<ClientsService>(ClientsService);
+    const utilsService = container.get<UtilsService>(UtilsService);
+    const clientService = container.get<ClientService>(ClientService);
+    const Loading = container.get<FC<BoxProps>>(LoadingComponent);
+    const Exception = container.get<FC<ExceptionProps>>(ExceptionComponent);
 
     const navigate = useNavigate();
     const [searchValue, setSearchValue] = useState<string>('');

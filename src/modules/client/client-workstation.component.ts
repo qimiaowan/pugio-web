@@ -14,7 +14,11 @@ import { ConfigService } from '@modules/config/config.service';
 import { PopoverComponent } from '@modules/common/popover.component';
 
 @Component({
-    component: lazy(() => import('@modules/client/ClientWorkstation')),
+    factory: (forwardRef) => {
+        return lazy(() => {
+            return forwardRef(import('@modules/client/ClientWorkstation'));
+        });
+    },
     declarations: [
         TabComponent,
         ChannelPanelComponent,

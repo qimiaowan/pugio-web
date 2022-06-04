@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import styled from '@mui/material/styles/styled';
-import { InjectedComponentProps } from 'khamsa';
+import { getContainer } from 'khamsa';
 import {
     FC,
     useCallback,
@@ -118,9 +118,8 @@ const StyledBox = styled(Box)(({ theme }) => {
     `;
 });
 
-const ClientStatus: FC<InjectedComponentProps> = ({
-    declarations,
-}) => {
+const ClientStatus: FC = () => {
+    const container = getContainer(ClientStatus);
     const dateRanges = [
         {
             title: 'dateRange.halfHour',
@@ -136,11 +135,11 @@ const ClientStatus: FC<InjectedComponentProps> = ({
         },
     ];
 
-    const Exception = declarations.get<FC<ExceptionProps>>(ExceptionComponent);
-    const Loading = declarations.get<FC>(LoadingComponent);
-    const localeService = declarations.get<LocaleService>(LocaleService);
-    const storeService = declarations.get<StoreService>(StoreService);
-    const clientService = declarations.get<ClientService>(ClientService);
+    const Exception = container.get<FC<ExceptionProps>>(ExceptionComponent);
+    const Loading = container.get<FC>(LoadingComponent);
+    const localeService = container.get<LocaleService>(LocaleService);
+    const storeService = container.get<StoreService>(StoreService);
+    const clientService = container.get<ClientService>(ClientService);
 
     const theme = useTheme();
     const headerRef = useRef<HTMLDivElement>(null);

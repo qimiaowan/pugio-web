@@ -7,7 +7,11 @@ import { ClientService } from '@modules/client/client.service';
 import { LoadingComponent } from '../brand/loading.component';
 
 @Component({
-    component: lazy(() => import('@modules/client/ClientStatus')),
+    factory: (forwardRef) => {
+        return lazy(() => {
+            return forwardRef(import('@modules/client/ClientStatus'));
+        });
+    },
     declarations: [
         ExceptionComponent,
         LocaleService,
