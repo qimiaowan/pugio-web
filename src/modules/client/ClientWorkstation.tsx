@@ -413,7 +413,6 @@ const ClientWorkstation: FC = () => {
                                 }}
                                 searchProps={{
                                     InputProps: {
-                                        startAdornment: <Icon className="icon-search" />,
                                         sx: {
                                             border: 0,
                                         },
@@ -851,7 +850,6 @@ const ClientWorkstation: FC = () => {
                                                         }}
                                                         searchProps={{
                                                             InputProps: {
-                                                                startAdornment: <Icon className="icon-search" />,
                                                                 sx: {
                                                                     border: 0,
                                                                 },

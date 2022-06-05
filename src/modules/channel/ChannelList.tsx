@@ -2,7 +2,6 @@ import {
     FC,
     useEffect,
     useState,
-    useRef,
     useCallback,
 } from 'react';
 import { getContainer } from 'khamsa';
@@ -140,7 +139,6 @@ const ChannelListContainer = styled(Box)(({ theme }) => {
         }
 
         .loading-wrapper {
-            height: 300px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -152,7 +150,7 @@ const ChannelList: FC<ChannelListProps> = (listProps) => {
     const {
         clientId,
         width,
-        height,
+        height = 320,
         headerSlot,
         listItemProps,
         headerProps = {},
@@ -165,6 +163,7 @@ const ChannelList: FC<ChannelListProps> = (listProps) => {
     } = headerProps;
     const {
         className: searchClassName,
+        InputProps = {},
         ...otherSearchProps
     } = searchProps;
     const container = getContainer(ChannelList);
@@ -181,8 +180,6 @@ const ChannelList: FC<ChannelListProps> = (listProps) => {
     const getLocaleText = localeService.useLocaleContext('components.channelList');
     const [searchValue, setSearchValue] = useState<string>('');
     const debouncedSearchValue = useDebounce(searchValue, { wait: 500 });
-    const headerRef = useRef<HTMLDivElement>(null);
-    const [headerHeight, setHeaderHeight] = useState<number>(0);
     const [channelListGroups, setChannelListGroups] = useState<InfiniteScrollHookData<QueryClientChannelResponseDataItem>[]>([]);
     const [categories, setCategories] = useState<ChannelListCategory[]>([
         {
@@ -305,12 +302,6 @@ const ChannelList: FC<ChannelListProps> = (listProps) => {
     );
 
     useEffect(() => {
-        if (headerRef.current) {
-            setHeaderHeight((headerRef.current.clientHeight || 0) + 1);
-        }
-    }, [headerRef.current]);
-
-    useEffect(() => {
         handleLoadChannels(
             new Array(categories.length)
                 .fill(null)
@@ -324,7 +315,7 @@ const ChannelList: FC<ChannelListProps> = (listProps) => {
 
     return (
         <ChannelListContainer className="channel-list-container" style={{ width }}>
-            <Box className={clsx('header', headerClassName)} {...otherHeaderProps} ref={headerRef}>
+            <Box className={clsx('header', headerClassName)} {...otherHeaderProps}>
                 <Box className="search-wrapper">
                     <TextField
                         classes={{
@@ -338,6 +329,25 @@ const ChannelList: FC<ChannelListProps> = (listProps) => {
                         }}
                         placeholder={getLocaleText('searchPlaceholder')}
                         {...otherSearchProps}
+                        InputProps={{
+                            ...InputProps,
+                            startAdornment: (
+                                <Box
+                                    style={{
+                                        width: 22,
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    {
+                                        categories.some((category) => category.loading || category.loadingMore)
+                                            ? <Loading />
+                                            : <Icon className="icon-search" style={{ display: 'inline-block', width: 22 }} />
+                                    }
+                                </Box>
+                            ),
+                        }}
                         onChange={(event) => setSearchValue(event.target.value)}
                     />
                     {headerSlot}
@@ -346,7 +356,8 @@ const ChannelList: FC<ChannelListProps> = (listProps) => {
             <SimpleBar
                 className="list-wrapper"
                 style={{
-                    height: height - headerHeight,
+                    height: 'auto',
+                    maxHeight: height,
                 }}
             >
                 {
@@ -366,91 +377,82 @@ const ChannelList: FC<ChannelListProps> = (listProps) => {
                                     >
                                         <Icon className={`icon-keyboard-arrow-${category?.expanded ? 'down' : 'right'}`} />
                                     </IconButton>
-                                    <Typography classes={{ root: 'title' }}>
-                                        {getLocaleText(category.title)}
-                                        {
-                                            !(category.loading || category.loadingMore) && (
-                                                ` (${channelList?.list?.length || 0 + channelList?.remains || 0})`
-                                            )
-                                        }
-                                    </Typography>
+                                    <Typography
+                                        classes={{ root: 'title' }}
+                                    >{getLocaleText(category.title)}&nbsp;({channelList?.list?.length || 0 + channelList?.remains || 0})</Typography>
                                 </Box>
-                                {
-                                    category?.loading
-                                        ? <Box className="loading-wrapper"><Loading/></Box>
-                                        : <Box
-                                            className={clsx('channels-list-wrapper', {
-                                                hidden: !category?.expanded,
-                                            })}
-                                        >
-                                            {
-                                                (channelList?.list || []).map((item) => {
-                                                    const props = {
-                                                        key: item?.id,
-                                                        builtIn: category?.query?.builtIn === 1,
-                                                        data: item?.channel,
-                                                        width: utilsService.calculateItemWidth(width, 120),
-                                                        menu: [
-                                                            {
-                                                                icon: 'icon-info',
-                                                                title: getLocaleText('info'),
-                                                            },
-                                                            ...(
-                                                                category?.query?.builtIn !== 1
-                                                                    ? [
-                                                                        {
-                                                                            icon: 'icon-delete',
-                                                                            title: getLocaleText('delete'),
-                                                                        },
-                                                                    ]
-                                                                    : []
-                                                            ),
-                                                        ],
-                                                        onClick: () => {
-                                                            onSelectChannel(item.channel);
-                                                        },
-                                                    } as ChannelListItemProps;
-
-                                                    return (
-                                                        <ChannelListItem
-                                                            {...props}
-                                                            {
-                                                                ...(
-                                                                    listItemProps
-                                                                        ? _.isFunction(listItemProps)
-                                                                            ? (listItemProps(props, listProps) || {})
-                                                                            : listItemProps
-                                                                        : {}
-                                                                )
-                                                            }
-                                                        />
-                                                    );
-                                                })
-                                            }
-                                            {
-                                                channelList?.remains > 0 && (
-                                                    <Box className="load-more-wrapper">
-                                                        <Box>
-                                                            <Button
-                                                                variant="text"
-                                                                classes={{ root: 'load-more-button' }}
-                                                                disabled={category.loadingMore}
-                                                                onClick={() => handleLoadChannels([index], {}, 'loadMore')}
-                                                            >
+                                <Box
+                                    className={clsx('channels-list-wrapper', {
+                                        hidden: !category?.expanded,
+                                    })}
+                                >
+                                    {
+                                        (channelList?.list || []).map((item) => {
+                                            const props = {
+                                                key: item?.id,
+                                                builtIn: category?.query?.builtIn === 1,
+                                                data: item?.channel,
+                                                width: utilsService.calculateItemWidth(width, 120),
+                                                menu: [
+                                                    {
+                                                        icon: 'icon-info',
+                                                        title: getLocaleText('info'),
+                                                    },
+                                                    ...(
+                                                        category?.query?.builtIn !== 1
+                                                            ? [
                                                                 {
-                                                                    category.loadingMore
-                                                                        ? getLocaleText('loading')
-                                                                        : channelList?.remains === 0
-                                                                            ? getLocaleText('noMore')
-                                                                            : getLocaleText('loadMore')
-                                                                }
-                                                            </Button>
-                                                        </Box>
-                                                    </Box>
-                                                )
-                                            }
-                                        </Box>
-                                }
+                                                                    icon: 'icon-delete',
+                                                                    title: getLocaleText('delete'),
+                                                                },
+                                                            ]
+                                                            : []
+                                                    ),
+                                                ],
+                                                onClick: () => {
+                                                    onSelectChannel(item.channel);
+                                                },
+                                            } as ChannelListItemProps;
+
+                                            return (
+                                                <ChannelListItem
+                                                    {...props}
+                                                    {
+                                                        ...(
+                                                            listItemProps
+                                                                ? _.isFunction(listItemProps)
+                                                                    ? (listItemProps(props, listProps) || {})
+                                                                    : listItemProps
+                                                                : {}
+                                                        )
+                                                    }
+                                                />
+                                            );
+                                        })
+                                    }
+                                    {
+                                        channelList?.remains > 0 && (
+                                            <Box className="load-more-wrapper">
+                                                <Box>
+                                                    <Button
+                                                        variant="text"
+                                                        classes={{ root: 'load-more-button' }}
+                                                        disabled={category.loadingMore}
+                                                        onClick={() => handleLoadChannels([index], {}, 'loadMore')}
+                                                    >
+                                                        {
+                                                            category.loadingMore
+                                                                ? getLocaleText('loading')
+                                                                : channelList?.remains === 0
+                                                                    ? getLocaleText('noMore')
+                                                                    : getLocaleText('loadMore')
+                                                        }
+                                                    </Button>
+                                                </Box>
+                                            </Box>
+                                        )
+                                    }
+                                </Box>
                             </Box>
                         );
                     })
