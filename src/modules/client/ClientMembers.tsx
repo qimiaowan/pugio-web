@@ -371,7 +371,6 @@ const ClientMembers: FC<BoxProps> = ({
                                                         return (
                                                             <ListItemButton
                                                                 key={title}
-                                                                dense={true}
                                                                 classes={{
                                                                     root: 'toggle-button',
                                                                 }}
@@ -387,15 +386,15 @@ const ClientMembers: FC<BoxProps> = ({
                                                                         )
                                                                     }
                                                                 </ListItemIcon>
-                                                                <ListItemText>
-                                                                    <Typography
-                                                                        sx={{
+                                                                <ListItemText
+                                                                    primaryTypographyProps={{
+                                                                        noWrap: true,
+                                                                        style: {
                                                                             minWidth: 81,
                                                                             maxWidth: 100,
-                                                                        }}
-                                                                        noWrap={true}
-                                                                    >{getPageLocaleText(title)}</Typography>
-                                                                </ListItemText>
+                                                                        },
+                                                                    }}
+                                                                >{getPageLocaleText(title)}</ListItemText>
                                                             </ListItemButton>
                                                         );
                                                     })

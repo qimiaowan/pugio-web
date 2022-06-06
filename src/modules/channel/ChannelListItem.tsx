@@ -22,6 +22,7 @@ import Menu from '@mui/material/Menu';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import useTheme from '@mui/material/styles/useTheme';
 
 const ChannelListItemWrapper = styled('div')(({ theme }) => {
     const mode = theme.palette.mode;
@@ -123,6 +124,7 @@ const ChannelListItemMenu: FC<ChannelListItemMenuProps> = ({
     menu = [],
     IconButtonProps = {},
 }) => {
+    const theme = useTheme();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
     const open = Boolean(anchorEl);
@@ -140,6 +142,13 @@ const ChannelListItemMenu: FC<ChannelListItemMenuProps> = ({
             ? <>
                 <IconButton
                     {...IconButtonProps}
+                    style={{
+                        ...(open ? {
+                            backgroundColor: theme.palette.mode === 'dark'
+                                ? theme.palette.grey[600]
+                                : theme.palette.grey[400],
+                        } : {}),
+                    }}
                     onClick={handleClick}
                 >
                     <Icon className="icon icon-more-horizontal" />
@@ -162,7 +171,6 @@ const ChannelListItemMenu: FC<ChannelListItemMenuProps> = ({
                                 <ListItemButton
                                     key={index}
                                     style={{ minWidth: 180 }}
-                                    dense={true}
                                     onClick={(event) => {
                                         if (_.isFunction(onClick)) {
                                             onClick(event);

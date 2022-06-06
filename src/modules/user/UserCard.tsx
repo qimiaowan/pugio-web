@@ -141,12 +141,22 @@ const UserCardMenu: FC<UserCardMenuProps> = ({
                         return (
                             <MenuItem key={index} onClick={onActive}>
                                 <ListItemIcon><Icon className={icon} /></ListItemIcon>
-                                <ListItemText>{title}</ListItemText>
+                                <ListItemText
+                                    primaryTypographyProps={{
+                                        noWrap: true,
+                                        style: {
+                                            width: 160,
+                                        },
+                                    }}
+                                >{title}</ListItemText>
                                 {
                                     extra && (
-                                        <ListItemText classes={{ root: 'list-item-extra-text' }}>
-                                            <Typography variant="body2" color="text.secondary">{extra}</Typography>
-                                        </ListItemText>
+                                        <Typography
+                                            variant="subtitle2"
+                                            color="text.secondary"
+                                            noWrap={true}
+                                            style={{ maxWidth: 80 }}
+                                        >{extra}</Typography>
                                     )
                                 }
                             </MenuItem>

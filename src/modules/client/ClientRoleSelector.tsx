@@ -5,7 +5,6 @@ import Icon from '@mui/material/Icon';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import Typography from '@mui/material/Typography';
 import { getContainer } from 'khamsa';
 import { LocaleService } from '@modules/locale/locale.service';
 import _ from 'lodash';
@@ -66,7 +65,6 @@ const ClientRoleSelector: FC<ClientRoleSelectorProps> = ({
                                     return (
                                         <ListItemButton
                                             key={index}
-                                            dense={true}
                                             selected={currentRole === role}
                                             {
                                                 ...(
@@ -88,13 +86,15 @@ const ClientRoleSelector: FC<ClientRoleSelectorProps> = ({
                                                     currentRole === role && <Icon className="icon-check" />
                                                 }
                                             </ListItemIcon>
-                                            <ListItemText>
-                                                <Typography
-                                                    variant="subtitle2"
-                                                    noWrap={true}
-                                                    sx={{ minWidth: 64, maxWidth: 120 }}
-                                                >{getLocaleText(`roles[${currentRole}]`)}</Typography>
-                                            </ListItemText>
+                                            <ListItemText
+                                                primaryTypographyProps={{
+                                                    noWrap: true,
+                                                    style: {
+                                                        minWidth: 64,
+                                                        maxWidth: 120,
+                                                    },
+                                                }}
+                                            >{getLocaleText(`roles[${currentRole}]`)}</ListItemText>
                                         </ListItemButton>
                                     );
                                 })

@@ -52,7 +52,12 @@ export class BrandService {
                     },
                     MuiListItemText: {
                         defaultProps: {
-                            disableTypography: true,
+                            primaryTypographyProps: {
+                                noWrap: true,
+                            },
+                            secondaryTypographyProps: {
+                                noWrap: true,
+                            },
                         },
                         styleOverrides: {
                             root: {
@@ -155,6 +160,7 @@ export class BrandService {
                                     },
                                 },
                             }),
+                            dense: true,
                         },
                     },
                     MuiAvatar: {

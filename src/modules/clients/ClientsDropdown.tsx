@@ -311,6 +311,7 @@ const ClientsDropdown: FC<ClientsDropdownProps> = ({
                                             return (
                                                 <ListItemButton
                                                     key={item.id}
+                                                    dense={false}
                                                     selected={selectedClientId === item.client.id}
                                                     onClick={() => handleSelectClient(item.client.id)}
                                                 >
@@ -323,7 +324,6 @@ const ClientsDropdown: FC<ClientsDropdownProps> = ({
                                                     </ListItemIcon>
                                                     <ListItemIcon><Icon className="icon-server" /></ListItemIcon>
                                                     <ListItemText
-                                                        disableTypography={false}
                                                         primaryTypographyProps={typographyProps}
                                                         secondaryTypographyProps={typographyProps}
                                                     >{item.client.name || item.client.id}</ListItemText>

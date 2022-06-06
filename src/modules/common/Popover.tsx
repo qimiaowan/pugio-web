@@ -18,6 +18,10 @@ const StyledMuiPopover = styled(MuiPopover)(({ theme }) => {
                 padding: ${theme.spacing(1)} 0;
             }
         }
+
+        hr {
+            margin: ${theme.spacing(1)} 0;
+        }
     `;
 });
 
