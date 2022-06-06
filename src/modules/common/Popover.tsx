@@ -9,6 +9,7 @@ import MuiPopover from '@mui/material/Popover';
 import { PopoverProps } from '@modules/common/popover.interface';
 import clsx from 'clsx';
 import styled from '@mui/material/styles/styled';
+import _ from 'lodash';
 
 const StyledMuiPopover = styled(MuiPopover)(({ theme }) => {
     return `
@@ -57,6 +58,12 @@ const Popover: FC<PopoverProps> = ({
                 open={visible}
                 anchorEl={anchorEl.current}
                 onClose={handleClose}
+                onClick={(event) => {
+                    event.stopPropagation();
+                    if (_.isFunction(muiPopoverProps.onClick)) {
+                        muiPopoverProps.onClick(event);
+                    }
+                }}
             >
                 {
                     children({
