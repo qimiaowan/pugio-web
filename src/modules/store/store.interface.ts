@@ -29,8 +29,9 @@ export interface ObservableChannelConfig {
     mode: 'dark' | 'light';
 }
 
-export interface ChannelConfig extends ObservableChannelConfig {
-    metadata: ChannelMetadata;
+export interface ObservableChannelData extends ObservableChannelConfig {
+    dispose: Function;
+    status: 'initializing' | 'updated';
 }
 
 type TabTitleSetter = (previousTitle: string) => string;
@@ -40,8 +41,10 @@ export interface TabFunctionMap {
     setTitle: (setterOrString: string | TabTitleSetter) => void;
 }
 
-export interface LoadedChannelProps extends ChannelConfig {
+export interface LoadedChannelProps {
+    metadata: ChannelMetadata;
     tab: TabFunctionMap,
+    useChannelConfig: () => ObservableChannelData;
     setup: (lifecycle?: Lifecycle, channelId?: string) => void;
 }
 

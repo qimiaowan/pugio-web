@@ -105,10 +105,9 @@ const ResizeDetector = styled(Box)(() => {
 const App: FC<LoadedChannelProps> = (props) => {
     const {
         metadata,
-        width,
-        height,
         tab,
         setup,
+        useChannelConfig,
     } = props;
 
     const clientId = _.get(metadata, 'client.id');
@@ -135,7 +134,11 @@ const App: FC<LoadedChannelProps> = (props) => {
     const [terminalHeight, setTerminalHeight] = useState<number>(0);
     const [terminalWidth, setTerminalWidth] = useState<number>(0);
     const [terminalFitAddon, setTerminalFitAddon] = useState<FitAddon>(null);
-    const [handleRemoveBusListener, setHandleRemoveBusListener] = useState<Function>(() => _.noop);
+    const {
+        width,
+        height,
+        dispose,
+    } = useChannelConfig();
 
     const calculateTerminalSize = (
         width: number,
@@ -232,7 +235,7 @@ const App: FC<LoadedChannelProps> = (props) => {
                 dataSocket.removeEventListener('message', clientDataHandler);
                 closeSocket.removeEventListener('message', clientCloseHandler);
                 tab.closeTab();
-                handleRemoveBusListener();
+                dispose();
 
                 if (dataSocket) {
                     dataSocket.close();
@@ -411,21 +414,6 @@ const App: FC<LoadedChannelProps> = (props) => {
             observer.disconnect();
         };
     }, [containerRef.current, controlsWrapperRef.current]);
-
-    useEffect(() => {
-        if (window['__PUGIO_WORKSTATION_BUS__']) {
-            const dispose = window['__PUGIO_WORKSTATION_BUS__'].onData((data) => {
-                // TODO example
-                console.log(data);
-            });
-
-            setHandleRemoveBusListener(() => dispose);
-
-            return () => {
-                dispose();
-            };
-        }
-    }, []);
 
     return (
         <>

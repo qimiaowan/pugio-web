@@ -10,8 +10,14 @@ import { Location } from 'react-router-dom';
 import {
     FC,
     useCallback,
+    useEffect,
+    useState,
 } from 'react';
-import { LoadedChannelProps } from '@modules/store/store.interface';
+import {
+    LoadedChannelProps,
+    ObservableChannelConfig,
+    ObservableChannelData,
+} from '@modules/store/store.interface';
 import { useInfiniteScroll } from 'ahooks';
 import { InfiniteScrollOptions } from 'ahooks/lib/useInfiniteScroll/types';
 import { Profile } from '@modules/profile/profile.interface';
@@ -284,5 +290,34 @@ export class UtilsService extends CaseTransformerService {
 
     public createEventBus() {
         return new EventBus();
+    }
+
+    public useChannelConfig(): ObservableChannelData {
+        const [channelConfig, setChannelConfig] = useState<ObservableChannelData>({
+            width: undefined,
+            height: undefined,
+            locale: 'en_US',
+            mode: 'light',
+            status: 'initializing',
+            dispose: _.noop,
+        });
+
+        useEffect(() => {
+            if (window[this.configService.WORKSTATION_BUS_ID]) {
+                const dispose = window[this.configService.WORKSTATION_BUS_ID].onData((config: ObservableChannelConfig) => {
+                    setChannelConfig({
+                        ...config,
+                        dispose,
+                        status: 'updated',
+                    });
+                });
+
+                return () => {
+                    dispose();
+                };
+            }
+        }, []);
+
+        return channelConfig;
     }
 }

@@ -311,11 +311,7 @@ const ClientWorkstation: FC = () => {
                                             >
                                                 <Suspense fallback={null}>
                                                     <ChannelEntry
-                                                        width={headerWidth}
-                                                        height={panelHeight}
                                                         metadata={metadata}
-                                                        locale={locale}
-                                                        mode={theme.palette.mode}
                                                         setup={(lifecycle = {}) => {
                                                             updateTab(clientId, tabId, {
                                                                 lifecycle,
@@ -347,6 +343,7 @@ const ClientWorkstation: FC = () => {
                                                                 }
                                                             },
                                                         }}
+                                                        useChannelConfig={utilsService.useChannelConfig.bind(utilsService)}
                                                     />
                                                 </Suspense>
                                             </LocaleContext.Provider>

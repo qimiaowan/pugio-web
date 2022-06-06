@@ -22,6 +22,8 @@ export interface Channel extends BaseResponseData {
     status: number;
     creator: Profile;
     description?: string;
+    nameTranslation?: string;
+    localeMap?: string;
 }
 
 export interface GetChannelInfoRequestOptions {
