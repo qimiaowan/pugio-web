@@ -10,7 +10,7 @@
         "avatarDropdown": {
             "settings": "Account Settings",
             "signout": "Sign Out",
-            "create": "Create a new account"
+            "create": "Create a New Account"
         },
         "createClient": "Client",
         "searchPlaceholder": "Type to search..."
