@@ -172,7 +172,6 @@ const ClientWorkstation: FC = () => {
     const startupWrapperRef = useRef<HTMLDivElement>(null);
     const [tabsScrollOffset, setTabsScrollOffset] = useState<number>(null);
     const debouncedTabsScrollOffset = useDebounce(tabsScrollOffset, { wait: 300 });
-    const [tabTitleChangeCount, setTabTitleChangeCount] = useState<number>(0);
     const [buttonsWrapperSticked, setButtonsWrapperSticked] = useState<boolean>(false);
     const [buttonsWrapperWidth, setButtonsWrapperWidth] = useState<number>(120);
     const [startupWrapperWidth, setStartupWrapperWidth] = useState<number>(0);
@@ -711,7 +710,11 @@ const ClientWorkstation: FC = () => {
 
                                                                 destroyTab(clientId, tabId);
                                                             }}
-                                                            onTitleChange={() => setTabTitleChangeCount(tabTitleChangeCount + 1)}
+                                                            onTitleChange={(title) => {
+                                                                if (title && _.isString(title)) {
+                                                                    updateTab(clientId, tabId, { title });
+                                                                }
+                                                            }}
                                                             onSelectedScroll={(offsetLeft, clientWidth) => {
                                                                 const scrollOffset = offsetLeft - (headerWidth - clientWidth) / 2;
                                                                 scrollTabs(scrollOffset <= 0 ? 0 : scrollOffset);
