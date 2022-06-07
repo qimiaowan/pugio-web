@@ -11,6 +11,7 @@ import { ClientMenuItemProps } from '@modules/client/client-menu-item.interface'
 import styled from '@mui/material/styles/styled';
 import _ from 'lodash';
 import useTheme from '@mui/material/styles/useTheme';
+import Tooltip from '@mui/material/Tooltip';
 
 const ClientMenuItemWrapper = styled(Box)(({ theme }) => {
     const mode = theme.palette.mode;
@@ -23,11 +24,13 @@ const ClientMenuItemWrapper = styled(Box)(({ theme }) => {
         text-decoration: none;
         color: ${theme.palette.text.primary};
         padding: ${theme.spacing(2)};
-        min-width: 80px;
+        width: 120px;
+        box-sizing: border-box;
 
         .title {
             font-size: 10px;
             text-decoration: none;
+            max-width: 100px;
         }
 
         .icon {
@@ -41,7 +44,6 @@ const ClientMenuItemWrapper = styled(Box)(({ theme }) => {
 
         &.full-width {
             flex-direction: row;
-            min-width: 120px;
 
             .icon {
                 margin-right: 5px;
@@ -73,7 +75,7 @@ const ClientMenuItem: FC<ClientMenuItemProps> = ({
 }) => {
     const theme = useTheme();
     const ref = useRef<HTMLDivElement>(null);
-    const [width, setWidth] = useState<number>(fullWidth ? 152 : 112);
+    const [width, setWidth] = useState<number>(120);
     const [skeletonFill, setSkeletonFill] = useState<string>('transparent');
 
     useEffect(() => {
@@ -84,7 +86,7 @@ const ClientMenuItem: FC<ClientMenuItemProps> = ({
                 const currentWidth = _.get(observationData, 'borderBoxSize[0].inlineSize');
 
                 if (_.isNumber(currentWidth)) {
-                    setWidth(currentWidth || fullWidth ? 152 : 112);
+                    setWidth(currentWidth || 120);
                 }
             }
         });
@@ -122,8 +124,8 @@ const ClientMenuItem: FC<ClientMenuItemProps> = ({
                         ? <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width={width * 0.7}
-                            height={width * 0.7 * 32 / 140}
-                            viewBox="0 0 140 32"
+                            height={width * 0.7 * 32 / 120}
+                            viewBox="0 0 120 32"
                         >
                             <g>
                                 <rect x="42" y="0" width="96" height="32" rx="3" fill={skeletonFill} />
@@ -143,16 +145,26 @@ const ClientMenuItem: FC<ClientMenuItemProps> = ({
                         </svg>
                 }
             </Box>
-            : <ClientMenuItemWrapper
-                ref={ref}
-                className={clsx('client-menu-item', {
-                    active,
-                    'full-width': fullWidth,
-                })}
+            : <Tooltip
+                title={title}
+                arrow={true}
+                placement="right"
+                sx={{ userSelect: 'none' }}
+                onClick={() => {
+                    return false;
+                }}
             >
-                <Box className="icon">{icon}</Box>
-                <Typography classes={{ root: 'title' }} noWrap={true}>{title}</Typography>
-            </ClientMenuItemWrapper>
+                <ClientMenuItemWrapper
+                    ref={ref}
+                    className={clsx('client-menu-item', {
+                        active,
+                        'full-width': fullWidth,
+                    })}
+                >
+                    <Box className="icon">{icon}</Box>
+                    <Typography classes={{ root: 'title' }} noWrap={true}>{title}</Typography>
+                </ClientMenuItemWrapper>
+            </Tooltip>
     );
 };
 

@@ -2,8 +2,9 @@ import {
     FC,
     useState,
     useEffect,
+    memo,
 } from 'react';
-import Avatar from '@mui/material/Avatar';
+import MuiAvatar from '@mui/material/Avatar';
 import { BoxProps } from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Icon from '@mui/material/Icon';
@@ -11,7 +12,7 @@ import IconButton from '@mui/material/IconButton';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { getContainer } from 'khamsa';
+import { forwardContainer } from 'khamsa';
 import { LocaleService } from '@modules/locale/locale.service';
 import { ProfileService } from '@modules/profile/profile.service';
 import { useRequest } from 'ahooks';
@@ -23,8 +24,9 @@ import { PopoverComponent } from '@modules/common/popover.component';
 import { PopoverProps } from '@modules/common/popover.interface';
 import useTheme from '@mui/material/styles/useTheme';
 
-const ProfileMenu: FC = () => {
-    const container = getContainer(ProfileMenu);
+const Avatar = memo(MuiAvatar, () => true);
+
+const ProfileMenu: FC = forwardContainer(({ container }) => {
     const localeService = container.get<LocaleService>(LocaleService);
     const storeService = container.get<StoreService>(StoreService);
     const profileService = container.get<ProfileService>(ProfileService);
@@ -123,6 +125,6 @@ const ProfileMenu: FC = () => {
                 }
             </Popover>
     );
-};
+});
 
-export default ProfileMenu;
+export default memo(ProfileMenu);

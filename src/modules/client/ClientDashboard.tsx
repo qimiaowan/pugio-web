@@ -7,7 +7,6 @@ import {
 } from 'react';
 import Box from '@mui/material/Box';
 import Icon from '@mui/material/Icon';
-import IconButton from '@mui/material/IconButton';
 import { getContainer } from 'khamsa';
 import {
     NavLink,
@@ -24,6 +23,7 @@ import { useRequest } from 'ahooks';
 import { UserClientRelationResponseData } from '@modules/client/client.interface';
 import styled from '@mui/material/styles/styled';
 import shallow from 'zustand/shallow';
+import SimpleBar from 'simplebar-react';
 
 interface MenuMetadataItem {
     to: string;
@@ -50,10 +50,9 @@ const ClientDashboardContainer = styled(Box)(({ theme }) => {
             flex-shrink: 1;
             flex-grow: 0;
             box-sizing: border-box;
-            padding: ${theme.spacing(2)} 0;
-            padding-top: 0;
             background-color: ${mode === 'dark' ? theme.palette.grey[900] : theme.palette.grey[50]};
             border-right: 1px solid ${theme.palette.divider};
+            overflow-x: visible;
 
             .menu-container {
                 box-sizing: border-box;
@@ -61,7 +60,7 @@ const ClientDashboardContainer = styled(Box)(({ theme }) => {
                 flex-direction: column;
                 flex-shrink: 0;
                 flex-grow: 1;
-                overflow-y: auto;
+                overflow-x: visible;
 
                 .sidebar-link {
                     display: block;
@@ -72,7 +71,7 @@ const ClientDashboardContainer = styled(Box)(({ theme }) => {
 
             .expand-collapse-container {
                 box-sizing: border-box;
-                padding: ${theme.spacing(1)};
+                padding: ${theme.spacing(2)};
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -126,15 +125,21 @@ const ClientDashboard: FC = () => {
     const [fullWidthMenu, setFullWidthMenu] = useState<boolean>(false);
     const [menuMetadataItems, setMenuMetadataItems] = useState<MenuMetadataItem[]>([]);
     const {
+        appNavbarHeight,
+        windowInnerHeight,
         setSidebarWidth,
         changeSelectedClientId,
     } = storeService.useStore((state) => {
         const {
+            appNavbarHeight,
+            windowInnerHeight,
             setClientSidebarWidth,
             changeSelectedClientId,
         } = state;
 
         return {
+            appNavbarHeight,
+            windowInnerHeight,
             setSidebarWidth: setClientSidebarWidth,
             changeSelectedClientId,
         };
@@ -152,14 +157,6 @@ const ClientDashboard: FC = () => {
 
     const generateFullWidthMenuKey = (id: string) => {
         return `app.client.fullWidthMenu@${id}`;
-    };
-
-    const handleExpandCollapseClick = () => {
-        localStorage.setItem(
-            generateFullWidthMenuKey(clientId),
-            JSON.stringify(!fullWidthMenu),
-        );
-        setFullWidthMenu(!fullWidthMenu);
     };
 
     useEffect(() => {
@@ -238,67 +235,60 @@ const ClientDashboard: FC = () => {
     return (
         <ClientDashboardContainer>
             <Box className="sidebar" ref={sidebarRef}>
-                <Box className="menu-container">
-                    {
-                        menuMetadataItems.map((menuMetadataItem) => {
-                            const {
-                                icon,
-                                to,
-                                titleSlotId,
-                                condition,
-                            } = menuMetadataItem;
+                <SimpleBar style={{ height: windowInnerHeight - appNavbarHeight, width: 120 }} forceVisible="x">
+                    <Box className="menu-container">
+                        {
+                            menuMetadataItems.map((menuMetadataItem) => {
+                                const {
+                                    icon,
+                                    to,
+                                    titleSlotId,
+                                    condition,
+                                } = menuMetadataItem;
 
-                            if (_.isFunction(condition) && !condition(userClientRelationResponseData?.response)) {
-                                return null;
-                            }
+                                if (_.isFunction(condition) && !condition(userClientRelationResponseData?.response)) {
+                                    return null;
+                                }
 
-                            return (
-                                <NavLink
-                                    key={titleSlotId}
-                                    className="sidebar-link"
-                                    to={to}
-                                >
-                                    {
-                                        ({ isActive }) => {
-                                            return (
-                                                <ClientMenuItem
-                                                    fullWidth={fullWidthMenu}
-                                                    active={isActive}
-                                                    icon={<Icon className={icon} />}
-                                                    title={getLocaleText(titleSlotId)}
-                                                />
-                                            );
-                                        }
-                                    }
-                                </NavLink>
-                            );
-                        })
-                    }
-                    {
-                        menuMetadataItems.length === 0 && (
-                            new Array(3).fill(null).map((value, index) => {
                                 return (
-                                    <ClientMenuItem
-                                        key={index}
-                                        fullWidth={fullWidthMenu}
-                                        skeleton={true}
-                                        title=""
-                                        icon=""
-                                    />
+                                    <NavLink
+                                        key={titleSlotId}
+                                        className="sidebar-link"
+                                        to={to}
+                                    >
+                                        {
+                                            ({ isActive }) => {
+                                                return (
+                                                    <ClientMenuItem
+                                                        fullWidth={fullWidthMenu}
+                                                        active={isActive}
+                                                        icon={<Icon className={icon} />}
+                                                        title={getLocaleText(titleSlotId)}
+                                                    />
+                                                );
+                                            }
+                                        }
+                                    </NavLink>
                                 );
                             })
-                        )
-                    }
-                </Box>
-                {
-                    menuMetadataItems.length > 0 && (
-                        <Box className="expand-collapse-container">
-                            <IconButton onClick={handleExpandCollapseClick}>
-                                <Icon className={`icon-double-${fullWidthMenu ? 'left' : 'right'}-arrow`} />
-                            </IconButton>
-                        </Box>
-                    )
-                }
+                        }
+                        {
+                            menuMetadataItems.length === 0 && (
+                                new Array(3).fill(null).map((value, index) => {
+                                    return (
+                                        <ClientMenuItem
+                                            title=""
+                                            icon=""
+                                            key={index}
+                                            fullWidth={fullWidthMenu}
+                                            skeleton={true}
+                                        />
+                                    );
+                                })
+                            )
+                        }
+                    </Box>
+                </SimpleBar>
             </Box>
             <Box className="content-container">
                 <Outlet />

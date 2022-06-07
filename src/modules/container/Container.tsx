@@ -1,6 +1,7 @@
-import { getContainer } from 'khamsa';
+import { forwardContainer } from 'khamsa';
 import {
     FC,
+    memo,
     PropsWithChildren,
     useEffect,
     useState,
@@ -8,7 +9,6 @@ import {
 import {
     NavLink,
     Outlet,
-    useNavigate,
 } from 'react-router-dom';
 import { LocaleService } from '@modules/locale/locale.service';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
@@ -116,10 +116,11 @@ const ContainerWrapper = styled(Box)(({ theme }) => {
     `;
 });
 
-const Container: FC<PropsWithChildren<ContainerProps>> = ({
-    onLocaleChange = _.noop,
+const Container: FC<PropsWithChildren<ContainerProps>> = forwardContainer(({
+    props,
+    container,
 }) => {
-    const container = getContainer(Container);
+    const { onLocaleChange = _.noop } = props;
     const brandService = container.get<BrandService>(BrandService);
     const localeService = container.get<LocaleService>(LocaleService);
     const storeService = container.get<StoreService>(StoreService);
@@ -129,7 +130,6 @@ const Container: FC<PropsWithChildren<ContainerProps>> = ({
 
     const theme = brandService.getTheme();
 
-    const navigate = useNavigate();
     const [locales, setLocales] = useState<LocaleListItem[]>([]);
     const [locale, setLocale] = useState(localStorage.getItem('locale') || 'en_US');
     const [logo, setLogo] = useState<string>('');
@@ -212,7 +212,6 @@ const Container: FC<PropsWithChildren<ContainerProps>> = ({
                                         color="primary"
                                         classes={{ sizeSmall: 'control-button' }}
                                         startIcon={<Icon className="icon-plus" />}
-                                        onClick={() => navigate('/clients/create')}
                                     >{getLocaleText('app.createClient')}</Button>
                                     <NavLink to="/settings" className="navlink">
                                         <IconButton
@@ -283,6 +282,6 @@ const Container: FC<PropsWithChildren<ContainerProps>> = ({
             </StyledEngineProvider>
         </ThemeProvider>
     );
-};
+});
 
-export default Container;
+export default memo(Container);
