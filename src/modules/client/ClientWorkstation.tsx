@@ -690,7 +690,7 @@ const ClientWorkstation: FC = () => {
                                                             loading={loading}
                                                             errored={errored}
                                                             channelId={channelId}
-                                                            title={title || data?.name}
+                                                            title={title || utilsService.getChannelName(data?.name, locale, data?.nameTranslation)}
                                                             avatar={data?.avatar}
                                                             active={selectedTabId === tabId}
                                                             metadata={selectedTabMetadata}

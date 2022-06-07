@@ -320,4 +320,19 @@ export class UtilsService extends CaseTransformerService {
 
         return channelConfig;
     }
+
+    public getChannelName(defaultName: string, locale: string, rawTranslationMap = '{}') {
+        try {
+            const translationMap = JSON.parse(rawTranslationMap) || {};
+            const name = translationMap[locale];
+
+            if (name) {
+                return name;
+            }
+
+            return defaultName;
+        } catch (e) {
+            return defaultName;
+        }
+    }
 }
