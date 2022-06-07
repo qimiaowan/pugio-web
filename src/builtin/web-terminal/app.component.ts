@@ -1,7 +1,6 @@
 import { Component } from 'khamsa';
 import { lazy } from 'react';
 import { AppService } from '@builtin:web-terminal/app.service';
-import { LocaleService } from '@modules/locale/locale.service';
 import { LoadingComponent } from '@modules/brand/loading.component';
 
 @Component({
@@ -12,7 +11,6 @@ import { LoadingComponent } from '@modules/brand/loading.component';
     },
     declarations: [
         AppService,
-        LocaleService,
         LoadingComponent,
     ],
 })

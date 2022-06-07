@@ -296,7 +296,7 @@ export class UtilsService extends CaseTransformerService {
         const [channelConfig, setChannelConfig] = useState<ObservableChannelData>({
             width: undefined,
             height: undefined,
-            locale: 'en_US',
+            locale: undefined,
             mode: 'light',
             status: 'initializing',
             dispose: _.noop,
@@ -316,8 +316,23 @@ export class UtilsService extends CaseTransformerService {
                     dispose();
                 };
             }
-        }, []);
+        }, [window[this.configService.WORKSTATION_BUS_ID]]);
 
         return channelConfig;
+    }
+
+    public getChannelName(defaultName: string, locale: string, rawTranslationMap = '{}') {
+        try {
+            const translationMap = JSON.parse(rawTranslationMap) || {};
+            const name = translationMap[locale];
+
+            if (name) {
+                return name;
+            }
+
+            return defaultName;
+        } catch (e) {
+            return defaultName;
+        }
     }
 }

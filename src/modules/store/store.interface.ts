@@ -41,10 +41,14 @@ export interface TabFunctionMap {
     setTitle: (setterOrString: string | TabTitleSetter) => void;
 }
 
+export type UseChannelLocaleContext = (basePathname?: string) => Function;
+export type UseChannelConfig = () => ObservableChannelData;
+
 export interface LoadedChannelProps {
     metadata: ChannelMetadata;
     tab: TabFunctionMap,
-    useChannelConfig: () => ObservableChannelData;
+    useLocaleContext: UseChannelLocaleContext;
+    useChannelConfig: UseChannelConfig;
     setup: (lifecycle?: Lifecycle, channelId?: string) => void;
 }
 

@@ -18,11 +18,14 @@ import styled from '@mui/material/styles/styled';
 import clsx from 'clsx';
 import _ from 'lodash';
 import Color from 'color';
+import { getContainer } from 'khamsa';
 import Menu from '@mui/material/Menu';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import useTheme from '@mui/material/styles/useTheme';
+import { LocaleService } from '@modules/locale/locale.service';
+import { UtilsService } from '@modules/utils/utils.service';
 
 const ChannelListItemWrapper = styled('div')(({ theme }) => {
     const mode = theme.palette.mode;
@@ -201,7 +204,7 @@ const ChannelListItemMenu: FC<ChannelListItemMenuProps> = ({
 };
 
 const ChannelListItem: FC<ChannelListItemProps> = ({
-    data = {},
+    data,
     style,
     width,
     mode = 'app-entry',
@@ -212,7 +215,12 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
         name,
         avatar,
         description = '',
+        nameTranslation = '',
     } = data;
+
+    const container = getContainer(ChannelListItem);
+    const localeService = container.get<LocaleService>(LocaleService);
+    const utilsService = container.get<UtilsService>(UtilsService);
 
     let channelListItemDisplayMode: ChannelListItemMode;
 
@@ -223,6 +231,7 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
     }
 
     const [shouldHaveClickClass, setShouldHaveClickClass] = useState<boolean>(true);
+    const locale = localeService.useContextLocale();
 
     useEffect(() => {
         const handler = () => {
@@ -330,7 +339,10 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
                         src="/static/images/channel_avatar_fallback.svg"
                     />
                 </Avatar>
-                <Typography classes={{ root: 'text' }} variant="subtitle2">{name}</Typography>
+                <Typography
+                    classes={{ root: 'text' }}
+                    variant="subtitle2"
+                >{utilsService.getChannelName(name, locale, nameTranslation)}</Typography>
             </Box>
         </ChannelListItemWrapper>
     );
