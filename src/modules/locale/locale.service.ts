@@ -159,12 +159,20 @@ export class LocaleService {
         const useChannelLocaleContext = (basePathname = '') => {
             const basePathnameSegments = basePathname.split('.');
 
-            const { locale } = useChannelConfig();
+            const { locale: clientLocale } = useChannelConfig();
             const {
                 localeTextMap: translationMap,
             } = useContext(this.LocaleContext);
             const [localeTextGetter, setLocaleTextGetter] = useState<Function>(() => _.noop);
             const [localeTextMap, setLocaleTextMap] = useState<Record<string, any>>({});
+            const initialLocale = this.useContextLocale();
+            const [locale, setLocale] = useState<string>(initialLocale);
+
+            useEffect(() => {
+                if (clientLocale) {
+                    setLocale(clientLocale);
+                }
+            }, [clientLocale]);
 
             useEffect(() => {
                 const defaultLocaleTextMap = translationMap['default'] || translationMap['en_US'] || {};

@@ -296,7 +296,7 @@ export class UtilsService extends CaseTransformerService {
         const [channelConfig, setChannelConfig] = useState<ObservableChannelData>({
             width: undefined,
             height: undefined,
-            locale: 'en_US',
+            locale: undefined,
             mode: 'light',
             status: 'initializing',
             dispose: _.noop,
