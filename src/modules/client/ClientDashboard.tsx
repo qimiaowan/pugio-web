@@ -233,7 +233,7 @@ const ClientDashboard: FC = () => {
 
     useEffect(() => {
         updateMenuMetadataItems();
-    }, [updateMenuMetadataItems]);
+    }, [clientId, userClientRelationResponseData]);
 
     return (
         <ClientDashboardContainer>
@@ -274,12 +274,31 @@ const ClientDashboard: FC = () => {
                             );
                         })
                     }
+                    {
+                        menuMetadataItems.length === 0 && (
+                            new Array(3).fill(null).map((value, index) => {
+                                return (
+                                    <ClientMenuItem
+                                        key={index}
+                                        fullWidth={fullWidthMenu}
+                                        skeleton={true}
+                                        title=""
+                                        icon=""
+                                    />
+                                );
+                            })
+                        )
+                    }
                 </Box>
-                <Box className="expand-collapse-container">
-                    <IconButton onClick={handleExpandCollapseClick}>
-                        <Icon className={`icon-double-${fullWidthMenu ? 'left' : 'right'}-arrow`} />
-                    </IconButton>
-                </Box>
+                {
+                    menuMetadataItems.length > 0 && (
+                        <Box className="expand-collapse-container">
+                            <IconButton onClick={handleExpandCollapseClick}>
+                                <Icon className={`icon-double-${fullWidthMenu ? 'left' : 'right'}-arrow`} />
+                            </IconButton>
+                        </Box>
+                    )
+                }
             </Box>
             <Box className="content-container">
                 <Outlet />

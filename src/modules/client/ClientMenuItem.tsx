@@ -1,9 +1,16 @@
-import { FC } from 'react';
+import {
+    FC,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import clsx from 'clsx';
 import { ClientMenuItemProps } from '@modules/client/client-menu-item.interface';
 import styled from '@mui/material/styles/styled';
+import _ from 'lodash';
+import useTheme from '@mui/material/styles/useTheme';
 
 const ClientMenuItemWrapper = styled(Box)(({ theme }) => {
     const mode = theme.palette.mode;
@@ -60,19 +67,92 @@ const ClientMenuItemWrapper = styled(Box)(({ theme }) => {
 const ClientMenuItem: FC<ClientMenuItemProps> = ({
     title,
     icon,
-    active,
-    fullWidth,
+    active = false,
+    fullWidth = false,
+    skeleton = false,
 }) => {
+    const theme = useTheme();
+    const ref = useRef<HTMLDivElement>(null);
+    const [width, setWidth] = useState<number>(fullWidth ? 152 : 112);
+    const [skeletonFill, setSkeletonFill] = useState<string>('transparent');
+
+    useEffect(() => {
+        const observer = new ResizeObserver((entries) => {
+            const [observationData] = entries;
+
+            if (observationData) {
+                const currentWidth = _.get(observationData, 'borderBoxSize[0].inlineSize');
+
+                if (_.isNumber(currentWidth)) {
+                    setWidth(currentWidth || fullWidth ? 152 : 112);
+                }
+            }
+        });
+
+        if (ref.current) {
+            observer.observe(ref.current);
+        }
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [ref.current]);
+
+    useEffect(() => {
+        setSkeletonFill(
+            theme.palette.mode === 'dark'
+                ? theme.palette.grey[800]
+                : theme.palette.grey[200],
+        );
+    }, [theme]);
+
     return (
-        <ClientMenuItemWrapper
-            className={clsx('client-menu-item', {
-                active,
-                'full-width': fullWidth,
-            })}
-        >
-            <Box className="icon">{icon}</Box>
-            <Typography classes={{ root: 'title' }} noWrap={true}>{title}</Typography>
-        </ClientMenuItemWrapper>
+        skeleton
+            ? <Box
+                style={{
+                    width,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: `${theme.spacing(fullWidth ? 1.5 : 2)} 0`,
+                }}
+            >
+                {
+                    fullWidth
+                        ? <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width={width * 0.7}
+                            height={width * 0.7 * 32 / 140}
+                            viewBox="0 0 140 32"
+                        >
+                            <g>
+                                <rect x="42" y="0" width="96" height="32" rx="3" fill={skeletonFill} />
+                                <rect y="0" width="32" height="32" rx="3" fill={skeletonFill}  x="0"/>
+                            </g>
+                        </svg>
+                        : <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width={width * 0.2}
+                            height={width * 0.2 * 65 / 50}
+                            viewBox="0 0 50 65"
+                        >
+                            <g>
+                                <rect x="0" y="55" width="50" height="10" rx="3" fill={skeletonFill} />
+                                <rect y="0" width="50" height="50" rx="3" fill={skeletonFill} x="0"/>
+                            </g>
+                        </svg>
+                }
+            </Box>
+            : <ClientMenuItemWrapper
+                ref={ref}
+                className={clsx('client-menu-item', {
+                    active,
+                    'full-width': fullWidth,
+                })}
+            >
+                <Box className="icon">{icon}</Box>
+                <Typography classes={{ root: 'title' }} noWrap={true}>{title}</Typography>
+            </ClientMenuItemWrapper>
     );
 };
 

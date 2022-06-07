@@ -5,4 +5,5 @@ export interface ClientMenuItemProps {
     icon: ReactNode;
     active?: boolean;
     fullWidth?: boolean;
+    skeleton?: boolean;
 }
