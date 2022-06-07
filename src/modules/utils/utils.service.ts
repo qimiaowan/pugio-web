@@ -305,6 +305,7 @@ export class UtilsService extends CaseTransformerService {
         useEffect(() => {
             if (window[this.configService.WORKSTATION_BUS_ID]) {
                 const dispose = window[this.configService.WORKSTATION_BUS_ID].onData((config: ObservableChannelConfig) => {
+                    console.log('onData', config);
                     setChannelConfig({
                         ...config,
                         dispose,
@@ -316,7 +317,7 @@ export class UtilsService extends CaseTransformerService {
                     dispose();
                 };
             }
-        }, []);
+        }, [window[this.configService.WORKSTATION_BUS_ID]]);
 
         return channelConfig;
     }

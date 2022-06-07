@@ -44,6 +44,7 @@ export interface TabFunctionMap {
 export interface LoadedChannelProps {
     metadata: ChannelMetadata;
     tab: TabFunctionMap,
+    useLocaleContext: (locale?: string, basePathname?: string) => Function;
     useChannelConfig: () => ObservableChannelData;
     setup: (lifecycle?: Lifecycle, channelId?: string) => void;
 }

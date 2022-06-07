@@ -168,7 +168,6 @@ const ClientWorkstation: FC = () => {
     const theme = useTheme();
     const { client_id: clientId } = useParams();
     const locale = localeService.useContextLocale();
-    const localeMap = localeService.useLocaleMap(locale);
     const buttonsWrapperRef = useRef<HTMLDivElement>(null);
     const startupWrapperRef = useRef<HTMLDivElement>(null);
     const [tabsScrollOffset, setTabsScrollOffset] = useState<number>(null);
@@ -240,6 +239,29 @@ const ClientWorkstation: FC = () => {
     const [clientOffline, setClientOffline] = useState<boolean>(false);
     const [lastSelectedTabId, setLastSelectedTabId] = useState<string>(null);
 
+    const handleEmitConfig = useCallback(
+        () => {
+            if (window[configService.WORKSTATION_BUS_ID]) {
+                window[configService.WORKSTATION_BUS_ID].emit({
+                    width: headerWidth,
+                    height: panelHeight,
+                    locale,
+                    mode: theme.palette.mode,
+                });
+            }
+        },
+        [
+            locale,
+            theme.palette.mode,
+            panelHeight,
+            headerWidth,
+        ],
+    );
+
+    useEffect(() => {
+        console.log('locale change', locale);
+    }, [locale]);
+
     const handleCreateTab = (clientId: string, data: TabData = {}) => {
         const tabId = createTab(clientId, data);
         setSelectedTab(clientId, `${tabId}:scroll`);
@@ -290,6 +312,7 @@ const ClientWorkstation: FC = () => {
                     const {
                         bundleUrl: url,
                         id: channelId,
+                        localeMap: rawTranslationMap,
                     } = data;
 
                     const channelEntryPromise = url === '<internal>'
@@ -306,7 +329,7 @@ const ClientWorkstation: FC = () => {
                                             <LocaleContext.Provider
                                                 value={{
                                                     locale,
-                                                    localeTextMap: localeMap,
+                                                    localeTextMap: localeService.parseChannelTranslationMap(rawTranslationMap),
                                                 }}
                                             >
                                                 <Suspense fallback={null}>
@@ -344,6 +367,7 @@ const ClientWorkstation: FC = () => {
                                                             },
                                                         }}
                                                         useChannelConfig={utilsService.useChannelConfig.bind(utilsService)}
+                                                        useLocaleContext={localeService.useChannelLocaleContext.bind(localeService)}
                                                     />
                                                 </Suspense>
                                             </LocaleContext.Provider>
@@ -601,16 +625,7 @@ const ClientWorkstation: FC = () => {
     }, []);
 
     useEffect(
-        () => {
-            if (window[configService.WORKSTATION_BUS_ID]) {
-                window[configService.WORKSTATION_BUS_ID].emit({
-                    width: headerWidth,
-                    height: panelHeight,
-                    locale,
-                    mode: theme.palette.mode,
-                });
-            }
-        },
+        handleEmitConfig,
         [
             locale,
             theme.palette.mode,
@@ -689,6 +704,7 @@ const ClientWorkstation: FC = () => {
                                                                 (channelId) => {
                                                                     if (!nodes) {
                                                                         handleLoadChannel(channelId, clientId, tabId);
+                                                                        handleEmitConfig();
                                                                     }
                                                                 }
                                                             }

@@ -5,6 +5,7 @@ export interface HeaderControlItem {
     button?: {
         icon: string;
         props?: ButtonProps;
+        title?: string;
     };
     divider?: boolean;
 }

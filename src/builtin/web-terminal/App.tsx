@@ -7,6 +7,7 @@ import {
 } from 'react';
 import Box, { BoxProps } from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
+import Button from '@mui/material/Button';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
 import { getContainer } from 'khamsa';
@@ -16,7 +17,6 @@ import _ from 'lodash';
 import { AppService } from '@builtin:web-terminal/app.service';
 import { useAsyncEffect } from 'use-async-effect';
 import { FitAddon } from 'xterm-addon-fit';
-import { LocaleService } from '@modules/locale/locale.service';
 import '@builtin:web-terminal/app.component.less';
 import { HeaderControlItem } from '@builtin:web-terminal/app.interface';
 import { LoadingComponent } from '@modules/brand/loading.component';
@@ -108,6 +108,7 @@ const App: FC<LoadedChannelProps> = (props) => {
         tab,
         setup,
         useChannelConfig,
+        useLocaleContext,
     } = props;
 
     const clientId = _.get(metadata, 'client.id');
@@ -115,15 +116,20 @@ const App: FC<LoadedChannelProps> = (props) => {
 
     const container = getContainer(App);
     const appService = container.get<AppService>(AppService);
-    const localeService = container.get<LocaleService>(LocaleService);
     const Loading = container.get<FC<BoxProps>>(LoadingComponent);
 
+    const {
+        width,
+        height,
+        dispose,
+        locale,
+    } = useChannelConfig();
+    const getLocaleText = useLocaleContext(locale);
     const terminalRef = useRef<HTMLDivElement>(null);
     const controlsWrapperRef = useRef<SimpleBar>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const [terminalId, setTerminalId] = useState<string>(null);
     const [dataSocket, setDataSocket] = useState<WebSocket>(null);
-    const getLocaleText = localeService.useLocaleContext('builtin.webTerminal');
     const [loading, setLoading] = useState<boolean>(false);
     const [closeConnectionLoading, setCloseConnectionLoading] = useState<boolean>(false);
     const [cleanConnectionLoading, setCleanConnectionLoading] = useState<boolean>(false);
@@ -134,11 +140,10 @@ const App: FC<LoadedChannelProps> = (props) => {
     const [terminalHeight, setTerminalHeight] = useState<number>(0);
     const [terminalWidth, setTerminalWidth] = useState<number>(0);
     const [terminalFitAddon, setTerminalFitAddon] = useState<FitAddon>(null);
-    const {
-        width,
-        height,
-        dispose,
-    } = useChannelConfig();
+
+    useEffect(() => {
+        console.log('channel', locale);
+    }, [locale]);
 
     const calculateTerminalSize = (
         width: number,
@@ -311,6 +316,7 @@ const App: FC<LoadedChannelProps> = (props) => {
                 {
                     button: {
                         icon: 'icon-refresh',
+                        title: getLocaleText('reconnect'),
                         props: {
                             disabled: loading || closeConnectionLoading || cleanConnectionLoading,
                             title: getLocaleText('reconnect'),
@@ -321,6 +327,7 @@ const App: FC<LoadedChannelProps> = (props) => {
                 {
                     button: {
                         icon: 'icon-clipboard',
+                        title: getLocaleText('clipboard'),
                         props: {
                             disabled: loading ||
                                 closeConnectionLoading ||
@@ -344,6 +351,7 @@ const App: FC<LoadedChannelProps> = (props) => {
                 {
                     button: {
                         icon: 'icon-stop',
+                        title: getLocaleText('close'),
                         props: {
                             disabled: loading || closeConnectionLoading || cleanConnectionLoading,
                             title: getLocaleText('close'),
@@ -430,12 +438,20 @@ const App: FC<LoadedChannelProps> = (props) => {
                                 const {
                                     icon,
                                     props = {},
+                                    title,
                                 } = button;
 
                                 return (
-                                    <IconButton key={index} {...props} >
-                                        <Icon className={icon} />
-                                    </IconButton>
+                                    title
+                                        ? <Button
+                                            {...props}
+                                            key={index}
+                                            size="small"
+                                            startIcon={<Icon className={icon} />}
+                                        >{title}</Button>
+                                        : <IconButton key={index} {...props} >
+                                            <Icon className={icon} />
+                                        </IconButton>
                                 );
                             } else if (divider) {
                                 return (
