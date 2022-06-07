@@ -149,9 +149,11 @@ const ClientMenuItem: FC<ClientMenuItemProps> = ({
                 title={title}
                 arrow={true}
                 placement="right"
-                sx={{ userSelect: 'none' }}
-                onClick={() => {
-                    return false;
+                PopperProps={{
+                    style: {
+                        userSelect: 'none',
+                    },
+                    onClick: (event) => event.stopPropagation(),
                 }}
             >
                 <ClientMenuItemWrapper
