@@ -258,10 +258,6 @@ const ClientWorkstation: FC = () => {
         ],
     );
 
-    useEffect(() => {
-        console.log('locale change', locale);
-    }, [locale]);
-
     const handleCreateTab = (clientId: string, data: TabData = {}) => {
         const tabId = createTab(clientId, data);
         setSelectedTab(clientId, `${tabId}:scroll`);
@@ -367,7 +363,7 @@ const ClientWorkstation: FC = () => {
                                                             },
                                                         }}
                                                         useChannelConfig={utilsService.useChannelConfig.bind(utilsService)}
-                                                        useLocaleContext={localeService.useChannelLocaleContext.bind(localeService)}
+                                                        useLocaleContext={localeService.createUseChannelLocaleContext(utilsService.useChannelConfig.bind(utilsService))}
                                                     />
                                                 </Suspense>
                                             </LocaleContext.Provider>

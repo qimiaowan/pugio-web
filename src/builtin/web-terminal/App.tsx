@@ -122,9 +122,8 @@ const App: FC<LoadedChannelProps> = (props) => {
         width,
         height,
         dispose,
-        locale,
     } = useChannelConfig();
-    const getLocaleText = useLocaleContext(locale);
+    const getLocaleText = useLocaleContext();
     const terminalRef = useRef<HTMLDivElement>(null);
     const controlsWrapperRef = useRef<SimpleBar>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -140,10 +139,6 @@ const App: FC<LoadedChannelProps> = (props) => {
     const [terminalHeight, setTerminalHeight] = useState<number>(0);
     const [terminalWidth, setTerminalWidth] = useState<number>(0);
     const [terminalFitAddon, setTerminalFitAddon] = useState<FitAddon>(null);
-
-    useEffect(() => {
-        console.log('channel', locale);
-    }, [locale]);
 
     const calculateTerminalSize = (
         width: number,

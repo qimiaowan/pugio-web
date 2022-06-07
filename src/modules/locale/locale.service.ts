@@ -11,6 +11,10 @@ import {
     LocaleListItem,
     LocaleContextProps,
 } from '@modules/locale/locale.interface';
+import {
+    UseChannelConfig,
+    UseChannelLocaleContext,
+} from '@modules/store/store.interface';
 
 @Injectable()
 export class LocaleService {
@@ -149,5 +153,51 @@ export class LocaleService {
         }, [localeTextMap]);
 
         return localeTextGetter;
+    }
+
+    public createUseChannelLocaleContext(useChannelConfig: UseChannelConfig): UseChannelLocaleContext {
+        const useChannelLocaleContext = (basePathname = '') => {
+            const basePathnameSegments = basePathname.split('.');
+
+            const { locale } = useChannelConfig();
+            const {
+                localeTextMap: translationMap,
+            } = useContext(this.LocaleContext);
+            const [localeTextGetter, setLocaleTextGetter] = useState<Function>(() => _.noop);
+            const [localeTextMap, setLocaleTextMap] = useState<Record<string, any>>({});
+
+            useEffect(() => {
+                const defaultLocaleTextMap = translationMap['default'] || translationMap['en_US'] || {};
+                const currentLocaleTextMap = translationMap[locale] || {};
+                setLocaleTextMap(_.merge({}, defaultLocaleTextMap, currentLocaleTextMap));
+            }, [locale, translationMap]);
+
+            useEffect(() => {
+                const newLocaleTextGetter = (pathname: string, props: any = {}) => {
+                    const localeText = _.get(
+                        localeTextMap,
+                        basePathnameSegments.concat(
+                            pathname.split('.'),
+                        ).filter((segment) => !!segment).join('.'),
+                    ) || '';
+
+                    if (!localeText || !_.isString(localeText)) {
+                        return '';
+                    }
+
+                    try {
+                        const parsedLocaleText = Mustache.render(localeText, props);
+                        return parsedLocaleText;
+                    } catch (e) {
+                        return localeText;
+                    }
+                };
+                setLocaleTextGetter(() => newLocaleTextGetter);
+            }, [localeTextMap]);
+
+            return localeTextGetter;
+        };
+
+        return useChannelLocaleContext.bind(this);
     }
 }
