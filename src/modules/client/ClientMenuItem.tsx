@@ -24,13 +24,13 @@ const ClientMenuItemWrapper = styled(Box)(({ theme }) => {
         text-decoration: none;
         color: ${theme.palette.text.primary};
         padding: ${theme.spacing(2)};
-        width: 120px;
+        width: 100px;
         box-sizing: border-box;
 
         .title {
             font-size: 10px;
             text-decoration: none;
-            max-width: 100px;
+            max-width: 92px;
         }
 
         .icon {
@@ -75,7 +75,7 @@ const ClientMenuItem: FC<ClientMenuItemProps> = ({
 }) => {
     const theme = useTheme();
     const ref = useRef<HTMLDivElement>(null);
-    const [width, setWidth] = useState<number>(120);
+    const [width, setWidth] = useState<number>(100);
     const [skeletonFill, setSkeletonFill] = useState<string>('transparent');
 
     useEffect(() => {
@@ -86,7 +86,7 @@ const ClientMenuItem: FC<ClientMenuItemProps> = ({
                 const currentWidth = _.get(observationData, 'borderBoxSize[0].inlineSize');
 
                 if (_.isNumber(currentWidth)) {
-                    setWidth(currentWidth || 120);
+                    setWidth(currentWidth || 100);
                 }
             }
         });

@@ -235,7 +235,7 @@ const ClientDashboard: FC = () => {
     return (
         <ClientDashboardContainer>
             <Box className="sidebar" ref={sidebarRef}>
-                <SimpleBar style={{ height: windowInnerHeight - appNavbarHeight, width: 120 }} forceVisible="x">
+                <SimpleBar style={{ height: windowInnerHeight - appNavbarHeight, width: 100 }} forceVisible="x">
                     <Box className="menu-container">
                         {
                             menuMetadataItems.map((menuMetadataItem) => {
