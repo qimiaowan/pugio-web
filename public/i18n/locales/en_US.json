@@ -158,13 +158,6 @@
             "unknown": "Unknown"
         }
     },
-    "builtin": {
-        "webTerminal": {
-            "reconnect": "Reconnect",
-            "clipboard": "Clipboard",
-            "close": "Close Connection"
-        }
-    },
     "loadings": {
         "loading": "Loading...",
         "loadMore": "Load More",
