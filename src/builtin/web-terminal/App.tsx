@@ -310,7 +310,7 @@ const App: FC<LoadedChannelProps> = (props) => {
             setHeaderControlItems([
                 {
                     button: {
-                        icon: 'icon-refresh',
+                        icon: 'icon-rotate-cw',
                         title: getLocaleText('reconnect'),
                         props: {
                             disabled: loading || closeConnectionLoading || cleanConnectionLoading,
@@ -345,7 +345,7 @@ const App: FC<LoadedChannelProps> = (props) => {
                 },
                 {
                     button: {
-                        icon: 'icon-stop',
+                        icon: 'icon-power',
                         title: getLocaleText('close'),
                         props: {
                             disabled: loading || closeConnectionLoading || cleanConnectionLoading,

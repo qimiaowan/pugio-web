@@ -556,7 +556,7 @@ const ClientStatus: FC = () => {
                     <Box>
                         <Button
                             variant="text"
-                            startIcon={<Icon className="icon-refresh" />}
+                            startIcon={<Icon className="icon-refresh-cw" />}
                             disabled={chartsLoading}
                             onClick={handleChangeDateRange}
                         >{getLocaleText('refresh')}</Button>

@@ -200,7 +200,7 @@ const Tab: FC<TabProps> = ({
                             onClose();
                         }}
                     >
-                        <Icon className="icon-close" />
+                        <Icon className="icon-x" />
                     </IconButton>
                 )
             }

@@ -201,7 +201,7 @@ const ClientDashboard: FC = () => {
             setMenuMetadataItems(
                 [
                     {
-                        icon: 'icon-apps',
+                        icon: 'icon-grid',
                         to: `/client/${clientId}/workstation`,
                         titleSlotId: 'clientsSidebarMenu.workstation',
                     },
@@ -214,7 +214,7 @@ const ClientDashboard: FC = () => {
                         },
                     },
                     {
-                        icon: 'icon-status',
+                        icon: 'icon-activity',
                         to: `/client/${clientId}/status`,
                         titleSlotId: 'clientsSidebarMenu.status',
                     },

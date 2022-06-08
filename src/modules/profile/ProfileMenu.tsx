@@ -107,16 +107,16 @@ const ProfileMenu: FC = forwardContainer(({ container }) => {
                         return (
                             <>
                                 <ListItemButton>
-                                    <ListItemIcon><Icon className="icon-account" /></ListItemIcon>
+                                    <ListItemIcon><Icon className="icon-user" /></ListItemIcon>
                                     <ListItemText>{getLocaleText('app.avatarDropdown.settings')}</ListItemText>
                                 </ListItemButton>
                                 <ListItemButton>
-                                    <ListItemIcon><Icon className="icon-logout" /></ListItemIcon>
+                                    <ListItemIcon><Icon className="icon-log-out" /></ListItemIcon>
                                     <ListItemText>{getLocaleText('app.avatarDropdown.signout')}</ListItemText>
                                 </ListItemButton>
                                 <Divider />
                                 <ListItemButton>
-                                    <ListItemIcon><Icon className="icon-account-add" /></ListItemIcon>
+                                    <ListItemIcon><Icon className="icon-plus-square" /></ListItemIcon>
                                     <ListItemText>{getLocaleText('app.avatarDropdown.create')}</ListItemText>
                                 </ListItemButton>
                             </>

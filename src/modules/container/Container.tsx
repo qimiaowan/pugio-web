@@ -236,7 +236,7 @@ const Container: FC<PropsWithChildren<ContainerProps>> = forwardContainer(({
                                                         } : {}),
                                                     }}
                                                     onClick={openPopover}
-                                                ><Icon className="icon-language" /></IconButton>
+                                                ><Icon className="icon-globe" /></IconButton>
                                             );
                                         }}
                                     >

@@ -33,7 +33,7 @@ const ClientRoleSelector: FC<ClientRoleSelectorProps> = ({
                 return (
                     <Button
                         variant="text"
-                        endIcon={<Icon className={`icon-keyboard-arrow-${open ? 'up' : 'down'}`} />}
+                        endIcon={<Icon className={`icon-chevron-${open ? 'up' : 'down'}`} />}
                         {...triggerProps}
                         sx={{
                             ...(open ? {

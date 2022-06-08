@@ -342,7 +342,7 @@ const UserSelector: FC<UserSelectorProps> = ({
                                                                 )
                                                             }
                                                         </ListItemIcon>
-                                                        <ListItemText className="users-list-item-text">
+                                                        <ListItemText className="users-list-item-text" disableTypography={true}>
                                                             <Avatar
                                                                 classes={{ root: 'avatar' }}
                                                                 src={picture}
@@ -381,7 +381,7 @@ const UserSelector: FC<UserSelectorProps> = ({
                             </SimpleBar>
                     }
                 </Popover>
-                <IconButton onClick={() => handleCloseSelector()}><Icon className="icon-close" /></IconButton>
+                <IconButton onClick={() => handleCloseSelector()}><Icon className="icon-x" /></IconButton>
             </DialogTitle>
             <DialogContent
                 classes={{ root: 'content' }}
@@ -399,7 +399,7 @@ const UserSelector: FC<UserSelectorProps> = ({
                                 <Button
                                     size="small"
                                     color={selectedMembershipList.length === selectedSelectedUserIdList.length ? 'info' : 'secondary'}
-                                    startIcon={<Icon className="icon-select-all" />}
+                                    startIcon={<Icon className="icon-check-square" />}
                                     sx={{
                                         marginRight: theme.spacing(1),
                                     }}
@@ -425,7 +425,7 @@ const UserSelector: FC<UserSelectorProps> = ({
                                     size="small"
                                     color="error"
                                     variant="text"
-                                    startIcon={<Icon className="icon-delete" />}
+                                    startIcon={<Icon className="icon-trash-2" />}
                                     disabled={selectedSelectedUserIdList.length === 0}
                                     onClick={() => {
                                         setSelectedMembershipList(selectedMembershipList.filter((membership) => {
@@ -446,7 +446,7 @@ const UserSelector: FC<UserSelectorProps> = ({
                                                 checked={selectedSelectedUserIdList.indexOf(membership.profile.id) !== -1}
                                                 menu={[
                                                     {
-                                                        icon: 'icon-close',
+                                                        icon: 'icon-delete',
                                                         title: getComponentLocaleText('clearSelected'),
                                                         onActive: () => {
                                                             setSelectedMembershipList(selectedMembershipList.filter((selectedMembership) => {

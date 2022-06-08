@@ -226,7 +226,7 @@ const ClientsDropdown: FC<ClientsDropdownProps> = ({
                     }),
                 }}
                 variant="text"
-                endIcon={<Icon className="dropdown-icon icon-keyboard-arrow-down" />}
+                endIcon={<Icon className="dropdown-icon icon-chevron-down" />}
                 startIcon={
                     getClientInformationResponseData?.response?.name
                         ? <Icon className="icon-server" />

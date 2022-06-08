@@ -351,7 +351,7 @@ const ClientMembers: FC<BoxProps> = ({
                                 Trigger={({ open, openPopover }) => {
                                     return (
                                         <Button
-                                            endIcon={<Icon className={`icon-keyboard-arrow-${open ? 'up' : 'down'}`} />}
+                                            endIcon={<Icon className={`icon-chevron-${open ? 'up' : 'down'}`} />}
                                             onClick={openPopover}
                                         >{generateSelectorValue(role)}</Button>
                                     );
@@ -434,7 +434,7 @@ const ClientMembers: FC<BoxProps> = ({
                         <Button
                             variant="contained"
                             size="small"
-                            startIcon={<Icon className="icon-account-add" />}
+                            startIcon={<Icon className="icon-user-plus" />}
                             classes={{ root: 'control-button' }}
                             onClick={() => setUserSelectorOpen(true)}
                         >{getPageLocaleText('add')}</Button>
@@ -481,7 +481,7 @@ const ClientMembers: FC<BoxProps> = ({
                                                     profile={user}
                                                     menu={[
                                                         {
-                                                            icon: 'icon-delete',
+                                                            icon: 'icon-trash-2',
                                                             title: getPageLocaleText('userCardMenu.delete'),
                                                             onActive: () => handleDeleteSelectedMembers([membership]),
                                                         },

@@ -375,7 +375,7 @@ const ChannelList: FC<ChannelListProps> = (listProps) => {
                                             });
                                         }}
                                     >
-                                        <Icon className={`icon-keyboard-arrow-${category?.expanded ? 'down' : 'right'}`} />
+                                        <Icon className={`icon-chevron-${category?.expanded ? 'down' : 'right'}`} />
                                     </IconButton>
                                     <Typography
                                         classes={{ root: 'title' }}

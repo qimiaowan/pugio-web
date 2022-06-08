@@ -767,18 +767,6 @@ const ClientWorkstation: FC = () => {
                                             setLastSelectedTabId(selectedTabId);
                                         }}
                                     >{getLocaleText('home')}</Button>
-                                    <Button
-                                        size="small"
-                                        classes={{ root: 'navigate-buttons' }}
-                                        disabled={true}
-                                        startIcon={<Icon className="icon-import" />}
-                                    >{getLocaleText('installChannel')}</Button>
-                                    <Button
-                                        size="small"
-                                        classes={{ root: 'navigate-buttons' }}
-                                        disabled={true}
-                                        startIcon={<Icon className="icon-plus" />}
-                                    >{getLocaleText('createChannel')}</Button>
                                 </Box>
                             </Box>
                         </Box>
@@ -823,7 +811,7 @@ const ClientWorkstation: FC = () => {
                                                 variant="text"
                                                 color="primary"
                                                 size="small"
-                                                startIcon={<Icon className="icon-return" />}
+                                                startIcon={<Icon className="icon-corner-up-left" />}
                                                 onClick={() => {
                                                     setSelectedTab(clientId, lastSelectedTabId);
                                                     setLastSelectedTabId(null);
