@@ -43,7 +43,7 @@ export class BrandService {
                                 fontSize: 12,
                             },
                             fontSizeSmall: {
-                                fontSize: 6,
+                                fontSize: 10,
                             },
                             fontSizeLarge: {
                                 fontSize: 16,
@@ -133,7 +133,7 @@ export class BrandService {
                             },
                             iconSizeSmall: {
                                 '.pugio-icons': {
-                                    fontSize: 6,
+                                    fontSize: 10,
                                     lineHeight: '12px',
                                 },
                             },

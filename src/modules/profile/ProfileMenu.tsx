@@ -107,7 +107,7 @@ const ProfileMenu: FC = forwardContainer(({ container }) => {
                         return (
                             <>
                                 <ListItemButton>
-                                    <ListItemIcon><Icon className="icon-user" /></ListItemIcon>
+                                    <ListItemIcon><Icon className="icon-sliders" /></ListItemIcon>
                                     <ListItemText>{getLocaleText('app.avatarDropdown.settings')}</ListItemText>
                                 </ListItemButton>
                                 <ListItemButton>
