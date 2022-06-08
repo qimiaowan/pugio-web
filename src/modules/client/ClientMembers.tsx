@@ -424,7 +424,7 @@ const ClientMembers: FC<BoxProps> = ({
                                     variant="text"
                                     size="small"
                                     color="error"
-                                    startIcon={<Icon className="icon-delete" />}
+                                    startIcon={<Icon className="icon-trash-2" />}
                                     classes={{ root: 'control-button' }}
                                     title={getPageLocaleText('delete', { count: selectedMemberships.length })}
                                     onClick={() => handleDeleteSelectedMembers(selectedMemberships)}

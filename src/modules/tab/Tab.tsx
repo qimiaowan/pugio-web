@@ -16,6 +16,7 @@ import clsx from 'clsx';
 import _ from 'lodash';
 import styled from '@mui/material/styles/styled';
 import Color from 'color';
+import { BrandService } from '@modules/brand/brand.service';
 
 const TabWrapper = styled(Box)(({ theme }) => {
     const mode = theme.palette.mode;
@@ -127,6 +128,7 @@ const Tab: FC<TabProps> = ({
     const container = getContainer(Tab);
     const localeService = container.get<LocaleService>(LocaleService);
     const Loading = container.get<FC<BoxProps>>(LoadingComponent);
+    const brandService = container.get<BrandService>(BrandService);
 
     const getLocaleText = localeService.useLocaleContext('components.tab');
     const [tabTitle, setTabTitle] = useState<string>('');
@@ -178,7 +180,14 @@ const Tab: FC<TabProps> = ({
                         ? children
                         : (
                             <Box className="content-wrapper">
-                                <Box className="avatar" component="img" src={!errored ? avatar : '/static/images/error_avatar.svg'} />
+                                {
+                                    errored
+                                        ? <Box
+                                            className="avatar"
+                                            dangerouslySetInnerHTML={{ __html: brandService.getVectors('errorAvatar') }}
+                                        />
+                                        : <Box className="avatar" component="img" src={avatar} />
+                                }
                                 <Typography className="text" noWrap={true}>
                                     {
                                         errored
