@@ -255,6 +255,7 @@ const ClientDashboard: FC = () => {
                                         key={titleSlotId}
                                         className="sidebar-link"
                                         to={to}
+                                        draggable={false}
                                     >
                                         {
                                             ({ isActive }) => {

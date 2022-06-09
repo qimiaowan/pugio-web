@@ -40,13 +40,14 @@ export class BrandService {
                             root: {
                                 width: 'initial',
                                 height: 'initial',
-                                fontSize: 12,
+                                fontSize: 16,
+                                lineHeight: 1.4,
                             },
                             fontSizeSmall: {
-                                fontSize: 10,
+                                fontSize: 14,
                             },
                             fontSizeLarge: {
-                                fontSize: 16,
+                                fontSize: 18,
                             },
                         },
                     },

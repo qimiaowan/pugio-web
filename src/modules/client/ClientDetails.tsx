@@ -11,6 +11,8 @@ import { useRequest } from 'ahooks';
 import { getContainer } from 'khamsa';
 import { ClientService } from '@modules/client/client.service';
 import { LoadingComponent } from '@modules/brand/loading.component';
+import { FormItemProps } from '@modules/common/form-item.interface';
+import { FormItemComponent } from '@modules/common/form-item.component';
 
 const ClientDetailsPage = styled(Box)(() => {
     return `
@@ -42,6 +44,7 @@ const ClientDetails: FC = () => {
     const container = getContainer(ClientDetails);
     const clientService = container.get<ClientService>(ClientService);
     const Loading = container.get<FC<BoxProps>>(LoadingComponent);
+    const FormItem = container.get<FC<FormItemProps>>(FormItemComponent);
 
     const { client_id: clientId } = useParams();
     const {
@@ -74,6 +77,11 @@ const ClientDetails: FC = () => {
                     ? <Box className="loading-wrapper"><Loading /></Box>
                     : <SimpleBar style={{ width: '100%', height: '100%' }}>
                         <Box className="form-wrapper">
+                            <FormItem
+                                title="asdaksdasdkasd"
+                                value="oasjdoqjep09k0a9id-a0sdi"
+                                editorType="text-area"
+                            />
                         </Box>
                     </SimpleBar>
             }
