@@ -7,7 +7,7 @@ import {
 
 type ClosePopoverFunction = () => void;
 
-interface TriggerProps {
+export interface PopoverTriggerProps {
     open: boolean;
     openPopover: (event: MouseEvent<any>) => void;
 }
@@ -17,7 +17,7 @@ export interface PopoverChildrenCreatorData {
 }
 
 export interface PopoverProps {
-    Trigger: FC<TriggerProps>;
+    Trigger: FC<PopoverTriggerProps>;
     children: (data: PopoverChildrenCreatorData) => ReactNode;
     variant?: 'menu' | 'popover';
     muiPopoverProps?: Partial<MuiPopoverProps>;

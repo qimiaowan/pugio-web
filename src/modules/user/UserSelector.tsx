@@ -2,11 +2,9 @@ import {
     FC,
     useEffect,
     useState,
-    MouseEvent,
 } from 'react';
 import { UserSelectorProps } from '@modules/user/user-selector.interface';
-import Avatar from '@mui/material/Avatar';
-import Box, { BoxProps } from '@mui/material/Box';
+import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
@@ -14,13 +12,6 @@ import DialogContent from '@mui/material/DialogContent';
 import Button from '@mui/material/Button';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Popover from '@mui/material/Popover';
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import TextField from '@mui/material/TextField';
 import { getContainer } from 'khamsa';
 import { LocaleService } from '@modules/locale/locale.service';
 import SimpleBar from 'simplebar-react';
@@ -28,11 +19,6 @@ import clsx from 'clsx';
 import _ from 'lodash';
 import { UserCardProps } from '@modules/user/user-card.interface';
 import { UserCardComponent } from '@modules/user/user-card.component';
-import { UserService } from '@modules/user/user.service';
-import { useDebounce } from 'ahooks';
-import { UtilsService } from '@modules/utils/utils.service';
-import { QueryUsersResponseDataItem } from '@modules/user/user.interface';
-import { LoadingComponent } from '@modules/brand/loading.component';
 import { Profile } from '@modules/profile/profile.interface';
 import { ExceptionComponentProps } from '@modules/brand/exception.interface';
 import { ExceptionComponent } from '@modules/brand/exception.component';
@@ -41,6 +27,8 @@ import useTheme from '@mui/material/styles/useTheme';
 import { ClientRoleSelectorProps } from '@modules/client/client-role-selector.interface';
 import { ClientRoleSelectorComponent } from '@modules/client/client-role-selector.component';
 import { ClientMembership } from '@modules/client/client.interface';
+import { UserSearcherProps } from '@modules/user/user-searcher.interface';
+import { UserSearcherComponent } from '@modules/user/user-searcher.component';
 
 const UserSelectorWrapper = styled(Dialog)(({ theme }) => {
     return `
@@ -71,64 +59,10 @@ const UserSelectorWrapper = styled(Dialog)(({ theme }) => {
             }
         }
 
-        .loading-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
         .simplebar-content {
             display: flex;
             flex-direction: column;
             align-items: stretch;
-        }
-
-        .load-more-wrapper {
-            padding: ${theme.spacing(1)};
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .selected-controls-wrapper {
-            flex-grow: 1;
-            flex-shrink: 1;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-
-            & > button {
-                margin-left: ${theme.spacing(1)};
-            }
-        }
-
-        .add-users-popover {
-            width: 360px;
-
-            .users-list-item {
-                padding: ${theme.spacing(0.5)} ${theme.spacing(1)};
-
-                .avatar {
-                    width: 28px;
-                    height: 28px;
-                    margin-right: ${theme.spacing(1)};
-                }
-
-                &-text {
-                    display: flex;
-                    align-items: center;
-                }
-            }
-
-            .search-users-wrapper {
-                display: flex;
-                box-sizing: border-box;
-                border-bottom: 1px solid ${theme.palette.divider};
-
-                & > * {
-                    flex-grow: 1;
-                }
-            }
         }
     `;
 });
@@ -141,53 +75,17 @@ const UserSelector: FC<UserSelectorProps> = ({
 }) => {
     const container = getContainer(UserSelector);
     const localeService = container.get<LocaleService>(LocaleService);
-    const userService = container.get<UserService>(UserService);
-    const utilsService = container.get<UtilsService>(UtilsService);
     const UserCard = container.get<FC<UserCardProps>>(UserCardComponent);
-    const Loading = container.get<FC<BoxProps>>(LoadingComponent);
     const Exception = container.get<FC<ExceptionComponentProps>>(ExceptionComponent);
     const ClientRoleSelector = container.get<FC<ClientRoleSelectorProps>>(ClientRoleSelectorComponent);
-
-    const handleOpenPopover = (event: MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClosePopover = () => {
-        setAnchorEl(null);
-    };
+    const UserSearcher = container.get<FC<UserSearcherProps>>(UserSearcherComponent);
 
     const theme = useTheme();
-    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-    const [searchValue, setSearchValue] = useState<string>('');
-    const debouncedSearchValue = useDebounce(searchValue, { wait: 300 });
     const [selectedMembershipList, setSelectedMembershipList] = useState<(Omit<ClientMembership, 'userId'> & { profile: Profile })[]>([]);
     const [selectedSelectedUserIdList, setSelectedSelectedUserIdList] = useState<string[]>([]);
     const [dialogContentHeight, setDialogContentHeight] = useState<number>(0);
     const [dialogContentElement, setDialogContentElement] = useState<HTMLDivElement>(null);
-    const [popoverContentElement, setPopoverContentElement] = useState<HTMLElement>(null);
-    const [popoverContentHeight, setPopoverContentHeight] = useState<number>(0);
     const getComponentLocaleText = localeService.useLocaleContext('components.userSelector');
-    const getAppLocaleText = localeService.useLocaleContext('app');
-    const {
-        data: queryUsersResponseData,
-        loadMore: queryMoreUsers,
-        loading: queryUsersLoading,
-        loadingMore: queryUsersLoadingMore,
-    } = utilsService.useLoadMore<QueryUsersResponseDataItem> (
-        (data) => {
-            return userService.queryUsers(
-                {
-                    ..._.pick(data, ['lastCursor', 'size']),
-                    search: debouncedSearchValue,
-                },
-            );
-        },
-        {
-            reloadDeps: [debouncedSearchValue],
-        },
-    );
-
-    const popoverOpen = Boolean(anchorEl);
 
     const handleCloseSelector = (event = {}, reason = null) => {
         if (reason === 'backdropClick' || reason !== null) {
@@ -195,7 +93,6 @@ const UserSelector: FC<UserSelectorProps> = ({
         }
 
         onClose(event, reason);
-        setSearchValue('');
         setSelectedMembershipList([]);
         setSelectedSelectedUserIdList([]);
     };
@@ -222,28 +119,6 @@ const UserSelector: FC<UserSelectorProps> = ({
         };
     }, [dialogContentElement]);
 
-    useEffect(() => {
-        const observer = new ResizeObserver((entries) => {
-            const [observationData] = entries;
-
-            if (observationData) {
-                const blockSize = _.get(observationData, 'borderBoxSize[0].blockSize');
-
-                if (_.isNumber(blockSize)) {
-                    setPopoverContentHeight(blockSize);
-                }
-            }
-        });
-
-        if (popoverContentElement) {
-            observer.observe(popoverContentElement);
-        }
-
-        return () => {
-            observer.disconnect();
-        };
-    }, [popoverContentElement]);
-
     return (
         <UserSelectorWrapper
             {...props}
@@ -254,133 +129,24 @@ const UserSelector: FC<UserSelectorProps> = ({
             onClose={handleCloseSelector}
         >
             <DialogTitle classes={{ root: 'dialog-title' }}>
-                <Button
-                    color="primary"
-                    startIcon={<Icon className="icon icon-account-add" />}
-                    onClick={handleOpenPopover}
-                >{getComponentLocaleText('addUsers')}</Button>
-                <Popover
-                    open={popoverOpen}
-                    disablePortal={true}
-                    classes={{
-                        paper: 'add-users-popover',
+                <UserSearcher
+                    Trigger={({ openPopover }) => {
+                        return (
+                            <Button
+                                color="primary"
+                                startIcon={<Icon className="icon icon-account-add" />}
+                                onClick={openPopover}
+                            >{getComponentLocaleText('addUsers')}</Button>
+                        );
                     }}
-                    anchorEl={anchorEl}
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                    }}
-                    onClose={handleClosePopover}
-                >
-                    <Box className="search-users-wrapper">
-                        <TextField
-                            placeholder={getAppLocaleText('searchPlaceholder')}
-                            InputProps={{
-                                startAdornment: <Icon className="icon-search" />,
-                                sx: {
-                                    border: 0,
-                                },
-                            }}
-                            onChange={(event) => setSearchValue(event.target.value)}
-                        />
-                    </Box>
-                    {
-                        queryUsersLoading
-                            ? <Box
-                                className="loading-wrapper"
-                                style={{ height: popoverContentHeight || 320 }}
-                            ><Loading /></Box>
-                            : <SimpleBar style={{ maxHeight: dialogContentHeight - 1 || 320 }}>
-                                <Box ref={(element) => setPopoverContentElement(element as unknown as HTMLElement)}>
-                                    <List
-                                        sx={{
-                                            width: '100%',
-                                            height: '100%',
-                                            padding: 0,
-                                        }}
-                                    >
-                                        {
-                                            (_.isArray(queryUsersResponseData?.list)) && queryUsersResponseData.list.map((item) => {
-                                                const {
-                                                    id,
-                                                    fullName,
-                                                    email,
-                                                    picture = '/static/images/profile_avatar_fallback.svg',
-                                                } = item;
-
-                                                return (
-                                                    <ListItemButton
-                                                        key={item.id}
-                                                        title={id}
-                                                        classes={{
-                                                            root: 'users-list-item',
-                                                        }}
-                                                        selected={selectedMembershipList.some((membership) => membership.profile.id === id)}
-                                                        onClick={() => {
-                                                            if (!selectedMembershipList.some((membership) => membership.profile.id === id)) {
-                                                                setSelectedMembershipList(
-                                                                    [
-                                                                        {
-                                                                            profile: item,
-                                                                            roleType: 2,
-                                                                        },
-                                                                    ].concat(selectedMembershipList),
-                                                                );
-                                                            } else {
-                                                                setSelectedMembershipList(
-                                                                    selectedMembershipList.filter((membership) => {
-                                                                        return membership.profile.id !== id;
-                                                                    }),
-                                                                );
-                                                            }
-                                                        }}
-                                                    >
-                                                        <ListItemIcon>
-                                                            {
-                                                                selectedMembershipList.some((membership) => membership.profile.id === item.id) && (
-                                                                    <Icon className="icon icon-check" />
-                                                                )
-                                                            }
-                                                        </ListItemIcon>
-                                                        <ListItemText className="users-list-item-text" disableTypography={true}>
-                                                            <Avatar
-                                                                classes={{ root: 'avatar' }}
-                                                                src={picture}
-                                                                variant="rounded"
-                                                            />
-                                                            <Typography noWrap={true}>{fullName} ({email})</Typography>
-                                                        </ListItemText>
-                                                    </ListItemButton>
-                                                );
-                                            })
-                                        }
-                                        {
-                                            !queryUsersLoading && (
-                                                <Box className="load-more-wrapper">
-                                                    <Button
-                                                        variant="text"
-                                                        classes={{ root: 'load-more-button' }}
-                                                        disabled={queryUsersLoadingMore || queryUsersResponseData?.remains === 0}
-                                                        onClick={queryMoreUsers}
-                                                    >
-                                                        {
-                                                            getComponentLocaleText(
-                                                                queryUsersLoadingMore
-                                                                    ? 'loading'
-                                                                    : queryUsersResponseData?.remains === 0
-                                                                        ? 'noMore'
-                                                                        : 'loadMore',
-                                                            )
-                                                        }
-                                                    </Button>
-                                                </Box>
-                                            )
-                                        }
-                                    </List>
-                                </Box>
-                            </SimpleBar>
-                    }
-                </Popover>
+                    selectedUsers={selectedMembershipList.map((membership) => membership.profile)}
+                    onUsersSelected={(users) => setSelectedMembershipList(users.map((user) => {
+                        return {
+                            profile: user,
+                            roleType: 2,
+                        };
+                    }))}
+                />
                 <IconButton onClick={() => handleCloseSelector()}><Icon className="icon-x" /></IconButton>
             </DialogTitle>
             <DialogContent

@@ -161,6 +161,12 @@
             "selectAll": "Select All",
             "unselectAll": "Unselect All"
         },
+        "userSearcher": {
+            "search": "Search",
+            "loadMore": "Load More",
+            "loading": "Loading...",
+            "noMore": "No More"
+        },
         "clientRoleSelector": {
             "roles": {
                 "1": "Admin",

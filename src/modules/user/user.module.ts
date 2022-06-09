@@ -6,6 +6,7 @@ import { UserSelectorComponent } from '@modules/user/user-selector.component';
 import { UserService } from '@modules/user/user.service';
 import { UserCardComponent } from '@modules/user/user-card.component';
 import { ClientModule } from '@modules/client/client.module';
+import { UserSearcherComponent } from '@modules/user/user-searcher.component';
 
 @Global()
 @Module({
@@ -18,6 +19,7 @@ import { ClientModule } from '@modules/client/client.module';
     components: [
         UserSelectorComponent,
         UserCardComponent,
+        UserSearcherComponent,
     ],
     exports: [
         UserService,
