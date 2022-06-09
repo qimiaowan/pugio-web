@@ -8,6 +8,10 @@ export interface Client extends BaseResponseData {
     name: string;
     description: string;
     verified: boolean;
+    deviceId: string;
+    version?: string;
+    publicKey?: string;
+    privateKey?: string;
 }
 
 export interface QueryClientsRequestOptions extends PaginationRequestOptions {

@@ -90,6 +90,17 @@
                 "title": "Failed to load chart {{ chartName }}",
                 "subTitle": "Refresh to reload"
             }
+        },
+        "clientDetails": {
+            "version": "Version",
+            "verified": "Verified",
+            "form": {
+                "name": "Name",
+                "description": "Description",
+                "deviceId": "Device ID",
+                "publicKey": "Public Key",
+                "privateKey": "Private Key"
+            }
         }
     },
     "components": {

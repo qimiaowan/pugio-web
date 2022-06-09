@@ -29,6 +29,7 @@ const FormItemWrapper = styled(Box)(({ theme }) => {
             font-weight: 700;
             padding-left: ${theme.spacing(1)};
             padding-right: ${theme.spacing(1)};
+            font-size: 12px;
         }
 
         .form-content-wrapper {
@@ -36,18 +37,27 @@ const FormItemWrapper = styled(Box)(({ theme }) => {
 
             .content {
                 display: flex;
-                align-items: stretch;
+                align-items: center;
 
                 &.view {
                     border: 1px solid transparent;
+                    position: relative;
 
                     .value-view-text {
                         font-size: 13px;
                         padding: ${theme.spacing(1)};
+                        padding-right: 60px;
+
+                        &.multi-line {
+                            max-height: 320px;
+                        }
                     }
 
                     .edit-button {
                         display: none;
+                        position: absolute;
+                        top: ${theme.spacing(1)};
+                        right: ${theme.spacing(1)};
                     }
 
                     &:hover .edit-button {
@@ -66,7 +76,7 @@ const FormItemWrapper = styled(Box)(({ theme }) => {
                     }
 
                     .editor-text-field .input {
-                        padding: ${theme.spacing(0.6)} 0;
+                        padding: ${theme.spacing(1)} 0;
                     }
 
                     .editor-text-area, .editor-text-field .input {
@@ -163,8 +173,16 @@ const FormItem: FC<FormItemProps> = ({
                         ? <Box className="content view">
                             <Typography
                                 {...valueProps}
-                                noWrap={true}
-                                classes={{ root: clsx('value-view-text', valueProps?.classes?.root) }}
+                                noWrap={editorType === 'text-field'}
+                                classes={{
+                                    root: clsx(
+                                        'value-view-text',
+                                        valueProps?.classes?.root,
+                                        {
+                                            'multi-line': editorType === 'text-area',
+                                        },
+                                    ),
+                                }}
                             >{value}</Typography>
                             {
                                 editable && (
