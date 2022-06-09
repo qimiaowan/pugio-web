@@ -6,6 +6,7 @@ import { LoadingComponent } from '@modules/brand/loading.component';
 import { StoreService } from '@modules/store/store.service';
 import { ConfigService } from '@modules/config/config.service';
 import { PopoverComponent } from '@modules/common/popover.component';
+import { UserCardComponent } from '@modules/user/user-card.component';
 
 @Component({
     factory: () => ProfileMenu,
@@ -16,6 +17,7 @@ import { PopoverComponent } from '@modules/common/popover.component';
         StoreService,
         ConfigService,
         PopoverComponent,
+        UserCardComponent,
     ],
 })
 export class ProfileMenuComponent {}

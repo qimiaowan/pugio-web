@@ -34,19 +34,22 @@ const UserCardWrapper = styled(Box)(({ theme }) => {
         padding: ${theme.spacing(1)};
         align-items: center;
         border-bottom: 1px solid ${theme.palette.divider};
-        cursor: pointer;
+
+        &.checkable {
+            cursor: pointer;
+
+            &:hover, &.checked:hover {
+                background-color: ${mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[100]};
+            }
+
+            &:active:focus,
+            &:active:not(:focus):not(:focus-within) {
+                background-color: ${mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[200]};
+            }
+        }
 
         &, * {
             user-select: none;
-        }
-
-        &:hover, &.checked:hover {
-            background-color: ${mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[100]};
-        }
-
-        &:active:focus,
-        &:active:not(:focus):not(:focus-within) {
-            background-color: ${mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[200]};
         }
 
         &.checked {
@@ -198,7 +201,7 @@ const UserCard: FC<UserCardProps> = ({
     return (
         <UserCardWrapper
             {...props}
-            className={clsx({ checked }, className)}
+            className={clsx({ checked, checkable }, className)}
             onMouseEnter={() => setControlsVisible(true)}
             onMouseLeave={() => setControlsVisible(false)}
             onClick={(event) => {

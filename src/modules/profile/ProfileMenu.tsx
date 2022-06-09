@@ -5,7 +5,7 @@ import {
     memo,
 } from 'react';
 import MuiAvatar from '@mui/material/Avatar';
-import { BoxProps } from '@mui/material/Box';
+import Box, { BoxProps } from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
@@ -23,6 +23,8 @@ import { ConfigService } from '@modules/config/config.service';
 import { PopoverComponent } from '@modules/common/popover.component';
 import { PopoverProps } from '@modules/common/popover.interface';
 import useTheme from '@mui/material/styles/useTheme';
+import { UserCardProps } from '@modules/user/user-card.interface';
+import { UserCardComponent } from '@modules/user/user-card.component';
 
 const Avatar = memo(MuiAvatar, () => true);
 
@@ -32,6 +34,7 @@ const ProfileMenu: FC = forwardContainer(({ container }) => {
     const profileService = container.get<ProfileService>(ProfileService);
     const configService = container.get<ConfigService>(ConfigService);
     const Popover = container.get<FC<PopoverProps>>(PopoverComponent);
+    const UserCard = container.get<FC<UserCardProps>>(UserCardComponent);
 
     const Loading = container.get<FC<BoxProps>>(LoadingComponent);
 
@@ -106,7 +109,17 @@ const ProfileMenu: FC = forwardContainer(({ container }) => {
                 {
                     ({ closePopover }) => {
                         return (
-                            <>
+                            <Box onClick={closePopover}>
+                                <UserCard
+                                    checkable={false}
+                                    style={{
+                                        borderBottom: 0,
+                                        padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
+                                    }}
+                                    profile={{ ...userProfile, picture: avatarUrl }}
+                                    onClick={(event) => event.stopPropagation()}
+                                />
+                                <Divider />
                                 <ListItemButton>
                                     <ListItemIcon><Icon className="icon-sliders" /></ListItemIcon>
                                     <ListItemText>{getLocaleText('app.avatarDropdown.settings')}</ListItemText>
@@ -120,7 +133,7 @@ const ProfileMenu: FC = forwardContainer(({ container }) => {
                                     <ListItemIcon><Icon className="icon-plus-square" /></ListItemIcon>
                                     <ListItemText>{getLocaleText('app.avatarDropdown.create')}</ListItemText>
                                 </ListItemButton>
-                            </>
+                            </Box>
                         );
                     }
                 }
