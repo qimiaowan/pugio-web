@@ -82,6 +82,7 @@ const ProfileMenu: FC = forwardContainer(({ container }) => {
                             aria-haspopup="true"
                             aria-expanded={open ? 'true' : undefined}
                             sx={{
+                                padding: theme.spacing(1),
                                 ...(open ? {
                                     backgroundColor: theme.palette.mode === 'dark'
                                         ? theme.palette.grey[700]

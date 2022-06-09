@@ -77,7 +77,7 @@ const ContainerWrapper = styled(Box)(({ theme }) => {
                     }
 
                     & > * {
-                        margin: 0 ${theme.spacing(1)};
+                        margin: 0 ${theme.spacing(0.5)};
                     }
 
                     .right-button {
