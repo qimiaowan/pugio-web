@@ -160,6 +160,13 @@ export class BrandService {
                                             : theme.palette.grey[900],
                                     },
                                 },
+
+                                '.pugio-icons': {
+                                    marginRight: 1,
+                                    '&.icon-check': {
+                                        marginRight: 0,
+                                    },
+                                },
                             }),
                             dense: true,
                         },
