@@ -77,11 +77,6 @@ const ClientDetails: FC = () => {
                     ? <Box className="loading-wrapper"><Loading /></Box>
                     : <SimpleBar style={{ width: '100%', height: '100%' }}>
                         <Box className="form-wrapper">
-                            <FormItem
-                                title="asdaksdasdkasd"
-                                value="oasjdoqjep09k0a9id-a0sdi"
-                                editorType="text-area"
-                            />
                         </Box>
                     </SimpleBar>
             }

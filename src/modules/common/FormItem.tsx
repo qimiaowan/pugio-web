@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
     FC,
     useCallback,
@@ -81,8 +80,13 @@ const FormItemWrapper = styled(Box)(({ theme }) => {
                         box-sizing: border-box;
                         outline: 0;
                         padding: ${theme.spacing(0.8)};
-                        border: 1px solid ${theme.palette.text.primary};
+                        border: 1px solid ${theme.palette.text.secondary};
                         border-radius: ${theme.shape.borderRadius}px;
+                        font-family: inherit;
+
+                        &:hover {
+                            border: 1px solid ${theme.palette.text.primary};
+                        }
 
                         &:focus {
                             border: 1px solid ${theme.palette.primary.main};
@@ -114,6 +118,8 @@ const FormItem: FC<FormItemProps> = ({
 }) => {
     const [editorValue, setEditorValue] = useState<any>(null);
     const [currentState, setCurrentState] = useState<'view' | 'edit'>('view');
+    const [textFieldElement, setTextFieldElement] = useState<HTMLInputElement>(null);
+    const [textAreaElement, setTextAreaElement] = useState<HTMLTextAreaElement>(null);
 
     const handleSubmitValue = useCallback(() => {
         onValueChange(editorValue);
@@ -121,12 +127,22 @@ const FormItem: FC<FormItemProps> = ({
     }, [editorValue]);
 
     const handleCancelEdit = useCallback(() => {
+        setEditorValue(value);
         setCurrentState('view');
-    }, []);
+    }, [value]);
 
     useEffect(() => {
         setEditorValue(value);
     }, [value]);
+
+    useEffect(() => {
+        if (textFieldElement) {
+            textFieldElement.focus();
+        }
+        if (textAreaElement) {
+            textAreaElement.focus();
+        }
+    }, [textFieldElement, textAreaElement]);
 
     return (
         <FormItemWrapper
@@ -164,6 +180,7 @@ const FormItem: FC<FormItemProps> = ({
                                 editorType === 'text-field'
                                     ? <TextField
                                         {...editorTextFieldProps}
+                                        inputRef={(ref) => setTextFieldElement(ref)}
                                         value={editorValue}
                                         classes={{
                                             root: clsx('editor-text-field', editorTextFieldProps?.classes?.root),
@@ -178,6 +195,7 @@ const FormItem: FC<FormItemProps> = ({
                                     />
                                     : <textarea
                                         {...editorTextAreaProps}
+                                        ref={(ref) => setTextAreaElement(ref)}
                                         className={clsx('editor-text-area', editorTextAreaProps?.className)}
                                         value={editorValue}
                                         onChange={(event) => setEditorValue(event.target.value)}
