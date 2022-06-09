@@ -168,7 +168,7 @@ const Container: FC<PropsWithChildren<ContainerProps>> = forwardContainer(({
                                         dangerouslySetInnerHTML={{ __html: logo }}
                                     />
                                     <ClientsDropdown />
-                                    <NavLink to="/home" className="navlink">
+                                    <NavLink to="/home" className="navlink" draggable={false}>
                                         {
                                             <Button
                                                 classes={{
@@ -195,7 +195,7 @@ const Container: FC<PropsWithChildren<ContainerProps>> = forwardContainer(({
                                             >{getLocaleText('app.navbar.development')}</Button>
                                         }
                                     </NavLink> */}
-                                    <a target="_blank" href="https://github.com/pugiojs/pugio-web/issues" className="navlink">
+                                    <a draggable={false} target="_blank" href="https://github.com/pugiojs/pugio-web/issues" className="navlink">
                                         {
                                             <Button
                                                 classes={{
@@ -213,7 +213,7 @@ const Container: FC<PropsWithChildren<ContainerProps>> = forwardContainer(({
                                         classes={{ sizeSmall: 'control-button' }}
                                         startIcon={<Icon className="icon-plus" />}
                                     >{getLocaleText('app.createClient')}</Button>
-                                    <NavLink to="/settings" className="navlink">
+                                    <NavLink to="/settings" className="navlink" draggable={false}>
                                         <IconButton
                                             classes={{ root: 'right-button' }}
                                         >
