@@ -22,6 +22,13 @@ export interface GetClientInformationRequestOptions {
 
 export type GetClientInformationResponseData = Client;
 
+export interface UpdateClientInformationRequestOptions {
+    clientId: string;
+    updates: Partial<Client>;
+}
+
+export type UpdateClientInformationResponseData = Client;
+
 export interface GetClientCurrentStatusRequestOptions {
     clientId: string;
     offlineThreshold?: number;

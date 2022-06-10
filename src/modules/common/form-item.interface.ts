@@ -7,6 +7,18 @@ import {
     TextareaHTMLAttributes,
 } from 'react';
 
+export type FormItemEditorType =
+    | 'text'
+    | 'longText'
+    | 'number'
+    | 'multipleSelect'
+    | 'singleSelect'
+    | 'datetime'
+    | 'datetimeRange'
+    | 'password'
+    | 'file'
+    | 'color';
+
 export interface FormItemProps {
     title: string;
     value: string;

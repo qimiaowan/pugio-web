@@ -1,5 +1,6 @@
 import {
     FC,
+    HTMLInputTypeAttribute,
     useCallback,
     useEffect,
     useState,
@@ -139,6 +140,36 @@ const FormItem: FC<FormItemProps> = ({
     const handleCancelEdit = useCallback(() => {
         setEditorValue(value);
         setCurrentState('view');
+    }, [value]);
+
+    // eslint-disable-next-line no-unused-vars
+    const handleGetValueType = useCallback((value): HTMLInputTypeAttribute => {
+        const type = typeof value;
+        let inputType: HTMLInputTypeAttribute;
+
+        switch (type) {
+            case 'bigint':
+                inputType = 'number';
+                break;
+            case 'boolean':
+                inputType = 'checkbox';
+                break;
+            case 'number':
+                inputType = 'number';
+                break;
+            default:
+                break;
+        }
+
+        if (inputType) {
+            return inputType;
+        }
+
+        if (_.isDate(value)) {
+            inputType = 'date';
+        }
+
+        return inputType;
     }, [value]);
 
     useEffect(() => {

@@ -21,6 +21,8 @@ import {
     ChangeClientMembershipResponseData,
     GetSystemStatusRequestOptions,
     GetSystemStatusResponseData,
+    UpdateClientInformationRequestOptions,
+    UpdateClientInformationResponseData,
 } from '@modules/client/client.interface';
 
 @Injectable()
@@ -51,6 +53,22 @@ export class ClientService {
             .request({
                 method: 'get',
                 url: `/client/${clientId}`,
+            });
+    }
+
+    public async updateClientInformation(
+        options: UpdateClientInformationRequestOptions,
+    ): Promise<Response<UpdateClientInformationResponseData>> {
+        const {
+            clientId,
+            updates,
+        } = options;
+
+        return await this.requestService.getInstance()
+            .request({
+                method: 'patch',
+                url: `/client/${clientId}`,
+                data: updates,
             });
     }
 

@@ -13,7 +13,9 @@
             "create": "Create a New Account"
         },
         "createClient": "Client",
-        "searchPlaceholder": "Type to search..."
+        "searchPlaceholder": "Type to search...",
+        "yes": "YES",
+        "no": "NO"
     },
     "clientsSidebarMenu": {
         "workstation": "Workstation",
@@ -92,8 +94,22 @@
             }
         },
         "clientDetails": {
-            "version": "Version",
-            "verified": "Verified",
+            "basicInfo": "Basic Information",
+            "createdAt": "Create Time",
+            "version": "Client Version",
+            "verified": "Device Verified",
+            "dangerZone": "Danger Zone",
+            "keyPair": "Key Pair",
+            "danger": {
+                "transformOwnership": {
+                    "title": "Transfer Ownership",
+                    "description": ""
+                },
+                "delete": {
+                    "title": "Delete Client",
+                    "description": ""
+                }
+            },
             "form": {
                 "name": "Name",
                 "description": "Description",
