@@ -6,6 +6,8 @@ import {
     useState,
 } from 'react';
 import Box, { BoxProps } from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Icon from '@mui/material/Icon';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import styled from '@mui/material/styles/styled';
@@ -25,6 +27,8 @@ import { Client } from '@modules/clients/clients.interface';
 import { LocaleService } from '@modules/locale/locale.service';
 import _ from 'lodash';
 import clsx from 'clsx';
+import { UserSearcherProps } from '@modules/user/user-searcher.interface';
+import { UserSearcherComponent } from '@modules/user/user-searcher.component';
 
 interface IFormItem {
     key: string;
@@ -97,6 +101,7 @@ const ClientDetails: FC = () => {
     const Loading = container.get<FC<BoxProps>>(LoadingComponent);
     const FormItem = container.get<FC<FormItemProps>>(FormItemComponent);
     const localeService = container.get<LocaleService>(LocaleService);
+    const UserSearcher = container.get<FC<UserSearcherProps>>(UserSearcherComponent);
     const basicInfoFormItems: IFormItem[] = [
         {
             key: 'name',
@@ -241,7 +246,7 @@ const ClientDetails: FC = () => {
                                 }
                             </Box>
                             {
-                                (clientInfo.publicKey && clientInfo.privateKey) && (
+                                userClientRelationResponseData?.response?.roleType <= 1 && (
                                     <>
                                         <Box className="wrapper"><Divider /></Box>
                                         <Box className="wrapper form-wrapper">
@@ -260,7 +265,7 @@ const ClientDetails: FC = () => {
                                                     return (
                                                         <FormItem
                                                             key={key}
-                                                            value={clientInfo[key]}
+                                                            value={clientInfo[key] || ''}
                                                             title={getLocaleText(`form.${key}`)}
                                                             editable={userClientRelationResponseData?.response?.roleType <= 1}
                                                             valueProps={{
@@ -284,13 +289,46 @@ const ClientDetails: FC = () => {
                                 userClientRelationResponseData?.response?.roleType <= 1 && (
                                     <>
                                         <Box className="wrapper"><Divider /></Box>
-                                        <Box className="wrapper danger-zone">
+                                        <Box className="wrapper form-wrapper danger-zone">
                                             <Typography
                                                 variant="subtitle1"
                                                 classes={{ root: 'part-title' }}
                                             >{getLocaleText('dangerZone')}</Typography>
-                                            <Box className="button-group">
-                                            </Box>
+                                            <FormItem
+                                                value={null}
+                                                title={getLocaleText('danger.transformOwnership.title')}
+                                                editable={false}
+                                                containerProps={{ className: 'form-item' }}
+                                                valueRender={() => {
+                                                    return (
+                                                        <UserSearcher
+                                                            Trigger={({ openPopover }) => {
+                                                                return (
+                                                                    <Button
+                                                                        color="error"
+                                                                        startIcon={<Icon className="icon-send" />}
+                                                                        onClick={openPopover}
+                                                                    >{getLocaleText('danger.transformOwnership.title')}</Button>
+                                                                );
+                                                            }}
+                                                            mode="single"
+                                                        />
+                                                    );
+                                                }}
+                                            />
+                                            <FormItem
+                                                value={null}
+                                                title={getLocaleText('danger.delete.title')}
+                                                containerProps={{ className: 'form-item' }}
+                                                valueRender={() => {
+                                                    return (
+                                                        <Button
+                                                            color="error"
+                                                            startIcon={<Icon className="icon-trash-2" />}
+                                                        >{getLocaleText('danger.transformOwnership.title')}</Button>
+                                                    );
+                                                }}
+                                            />
                                         </Box>
                                     </>
                                 )

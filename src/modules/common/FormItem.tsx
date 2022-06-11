@@ -41,6 +41,7 @@ const FormItemWrapper = styled(Box)(({ theme }) => {
             .content {
                 display: flex;
                 align-items: center;
+                margin-top: ${theme.spacing(1)};
 
                 &.view {
                     border: 1px solid transparent;
@@ -71,7 +72,6 @@ const FormItemWrapper = styled(Box)(({ theme }) => {
                 &.edit {
                     display: flex;
                     align-items: center;
-                    margin-top: ${theme.spacing(1)};
 
                     .editor-buttons-wrapper {
                         flex-grow: 0;
