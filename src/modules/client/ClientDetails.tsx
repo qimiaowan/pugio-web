@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
     FC,
     ReactNode,
@@ -9,7 +8,6 @@ import {
 import Box, { BoxProps } from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import styled from '@mui/material/styles/styled';
 import SimpleBar from 'simplebar-react';
 import { useParams } from 'react-router-dom';
@@ -17,7 +15,11 @@ import { useRequest } from 'ahooks';
 import { getContainer } from 'khamsa';
 import { ClientService } from '@modules/client/client.service';
 import { LoadingComponent } from '@modules/brand/loading.component';
-import { FormItemProps } from '@modules/common/form-item.interface';
+import {
+    FormItemEditor,
+    FormItemProps,
+    FormItemValueRender,
+} from '@modules/common/form-item.interface';
 import { FormItemComponent } from '@modules/common/form-item.component';
 import { Client } from '@modules/clients/clients.interface';
 import { LocaleService } from '@modules/locale/locale.service';
@@ -26,9 +28,9 @@ import clsx from 'clsx';
 
 interface IFormItem {
     key: string;
-    monospace?: boolean;
-    type?: 'text-area' | 'text-field';
-    extra?: ReactNode;
+    Editor?: FormItemEditor;
+    helper?: ReactNode;
+    valueRender?: FormItemValueRender;
 }
 
 const ClientDetailsPage = styled(Box)(({ theme }) => {
@@ -59,8 +61,23 @@ const ClientDetailsPage = styled(Box)(({ theme }) => {
                 .form-item {
                     margin-bottom: ${theme.spacing(2)};
 
-                    .value-monospace {
-                        font-family: Menlo, Courier, Courier New, Consolas;
+                    .form-item-editor-textarea {
+                        resize: none;
+                        outline: 0;
+                        border: 0;
+                        flex-grow: 1;
+                        flex-shrink: 1;
+                        padding: ${theme.spacing(1)};
+                        border: 1px solid ${theme.palette.text.secondary};
+                        border-radius: ${theme.shape.borderRadius}px;
+
+                        &:hover {
+                            border-color: ${theme.palette.text.primary};
+                        }
+
+                        &:focus {
+                            border-color: ${theme.palette.primary.main};
+                        }
                     }
                 }
             }
@@ -86,7 +103,6 @@ const ClientDetails: FC = () => {
         },
         {
             key: 'description',
-            type: 'text-area',
         },
         {
             key: 'deviceId',
@@ -95,13 +111,31 @@ const ClientDetails: FC = () => {
     const keyPairFormItems: IFormItem[] = [
         {
             key: 'publicKey',
-            type: 'text-area',
-            monospace: true,
+            Editor: ({ value, updateValue }) => {
+                return (
+                    <textarea
+                        className="form-item-editor-textarea monospace"
+                        style={{ height: 320 }}
+                        value={value}
+                        onChange={(event) => updateValue(event.target.value)}
+                    />
+                );
+            },
+            valueRender: ({ value }) => <Typography noWrap={false} classes={{ root: 'monospace' }}>{value}</Typography>,
         },
         {
             key: 'privateKey',
-            type: 'text-area',
-            monospace: true,
+            Editor: ({ value, updateValue }) => {
+                return (
+                    <textarea
+                        className="form-item-editor-textarea monospace"
+                        style={{ height: 320 }}
+                        value={value}
+                        onChange={(event) => updateValue(event.target.value)}
+                    />
+                );
+            },
+            valueRender: ({ value }) => <Typography noWrap={false} classes={{ root: 'monospace' }}>{value}</Typography>,
         },
     ];
 
@@ -183,7 +217,8 @@ const ClientDetails: FC = () => {
                                     basicInfoFormItems.map((formItem) => {
                                         const {
                                             key,
-                                            type,
+                                            Editor,
+                                            valueRender,
                                         } = formItem;
 
                                         if (_.isUndefined(clientInfo[key]) || _.isNull(clientInfo[key])) {
@@ -196,7 +231,8 @@ const ClientDetails: FC = () => {
                                                 value={clientInfo[key]}
                                                 title={getLocaleText(`form.${key}`)}
                                                 editable={userClientRelationResponseData?.response?.roleType <= 1}
-                                                editorType={type}
+                                                Editor={Editor}
+                                                valueRender={valueRender}
                                                 containerProps={{ className: 'form-item' }}
                                                 onValueChange={(value) => handleUpdateClientInfo(key, value)}
                                             />
@@ -217,8 +253,8 @@ const ClientDetails: FC = () => {
                                                 keyPairFormItems.map((formItem) => {
                                                     const {
                                                         key,
-                                                        type,
-                                                        monospace = false,
+                                                        Editor,
+                                                        valueRender,
                                                     } = formItem;
 
                                                     return (
@@ -227,14 +263,13 @@ const ClientDetails: FC = () => {
                                                             value={clientInfo[key]}
                                                             title={getLocaleText(`form.${key}`)}
                                                             editable={userClientRelationResponseData?.response?.roleType <= 1}
-                                                            editorType={type}
                                                             valueProps={{
                                                                 classes: {
-                                                                    root: clsx({
-                                                                        'value-monospace': monospace,
-                                                                    }),
+                                                                    root: clsx('monospace'),
                                                                 },
                                                             }}
+                                                            Editor={Editor}
+                                                            valueRender={valueRender}
                                                             containerProps={{ className: 'form-item' }}
                                                             onValueChange={(value) => handleUpdateClientInfo(key, value)}
                                                         />

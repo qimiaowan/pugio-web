@@ -1,10 +1,14 @@
 import {
     FC,
+    useCallback,
     useEffect,
     useState,
     createElement,
 } from 'react';
-import { FormItemProps } from '@modules/common/form-item.interface';
+import {
+    FormItemEditorProps,
+    FormItemProps,
+} from '@modules/common/form-item.interface';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import clsx from 'clsx';
@@ -55,7 +59,7 @@ const FormItemWrapper = styled(Box)(({ theme }) => {
                     .edit-button {
                         display: none;
                         position: absolute;
-                        top: ${theme.spacing(1)};
+                        top: 0;
                         right: ${theme.spacing(1)};
                     }
 
@@ -66,17 +70,51 @@ const FormItemWrapper = styled(Box)(({ theme }) => {
 
                 &.edit {
                     display: flex;
-                    align-items: flex-start;
+                    align-items: center;
+                    margin-top: ${theme.spacing(1)};
 
                     .editor-buttons-wrapper {
                         flex-grow: 0;
                         flex-shrink: 0;
+                        box-sizing: border-box;
+                        padding: 0 ${theme.spacing(1)};
+                    }
+
+                    .form-item-input {
+                        padding: ${theme.spacing(1)};
+                        border-radius: ${theme.shape.borderRadius}px;
+                        border: 0;
+                        outline: 0;
+                        border: 1px solid ${theme.palette.text.secondary};
+                        flex-grow: 1;
+                        flex-shrink: 0;
+
+                        &:hover {
+                            border-color: ${theme.palette.text.primary};
+                        }
+
+                        &:focus {
+                            border-color: ${theme.palette.primary.main};
+                        }
                     }
                 }
             }
         }
     `;
 });
+
+const DefaultFormItemEditor: FC<FormItemEditorProps> = ({
+    value,
+    updateValue,
+}) => {
+    return (
+        <input
+            className="form-item-input"
+            value={value}
+            onChange={(event) => updateValue(event.target.value)}
+        />
+    );
+};
 
 const FormItem: FC<FormItemProps> = ({
     title,
@@ -92,6 +130,16 @@ const FormItem: FC<FormItemProps> = ({
 }) => {
     const [editorValue, setEditorValue] = useState<any>(null);
     const [currentState, setCurrentState] = useState<'view' | 'edit'>('view');
+
+    const handleSubmitValue = useCallback(() => {
+        onValueChange(editorValue);
+        setCurrentState('view');
+    }, [editorValue]);
+
+    const handleCancelEdit = useCallback(() => {
+        setEditorValue(value);
+        setCurrentState('view');
+    }, [value]);
 
     useEffect(() => {
         setEditorValue(value);
@@ -155,10 +203,18 @@ const FormItem: FC<FormItemProps> = ({
                                 )
                             }
                         </Box>
-                        : createElement(Editor, {
-                            value: editorValue,
-                            updateValue: setEditorValue,
-                        })
+                        : <Box className="content edit">
+                            {
+                                createElement(Editor || DefaultFormItemEditor, {
+                                    value: editorValue,
+                                    updateValue: setEditorValue,
+                                })
+                            }
+                            <Box className="editor-buttons-wrapper">
+                                <IconButton onClick={handleSubmitValue}><Icon className="icon-check" /></IconButton>
+                                <IconButton onClick={handleCancelEdit}><Icon className="icon-x" /></IconButton>
+                            </Box>
+                        </Box>
                 }
             </Box>
             {helper}

@@ -14,6 +14,9 @@ export interface FormItemEditorProps {
     updateValue: (value: any) => void;
 }
 
+export type FormItemEditor = FC<FormItemEditorProps>;
+export type FormItemValueRender = (data: FormItemRenderData) => string | ReactNode;
+
 export interface FormItemProps {
     title: string;
     value: string;
@@ -22,7 +25,7 @@ export interface FormItemProps {
     titleProps?: TypographyProps;
     valueProps?: TypographyProps;
     helper?: ReactNode;
-    Editor?: FC<FormItemEditorProps>;
-    valueRender?: (data: FormItemRenderData) => string | ReactNode;
+    Editor?: FormItemEditor;
+    valueRender?: FormItemValueRender;
     onValueChange?: (value: any) => void;
 }
