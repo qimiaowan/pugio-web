@@ -1,14 +1,16 @@
 import {
     FC,
-    HTMLInputTypeAttribute,
     useCallback,
     useEffect,
     useState,
+    createElement,
 } from 'react';
-import { FormItemProps } from '@modules/common/form-item.interface';
+import {
+    FormItemEditorProps,
+    FormItemProps,
+} from '@modules/common/form-item.interface';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
 import clsx from 'clsx';
 import styled from '@mui/material/styles/styled';
 import Icon from '@mui/material/Icon';
@@ -39,6 +41,7 @@ const FormItemWrapper = styled(Box)(({ theme }) => {
             .content {
                 display: flex;
                 align-items: center;
+                margin-top: ${theme.spacing(1)};
 
                 &.view {
                     border: 1px solid transparent;
@@ -57,7 +60,7 @@ const FormItemWrapper = styled(Box)(({ theme }) => {
                     .edit-button {
                         display: none;
                         position: absolute;
-                        top: ${theme.spacing(1)};
+                        top: 0;
                         right: ${theme.spacing(1)};
                     }
 
@@ -68,45 +71,31 @@ const FormItemWrapper = styled(Box)(({ theme }) => {
 
                 &.edit {
                     display: flex;
-                    align-items: flex-start;
-
-                    .editor-text-field, .editor-text-area {
-                        flex-grow: 1;
-                        flex-shrink: 1;
-                        margin-right: ${theme.spacing(1)};
-                    }
-
-                    .editor-text-field .input {
-                        padding: ${theme.spacing(1)} 0;
-                    }
-
-                    .editor-text-area, .editor-text-field .input {
-                        font-size: 13px;
-                        color: ${theme.palette.mode === 'dark' ? 'white' : 'black'};
-                    }
-
-                    .editor-text-area {
-                        height: 320px;
-                        resize: none;
-                        box-sizing: border-box;
-                        outline: 0;
-                        padding: ${theme.spacing(0.8)};
-                        border: 1px solid ${theme.palette.text.secondary};
-                        border-radius: ${theme.shape.borderRadius}px;
-                        font-family: inherit;
-
-                        &:hover {
-                            border: 1px solid ${theme.palette.text.primary};
-                        }
-
-                        &:focus {
-                            border: 1px solid ${theme.palette.primary.main};
-                        }
-                    }
+                    align-items: center;
 
                     .editor-buttons-wrapper {
                         flex-grow: 0;
                         flex-shrink: 0;
+                        box-sizing: border-box;
+                        padding: 0 ${theme.spacing(1)};
+                    }
+
+                    .form-item-input {
+                        padding: ${theme.spacing(1)};
+                        border-radius: ${theme.shape.borderRadius}px;
+                        border: 0;
+                        outline: 0;
+                        border: 1px solid ${theme.palette.text.secondary};
+                        flex-grow: 1;
+                        flex-shrink: 0;
+
+                        &:hover {
+                            border-color: ${theme.palette.text.primary};
+                        }
+
+                        &:focus {
+                            border-color: ${theme.palette.primary.main};
+                        }
                     }
                 }
             }
@@ -114,23 +103,33 @@ const FormItemWrapper = styled(Box)(({ theme }) => {
     `;
 });
 
+const DefaultFormItemEditor: FC<FormItemEditorProps> = ({
+    value,
+    updateValue,
+}) => {
+    return (
+        <input
+            className="form-item-input"
+            value={value}
+            onChange={(event) => updateValue(event.target.value)}
+        />
+    );
+};
+
 const FormItem: FC<FormItemProps> = ({
     title,
     value,
     containerProps = {},
+    editable = true,
     titleProps = {},
     valueProps = {},
-    editorTextFieldProps = {},
-    editorTextAreaProps = {},
-    editable = true,
-    editorType = 'text-field',
-    extra = null,
+    helper = null,
+    Editor,
+    valueRender,
     onValueChange = _.noop,
 }) => {
     const [editorValue, setEditorValue] = useState<any>(null);
     const [currentState, setCurrentState] = useState<'view' | 'edit'>('view');
-    const [textFieldElement, setTextFieldElement] = useState<HTMLInputElement>(null);
-    const [textAreaElement, setTextAreaElement] = useState<HTMLTextAreaElement>(null);
 
     const handleSubmitValue = useCallback(() => {
         onValueChange(editorValue);
@@ -142,48 +141,9 @@ const FormItem: FC<FormItemProps> = ({
         setCurrentState('view');
     }, [value]);
 
-    // eslint-disable-next-line no-unused-vars
-    const handleGetValueType = useCallback((value): HTMLInputTypeAttribute => {
-        const type = typeof value;
-        let inputType: HTMLInputTypeAttribute;
-
-        switch (type) {
-            case 'bigint':
-                inputType = 'number';
-                break;
-            case 'boolean':
-                inputType = 'checkbox';
-                break;
-            case 'number':
-                inputType = 'number';
-                break;
-            default:
-                break;
-        }
-
-        if (inputType) {
-            return inputType;
-        }
-
-        if (_.isDate(value)) {
-            inputType = 'date';
-        }
-
-        return inputType;
-    }, [value]);
-
     useEffect(() => {
         setEditorValue(value);
     }, [value]);
-
-    useEffect(() => {
-        if (textFieldElement) {
-            textFieldElement.focus();
-        }
-        if (textAreaElement) {
-            textAreaElement.focus();
-        }
-    }, [textFieldElement, textAreaElement]);
 
     return (
         <FormItemWrapper
@@ -202,19 +162,38 @@ const FormItem: FC<FormItemProps> = ({
                 {
                     currentState === 'view'
                         ? <Box className="content view">
-                            <Typography
-                                {...valueProps}
-                                noWrap={editorType === 'text-field'}
-                                classes={{
-                                    root: clsx(
-                                        'value-view-text',
-                                        valueProps?.classes?.root,
-                                        {
-                                            'multi-line': editorType === 'text-area',
-                                        },
-                                    ),
-                                }}
-                            >{value}</Typography>
+                            {
+                                _.isFunction(valueRender)
+                                    ? (() => {
+                                        const renderedValue = valueRender({ value });
+                                        if (_.isString(renderedValue)) {
+                                            return (
+                                                <Typography
+                                                    noWrap={true}
+                                                    {...valueProps}
+                                                    classes={{
+                                                        root: clsx(
+                                                            'value-view-text',
+                                                            valueProps?.classes?.root,
+                                                        ),
+                                                    }}
+                                                >{renderedValue}</Typography>
+                                            );
+                                        } else {
+                                            return renderedValue;
+                                        }
+                                    })()
+                                    : <Typography
+                                        noWrap={true}
+                                        {...valueProps}
+                                        classes={{
+                                            root: clsx(
+                                                'value-view-text',
+                                                valueProps?.classes?.root,
+                                            ),
+                                        }}
+                                    >{value}</Typography>
+                            }
                             {
                                 editable && (
                                     <IconButton
@@ -226,40 +205,19 @@ const FormItem: FC<FormItemProps> = ({
                         </Box>
                         : <Box className="content edit">
                             {
-                                editorType === 'text-field'
-                                    ? <TextField
-                                        {...editorTextFieldProps}
-                                        inputRef={(ref) => setTextFieldElement(ref)}
-                                        value={editorValue}
-                                        classes={{
-                                            root: clsx('editor-text-field', editorTextFieldProps?.classes?.root),
-                                        }}
-                                        InputProps={{
-                                            classes: {
-                                                root: 'input',
-                                            },
-                                            ...(editorTextFieldProps?.InputProps || {}),
-                                        }}
-                                        onChange={(event) => setEditorValue(event.target.value)}
-                                    />
-                                    : <textarea
-                                        {...editorTextAreaProps}
-                                        ref={(ref) => setTextAreaElement(ref)}
-                                        className={clsx('editor-text-area', editorTextAreaProps?.className)}
-                                        value={editorValue}
-                                        onChange={(event) => setEditorValue(event.target.value)}
-                                    ></textarea>
+                                createElement(Editor || DefaultFormItemEditor, {
+                                    value: editorValue,
+                                    updateValue: setEditorValue,
+                                })
                             }
                             <Box className="editor-buttons-wrapper">
-                                <IconButton
-                                    onClick={handleSubmitValue}
-                                ><Icon className="icon-check" /></IconButton>
+                                <IconButton onClick={handleSubmitValue}><Icon className="icon-check" /></IconButton>
                                 <IconButton onClick={handleCancelEdit}><Icon className="icon-x" /></IconButton>
                             </Box>
                         </Box>
                 }
             </Box>
-            {extra}
+            {helper}
         </FormItemWrapper>
     );
 };

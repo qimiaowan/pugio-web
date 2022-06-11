@@ -1,34 +1,31 @@
 import { BoxProps } from '@mui/material/Box';
-import { TextFieldProps } from '@mui/material/TextField';
 import { TypographyProps } from '@mui/material/Typography';
 import {
-    DetailedHTMLProps,
+    FC,
     ReactNode,
-    TextareaHTMLAttributes,
 } from 'react';
 
-export type FormItemEditorType =
-    | 'text'
-    | 'longText'
-    | 'number'
-    | 'multipleSelect'
-    | 'singleSelect'
-    | 'datetime'
-    | 'datetimeRange'
-    | 'password'
-    | 'file'
-    | 'color';
+export interface FormItemRenderData {
+    value: any;
+}
+
+export interface FormItemEditorProps {
+    value: any;
+    updateValue: (value: any) => void;
+}
+
+export type FormItemEditor = FC<FormItemEditorProps>;
+export type FormItemValueRender = (data: FormItemRenderData) => string | ReactNode;
 
 export interface FormItemProps {
     title: string;
     value: string;
     containerProps?: BoxProps;
     editable?: boolean;
-    editorType?: 'text-field' | 'text-area';
     titleProps?: TypographyProps;
     valueProps?: TypographyProps;
-    extra?: ReactNode;
-    editorTextFieldProps?: TextFieldProps;
-    editorTextAreaProps?: DetailedHTMLProps<TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>
+    helper?: ReactNode;
+    Editor?: FormItemEditor;
+    valueRender?: FormItemValueRender;
     onValueChange?: (value: any) => void;
 }
