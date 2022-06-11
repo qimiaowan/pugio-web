@@ -184,6 +184,13 @@ const ClientDetails: FC = () => {
         setClientInfo(clientInformationResponseData?.response);
     }, [clientInformationResponseData]);
 
+    useEffect(() => {
+        clientService.updateClientInformation({
+            clientId,
+            updates: clientInfo,
+        });
+    }, [clientInfo]);
+
     return (
         <ClientDetailsPage>
             {
