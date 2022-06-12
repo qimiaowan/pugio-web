@@ -29,6 +29,8 @@ import { ClientRoleSelectorComponent } from '@modules/client/client-role-selecto
 import { ClientMembership } from '@modules/client/client.interface';
 import { UserSearcherProps } from '@modules/user/user-searcher.interface';
 import { UserSearcherComponent } from '@modules/user/user-searcher.component';
+import { ModalProps } from '@modules/common/modal.interface';
+import { ModalComponent } from '@modules/common/modal.component';
 
 const UserSelectorWrapper = styled(Dialog)(({ theme }) => {
     return `
@@ -68,17 +70,19 @@ const UserSelectorWrapper = styled(Dialog)(({ theme }) => {
 });
 
 const UserSelector: FC<UserSelectorProps> = ({
-    className,
     onSelectUsers = _.noop,
-    onClose = _.noop,
     ...props
 }) => {
+    const {
+        muiDialogProps = {},
+    } = props;
     const container = getContainer(UserSelector);
     const localeService = container.get<LocaleService>(LocaleService);
     const UserCard = container.get<FC<UserCardProps>>(UserCardComponent);
     const Exception = container.get<FC<ExceptionComponentProps>>(ExceptionComponent);
     const ClientRoleSelector = container.get<FC<ClientRoleSelectorProps>>(ClientRoleSelectorComponent);
     const UserSearcher = container.get<FC<UserSearcherProps>>(UserSearcherComponent);
+    const Modal = container.get<FC<ModalProps>>(ModalComponent);
 
     const theme = useTheme();
     const [selectedMembershipList, setSelectedMembershipList] = useState<(Omit<ClientMembership, 'userId'> & { profile: Profile })[]>([]);
@@ -86,16 +90,6 @@ const UserSelector: FC<UserSelectorProps> = ({
     const [dialogContentHeight, setDialogContentHeight] = useState<number>(0);
     const [dialogContentElement, setDialogContentElement] = useState<HTMLDivElement>(null);
     const getComponentLocaleText = localeService.useLocaleContext('components.userSelector');
-
-    const handleCloseSelector = (event = {}, reason = null) => {
-        if (reason === 'backdropClick' || reason !== null) {
-            return;
-        }
-
-        onClose(event, reason);
-        setSelectedMembershipList([]);
-        setSelectedSelectedUserIdList([]);
-    };
 
     useEffect(() => {
         const observer = new ResizeObserver((entries) => {
@@ -120,160 +114,181 @@ const UserSelector: FC<UserSelectorProps> = ({
     }, [dialogContentElement]);
 
     return (
-        <UserSelectorWrapper
+        <Modal
             {...props}
-            disableEscapeKeyDown={true}
-            maxWidth="sm"
-            fullWidth={true}
-            className={clsx('user-selector', className)}
-            onClose={handleCloseSelector}
+            DialogComponent={UserSelectorWrapper}
+            muiDialogProps={{
+                ...muiDialogProps,
+                disableEscapeKeyDown: true,
+                maxWidth: 'sm',
+                fullWidth: true,
+                className: clsx('user-selector', muiDialogProps.className),
+            }}
         >
-            <DialogTitle classes={{ root: 'dialog-title' }}>
-                <UserSearcher
-                    Trigger={({ openPopover }) => {
-                        return (
-                            <Button
-                                color="primary"
-                                startIcon={<Icon className="icon icon-account-add" />}
-                                onClick={openPopover}
-                            >{getComponentLocaleText('addUsers')}</Button>
-                        );
-                    }}
-                    selectedUsers={selectedMembershipList.map((membership) => membership.profile)}
-                    onUsersSelected={(users) => setSelectedMembershipList(users.map((user) => {
-                        return {
-                            profile: user,
-                            roleType: 2,
-                        };
-                    }))}
-                />
-                <IconButton onClick={() => handleCloseSelector()}><Icon className="icon-x" /></IconButton>
-            </DialogTitle>
-            <DialogContent
-                classes={{ root: 'content' }}
-                ref={(ref) => setDialogContentElement(ref as unknown as HTMLDivElement)}
-            >
-                {
-                    selectedMembershipList.length === 0
-                        ? <Exception
-                            type="empty"
-                            title={getComponentLocaleText('noSelected.title')}
-                            subTitle={getComponentLocaleText('noSelected.subTitle')}
-                        />
-                        : <Box>
-                            <Box className="select-controls-wrapper">
-                                <Button
-                                    size="small"
-                                    color={selectedMembershipList.length === selectedSelectedUserIdList.length ? 'info' : 'secondary'}
-                                    startIcon={<Icon className="icon-check-square" />}
-                                    sx={{
-                                        marginRight: theme.spacing(1),
-                                    }}
-                                    onClick={() => {
-                                        if (selectedMembershipList.length === selectedSelectedUserIdList.length) {
-                                            setSelectedSelectedUserIdList([]);
-                                        } else {
-                                            setSelectedSelectedUserIdList(
-                                                _.uniq(selectedSelectedUserIdList.concat(
-                                                    selectedMembershipList.map((membership) => membership.profile.id),
-                                                )),
-                                            );
-                                        }
-                                    }}
-                                >
-                                    {
-                                        selectedMembershipList.length === selectedSelectedUserIdList.length
-                                            ? getComponentLocaleText('unselectAll')
-                                            : getComponentLocaleText('selectAll')
-                                    }
-                                </Button>
-                                <Button
-                                    size="small"
-                                    color="error"
-                                    variant="text"
-                                    startIcon={<Icon className="icon-trash-2" />}
-                                    disabled={selectedSelectedUserIdList.length === 0}
-                                    onClick={() => {
-                                        setSelectedMembershipList(selectedMembershipList.filter((membership) => {
-                                            return !selectedSelectedUserIdList.some((userId) => userId === membership.profile.id);
-                                        }));
-                                        setSelectedSelectedUserIdList([]);
-                                    }}
-                                >{getComponentLocaleText('delete')}{selectedSelectedUserIdList.length > 0 ? ` (${selectedSelectedUserIdList.length})` : ''}</Button>
-                            </Box>
-                            <SimpleBar style={{ maxHeight: dialogContentHeight - 1 || 720 }}>
-                                {
-                                    selectedMembershipList.map((membership) => {
+            {
+                ({ closeModal }) => {
+                    const handleCloseSelector = (event = {}, reason = null) => {
+                        if (reason === 'backdropClick' || reason !== null) {
+                            return;
+                        }
+
+                        closeModal();
+                        setSelectedMembershipList([]);
+                        setSelectedSelectedUserIdList([]);
+                    };
+
+                    return (
+                        <>
+                            <DialogTitle classes={{ root: 'dialog-title' }}>
+                                <UserSearcher
+                                    Trigger={({ openPopover }) => {
                                         return (
-                                            <UserCard
-                                                key={membership.profile.id}
-                                                profile={membership.profile}
-                                                autoHide={false}
-                                                checked={selectedSelectedUserIdList.indexOf(membership.profile.id) !== -1}
-                                                menu={[
-                                                    {
-                                                        icon: 'icon-delete',
-                                                        title: getComponentLocaleText('clearSelected'),
-                                                        onActive: () => {
-                                                            setSelectedMembershipList(selectedMembershipList.filter((selectedMembership) => {
-                                                                return membership.profile.id !== selectedMembership.profile.id;
-                                                            }));
-                                                        },
-                                                    },
-                                                ]}
-                                                controlSlot={
-                                                    <ClientRoleSelector
-                                                        role={membership.roleType}
-                                                        onRoleChange={(role) => {
-                                                            setSelectedMembershipList(
-                                                                selectedMembershipList.map((selectedMembership) => {
-                                                                    if (membership.profile.id !== selectedMembership.profile.id) {
-                                                                        return selectedMembership;
-                                                                    }
-                                                                    return _.set(selectedMembership, 'roleType', role);
-                                                                }),
-                                                            );
-                                                        }}
-                                                    />
-                                                }
-                                                onCheckStatusChange={(checked) => {
-                                                    if (checked) {
-                                                        setSelectedSelectedUserIdList(
-                                                            _.uniq(selectedSelectedUserIdList.concat(membership.profile.id)),
-                                                        );
-                                                    } else {
-                                                        setSelectedSelectedUserIdList(
-                                                            selectedSelectedUserIdList.filter((userId) => {
-                                                                return userId !== membership.profile.id;
-                                                            }),
-                                                        );
-                                                    }
-                                                }}
-                                            />
+                                            <Button
+                                                color="primary"
+                                                startIcon={<Icon className="icon icon-account-add" />}
+                                                onClick={openPopover}
+                                            >{getComponentLocaleText('addUsers')}</Button>
                                         );
-                                    })
+                                    }}
+                                    selectedUsers={selectedMembershipList.map((membership) => membership.profile)}
+                                    onUsersSelected={(users) => setSelectedMembershipList(users.map((user) => {
+                                        return {
+                                            profile: user,
+                                            roleType: 2,
+                                        };
+                                    }))}
+                                />
+                                <IconButton onClick={() => handleCloseSelector()}><Icon className="icon-x" /></IconButton>
+                            </DialogTitle>
+                            <DialogContent
+                                classes={{ root: 'content' }}
+                                ref={(ref) => setDialogContentElement(ref as unknown as HTMLDivElement)}
+                            >
+                                {
+                                    selectedMembershipList.length === 0
+                                        ? <Exception
+                                            type="empty"
+                                            title={getComponentLocaleText('noSelected.title')}
+                                            subTitle={getComponentLocaleText('noSelected.subTitle')}
+                                        />
+                                        : <Box>
+                                            <Box className="select-controls-wrapper">
+                                                <Button
+                                                    size="small"
+                                                    color={selectedMembershipList.length === selectedSelectedUserIdList.length ? 'info' : 'secondary'}
+                                                    startIcon={<Icon className="icon-check-square" />}
+                                                    sx={{
+                                                        marginRight: theme.spacing(1),
+                                                    }}
+                                                    onClick={() => {
+                                                        if (selectedMembershipList.length === selectedSelectedUserIdList.length) {
+                                                            setSelectedSelectedUserIdList([]);
+                                                        } else {
+                                                            setSelectedSelectedUserIdList(
+                                                                _.uniq(selectedSelectedUserIdList.concat(
+                                                                    selectedMembershipList.map((membership) => membership.profile.id),
+                                                                )),
+                                                            );
+                                                        }
+                                                    }}
+                                                >
+                                                    {
+                                                        selectedMembershipList.length === selectedSelectedUserIdList.length
+                                                            ? getComponentLocaleText('unselectAll')
+                                                            : getComponentLocaleText('selectAll')
+                                                    }
+                                                </Button>
+                                                <Button
+                                                    size="small"
+                                                    color="error"
+                                                    variant="text"
+                                                    startIcon={<Icon className="icon-trash-2" />}
+                                                    disabled={selectedSelectedUserIdList.length === 0}
+                                                    onClick={() => {
+                                                        setSelectedMembershipList(selectedMembershipList.filter((membership) => {
+                                                            return !selectedSelectedUserIdList.some((userId) => userId === membership.profile.id);
+                                                        }));
+                                                        setSelectedSelectedUserIdList([]);
+                                                    }}
+                                                >{getComponentLocaleText('delete')}{selectedSelectedUserIdList.length > 0 ? ` (${selectedSelectedUserIdList.length})` : ''}</Button>
+                                            </Box>
+                                            <SimpleBar style={{ maxHeight: dialogContentHeight - 1 || 720 }}>
+                                                {
+                                                    selectedMembershipList.map((membership) => {
+                                                        return (
+                                                            <UserCard
+                                                                key={membership.profile.id}
+                                                                profile={membership.profile}
+                                                                autoHide={false}
+                                                                checked={selectedSelectedUserIdList.indexOf(membership.profile.id) !== -1}
+                                                                menu={[
+                                                                    {
+                                                                        icon: 'icon-delete',
+                                                                        title: getComponentLocaleText('clearSelected'),
+                                                                        onActive: () => {
+                                                                            setSelectedMembershipList(selectedMembershipList.filter((selectedMembership) => {
+                                                                                return membership.profile.id !== selectedMembership.profile.id;
+                                                                            }));
+                                                                        },
+                                                                    },
+                                                                ]}
+                                                                controlSlot={
+                                                                    <ClientRoleSelector
+                                                                        role={membership.roleType}
+                                                                        onRoleChange={(role) => {
+                                                                            setSelectedMembershipList(
+                                                                                selectedMembershipList.map((selectedMembership) => {
+                                                                                    if (membership.profile.id !== selectedMembership.profile.id) {
+                                                                                        return selectedMembership;
+                                                                                    }
+                                                                                    return _.set(selectedMembership, 'roleType', role);
+                                                                                }),
+                                                                            );
+                                                                        }}
+                                                                    />
+                                                                }
+                                                                onCheckStatusChange={(checked) => {
+                                                                    if (checked) {
+                                                                        setSelectedSelectedUserIdList(
+                                                                            _.uniq(selectedSelectedUserIdList.concat(membership.profile.id)),
+                                                                        );
+                                                                    } else {
+                                                                        setSelectedSelectedUserIdList(
+                                                                            selectedSelectedUserIdList.filter((userId) => {
+                                                                                return userId !== membership.profile.id;
+                                                                            }),
+                                                                        );
+                                                                    }
+                                                                }}
+                                                            />
+                                                        );
+                                                    })
+                                                }
+                                            </SimpleBar>
+                                        </Box>
                                 }
-                            </SimpleBar>
-                        </Box>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={() => handleCloseSelector()}>{getComponentLocaleText('cancel')}</Button>
+                                <Button
+                                    color="primary"
+                                    disabled={selectedMembershipList.length === 0}
+                                    onClick={() => {
+                                        onSelectUsers(selectedMembershipList.map((membership) => {
+                                            return {
+                                                userId: membership.profile.id,
+                                                roleType: membership.roleType,
+                                            };
+                                        }));
+                                        handleCloseSelector();
+                                    }}
+                                >{getComponentLocaleText('ok')}</Button>
+                            </DialogActions>
+                        </>
+                    );
                 }
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={() => handleCloseSelector()}>{getComponentLocaleText('cancel')}</Button>
-                <Button
-                    color="primary"
-                    disabled={selectedMembershipList.length === 0}
-                    onClick={() => {
-                        onSelectUsers(selectedMembershipList.map((membership) => {
-                            return {
-                                userId: membership.profile.id,
-                                roleType: membership.roleType,
-                            };
-                        }));
-                        handleCloseSelector();
-                    }}
-                >{getComponentLocaleText('ok')}</Button>
-            </DialogActions>
-        </UserSelectorWrapper>
+            }
+        </Modal>
     );
 };
 

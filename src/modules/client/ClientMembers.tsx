@@ -213,7 +213,6 @@ const ClientMembers: FC<BoxProps> = ({
     const [selectedMemberships, setSelectedMemberships] = useState<ClientMembership[]>([]);
     const confirm = utilsService.useConfirm();
     const { enqueueSnackbar } = useSnackbar();
-    const [userSelectorOpen, setUserSelectorOpen] = useState<boolean>(false);
     const {
         windowInnerHeight,
         appNavbarHeight,
@@ -431,13 +430,27 @@ const ClientMembers: FC<BoxProps> = ({
                                 >{getPageLocaleText('delete', { count: selectedMemberships.length })}</Button>
                             )
                         }
-                        <Button
-                            variant="contained"
-                            size="small"
-                            startIcon={<Icon className="icon-user-plus" />}
-                            classes={{ root: 'control-button' }}
-                            onClick={() => setUserSelectorOpen(true)}
-                        >{getPageLocaleText('add')}</Button>
+                        <UserSelector
+                            Trigger={({ openModal }) => {
+                                return (
+                                    <Button
+                                        variant="contained"
+                                        size="small"
+                                        startIcon={<Icon className="icon-user-plus" />}
+                                        classes={{ root: 'control-button' }}
+                                        onClick={openModal}
+                                    >{getPageLocaleText('add')}</Button>
+                                );
+                            }}
+                            onSelectUsers={(memberships) => {
+                                clientService.addClientMembers({
+                                    clientId,
+                                    memberships,
+                                }).then(() => {
+                                    reloadQueryClientMembers();
+                                });
+                            }}
+                        />
                     </Box>
                 </Box>
             </Box>
@@ -547,18 +560,6 @@ const ClientMembers: FC<BoxProps> = ({
                     }
                 </Box>
             </Box>
-            <UserSelector
-                open={userSelectorOpen}
-                onClose={() => setUserSelectorOpen(false)}
-                onSelectUsers={(memberships) => {
-                    clientService.addClientMembers({
-                        clientId,
-                        memberships,
-                    }).then(() => {
-                        reloadQueryClientMembers();
-                    });
-                }}
-            />
         </ClientMembersWrapper>
     );
 };

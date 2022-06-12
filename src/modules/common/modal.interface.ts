@@ -1,4 +1,4 @@
-import { DialogProps } from '@mui/material/Dialog';
+import Dialog, { DialogProps } from '@mui/material/Dialog';
 import {
     FC,
     ReactNode,
@@ -18,6 +18,7 @@ export interface ModalChildrenCreatorData {
 
 export interface ModalProps {
     Trigger: FC<ModalTriggerProps>;
-    children: (data: ModalChildrenCreatorData) => ReactNode;
     muiDialogProps?: Partial<DialogProps>;
+    DialogComponent?: typeof Dialog;
+    children: (data: ModalChildrenCreatorData) => ReactNode;
 }

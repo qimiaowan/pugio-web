@@ -10,7 +10,10 @@ const Modal: FC<ModalProps> = ({
     Trigger,
     children,
     muiDialogProps = {},
+    DialogComponent,
 }) => {
+    const ModalDialog = DialogComponent || Dialog;
+
     const [open, setOpen] = useState<boolean>(false);
 
     const closeModal = () => {
@@ -29,7 +32,7 @@ const Modal: FC<ModalProps> = ({
                     openModal,
                 })
             }
-            <Dialog
+            <ModalDialog
                 open={open}
                 {...muiDialogProps}
             >
@@ -38,7 +41,7 @@ const Modal: FC<ModalProps> = ({
                         closeModal,
                     })
                 }
-            </Dialog>
+            </ModalDialog>
         </>
     );
 };
