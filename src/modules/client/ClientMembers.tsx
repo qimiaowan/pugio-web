@@ -67,7 +67,7 @@ const ClientMembersWrapper = styled(Box)(({ theme }) => {
             .header-controls-wrapper {
                 display: flex;
                 justify-content: space-between;
-                align-items: center;
+                align-items: stretch;
                 padding: ${theme.spacing(1)} 0;
 
                 & > * {

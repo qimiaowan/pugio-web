@@ -299,6 +299,7 @@ const ClientDetails: FC = () => {
                                         <Box className="wrapper form-wrapper danger-zone">
                                             <Typography
                                                 variant="subtitle1"
+                                                color="error"
                                                 classes={{ root: 'part-title' }}
                                             >{getLocaleText('dangerZone')}</Typography>
                                             <FormItem
@@ -312,7 +313,7 @@ const ClientDetails: FC = () => {
                                                             Trigger={({ openPopover }) => {
                                                                 return (
                                                                     <Button
-                                                                        color="error"
+                                                                        color="warning"
                                                                         startIcon={<Icon className="icon-send" />}
                                                                         onClick={openPopover}
                                                                     >{getLocaleText('danger.transformOwnership.title')}</Button>
@@ -325,6 +326,7 @@ const ClientDetails: FC = () => {
                                             />
                                             <FormItem
                                                 value={null}
+                                                editable={false}
                                                 title={getLocaleText('danger.delete.title')}
                                                 containerProps={{ className: 'form-item' }}
                                                 valueRender={() => {
@@ -332,7 +334,7 @@ const ClientDetails: FC = () => {
                                                         <Button
                                                             color="error"
                                                             startIcon={<Icon className="icon-trash-2" />}
-                                                        >{getLocaleText('danger.transformOwnership.title')}</Button>
+                                                        >{getLocaleText('danger.delete.title')}</Button>
                                                     );
                                                 }}
                                             />
