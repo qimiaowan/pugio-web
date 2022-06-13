@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
     FC,
     ReactNode,
@@ -12,6 +11,7 @@ import Icon from '@mui/material/Icon';
 import Divider from '@mui/material/Divider';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
 import Alert from '@mui/material/Alert';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -36,6 +36,8 @@ import { UserSearcherProps } from '@modules/user/user-searcher.interface';
 import { UserSearcherComponent } from '@modules/user/user-searcher.component';
 import { ModalComponent } from '@modules/common/modal.component';
 import { ModalProps } from '@modules/common/modal.interface';
+import { UtilsService } from '@modules/utils/utils.service';
+import { Profile } from '@modules/profile/profile.interface';
 
 interface IFormItem {
     key: string;
@@ -126,8 +128,10 @@ const ClientDetails: FC = () => {
     const localeService = container.get<LocaleService>(LocaleService);
     const UserSearcher = container.get<FC<UserSearcherProps>>(UserSearcherComponent);
     const Modal = container.get<FC<ModalProps>>(ModalComponent);
+    const utilsService = container.get<UtilsService>(UtilsService);
 
     const { client_id: clientId } = useParams();
+    const confirm = utilsService.useConfirm();
     const getLocaleText = localeService.useLocaleContext('pages.clientDetails');
     const getAppLocaleText = localeService.useLocaleContext('app');
     const {
@@ -154,8 +158,6 @@ const ClientDetails: FC = () => {
         },
     );
     const [clientInfo, setClientInfo] = useState<Client>(null);
-    const [deleteClientConfirmContent, setDeleteClientConfirmContent] = useState<string>('');
-    const [transferOwnershipConfirmContent, setTransferOwnershipConfirmContent] = useState<string>('');
 
     const basicInfoFormItems: IFormItem[] = [
         {
@@ -378,18 +380,76 @@ const ClientDetails: FC = () => {
                                                 containerProps={{ className: 'form-item' }}
                                                 helper={getLocaleText('helpers.transferOwnership')}
                                                 valueRender={() => {
+                                                    const handleTransferOwnership = useCallback((users: Profile[], closePopover: Function) => {
+                                                        if (users.length === 1) {
+                                                            closePopover();
+                                                            confirm({
+                                                                title: getLocaleText('transferOwnership.title'),
+                                                                description: (
+                                                                    <>
+                                                                        <Alert severity="warning">{getLocaleText('transferOwnership.description')}</Alert>
+                                                                        <Typography sx={{ marginTop: 2 }}>
+                                                                            {
+                                                                                getLocaleText('transferOwnership.confirmText', {
+                                                                                    userName: users[0].fullName,
+                                                                                    userEmail: users[0].email,
+                                                                                })
+                                                                            }
+                                                                        </Typography>
+                                                                    </>
+                                                                ),
+                                                                confirmButtonText: getLocaleText('transferOwnership.okButtonText'),
+                                                                confirmButtonProps: {
+                                                                    color: 'warning',
+                                                                },
+                                                                dialogTitleProps: {
+                                                                    sx: {
+                                                                        backgroundColor: 'warning.main',
+                                                                        color: 'white',
+                                                                        '&, *': {
+                                                                            userSelect: 'none',
+                                                                        },
+                                                                    },
+                                                                },
+                                                                dialogContentProps: {
+                                                                    sx: {
+                                                                        '&, *': {
+                                                                            userSelect: 'none',
+                                                                        },
+                                                                    },
+                                                                },
+                                                                dialogContentTextProps: {
+                                                                    // @ts-ignore
+                                                                    component: 'div',
+                                                                },
+                                                                onConfirm: () => {
+                                                                    clientService.transferClientOwnership({
+                                                                        clientId,
+                                                                        owner: users[0].id,
+                                                                    }).finally(() => {
+                                                                        window.location.hash = '#/clients/all';
+                                                                    });
+                                                                },
+                                                            });
+                                                        }
+                                                    }, [getLocaleText]);
+
                                                     return (
                                                         <UserSearcher
-                                                            Trigger={({ openPopover }) => {
+                                                            Trigger={({ open, openPopover }) => {
                                                                 return (
                                                                     <Button
                                                                         color="warning"
                                                                         startIcon={<Icon className="icon-send" />}
+                                                                        sx={open ? {
+                                                                            backgroundColor: 'warning.dark',
+                                                                        } : {}}
                                                                         onClick={openPopover}
                                                                     >{getLocaleText('danger.transferOwnership.title')}</Button>
                                                                 );
                                                             }}
                                                             mode="single"
+                                                            onUsersSelected={handleTransferOwnership}
                                                         />
                                                     );
                                                 }}
@@ -412,9 +472,27 @@ const ClientDetails: FC = () => {
                                                                     >{getLocaleText('danger.delete.title')}</Button>
                                                                 );
                                                             }}
+                                                            muiDialogProps={{
+                                                                sx: {
+                                                                    '&, *': {
+                                                                        userSelect: 'none',
+                                                                    },
+                                                                },
+                                                            }}
                                                         >
                                                             {
                                                                 ({ closeModal }) => {
+                                                                    const [confirmContent, setConfirmContent] = useState<string>('');
+                                                                    const [deletingClient, setDeletingClient] = useState<boolean>(false);
+
+                                                                    const handleDeleteClient = useCallback(() => {
+                                                                        setDeletingClient(true);
+                                                                        clientService.deleteClient({ clientId }).finally(() => {
+                                                                            setDeletingClient(false);
+                                                                            window.location.href = '#/clients/all';
+                                                                        });
+                                                                    }, [clientId]);
+
                                                                     return (
                                                                         <>
                                                                             <DialogTitle
@@ -436,10 +514,18 @@ const ClientDetails: FC = () => {
                                                                                 >{getLocaleText('deleteClient.confirmText', { clientName: clientInfo?.name })}</Typography>
                                                                                 <TextField
                                                                                     fullWidth={true}
-                                                                                    value={deleteClientConfirmContent}
-                                                                                    onChange={(event) => setDeleteClientConfirmContent(event.target.value)}
+                                                                                    value={confirmContent}
+                                                                                    onChange={(event) => setConfirmContent(event.target.value)}
                                                                                 />
                                                                             </DialogContent>
+                                                                            <DialogActions>
+                                                                                <Button onClick={closeModal}>{getAppLocaleText('cancel')}</Button>
+                                                                                <Button
+                                                                                    color="error"
+                                                                                    disabled={deletingClient || confirmContent !== clientInfo?.name}
+                                                                                    onClick={handleDeleteClient}
+                                                                                >{getLocaleText('deleteClient.okButtonText')}</Button>
+                                                                            </DialogActions>
                                                                         </>
                                                                     );
                                                                 }
