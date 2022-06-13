@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
     FC,
     ReactNode,
@@ -29,6 +30,7 @@ import _ from 'lodash';
 import clsx from 'clsx';
 import { UserSearcherProps } from '@modules/user/user-searcher.interface';
 import { UserSearcherComponent } from '@modules/user/user-searcher.component';
+import { UtilsService } from '@modules/utils/utils.service';
 
 interface IFormItem {
     key: string;
@@ -105,6 +107,7 @@ const ClientDetails: FC = () => {
     const FormItem = container.get<FC<FormItemProps>>(FormItemComponent);
     const localeService = container.get<LocaleService>(LocaleService);
     const UserSearcher = container.get<FC<UserSearcherProps>>(UserSearcherComponent);
+    const utilsService = container.get<UtilsService>(UtilsService);
 
     const { client_id: clientId } = useParams();
     const getLocaleText = localeService.useLocaleContext('pages.clientDetails');
@@ -133,6 +136,7 @@ const ClientDetails: FC = () => {
         },
     );
     const [clientInfo, setClientInfo] = useState<Client>(null);
+    const confirm = utilsService.useConfirm();
 
     const basicInfoFormItems: IFormItem[] = [
         {

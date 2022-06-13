@@ -276,12 +276,35 @@ export class UtilsService extends CaseTransformerService {
     public useConfirm() {
         const getConfirmLocaleText = this.localeService.useLocaleContext('components.confirm');
         const createConfirm = useConfirmDialog();
+
         const confirm = useCallback((options: ConfirmOptions & GlobalOptions) => {
             createConfirm({
                 confirmButtonText: getConfirmLocaleText('ok'),
                 cancelButtonText: getConfirmLocaleText('cancel'),
                 title: getConfirmLocaleText('confirm'),
                 ...options,
+                dialogContentProps: {
+                    sx: {
+                        paddingBottom: 4,
+                        ...(options?.dialogContentProps?.sx || {}),
+                        '&, *': {
+                            userSelect: 'none',
+                            pointerEvents: 'none',
+                        },
+                    },
+                },
+                dialogTitleProps: {
+                    sx: {
+                        '&+.MuiDialogContent-root': {
+                            paddingTop: 4,
+                        },
+                        ...(options?.dialogTitleProps?.sx || {}),
+                        '&, *': {
+                            userSelect: 'none',
+                            pointerEvents: 'none',
+                        },
+                    },
+                },
             });
         }, [getConfirmLocaleText, createConfirm]);
 

@@ -5,6 +5,7 @@ import { LoadingComponent } from '@modules/brand/loading.component';
 import { FormItemComponent } from '@modules/common/form-item.component';
 import { LocaleService } from '@modules/locale/locale.service';
 import { UserSearcherComponent } from '@modules/user/user-searcher.component';
+import { UtilsService } from '@modules/utils/utils.service';
 
 @Component({
     factory: (forwardRef) => lazy(() => forwardRef(import('@modules/client/ClientDetails'))),
@@ -14,6 +15,7 @@ import { UserSearcherComponent } from '@modules/user/user-searcher.component';
         FormItemComponent,
         LocaleService,
         UserSearcherComponent,
+        UtilsService,
     ],
 })
 export class ClientDetailsComponent {}
