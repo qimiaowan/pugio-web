@@ -784,7 +784,7 @@ const ClientWorkstation: FC = () => {
                                 subTitle={getLocaleText('welcome.subTitle')}
                                 sx={{
                                     '.title': {
-                                        fontSize: 18,
+                                        fontSize: 16,
                                     },
                                     'img': {
                                         width: 120,
