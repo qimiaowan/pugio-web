@@ -101,6 +101,8 @@
             "verified": "Device Verified",
             "dangerZone": "Danger Zone",
             "keyPair": "Key Pair",
+            "initializePublicKey": "Initialize Public Key",
+            "initializePrivateKey": "Initialize Private Key",
             "danger": {
                 "transformOwnership": {
                     "title": "Transfer Ownership",

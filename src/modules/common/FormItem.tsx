@@ -30,9 +30,7 @@ const FormItemWrapper = styled(Box)(({ theme }) => {
         .title {
             width: 100%;
             font-weight: 700;
-            padding-left: ${theme.spacing(1)};
-            padding-right: ${theme.spacing(1)};
-            font-size: 12px;
+            font-size: 13px;
         }
 
         .form-content-wrapper {
@@ -151,7 +149,7 @@ const FormItem: FC<FormItemProps> = ({
             className={clsx(containerProps?.className)}
         >
             <Typography
-                color="text.secondary"
+                color="text.primary"
                 noWrap={true}
                 {...titleProps}
                 classes={{
@@ -165,7 +163,10 @@ const FormItem: FC<FormItemProps> = ({
                             {
                                 _.isFunction(valueRender)
                                     ? (() => {
-                                        const renderedValue = valueRender({ value });
+                                        const renderedValue = valueRender({
+                                            value,
+                                            changeMode: setCurrentState,
+                                        });
                                         if (_.isString(renderedValue)) {
                                             return (
                                                 <Typography

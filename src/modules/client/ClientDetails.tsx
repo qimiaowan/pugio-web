@@ -90,6 +90,9 @@ const ClientDetailsPage = styled(Box)(({ theme }) => {
                 font-weight: 700;
                 user-select: none;
                 margin: ${theme.spacing(2)} 0;
+                display: flex;
+                align-items: center;
+                font-size: 16px;
             }
         }
     `;
@@ -113,36 +116,6 @@ const ClientDetails: FC = () => {
             key: 'deviceId',
         },
     ];
-    const keyPairFormItems: IFormItem[] = [
-        {
-            key: 'publicKey',
-            Editor: ({ value, updateValue }) => {
-                return (
-                    <textarea
-                        className="form-item-editor-textarea monospace"
-                        style={{ height: 320 }}
-                        value={value}
-                        onChange={(event) => updateValue(event.target.value)}
-                    />
-                );
-            },
-            valueRender: ({ value }) => <Typography noWrap={false} classes={{ root: 'monospace' }}>{value}</Typography>,
-        },
-        {
-            key: 'privateKey',
-            Editor: ({ value, updateValue }) => {
-                return (
-                    <textarea
-                        className="form-item-editor-textarea monospace"
-                        style={{ height: 320 }}
-                        value={value}
-                        onChange={(event) => updateValue(event.target.value)}
-                    />
-                );
-            },
-            valueRender: ({ value }) => <Typography noWrap={false} classes={{ root: 'monospace' }}>{value}</Typography>,
-        },
-    ];
 
     const { client_id: clientId } = useParams();
     const getLocaleText = localeService.useLocaleContext('pages.clientDetails');
@@ -161,6 +134,7 @@ const ClientDetails: FC = () => {
     const {
         data: clientInformationResponseData,
         loading: clientInformationLoading,
+        refresh: reloadClientInformation,
     } = useRequest(
         () => {
             return clientService.getClientInformation({ clientId });
@@ -170,6 +144,63 @@ const ClientDetails: FC = () => {
         },
     );
     const [clientInfo, setClientInfo] = useState<Client>(null);
+
+    const keyPairFormItems: IFormItem[] = [
+        {
+            key: 'publicKey',
+            Editor: ({
+                value,
+                updateValue,
+            }) => {
+                return (
+                    <textarea
+                        className="form-item-editor-textarea monospace"
+                        style={{ height: 320 }}
+                        value={value}
+                        onChange={(event) => updateValue(event.target.value)}
+                    />
+                );
+            },
+            valueRender: ({
+                value,
+                changeMode,
+            }) => (
+                value
+                    ? <Typography noWrap={false} classes={{ root: 'monospace' }}>{value}</Typography>
+                    : <Button
+                        startIcon={<Icon className="icon-plus" />}
+                        onClick={() => changeMode('edit')}
+                    >{getLocaleText('initializePublicKey')}</Button>
+            ),
+        },
+        {
+            key: 'privateKey',
+            Editor: ({
+                value,
+                updateValue,
+            }) => {
+                return (
+                    <textarea
+                        className="form-item-editor-textarea monospace"
+                        style={{ height: 320 }}
+                        value={value}
+                        onChange={(event) => updateValue(event.target.value)}
+                    />
+                );
+            },
+            valueRender: ({
+                value,
+                changeMode,
+            }) => (
+                value
+                    ? <Typography noWrap={false} classes={{ root: 'monospace' }}>{value}</Typography>
+                    : <Button
+                        startIcon={<Icon className="icon-plus" />}
+                        onClick={() => changeMode('edit')}
+                    >{getLocaleText('initializePrivateKey')}</Button>
+            ),
+        },
+    ];
 
     const handleUpdateClientInfo = useCallback((key, value) => {
         if (clientInfo) {
@@ -202,7 +233,16 @@ const ClientDetails: FC = () => {
                                 <Typography
                                     variant="subtitle1"
                                     classes={{ root: 'part-title' }}
-                                >{getLocaleText('basicInfo')}</Typography>
+                                >
+                                    {getLocaleText('basicInfo')}
+                                    <Button
+                                        variant="text"
+                                        size="small"
+                                        startIcon={<Icon className="icon-refresh-cw" />}
+                                        sx={{ marginLeft: 1 }}
+                                        onClick={reloadClientInformation}
+                                    >{getAppLocaleText('refresh')}</Button>
+                                </Typography>
                                 {
                                     clientInfo?.version && (
                                         <FormItem
@@ -274,7 +314,7 @@ const ClientDetails: FC = () => {
                                                             key={key}
                                                             value={clientInfo[key] || ''}
                                                             title={getLocaleText(`form.${key}`)}
-                                                            editable={userClientRelationResponseData?.response?.roleType <= 1}
+                                                            editable={userClientRelationResponseData?.response?.roleType <= 1 && !!clientInfo[key]}
                                                             valueProps={{
                                                                 classes: {
                                                                     root: clsx('monospace'),

@@ -7,6 +7,7 @@ import {
 
 export interface FormItemRenderData {
     value: any;
+    changeMode: (mode: 'view' | 'edit') => void;
 }
 
 export interface FormItemEditorProps {
