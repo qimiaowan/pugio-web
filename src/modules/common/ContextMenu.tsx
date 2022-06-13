@@ -25,9 +25,12 @@ const StyledMuiPopover = styled(MuiPopover)(({ theme }) => {
 
 const ContextMenu: FC<ContextMenuProps> = ({
     Trigger,
-    children,
     muiPopoverProps = {},
+    PopoverComponent,
+    children,
 }) => {
+    const ContextMenuPopover = PopoverComponent || StyledMuiPopover;
+
     const anchorEl = useRef<HTMLDivElement>(null);
     const [visible, setVisible] = useState<boolean>(false);
     const [anchorLeft, setAnchorLeft] = useState<number>(-1);
@@ -54,7 +57,7 @@ const ContextMenu: FC<ContextMenuProps> = ({
             onContextMenu={handleOpen}
         >
             {Trigger}
-            <StyledMuiPopover
+            <ContextMenuPopover
                 {...muiPopoverProps}
                 anchorPosition={{
                     top: anchorTop,
@@ -79,7 +82,7 @@ const ContextMenu: FC<ContextMenuProps> = ({
                         closePopover: handleClose,
                     })
                 }
-            </StyledMuiPopover>
+            </ContextMenuPopover>
         </Box>
     );
 };

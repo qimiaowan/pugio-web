@@ -1,4 +1,4 @@
-import { PopoverProps as MuiPopoverProps } from '@mui/material/Popover';
+import Popover, { PopoverProps as MuiPopoverProps } from '@mui/material/Popover';
 import {
     FC,
     ReactNode,
@@ -18,7 +18,8 @@ export interface PopoverChildrenCreatorData {
 
 export interface PopoverProps {
     Trigger: FC<PopoverTriggerProps>;
-    children: (data: PopoverChildrenCreatorData) => ReactNode;
     variant?: 'menu' | 'popover';
     muiPopoverProps?: Partial<MuiPopoverProps>;
+    PopoverComponent?: typeof Popover;
+    children: (data: PopoverChildrenCreatorData) => ReactNode;
 }

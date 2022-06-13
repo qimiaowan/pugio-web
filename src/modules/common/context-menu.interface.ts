@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { PopoverProps } from '@mui/material/Popover';
+import Popover, { PopoverProps } from '@mui/material/Popover';
 
 type CloseContextMenuFunction = () => void;
 
@@ -9,6 +9,7 @@ export interface ContextMenuChildrenCreatorData {
 
 export interface ContextMenuProps {
     Trigger: ReactNode;
-    children: (data: ContextMenuChildrenCreatorData) => ReactNode;
+    PopoverComponent?: typeof Popover;
     muiPopoverProps?: Partial<PopoverProps>;
+    children: (data: ContextMenuChildrenCreatorData) => ReactNode;
 }

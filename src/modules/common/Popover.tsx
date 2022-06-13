@@ -27,10 +27,13 @@ const StyledMuiPopover = styled(MuiPopover)(({ theme }) => {
 
 const Popover: FC<PopoverProps> = ({
     Trigger,
-    children,
     variant = 'popover',
     muiPopoverProps = {},
+    PopoverComponent,
+    children,
 }) => {
+    const Popover = PopoverComponent || StyledMuiPopover;
+
     const anchorEl = useRef<HTMLDivElement>(null);
     const [visible, setVisible] = useState<boolean>(false);
 
@@ -50,7 +53,7 @@ const Popover: FC<PopoverProps> = ({
                     openPopover: handleOpen,
                 })
             }
-            <StyledMuiPopover
+            <Popover
                 anchorOrigin={{
                     vertical: 'bottom',
                     horizontal: 'left',
@@ -74,7 +77,7 @@ const Popover: FC<PopoverProps> = ({
                         closePopover: handleClose,
                     })
                 }
-            </StyledMuiPopover>
+            </Popover>
         </Box>
     );
 };
