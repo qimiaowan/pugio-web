@@ -96,6 +96,19 @@ const ClientDetailsPage = styled(Box)(({ theme }) => {
                 align-items: center;
                 font-size: 16px;
             }
+
+            &.danger-zone {
+                padding-left: ${theme.spacing(3)};
+                padding-right: ${theme.spacing(3)};
+                border-radius: ${theme.shape.borderRadius}px;
+                box-sizing: border-box;
+                border: 1px solid ${theme.palette.error.main};
+                margin-bottom: ${theme.spacing(5)};
+
+                .form-item:last-of-type {
+                    margin-bottom: ${theme.spacing(3)};
+                }
+            }
         }
     `;
 });
@@ -346,7 +359,6 @@ const ClientDetails: FC = () => {
                             {
                                 userClientRelationResponseData?.response?.roleType <= 1 && (
                                     <>
-                                        <Box className="wrapper"><Divider /></Box>
                                         <Box className="wrapper form-wrapper danger-zone">
                                             <Typography
                                                 variant="subtitle1"
