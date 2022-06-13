@@ -284,16 +284,17 @@ export class UtilsService extends CaseTransformerService {
                 title: getConfirmLocaleText('confirm'),
                 ...options,
                 dialogContentProps: {
+                    ...(options?.dialogContentProps || {}),
                     sx: {
                         paddingBottom: 4,
                         ...(options?.dialogContentProps?.sx || {}),
                         '&, *': {
                             userSelect: 'none',
-                            pointerEvents: 'none',
                         },
                     },
                 },
                 dialogTitleProps: {
+                    ...(options?.dialogTitleProps || {}),
                     sx: {
                         '&+.MuiDialogContent-root': {
                             paddingTop: 4,
@@ -301,7 +302,6 @@ export class UtilsService extends CaseTransformerService {
                         ...(options?.dialogTitleProps?.sx || {}),
                         '&, *': {
                             userSelect: 'none',
-                            pointerEvents: 'none',
                         },
                     },
                 },

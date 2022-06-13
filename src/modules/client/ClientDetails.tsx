@@ -10,7 +10,11 @@ import Box, { BoxProps } from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Icon from '@mui/material/Icon';
 import Divider from '@mui/material/Divider';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import Alert from '@mui/material/Alert';
 import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
 import styled from '@mui/material/styles/styled';
 import SimpleBar from 'simplebar-react';
 import { useParams } from 'react-router-dom';
@@ -30,7 +34,8 @@ import _ from 'lodash';
 import clsx from 'clsx';
 import { UserSearcherProps } from '@modules/user/user-searcher.interface';
 import { UserSearcherComponent } from '@modules/user/user-searcher.component';
-import { UtilsService } from '@modules/utils/utils.service';
+import { ModalComponent } from '@modules/common/modal.component';
+import { ModalProps } from '@modules/common/modal.interface';
 
 interface IFormItem {
     key: string;
@@ -120,7 +125,7 @@ const ClientDetails: FC = () => {
     const FormItem = container.get<FC<FormItemProps>>(FormItemComponent);
     const localeService = container.get<LocaleService>(LocaleService);
     const UserSearcher = container.get<FC<UserSearcherProps>>(UserSearcherComponent);
-    const utilsService = container.get<UtilsService>(UtilsService);
+    const Modal = container.get<FC<ModalProps>>(ModalComponent);
 
     const { client_id: clientId } = useParams();
     const getLocaleText = localeService.useLocaleContext('pages.clientDetails');
@@ -149,7 +154,8 @@ const ClientDetails: FC = () => {
         },
     );
     const [clientInfo, setClientInfo] = useState<Client>(null);
-    const confirm = utilsService.useConfirm();
+    const [deleteClientConfirmContent, setDeleteClientConfirmContent] = useState<string>('');
+    const [transferOwnershipConfirmContent, setTransferOwnershipConfirmContent] = useState<string>('');
 
     const basicInfoFormItems: IFormItem[] = [
         {
@@ -367,10 +373,10 @@ const ClientDetails: FC = () => {
                                             >{getLocaleText('dangerZone')}</Typography>
                                             <FormItem
                                                 value={null}
-                                                title={getLocaleText('danger.transformOwnership.title')}
+                                                title={getLocaleText('danger.transferOwnership.title')}
                                                 editable={false}
                                                 containerProps={{ className: 'form-item' }}
-                                                helper={getLocaleText('helpers.transformOwnership')}
+                                                helper={getLocaleText('helpers.transferOwnership')}
                                                 valueRender={() => {
                                                     return (
                                                         <UserSearcher
@@ -380,7 +386,7 @@ const ClientDetails: FC = () => {
                                                                         color="warning"
                                                                         startIcon={<Icon className="icon-send" />}
                                                                         onClick={openPopover}
-                                                                    >{getLocaleText('danger.transformOwnership.title')}</Button>
+                                                                    >{getLocaleText('danger.transferOwnership.title')}</Button>
                                                                 );
                                                             }}
                                                             mode="single"
@@ -396,10 +402,49 @@ const ClientDetails: FC = () => {
                                                 helper={getLocaleText('helpers.delete')}
                                                 valueRender={() => {
                                                     return (
-                                                        <Button
-                                                            color="error"
-                                                            startIcon={<Icon className="icon-trash-2" />}
-                                                        >{getLocaleText('danger.delete.title')}</Button>
+                                                        <Modal
+                                                            Trigger={({ openModal }) => {
+                                                                return (
+                                                                    <Button
+                                                                        color="error"
+                                                                        startIcon={<Icon className="icon-trash-2" />}
+                                                                        onClick={openModal}
+                                                                    >{getLocaleText('danger.delete.title')}</Button>
+                                                                );
+                                                            }}
+                                                        >
+                                                            {
+                                                                ({ closeModal }) => {
+                                                                    return (
+                                                                        <>
+                                                                            <DialogTitle
+                                                                                sx={{
+                                                                                    backgroundColor: 'error.main',
+                                                                                    color: 'white',
+                                                                                }}
+                                                                            >{getLocaleText('deleteClient.title')}</DialogTitle>
+                                                                            <DialogContent>
+                                                                                <Alert
+                                                                                    severity="warning"
+                                                                                    sx={{ marginBottom: 2 }}
+                                                                                >{getLocaleText('deleteClient.description', { clientName: clientInfo?.name })}</Alert>
+                                                                                <Typography
+                                                                                    sx={{
+                                                                                        marginTop: 2,
+                                                                                        marginBottom: 1,
+                                                                                    }}
+                                                                                >{getLocaleText('deleteClient.confirmText', { clientName: clientInfo?.name })}</Typography>
+                                                                                <TextField
+                                                                                    fullWidth={true}
+                                                                                    value={deleteClientConfirmContent}
+                                                                                    onChange={(event) => setDeleteClientConfirmContent(event.target.value)}
+                                                                                />
+                                                                            </DialogContent>
+                                                                        </>
+                                                                    );
+                                                                }
+                                                            }
+                                                        </Modal>
                                                     );
                                                 }}
                                             />

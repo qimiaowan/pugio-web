@@ -112,3 +112,16 @@ export interface GetSystemStatusResponseData {
     count: number;
     statistics: SystemStatistic[];
 }
+
+export interface TransferClientOwnershipRequestOptions {
+    clientId: string;
+    owner: string;
+}
+
+export type TransferClientOwnershipResponseData = UserClientRelationResponseData;
+
+export interface DeleteClientRequestOptions {
+    clientId: string;
+}
+
+export type DeleteClientResponseData = Client;

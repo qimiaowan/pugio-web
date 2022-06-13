@@ -23,6 +23,10 @@ import {
     GetSystemStatusResponseData,
     UpdateClientInformationRequestOptions,
     UpdateClientInformationResponseData,
+    TransferClientOwnershipRequestOptions,
+    TransferClientOwnershipResponseData,
+    DeleteClientRequestOptions,
+    DeleteClientResponseData,
 } from '@modules/client/client.interface';
 
 @Injectable()
@@ -178,6 +182,34 @@ export class ClientService {
                     count,
                     dateRange: dateRange.map((dateRangeItem) => dateRangeItem.toISOString()).join('--'),
                 },
+            });
+    }
+
+    public async transferClientOwnership(
+        options: TransferClientOwnershipRequestOptions,
+    ): Promise<Response<TransferClientOwnershipResponseData>> {
+        const {
+            clientId,
+            owner,
+        } = options;
+
+        return await this.requestService.getInstance()
+            .request({
+                method: 'put',
+                url: `/client/${clientId}/membership`,
+                data: {
+                    owner,
+                },
+            });
+    }
+
+    public async deleteClient(options: DeleteClientRequestOptions): Promise<Response<DeleteClientResponseData>> {
+        const { clientId } = options;
+
+        return await this.requestService.getInstance()
+            .request({
+                method: 'delete',
+                url: `/client/${clientId}`,
             });
     }
 }
