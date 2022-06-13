@@ -105,17 +105,6 @@ const ClientDetails: FC = () => {
     const FormItem = container.get<FC<FormItemProps>>(FormItemComponent);
     const localeService = container.get<LocaleService>(LocaleService);
     const UserSearcher = container.get<FC<UserSearcherProps>>(UserSearcherComponent);
-    const basicInfoFormItems: IFormItem[] = [
-        {
-            key: 'name',
-        },
-        {
-            key: 'description',
-        },
-        {
-            key: 'deviceId',
-        },
-    ];
 
     const { client_id: clientId } = useParams();
     const getLocaleText = localeService.useLocaleContext('pages.clientDetails');
@@ -145,9 +134,22 @@ const ClientDetails: FC = () => {
     );
     const [clientInfo, setClientInfo] = useState<Client>(null);
 
+    const basicInfoFormItems: IFormItem[] = [
+        {
+            key: 'name',
+        },
+        {
+            key: 'description',
+        },
+        {
+            key: 'deviceId',
+            helper: getLocaleText('helpers.deviceId'),
+        },
+    ];
     const keyPairFormItems: IFormItem[] = [
         {
             key: 'publicKey',
+            helper: getLocaleText('helpers.publicKey'),
             Editor: ({
                 value,
                 updateValue,
@@ -175,6 +177,7 @@ const ClientDetails: FC = () => {
         },
         {
             key: 'privateKey',
+            helper: getLocaleText('helpers.privateKey'),
             Editor: ({
                 value,
                 updateValue,
@@ -270,6 +273,7 @@ const ClientDetails: FC = () => {
                                         const {
                                             key,
                                             Editor,
+                                            helper,
                                             valueRender,
                                         } = formItem;
 
@@ -286,6 +290,7 @@ const ClientDetails: FC = () => {
                                                 Editor={Editor}
                                                 valueRender={valueRender}
                                                 containerProps={{ className: 'form-item' }}
+                                                helper={helper}
                                                 onValueChange={(value) => handleUpdateClientInfo(key, value)}
                                             />
                                         );
@@ -306,6 +311,7 @@ const ClientDetails: FC = () => {
                                                     const {
                                                         key,
                                                         Editor,
+                                                        helper,
                                                         valueRender,
                                                     } = formItem;
 
@@ -323,6 +329,7 @@ const ClientDetails: FC = () => {
                                                             Editor={Editor}
                                                             valueRender={valueRender}
                                                             containerProps={{ className: 'form-item' }}
+                                                            helper={helper}
                                                             onValueChange={(value) => handleUpdateClientInfo(key, value)}
                                                         />
                                                     );
@@ -347,6 +354,7 @@ const ClientDetails: FC = () => {
                                                 title={getLocaleText('danger.transformOwnership.title')}
                                                 editable={false}
                                                 containerProps={{ className: 'form-item' }}
+                                                helper={getLocaleText('helpers.transformOwnership')}
                                                 valueRender={() => {
                                                     return (
                                                         <UserSearcher
@@ -369,6 +377,7 @@ const ClientDetails: FC = () => {
                                                 editable={false}
                                                 title={getLocaleText('danger.delete.title')}
                                                 containerProps={{ className: 'form-item' }}
+                                                helper={getLocaleText('helpers.delete')}
                                                 valueRender={() => {
                                                     return (
                                                         <Button

@@ -15,6 +15,7 @@ import clsx from 'clsx';
 import styled from '@mui/material/styles/styled';
 import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
+import FormHelperText from '@mui/material/FormHelperText';
 import _ from 'lodash';
 
 const FormItemWrapper = styled(Box)(({ theme }) => {
@@ -33,6 +34,12 @@ const FormItemWrapper = styled(Box)(({ theme }) => {
             font-size: 13px;
         }
 
+        .form-item-helper {
+            align-self: flex-start;
+            color: ${theme.palette.text.secondary};
+            font-size: 12px;
+        }
+
         .form-content-wrapper {
             width: 100%;
 
@@ -48,6 +55,7 @@ const FormItemWrapper = styled(Box)(({ theme }) => {
                     .value-view-text {
                         font-size: 13px;
                         padding: ${theme.spacing(1)};
+                        padding-left: 0;
                         padding-right: 60px;
 
                         &.multi-line {
@@ -119,10 +127,11 @@ const FormItem: FC<FormItemProps> = ({
     value,
     containerProps = {},
     editable = true,
-    titleProps = {},
-    valueProps = {},
     helper = null,
     Editor,
+    titleProps = {},
+    valueProps = {},
+    helperProps = {},
     valueRender,
     onValueChange = _.noop,
 }) => {
@@ -156,6 +165,14 @@ const FormItem: FC<FormItemProps> = ({
                     root: clsx('title', titleProps?.classes?.root),
                 }}
             >{title}</Typography>
+            {
+                helper && (
+                    <FormHelperText
+                        {...helperProps}
+                        classes={{ root: clsx('form-item-helper', helperProps?.classes?.root) }}
+                    >{helper}</FormHelperText>
+                )
+            }
             <Box className="form-content-wrapper">
                 {
                     currentState === 'view'
@@ -218,7 +235,6 @@ const FormItem: FC<FormItemProps> = ({
                         </Box>
                 }
             </Box>
-            {helper}
         </FormItemWrapper>
     );
 };

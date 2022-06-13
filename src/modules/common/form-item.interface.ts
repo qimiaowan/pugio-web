@@ -1,5 +1,6 @@
 import { BoxProps } from '@mui/material/Box';
 import { TypographyProps } from '@mui/material/Typography';
+import { FormHelperTextProps } from '@mui/material/FormHelperText';
 import {
     FC,
     ReactNode,
@@ -16,17 +17,18 @@ export interface FormItemEditorProps {
 }
 
 export type FormItemEditor = FC<FormItemEditorProps>;
-export type FormItemValueRender = (data: FormItemRenderData) => string | ReactNode;
+export type FormItemValueRender = (data: FormItemRenderData) => ReactNode;
 
 export interface FormItemProps {
     title: string;
     value: string;
     containerProps?: BoxProps;
     editable?: boolean;
-    titleProps?: TypographyProps;
-    valueProps?: TypographyProps;
     helper?: ReactNode;
     Editor?: FormItemEditor;
+    titleProps?: TypographyProps;
+    valueProps?: TypographyProps;
+    helperProps?: FormHelperTextProps;
     valueRender?: FormItemValueRender;
     onValueChange?: (value: any) => void;
 }
