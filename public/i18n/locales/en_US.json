@@ -15,7 +15,8 @@
         "createClient": "Client",
         "searchPlaceholder": "Type to search...",
         "yes": "YES",
-        "no": "NO"
+        "no": "NO",
+        "refresh": "Refresh"
     },
     "clientsSidebarMenu": {
         "workstation": "Workstation",

@@ -91,6 +91,7 @@ const ClientMembersWrapper = styled(Box)(({ theme }) => {
                     user-select: none;
                     color: ${theme.palette.text.primary};
                     font-weight: 700;
+                    margin-right: ${theme.spacing(1)};
                 }
 
                 .control-button {
@@ -103,6 +104,11 @@ const ClientMembersWrapper = styled(Box)(({ theme }) => {
                     &:last-child {
                         margin-right: 0;
                     }
+                }
+
+                .header-controls-group {
+                    display: flex;
+                    align-items: center;
                 }
             }
         }
@@ -415,8 +421,17 @@ const ClientMembers: FC<BoxProps> = ({
                     />
                 </Box>
                 <Box className="header-controls-wrapper">
-                    <Typography classes={{ root: 'title' }} noWrap={true}>{getPageLocaleText('title')}</Typography>
-                    <Box>
+                    <Box className="header-controls-group">
+                        <Typography classes={{ root: 'title' }} noWrap={true}>{getPageLocaleText('title')}</Typography>
+                        <Button
+                            variant="text"
+                            size="small"
+                            startIcon={<Icon className="icon-refresh-cw" />}
+                            classes={{ root: 'control-button' }}
+                            onClick={reloadQueryClientMembers}
+                        >{getLocaleText('app.refresh')}</Button>
+                    </Box>
+                    <Box className="header-controls-group">
                         {
                             selectedMemberships.length > 0 && (
                                 <Button
