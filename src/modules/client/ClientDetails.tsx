@@ -63,7 +63,7 @@ const ClientDetailsPage = styled(Box)(({ theme }) => {
                 }
 
                 .form-item {
-                    margin-bottom: ${theme.spacing(2)};
+                    margin-bottom: ${theme.spacing(5)};
 
                     .form-item-editor-textarea {
                         resize: none;
