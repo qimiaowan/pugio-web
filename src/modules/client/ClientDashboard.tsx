@@ -152,6 +152,9 @@ const ClientDashboard: FC = () => {
         },
         {
             refreshDeps: [clientId],
+            onError: (error) => {
+                console.log(error);
+            },
         },
     );
 
@@ -160,9 +163,13 @@ const ClientDashboard: FC = () => {
     };
 
     useEffect(() => {
-        const pathname = window.location.hash.slice(1);
-        window.location.hash = pathname.replaceAll(clientId, selectedClientId);
-    }, [selectedClientId]);
+        if (selectedClientId && clientId && selectedClientId !== clientId) {
+            const pathname = window.location.hash.slice(1);
+            if (pathname && pathname !== 'null') {
+                window.location.hash = pathname.replaceAll(clientId, selectedClientId);
+            }
+        }
+    }, [selectedClientId, clientId]);
 
     useEffect(() => {
         if (clientId) {
@@ -212,7 +219,7 @@ const ClientDashboard: FC = () => {
                         to: `/client/${clientId}/members`,
                         titleSlotId: 'clientsSidebarMenu.members',
                         condition: (relation) => {
-                            return relation.roleType <= 1;
+                            return relation?.roleType <= 1;
                         },
                     },
                     {

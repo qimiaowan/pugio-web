@@ -3,69 +3,32 @@ import {
     FC,
     useEffect,
 } from 'react';
-import {
-    useLocation,
-    useNavigate,
-} from 'react-router-dom';
-import { UtilsService } from '@modules/utils/utils.service';
 import { StoreService } from '@modules/store/store.service';
 import shallow from 'zustand/shallow';
+import { useParams } from 'react-router-dom';
 
 const Listener: FC = () => {
     const container = getContainer(Listener);
-    const utilsService = container.get<UtilsService>(UtilsService);
     const storeService = container.get<StoreService>(StoreService);
 
-    const location = useLocation();
-    const navigate = useNavigate();
+    const { client_id: clientId } = useParams();
     const {
-        pathnameReady,
         selectedClientId,
-        setPathnameReady,
         setWindowInnerHeight,
         setWindowInnerWidth,
     } = storeService.useStore((state) => {
         const {
-            pathnameReady,
             selectedClientId,
-            setPathnameReady,
             setWindowInnerHeight,
             setWindowInnerWidth,
         } = state;
 
         return {
-            pathnameReady,
             selectedClientId,
-            setPathnameReady,
             setWindowInnerHeight,
             setWindowInnerWidth,
         };
     }, shallow);
-
-    useEffect(() => {
-        if (location && pathnameReady) {
-            localStorage.setItem('app.pathname', utilsService.serializeLocation(location));
-        }
-    }, [location, pathnameReady]);
-
-    useEffect(() => {
-        const pathname = localStorage.getItem('app.pathname') || '';
-        const currentLocation = window.location.hash;
-
-        if (!pathnameReady) {
-            if (!currentLocation || currentLocation === '#') {
-                if (pathname) {
-                    navigate(pathname);
-                } else if (selectedClientId) {
-                    navigate(`/client/${selectedClientId}`);
-                } else {
-                    navigate('/clients/list');
-                }
-            }
-        }
-
-        setPathnameReady();
-    }, [pathnameReady]);
 
     useEffect(() => {
         const handler = () => {
@@ -79,6 +42,20 @@ const Listener: FC = () => {
             window.removeEventListener('resize', handler);
         };
     }, []);
+
+    useEffect(() => {
+        const storageSelectedClientId = localStorage.getItem('app.selectedClientId') || '';
+
+        if (!clientId && !storageSelectedClientId && !selectedClientId) {
+            window.location.hash = '/home/clients';
+        }
+    }, [selectedClientId, clientId]);
+
+    useEffect(() => {
+        if (clientId && clientId !== 'null') {
+            localStorage.setItem('app.selectedClientId', clientId);
+        }
+    }, [clientId]);
 
     return (<></>);
 };

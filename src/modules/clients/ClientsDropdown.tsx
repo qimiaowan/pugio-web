@@ -190,9 +190,11 @@ const ClientsDropdown: FC<ClientsDropdownProps> = () => {
     );
 
     const handleSelectClient = (clientId: string) => {
-        changeSelectedClientId(clientId || '');
-        localStorage.setItem('app.selectedClientId', clientId || '');
         switchClientsDropdownVisibility(false);
+        if (clientId && clientId !== 'null') {
+            changeSelectedClientId(clientId || '');
+            localStorage.setItem('app.selectedClientId', clientId || '');
+        }
     };
 
     useEffect(() => {

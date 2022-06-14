@@ -13,7 +13,6 @@ import {
 } from '@modules/store/store.interface';
 import { Profile } from '@modules/profile/profile.interface';
 import { UtilsService } from '@modules/utils/utils.service';
-import { ConfigService } from '@modules/config/config.service';
 
 @Injectable()
 export class StoreService {
@@ -204,6 +203,5 @@ export class StoreService {
 
     public constructor(
         private readonly utilsService: UtilsService,
-        private readonly configService: ConfigService,
     ) {}
 }
