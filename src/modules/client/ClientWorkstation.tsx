@@ -47,6 +47,17 @@ import { PopoverProps } from '@modules/common/popover.interface';
 import { PopoverComponent } from '@modules/common/popover.component';
 import Color from 'color';
 import { ConfigService } from '@modules/config/config.service';
+import { LoadingComponent } from '@modules/brand/loading.component';
+
+const LoadingWrapper = styled(Box)(() => {
+    return `
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    `;
+});
 
 const ClientWorkstationWrapper = styled(Box)(({ theme }) => {
     const mode = theme.palette.mode;
@@ -159,6 +170,7 @@ const ClientWorkstation: FC = () => {
     const ChannelList = container.get<FC<ChannelListProps>>(ChannelListComponent);
     const configService = container.get<ConfigService>(ConfigService);
     const Popover = container.get<FC<PopoverProps>>(PopoverComponent);
+    const Loading = container.get<FC>(LoadingComponent);
 
     const internalChannelMap = {
         'pugio.web-terminal': WebTerminalAppComponent,
@@ -233,10 +245,12 @@ const ClientWorkstation: FC = () => {
         };
     }, shallow);
     const getLocaleText = localeService.useLocaleContext('pages.clientWorkstation');
+    const getAppLocaleText = localeService.useLocaleContext('app');
     const [selectedTabId, setSelectedTabId] = useState<string>(null);
     const [selectedTabMetadata, setSelectedTabMetadata] = useState<string[]>([]);
     const [clientOffline, setClientOffline] = useState<boolean>(false);
     const [lastSelectedTabId, setLastSelectedTabId] = useState<string>(null);
+    const [initialChecking, setInitialChecking] = useState<boolean>(true);
 
     const handleEmitConfig = useCallback(
         () => {
@@ -448,11 +462,18 @@ const ClientWorkstation: FC = () => {
                     )
                 }
             </Popover>
-            <IconButton>
-                <Icon className="icon-more-horizontal" />
-            </IconButton>
+            <IconButton><Icon className="icon-more-horizontal" /></IconButton>
         </Box>
     );
+
+    const handleCheckClientStatus = useCallback(() => {
+        clientService.getClientCurrentStatus({ clientId })
+            .then((response) => {
+                setClientOffline(response?.response?.offline);
+            }).finally(() => {
+                setInitialChecking(false);
+            });
+    }, [clientId]);
 
     useEffect(() => {
         if (_.isNumber(sidebarWidth) && _.isNumber(windowInnerWidth)) {
@@ -608,16 +629,14 @@ const ClientWorkstation: FC = () => {
     }, [tabsScrollRef.current]);
 
     useEffect(() => {
-        const intervalId = setInterval(() => {
-            clientService.getClientCurrentStatus({ clientId }).then((response) => {
-                setClientOffline(response?.response?.offline);
-            });
-        }, 30000);
+        setInitialChecking(true);
+        handleCheckClientStatus();
+        const intervalId = setInterval(handleCheckClientStatus, 30000);
 
         return () => {
             clearInterval(intervalId);
         };
-    }, []);
+    }, [clientId]);
 
     useEffect(
         handleEmitConfig,
@@ -648,250 +667,261 @@ const ClientWorkstation: FC = () => {
     ]);
 
     return (
-        clientOffline
-            ? <ClientWorkstationWrapper className="page offline">
-                <Exception
-                    type="error"
-                    title={getLocaleText('offline.title')}
-                    subTitle={getLocaleText('offline.subTitle')}
-                />
-            </ClientWorkstationWrapper>
-            : <ClientWorkstationWrapper className="page">
-                {
-                    selectedTabId && (
-                        <Box className="header-container">
-                            <Box className="tabs" style={{ width: headerWidth }} ref={tabsWrapperRef}>
-                                {
-                                    (clientTabsMap.get(clientId)?.size > 0 && selectedTabId !== null) && (
-                                        <SimpleBar
-                                            className="tabs-wrapper"
-                                            autoHide={true}
-                                            style={{
-                                                maxWidth: headerWidth - (buttonsWrapperSticked ? buttonsWrapperWidth : 0) - startupWrapperWidth,
-                                            }}
-                                            ref={tabsScrollRef}
-                                        >
-                                            {
-                                                _.isArray(tabs) && tabs.map((tab) => {
-                                                    const {
-                                                        tabId,
-                                                        channelId,
-                                                        data,
-                                                        title,
-                                                        loading,
-                                                        errored,
-                                                        lifecycle = {},
-                                                        nodes,
-                                                    } = tab;
+        initialChecking
+            ? <LoadingWrapper><Loading /></LoadingWrapper>
+            : clientOffline
+                ? <ClientWorkstationWrapper className="page offline">
+                    <Exception
+                        type="error"
+                        title={getLocaleText('offline.title')}
+                        subTitle={getLocaleText('offline.subTitle')}
+                    >
+                        <Button
+                            variant="text"
+                            startIcon={<Icon className="icon-refresh-cw" />}
+                            onClick={() => {
+                                setInitialChecking(true);
+                                handleCheckClientStatus();
+                            }}
+                        >{getAppLocaleText('refresh')}</Button>
+                    </Exception>
+                </ClientWorkstationWrapper>
+                : <ClientWorkstationWrapper className="page">
+                    {
+                        selectedTabId && (
+                            <Box className="header-container">
+                                <Box className="tabs" style={{ width: headerWidth }} ref={tabsWrapperRef}>
+                                    {
+                                        (clientTabsMap.get(clientId)?.size > 0 && selectedTabId !== null) && (
+                                            <SimpleBar
+                                                className="tabs-wrapper"
+                                                autoHide={true}
+                                                style={{
+                                                    maxWidth: headerWidth - (buttonsWrapperSticked ? buttonsWrapperWidth : 0) - startupWrapperWidth,
+                                                }}
+                                                ref={tabsScrollRef}
+                                            >
+                                                {
+                                                    _.isArray(tabs) && tabs.map((tab) => {
+                                                        const {
+                                                            tabId,
+                                                            channelId,
+                                                            data,
+                                                            title,
+                                                            loading,
+                                                            errored,
+                                                            lifecycle = {},
+                                                            nodes,
+                                                        } = tab;
 
-                                                    return (
-                                                        <Tab
-                                                            key={tabId}
-                                                            loading={loading}
-                                                            errored={errored}
-                                                            channelId={channelId}
-                                                            title={title || utilsService.getChannelName(data?.name, locale, data?.nameTranslation)}
-                                                            avatar={data?.avatar}
-                                                            active={selectedTabId === tabId}
-                                                            metadata={selectedTabMetadata}
-                                                            onClick={() => setSelectedTab(clientId, tabId)}
-                                                            onDataLoad={
-                                                                (channelId) => {
-                                                                    if (!nodes) {
-                                                                        handleLoadChannel(channelId, clientId, tabId);
-                                                                        handleEmitConfig();
+                                                        return (
+                                                            <Tab
+                                                                key={tabId}
+                                                                loading={loading}
+                                                                errored={errored}
+                                                                channelId={channelId}
+                                                                title={title || utilsService.getChannelName(data?.name, locale, data?.nameTranslation)}
+                                                                avatar={data?.avatar}
+                                                                active={selectedTabId === tabId}
+                                                                metadata={selectedTabMetadata}
+                                                                onClick={() => setSelectedTab(clientId, tabId)}
+                                                                onDataLoad={
+                                                                    (channelId) => {
+                                                                        if (!nodes) {
+                                                                            handleLoadChannel(channelId, clientId, tabId);
+                                                                            handleEmitConfig();
+                                                                        }
                                                                     }
                                                                 }
-                                                            }
-                                                            onClose={() => {
-                                                                if (typeof lifecycle.onBeforeDestroy === 'function' && !lifecycle.onBeforeDestroy()) {
-                                                                    return;
-                                                                }
+                                                                onClose={() => {
+                                                                    if (typeof lifecycle.onBeforeDestroy === 'function' && !lifecycle.onBeforeDestroy()) {
+                                                                        return;
+                                                                    }
 
-                                                                destroyTab(clientId, tabId);
-                                                            }}
-                                                            onTitleChange={(title) => {
-                                                                if (title && _.isString(title)) {
-                                                                    updateTab(clientId, tabId, { title });
-                                                                }
-                                                            }}
-                                                            onSelectedScroll={(offsetLeft, clientWidth) => {
-                                                                const scrollOffset = offsetLeft - (headerWidth - clientWidth) / 2;
-                                                                scrollTabs(scrollOffset <= 0 ? 0 : scrollOffset);
-                                                            }}
-                                                        />
-                                                    );
-                                                })
-                                            }
-                                            {
-                                                !buttonsWrapperSticked && (
-                                                    <Box
-                                                        ref={buttonsWrapperRef}
-                                                        className="buttons-wrapper floating"
-                                                    >{tabsControlButtons}</Box>
-                                                )
-                                            }
-                                            <Box className="buttons-wrapper placeholder" ref={placeholderRef} />
-                                        </SimpleBar>
-                                    )
-                                }
-                                {
-                                    buttonsWrapperSticked && (
-                                        <Box
-                                            ref={buttonsWrapperRef}
-                                            className="buttons-wrapper"
-                                        >{tabsControlButtons}</Box>
-                                    )
-                                }
-                                <Box
-                                    sx={{
-                                        flexGrow: clientTabsMap.get(clientId)?.size > 0 ? 0 : 1,
-                                        flexShrink: 0,
-                                        display: 'flex',
-                                        justifyContent: clientTabsMap.get(clientId)?.size > 0 ? 'space-between' : 'flex-end',
-                                        alignItems: 'center',
-                                        paddingLeft: theme.spacing(1),
-                                        borderBottom: `1px solid ${theme.palette.divider}`,
-
-                                        '& > *': {
-                                            marginRight: `${theme.spacing(1)} !important`,
-                                        },
-                                    }}
-                                >
-                                    <Button
-                                        size="small"
-                                        classes={{ root: 'navigate-buttons' }}
-                                        startIcon={<Icon className="icon-home" />}
-                                        onClick={() => {
-                                            setSelectedTab(clientId, null);
-                                            setLastSelectedTabId(selectedTabId);
-                                        }}
-                                    >{getLocaleText('home')}</Button>
-                                </Box>
-                            </Box>
-                        </Box>
-                    )
-                }
-                {
-                    !selectedTabId
-                        ? <Box
-                            className="empty-tabs"
-                            style={{ width: headerWidth, height: panelHeight }}
-                        >
-                            <Exception
-                                type="welcome"
-                                title={getLocaleText('welcome.title')}
-                                subTitle={getLocaleText('welcome.subTitle')}
-                                sx={{
-                                    '.title': {
-                                        fontSize: 16,
-                                    },
-                                    'img': {
-                                        width: 120,
-                                        height: 120,
-                                    },
-                                }}
-                            >
-                                <Box
-                                    sx={{
-                                        width: '100%',
-                                        marginTop: 4,
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-
-                                        '& button': {
-                                            margin: `0 ${theme.spacing(0.5)}`,
-                                        },
-                                    }}
-                                >
-                                    {
-                                        lastSelectedTabId && (
-                                            <Button
-                                                variant="text"
-                                                color="primary"
-                                                size="small"
-                                                startIcon={<Icon className="icon-corner-up-left" />}
-                                                onClick={() => {
-                                                    setSelectedTab(clientId, lastSelectedTabId);
-                                                    setLastSelectedTabId(null);
-                                                }}
-                                            >{getLocaleText('goBack')}</Button>
+                                                                    destroyTab(clientId, tabId);
+                                                                }}
+                                                                onTitleChange={(title) => {
+                                                                    if (title && _.isString(title)) {
+                                                                        updateTab(clientId, tabId, { title });
+                                                                    }
+                                                                }}
+                                                                onSelectedScroll={(offsetLeft, clientWidth) => {
+                                                                    const scrollOffset = offsetLeft - (headerWidth - clientWidth) / 2;
+                                                                    scrollTabs(scrollOffset <= 0 ? 0 : scrollOffset);
+                                                                }}
+                                                            />
+                                                        );
+                                                    })
+                                                }
+                                                {
+                                                    !buttonsWrapperSticked && (
+                                                        <Box
+                                                            ref={buttonsWrapperRef}
+                                                            className="buttons-wrapper floating"
+                                                        >{tabsControlButtons}</Box>
+                                                    )
+                                                }
+                                                <Box className="buttons-wrapper placeholder" ref={placeholderRef} />
+                                            </SimpleBar>
                                         )
                                     }
-                                    <Popover
-                                        Trigger={({ open, openPopover }) => {
-                                            return (
+                                    {
+                                        buttonsWrapperSticked && (
+                                            <Box
+                                                ref={buttonsWrapperRef}
+                                                className="buttons-wrapper"
+                                            >{tabsControlButtons}</Box>
+                                        )
+                                    }
+                                    <Box
+                                        sx={{
+                                            flexGrow: clientTabsMap.get(clientId)?.size > 0 ? 0 : 1,
+                                            flexShrink: 0,
+                                            display: 'flex',
+                                            justifyContent: clientTabsMap.get(clientId)?.size > 0 ? 'space-between' : 'flex-end',
+                                            alignItems: 'center',
+                                            paddingLeft: theme.spacing(1),
+                                            borderBottom: `1px solid ${theme.palette.divider}`,
+
+                                            '& > *': {
+                                                marginRight: `${theme.spacing(1)} !important`,
+                                            },
+                                        }}
+                                    >
+                                        <Button
+                                            size="small"
+                                            classes={{ root: 'navigate-buttons' }}
+                                            startIcon={<Icon className="icon-home" />}
+                                            onClick={() => {
+                                                setSelectedTab(clientId, null);
+                                                setLastSelectedTabId(selectedTabId);
+                                            }}
+                                        >{getLocaleText('home')}</Button>
+                                    </Box>
+                                </Box>
+                            </Box>
+                        )
+                    }
+                    {
+                        !selectedTabId
+                            ? <Box
+                                className="empty-tabs"
+                                style={{ width: headerWidth, height: panelHeight }}
+                            >
+                                <Exception
+                                    type="welcome"
+                                    title={getLocaleText('welcome.title')}
+                                    subTitle={getLocaleText('welcome.subTitle')}
+                                    sx={{
+                                        '.title': {
+                                            fontSize: 16,
+                                        },
+                                        'img': {
+                                            width: 120,
+                                            height: 120,
+                                        },
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            width: '100%',
+                                            marginTop: 4,
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+
+                                            '& button': {
+                                                margin: `0 ${theme.spacing(0.5)}`,
+                                            },
+                                        }}
+                                    >
+                                        {
+                                            lastSelectedTabId && (
                                                 <Button
                                                     variant="text"
                                                     color="primary"
                                                     size="small"
-                                                    startIcon={<Icon className="icon-plus" />}
-                                                    sx={{
-                                                        ...(open ? {
-                                                            backgroundColor: Color(theme.palette.primary.main).alpha(0.2).toString(),
-                                                        } : {}),
+                                                    startIcon={<Icon className="icon-corner-up-left" />}
+                                                    onClick={() => {
+                                                        setSelectedTab(clientId, lastSelectedTabId);
+                                                        setLastSelectedTabId(null);
                                                     }}
-                                                    onClick={openPopover}
-                                                >{getLocaleText('createTab')}</Button>
-                                            );
-                                        }}
-                                    >
-                                        {
-                                            ({ closePopover }) => (
-                                                ChannelList
-                                                    ? <ChannelList
-                                                        clientId={clientId}
-                                                        width={320}
-                                                        height={360}
-                                                        listItemProps={{
-                                                            mode: 'list-item',
-                                                            menu: [],
-                                                        }}
-                                                        searchProps={{
-                                                            InputProps: {
-                                                                sx: {
-                                                                    border: 0,
-                                                                },
-                                                            },
-                                                        }}
-                                                        headerProps={{
-                                                            style: {
-                                                                padding: 0,
-                                                            },
-                                                        }}
-                                                        onSelectChannel={(channel) => {
-                                                            handleCreateTab(clientId, { channelId: channel.id });
-                                                            closePopover();
-                                                        }}
-                                                    />
-                                                    : null
+                                                >{getLocaleText('goBack')}</Button>
                                             )
                                         }
-                                    </Popover>
-                                </Box>
-                            </Exception>
-                        </Box>
-                        : <>
-                            {
-                                selectedTabId && (
-                                    <SimpleBar
-                                        style={{
-                                            width: '100%',
-                                            height: panelHeight,
-                                        }}
-                                        className="panel-wrapper"
-                                    >
-                                        <ChannelPanel
-                                            tabId={selectedTabId}
-                                            channelTab={(clientTabsMap.get(clientId) || List<ChannelTab>([])).find((tab) => tab.tabId === selectedTabId)}
-                                        />
-                                    </SimpleBar>
-                                )
-                            }
-                        </>
-                }
-            </ClientWorkstationWrapper>
+                                        <Popover
+                                            Trigger={({ open, openPopover }) => {
+                                                return (
+                                                    <Button
+                                                        variant="text"
+                                                        color="primary"
+                                                        size="small"
+                                                        startIcon={<Icon className="icon-plus" />}
+                                                        sx={{
+                                                            ...(open ? {
+                                                                backgroundColor: Color(theme.palette.primary.main).alpha(0.2).toString(),
+                                                            } : {}),
+                                                        }}
+                                                        onClick={openPopover}
+                                                    >{getLocaleText('createTab')}</Button>
+                                                );
+                                            }}
+                                        >
+                                            {
+                                                ({ closePopover }) => (
+                                                    ChannelList
+                                                        ? <ChannelList
+                                                            clientId={clientId}
+                                                            width={320}
+                                                            height={360}
+                                                            listItemProps={{
+                                                                mode: 'list-item',
+                                                                menu: [],
+                                                            }}
+                                                            searchProps={{
+                                                                InputProps: {
+                                                                    sx: {
+                                                                        border: 0,
+                                                                    },
+                                                                },
+                                                            }}
+                                                            headerProps={{
+                                                                style: {
+                                                                    padding: 0,
+                                                                },
+                                                            }}
+                                                            onSelectChannel={(channel) => {
+                                                                handleCreateTab(clientId, { channelId: channel.id });
+                                                                closePopover();
+                                                            }}
+                                                        />
+                                                        : null
+                                                )
+                                            }
+                                        </Popover>
+                                    </Box>
+                                </Exception>
+                            </Box>
+                            : <>
+                                {
+                                    selectedTabId && (
+                                        <SimpleBar
+                                            style={{
+                                                width: '100%',
+                                                height: panelHeight,
+                                            }}
+                                            className="panel-wrapper"
+                                        >
+                                            <ChannelPanel
+                                                tabId={selectedTabId}
+                                                channelTab={(clientTabsMap.get(clientId) || List<ChannelTab>([])).find((tab) => tab.tabId === selectedTabId)}
+                                            />
+                                        </SimpleBar>
+                                    )
+                                }
+                            </>
+                    }
+                </ClientWorkstationWrapper>
     );
 };
 

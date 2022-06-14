@@ -13,6 +13,7 @@ import { ChannelListComponent } from '@modules/channel/channel-list.component';
 import { ConfigService } from '@modules/config/config.service';
 import { PopoverComponent } from '@modules/common/popover.component';
 import { ContextMenuComponent } from '@modules/common/context-menu.component';
+import { LoadingComponent } from '@modules/brand/loading.component';
 
 @Component({
     factory: (forwardRef) => {
@@ -34,6 +35,7 @@ import { ContextMenuComponent } from '@modules/common/context-menu.component';
         ConfigService,
         PopoverComponent,
         ContextMenuComponent,
+        LoadingComponent,
     ],
 })
 export class ClientWorkstationComponent {}
