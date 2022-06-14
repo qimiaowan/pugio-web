@@ -73,6 +73,10 @@
             "deleteConfirm": "Would you want to delete these {{ count }} member(s)?",
             "exceptions": {
                 "deleteMembers": "Failed to delete members"
+            },
+            "forbidden": {
+                "title": "You have no permission to access client members page",
+                "subTitle": "Please contact the owner of this client to grant you access"
             }
         },
         "clientStatus": {

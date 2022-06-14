@@ -130,7 +130,7 @@ const ClientMembersWrapper = styled(Box)(({ theme }) => {
                 display: flex;
                 box-sizing: border-box;
 
-                &.loading-wrapper {
+                &.loading-wrapperr {
                     justify-content: center;
                     align-items: center;
                 }
@@ -147,6 +147,11 @@ const ClientMembersWrapper = styled(Box)(({ theme }) => {
                 align-self: center;
                 margin-top: ${theme.spacing(1)};
             }
+        }
+
+        &.exception-wrapper {
+            justify-content: center;
+            align-items: center;
         }
     `;
 });
@@ -351,236 +356,248 @@ const ClientMembers: FC<BoxProps> = ({
     return (
         <ClientMembersWrapper
             {...props}
-            className={clsx(className)}
+            className={clsx(className, {
+                'exception-wrapper': userClientRelationResponseData?.response?.roleType > 1,
+            })}
         >
-            <Box className="header" ref={controlsWrapperRef}>
-                <Box className="header-controls-wrapper">
-                    {
-                        tabs.length > 0 && (
-                            <Popover
-                                variant="menu"
-                                Trigger={({ open, openPopover }) => {
-                                    return (
-                                        <Button
-                                            endIcon={<Icon className={`icon-chevron-${open ? 'up' : 'down'}`} />}
-                                            onClick={openPopover}
-                                        >{generateSelectorValue(role)}</Button>
-                                    );
-                                }}
+            {
+                userClientRelationResponseData?.response?.roleType > 1
+                    ? <Exception
+                        type="forbidden"
+                        title={getPageLocaleText('forbidden.title')}
+                        subTitle={getPageLocaleText('forbidden.subTitle')}
+                    />
+                    : <>
+                        <Box className="header" ref={controlsWrapperRef}>
+                            <Box className="header-controls-wrapper">
+                                {
+                                    tabs.length > 0 && (
+                                        <Popover
+                                            variant="menu"
+                                            Trigger={({ open, openPopover }) => {
+                                                return (
+                                                    <Button
+                                                        endIcon={<Icon className={`icon-chevron-${open ? 'up' : 'down'}`} />}
+                                                        onClick={openPopover}
+                                                    >{generateSelectorValue(role)}</Button>
+                                                );
+                                            }}
+                                        >
+                                            {
+                                                ({ closePopover }) => {
+                                                    return (
+                                                        <>
+                                                            {
+                                                                tabs.map((tab) => {
+                                                                    const {
+                                                                        title,
+                                                                        query,
+                                                                    } = tab;
+
+                                                                    return (
+                                                                        <ListItemButton
+                                                                            key={title}
+                                                                            classes={{
+                                                                                root: 'toggle-button',
+                                                                            }}
+                                                                            onClick={() => {
+                                                                                setRole(query?.role);
+                                                                                closePopover();
+                                                                            }}
+                                                                        >
+                                                                            <ListItemIcon>
+                                                                                {
+                                                                                    query?.role === role && (
+                                                                                        <Icon className="icon-check" />
+                                                                                    )
+                                                                                }
+                                                                            </ListItemIcon>
+                                                                            <ListItemText
+                                                                                primaryTypographyProps={{
+                                                                                    noWrap: true,
+                                                                                    style: {
+                                                                                        minWidth: 81,
+                                                                                        maxWidth: 100,
+                                                                                    },
+                                                                                }}
+                                                                            >{getPageLocaleText(title)}</ListItemText>
+                                                                        </ListItemButton>
+                                                                    );
+                                                                })
+                                                            }
+                                                        </>
+                                                    );
+                                                }
+                                            }
+                                        </Popover>
+                                    )
+                                }
+                                <TextField
+                                    classes={{ root: 'search' }}
+                                    placeholder={getPageLocaleText('placeholder')}
+                                    disabled={queryClientMembersLoading || queryClientMembersLoadingMore}
+                                    onChange={(event) => {
+                                        setSearchValue(event.target.value);
+                                    }}
+                                />
+                            </Box>
+                            <Box className="header-controls-wrapper">
+                                <Box className="header-controls-group">
+                                    <Typography classes={{ root: 'title' }} noWrap={true}>{getPageLocaleText('title')}</Typography>
+                                    <Button
+                                        variant="text"
+                                        size="small"
+                                        startIcon={<Icon className="icon-refresh-cw" />}
+                                        classes={{ root: 'control-button' }}
+                                        onClick={reloadQueryClientMembers}
+                                    >{getLocaleText('app.refresh')}</Button>
+                                </Box>
+                                <Box className="header-controls-group">
+                                    {
+                                        selectedMemberships.length > 0 && (
+                                            <Button
+                                                variant="text"
+                                                size="small"
+                                                color="error"
+                                                startIcon={<Icon className="icon-trash-2" />}
+                                                classes={{ root: 'control-button' }}
+                                                title={getPageLocaleText('delete', { count: selectedMemberships.length })}
+                                                onClick={() => handleDeleteSelectedMembers(selectedMemberships)}
+                                            >{getPageLocaleText('delete', { count: selectedMemberships.length })}</Button>
+                                        )
+                                    }
+                                    <UserSelector
+                                        Trigger={({ openModal }) => {
+                                            return (
+                                                <Button
+                                                    variant="contained"
+                                                    size="small"
+                                                    startIcon={<Icon className="icon-user-plus" />}
+                                                    classes={{ root: 'control-button' }}
+                                                    onClick={openModal}
+                                                >{getPageLocaleText('add')}</Button>
+                                            );
+                                        }}
+                                        onSelectUsers={(memberships) => {
+                                            clientService.addClientMembers({
+                                                clientId,
+                                                memberships,
+                                            }).then(() => {
+                                                reloadQueryClientMembers();
+                                            });
+                                        }}
+                                    />
+                                </Box>
+                            </Box>
+                        </Box>
+                        <Box className="page client-members-page">
+                            <Box
+                                className={clsx('members-wrapper', {
+                                    'loading-wrapper': queryClientMembersLoading || userClientRelationLoading,
+                                })}
                             >
                                 {
-                                    ({ closePopover }) => {
-                                        return (
-                                            <>
+                                    (queryClientMembersLoading || userClientRelationLoading)
+                                        ? <Loading />
+                                        : clientMembers.length === 0
+                                            ? <Exception
+                                                type="empty"
+                                                title={getPageLocaleText('empty.title')}
+                                                subTitle={getPageLocaleText('empty.subTitle')}
+                                            />
+                                            : <SimpleBar
+                                                style={{
+                                                    width: 720,
+                                                    height: membersContainerHeight,
+                                                }}
+                                            >
                                                 {
-                                                    tabs.map((tab) => {
+                                                    clientMembers.map((listItem) => {
                                                         const {
-                                                            title,
-                                                            query,
-                                                        } = tab;
+                                                            id,
+                                                            user,
+                                                            roleType,
+                                                        } = listItem;
+
+                                                        const membership: ClientMembership = {
+                                                            userId: user.id,
+                                                            roleType,
+                                                        };
 
                                                         return (
-                                                            <ListItemButton
-                                                                key={title}
-                                                                classes={{
-                                                                    root: 'toggle-button',
-                                                                }}
-                                                                onClick={() => {
-                                                                    setRole(query?.role);
-                                                                    closePopover();
-                                                                }}
-                                                            >
-                                                                <ListItemIcon>
+                                                            <UserCard
+                                                                key={id}
+                                                                profile={user}
+                                                                menu={[
                                                                     {
-                                                                        query?.role === role && (
-                                                                            <Icon className="icon-check" />
-                                                                        )
-                                                                    }
-                                                                </ListItemIcon>
-                                                                <ListItemText
-                                                                    primaryTypographyProps={{
-                                                                        noWrap: true,
-                                                                        style: {
-                                                                            minWidth: 81,
-                                                                            maxWidth: 100,
-                                                                        },
+                                                                        icon: 'icon-trash-2',
+                                                                        title: getPageLocaleText('userCardMenu.delete'),
+                                                                        onActive: () => handleDeleteSelectedMembers([membership]),
+                                                                    },
+                                                                ]}
+                                                                controlSlot={role === configService.CLIENT_MEMBER_ALL_ROLE_TYPE && <ClientRoleSelector
+                                                                    role={roleType}
+                                                                    triggerProps={{
+                                                                        disabled: userClientRelationResponseData?.response?.roleType >= roleType,
                                                                     }}
-                                                                >{getPageLocaleText(title)}</ListItemText>
-                                                            </ListItemButton>
+                                                                    onRoleChange={(role) => {
+                                                                        clientService.changeClientMembership({
+                                                                            clientId,
+                                                                            memberships: [
+                                                                                {
+                                                                                    userId: user.id,
+                                                                                    roleType: role,
+                                                                                },
+                                                                            ],
+                                                                        });
+
+                                                                        const index = clientMembers.findIndex((membership) => {
+                                                                            return membership.user.id === user.id;
+                                                                        });
+
+                                                                        if (index !== -1) {
+                                                                            setClientMembers(
+                                                                                clientMembers.splice(
+                                                                                    index,
+                                                                                    1,
+                                                                                    _.set(clientMembers[index], 'roleType', role),
+                                                                                ),
+                                                                            );
+                                                                        }
+                                                                    }}
+                                                                />}
+                                                                checked={selectedMemberships.some((membership) => membership?.userId === user.id)}
+                                                                onCheckStatusChange={(checked) => {
+                                                                    if (checked) {
+                                                                        handleAddSelectedMemberships(membership);
+                                                                    } else {
+                                                                        handleDeleteSelectedMemberships([membership]);
+                                                                    }
+                                                                }}
+                                                            />
                                                         );
                                                     })
                                                 }
-                                            </>
-                                        );
-                                    }
+                                                <Button
+                                                    variant="text"
+                                                    classes={{ root: 'load-more-button' }}
+                                                    disabled={queryClientMembersLoadingMore || queryClientMembersResponseData?.remains === 0}
+                                                    onClick={queryMoreClientMembers}
+                                                >
+                                                    {
+                                                        queryClientMembersLoadingMore
+                                                            ? getLocaleText('loadings.loading')
+                                                            : queryClientMembersResponseData?.remains === 0
+                                                                ? getLocaleText('loadings.noMore')
+                                                                : getLocaleText('loadings.loadMore')
+                                                    }
+                                                </Button>
+                                            </SimpleBar>
                                 }
-                            </Popover>
-                        )
-                    }
-                    <TextField
-                        classes={{ root: 'search' }}
-                        placeholder={getPageLocaleText('placeholder')}
-                        disabled={queryClientMembersLoading || queryClientMembersLoadingMore}
-                        onChange={(event) => {
-                            setSearchValue(event.target.value);
-                        }}
-                    />
-                </Box>
-                <Box className="header-controls-wrapper">
-                    <Box className="header-controls-group">
-                        <Typography classes={{ root: 'title' }} noWrap={true}>{getPageLocaleText('title')}</Typography>
-                        <Button
-                            variant="text"
-                            size="small"
-                            startIcon={<Icon className="icon-refresh-cw" />}
-                            classes={{ root: 'control-button' }}
-                            onClick={reloadQueryClientMembers}
-                        >{getLocaleText('app.refresh')}</Button>
-                    </Box>
-                    <Box className="header-controls-group">
-                        {
-                            selectedMemberships.length > 0 && (
-                                <Button
-                                    variant="text"
-                                    size="small"
-                                    color="error"
-                                    startIcon={<Icon className="icon-trash-2" />}
-                                    classes={{ root: 'control-button' }}
-                                    title={getPageLocaleText('delete', { count: selectedMemberships.length })}
-                                    onClick={() => handleDeleteSelectedMembers(selectedMemberships)}
-                                >{getPageLocaleText('delete', { count: selectedMemberships.length })}</Button>
-                            )
-                        }
-                        <UserSelector
-                            Trigger={({ openModal }) => {
-                                return (
-                                    <Button
-                                        variant="contained"
-                                        size="small"
-                                        startIcon={<Icon className="icon-user-plus" />}
-                                        classes={{ root: 'control-button' }}
-                                        onClick={openModal}
-                                    >{getPageLocaleText('add')}</Button>
-                                );
-                            }}
-                            onSelectUsers={(memberships) => {
-                                clientService.addClientMembers({
-                                    clientId,
-                                    memberships,
-                                }).then(() => {
-                                    reloadQueryClientMembers();
-                                });
-                            }}
-                        />
-                    </Box>
-                </Box>
-            </Box>
-            <Box className="page client-members-page">
-                <Box
-                    className={clsx('members-wrapper', {
-                        'loading-wrapper': (queryClientMembersLoading || userClientRelationLoading),
-                    })}
-                >
-                    {
-                        (queryClientMembersLoading || userClientRelationLoading)
-                            ? <Loading />
-                            : clientMembers.length === 0
-                                ? <Exception
-                                    type="empty"
-                                    title={getPageLocaleText('empty.title')}
-                                    subTitle={getPageLocaleText('empty.subTitle')}
-                                />
-                                : <SimpleBar
-                                    style={{
-                                        width: 720,
-                                        height: membersContainerHeight,
-                                    }}
-                                >
-                                    {
-                                        clientMembers.map((listItem) => {
-                                            const {
-                                                id,
-                                                user,
-                                                roleType,
-                                            } = listItem;
-
-                                            const membership: ClientMembership = {
-                                                userId: user.id,
-                                                roleType,
-                                            };
-
-                                            return (
-                                                <UserCard
-                                                    key={id}
-                                                    profile={user}
-                                                    menu={[
-                                                        {
-                                                            icon: 'icon-trash-2',
-                                                            title: getPageLocaleText('userCardMenu.delete'),
-                                                            onActive: () => handleDeleteSelectedMembers([membership]),
-                                                        },
-                                                    ]}
-                                                    controlSlot={role === configService.CLIENT_MEMBER_ALL_ROLE_TYPE && <ClientRoleSelector
-                                                        role={roleType}
-                                                        triggerProps={{
-                                                            disabled: userClientRelationResponseData?.response?.roleType >= roleType,
-                                                        }}
-                                                        onRoleChange={(role) => {
-                                                            clientService.changeClientMembership({
-                                                                clientId,
-                                                                memberships: [
-                                                                    {
-                                                                        userId: user.id,
-                                                                        roleType: role,
-                                                                    },
-                                                                ],
-                                                            });
-
-                                                            const index = clientMembers.findIndex((membership) => {
-                                                                return membership.user.id === user.id;
-                                                            });
-
-                                                            if (index !== -1) {
-                                                                setClientMembers(
-                                                                    clientMembers.splice(
-                                                                        index,
-                                                                        1,
-                                                                        _.set(clientMembers[index], 'roleType', role),
-                                                                    ),
-                                                                );
-                                                            }
-                                                        }}
-                                                    />}
-                                                    checked={selectedMemberships.some((membership) => membership?.userId === user.id)}
-                                                    onCheckStatusChange={(checked) => {
-                                                        if (checked) {
-                                                            handleAddSelectedMemberships(membership);
-                                                        } else {
-                                                            handleDeleteSelectedMemberships([membership]);
-                                                        }
-                                                    }}
-                                                />
-                                            );
-                                        })
-                                    }
-                                    <Button
-                                        variant="text"
-                                        classes={{ root: 'load-more-button' }}
-                                        disabled={queryClientMembersLoadingMore || queryClientMembersResponseData?.remains === 0}
-                                        onClick={queryMoreClientMembers}
-                                    >
-                                        {
-                                            queryClientMembersLoadingMore
-                                                ? getLocaleText('loadings.loading')
-                                                : queryClientMembersResponseData?.remains === 0
-                                                    ? getLocaleText('loadings.noMore')
-                                                    : getLocaleText('loadings.loadMore')
-                                        }
-                                    </Button>
-                                </SimpleBar>
-                    }
-                </Box>
-            </Box>
+                            </Box>
+                        </Box>
+                    </>
+            }
         </ClientMembersWrapper>
     );
 };

@@ -251,10 +251,12 @@ const ChannelList: FC<ChannelListProps> = (listProps) => {
                 }
 
                 return channelService.queryClientChannels(options).then((response) => {
-                    const data = response?.response;
+                    const data = response?.response || {
+                        items: [],
+                    };
 
                     const {
-                        items,
+                        items = [],
                         ...props
                     } = data;
 
