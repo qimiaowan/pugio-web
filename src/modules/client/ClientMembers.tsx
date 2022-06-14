@@ -201,11 +201,13 @@ const ClientMembers: FC<BoxProps> = ({
         {
             reloadDeps: [
                 debouncedSearchValue,
+                clientId,
             ],
         },
     );
     const {
         data: userClientRelationResponseData,
+        loading: userClientRelationLoading,
     } = useRequest(
         () => {
             return clientService.getUserClientRelation({
@@ -213,7 +215,7 @@ const ClientMembers: FC<BoxProps> = ({
             });
         },
         {
-            refreshDeps: [],
+            refreshDeps: [clientId],
         },
     );
     const [selectedMemberships, setSelectedMemberships] = useState<ClientMembership[]>([]);
@@ -472,11 +474,11 @@ const ClientMembers: FC<BoxProps> = ({
             <Box className="page client-members-page">
                 <Box
                     className={clsx('members-wrapper', {
-                        'loading-wrapper': queryClientMembersLoading,
+                        'loading-wrapper': (queryClientMembersLoading || userClientRelationLoading),
                     })}
                 >
                     {
-                        queryClientMembersLoading
+                        (queryClientMembersLoading || userClientRelationLoading)
                             ? <Loading />
                             : clientMembers.length === 0
                                 ? <Exception

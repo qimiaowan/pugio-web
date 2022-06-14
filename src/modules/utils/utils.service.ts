@@ -206,7 +206,9 @@ export class UtilsService extends CaseTransformerService {
         service: (data: InfiniteScrollHookData<DataType>) => Promise<PaginationResponseData<DataType>>,
         options: InfiniteScrollOptions<InfiniteScrollHookData<DataType>>,
     ) {
-        return useInfiniteScroll(
+        const [error, setError] = useState<Error>(null);
+
+        const data = useInfiniteScroll(
             async (data) => {
                 const response = await service(data);
                 return {
@@ -220,8 +222,16 @@ export class UtilsService extends CaseTransformerService {
                     isNoMore: (data) => data?.remains === 0,
                 } as InfiniteScrollOptions<InfiniteScrollHookData<DataType>>,
                 options,
+                {
+                    onError: (error) => setError(error),
+                },
             ),
         );
+
+        return {
+            ...data,
+            error,
+        };
     }
 
     public calculateItemWidth(baselineWidth: number, width: number) {
