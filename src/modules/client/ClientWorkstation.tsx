@@ -387,7 +387,7 @@ const ClientWorkstation: FC = () => {
                     loading: false,
                 });
             });
-    }, [tabs]);
+    }, [tabs, clientId]);
 
     const tabsControlButtons = (
         <Box

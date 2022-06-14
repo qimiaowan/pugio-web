@@ -50,18 +50,17 @@ const Listener: FC = () => {
 
     useEffect(() => {
         const pathname = localStorage.getItem('app.pathname') || '';
-
-        if (pathname && !pathnameReady) {
-            navigate(pathname);
-        }
+        const currentLocation = window.location.hash;
 
         if (!pathnameReady) {
-            if (pathname) {
-                navigate(pathname);
-            } else if (selectedClientId) {
-                navigate(`/client/${selectedClientId}`);
-            } else {
-                navigate('/clients/list');
+            if (!currentLocation || currentLocation === '#') {
+                if (pathname) {
+                    navigate(pathname);
+                } else if (selectedClientId) {
+                    navigate(`/client/${selectedClientId}`);
+                } else {
+                    navigate('/clients/list');
+                }
             }
         }
 

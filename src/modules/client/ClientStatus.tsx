@@ -173,7 +173,7 @@ const ClientStatus: FC = () => {
     } = useRequest(
         () => clientService.getClientCurrentStatus({ clientId }),
         {
-            refreshDeps: [],
+            refreshDeps: [clientId],
         },
     );
 
@@ -217,6 +217,7 @@ const ClientStatus: FC = () => {
             });
         }
     }, [
+        clientId,
         chartConfigList,
         charts,
         dateRange,

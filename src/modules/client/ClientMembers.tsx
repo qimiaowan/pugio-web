@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
     FC,
     useCallback,
@@ -173,38 +174,12 @@ const ClientMembers: FC<BoxProps> = ({
     const getPageLocaleText = localeService.useLocaleContext('pages.clientMembers');
     const getComponentLocaleText = localeService.useLocaleContext('components');
     const [searchValue, setSearchValue] = useState<string>('');
-    const [role, setRole] = useState<string>(undefined);
+    const [role, setRole] = useState<string>(configService.CLIENT_MEMBER_ALL_ROLE_TYPE);
     const [tabs, setTabs] = useState<ClientMemberTab[]>([]);
     const [controlsWrapperHeight, setControlsWrapperHeight] = useState<number>(0);
     const [membersContainerHeight, setMembersContainerHeight] = useState<number>(0);
     const controlsWrapperRef = useRef<HTMLDivElement>(null);
     const debouncedSearchValue = useDebounce(searchValue);
-    const {
-        data: queryClientMembersResponseData,
-        loadMore: queryMoreClientMembers,
-        loading: queryClientMembersLoading,
-        loadingMore: queryClientMembersLoadingMore,
-        reload: reloadQueryClientMembers,
-    } = utilsService.useLoadMore<QueryClientMembersResponseDataItem> (
-        (data) => {
-            if (role === undefined) {
-                return null;
-            }
-
-            return clientService.queryClientMembers({
-                clientId,
-                role: role === configService.CLIENT_MEMBER_ALL_ROLE_TYPE ? [1, 2] : [parseInt(role, 10)],
-                ..._.pick(data, ['lastCursor', 'size']),
-                search: debouncedSearchValue,
-            });
-        },
-        {
-            reloadDeps: [
-                debouncedSearchValue,
-                clientId,
-            ],
-        },
-    );
     const {
         data: userClientRelationResponseData,
         loading: userClientRelationLoading,
@@ -216,6 +191,36 @@ const ClientMembers: FC<BoxProps> = ({
         },
         {
             refreshDeps: [clientId],
+        },
+    );
+    const {
+        data: queryClientMembersResponseData,
+        loadMore: queryMoreClientMembers,
+        loading: queryClientMembersLoading,
+        loadingMore: queryClientMembersLoadingMore,
+        reload: reloadQueryClientMembers,
+    } = utilsService.useLoadMore<QueryClientMembersResponseDataItem> (
+        (data) => {
+            if (role === undefined && userClientRelationResponseData?.response?.roleType > 1) {
+                return null;
+            }
+
+            return clientService.queryClientMembers({
+                clientId,
+                role: role === configService.CLIENT_MEMBER_ALL_ROLE_TYPE
+                    ? [1, 2]
+                    : [parseInt(role, 10)],
+                ..._.pick(data, ['lastCursor', 'size']),
+                search: debouncedSearchValue,
+            });
+        },
+        {
+            reloadDeps: [
+                debouncedSearchValue,
+                clientId,
+                userClientRelationResponseData?.response,
+                role,
+            ],
         },
     );
     const [selectedMemberships, setSelectedMemberships] = useState<ClientMembership[]>([]);

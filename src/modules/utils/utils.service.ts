@@ -217,15 +217,13 @@ export class UtilsService extends CaseTransformerService {
                     lastCursor: _.get(Array.from(response?.response?.items || []).pop(), 'id') || null,
                 };
             },
-            _.merge(
-                {
+            {
+                ...({
                     isNoMore: (data) => data?.remains === 0,
-                } as InfiniteScrollOptions<InfiniteScrollHookData<DataType>>,
-                options,
-                {
                     onError: (error) => setError(error),
-                },
-            ),
+                }),
+                ...(options || {}),
+            },
         );
 
         return {

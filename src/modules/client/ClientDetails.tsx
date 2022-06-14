@@ -142,7 +142,7 @@ const ClientDetails: FC = () => {
             return clientService.getUserClientRelation({ clientId });
         },
         {
-            refreshDeps: [],
+            refreshDeps: [clientId],
         },
     );
     const {
@@ -154,7 +154,7 @@ const ClientDetails: FC = () => {
             return clientService.getClientInformation({ clientId });
         },
         {
-            refreshDeps: [],
+            refreshDeps: [clientId],
         },
     );
     const [clientInfo, setClientInfo] = useState<Client>(null);
@@ -248,7 +248,7 @@ const ClientDetails: FC = () => {
             clientId,
             updates: clientInfo,
         });
-    }, [clientInfo]);
+    }, [clientId, clientInfo]);
 
     return (
         <ClientDetailsPage>
