@@ -19,11 +19,14 @@ import { ClientMenuItemComponent } from '@modules/client/client-menu-item.compon
 import { ClientMenuItemProps } from '@modules/client/client-menu-item.interface';
 import { ClientService } from '@modules/client/client.service';
 import _ from 'lodash';
-import { useRequest } from 'ahooks';
 import { UserClientRelationResponseData } from '@modules/client/client.interface';
 import styled from '@mui/material/styles/styled';
 import shallow from 'zustand/shallow';
 import SimpleBar from 'simplebar-react';
+import clsx from 'clsx';
+import { LoadingComponent } from '@modules/brand/loading.component';
+import { ExceptionProps } from '@modules/brand/exception.interface';
+import { ExceptionComponent } from '@modules/brand/exception.component';
 
 interface MenuMetadataItem {
     to: string;
@@ -108,6 +111,15 @@ const ClientDashboardContainer = styled(Box)(({ theme }) => {
                     margin-right: 10px;
                 }
             }
+
+            &.loading-wrapper,
+            &.exception-wrapper {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
         }
     `;
 });
@@ -118,10 +130,13 @@ const ClientDashboard: FC = () => {
     const localeService = container.get<LocaleService>(LocaleService);
     const storeService = container.get<StoreService>(StoreService);
     const clientService = container.get<ClientService>(ClientService);
+    const Loading = container.get<FC>(LoadingComponent);
+    const Exception = container.get<FC<ExceptionProps>>(ExceptionComponent);
 
     const { client_id: clientId } = useParams();
     const sidebarRef = useRef<HTMLDivElement>(null);
     const getLocaleText = localeService.useLocaleContext();
+    const getPageLocaleText = localeService.useLocaleContext('pages.clientDashboard');
     const [fullWidthMenu, setFullWidthMenu] = useState<boolean>(false);
     const [menuMetadataItems, setMenuMetadataItems] = useState<MenuMetadataItem[]>([]);
     const {
@@ -144,23 +159,24 @@ const ClientDashboard: FC = () => {
             setSidebarWidth: setClientSidebarWidth,
         };
     }, shallow);
-    const {
-        data: userClientRelationResponseData,
-    } = useRequest(
-        () => {
-            return clientService.getUserClientRelation({ clientId });
-        },
-        {
-            refreshDeps: [clientId],
-            onError: (error) => {
-                console.log(error);
-            },
-        },
-    );
+    const [userClientRelationLoading, setUserClientRelationLoading] = useState<boolean>(true);
+    const [userClientRelation, setUserClientRelation] = useState<UserClientRelationResponseData>(null);
+    const [userClientRelationError, setUserClientRelationError] = useState<any>(null);
 
     const generateFullWidthMenuKey = (id: string) => {
         return `app.client.fullWidthMenu@${id}`;
     };
+
+    const handleGetUserClientRelation = useCallback(() => {
+        setUserClientRelationLoading(true);
+        clientService.getUserClientRelation({ clientId })
+            .then((response) => {
+                setUserClientRelation(response?.response);
+                setUserClientRelationError(response?.error);
+            })
+            .catch((error) => setUserClientRelationError(error))
+            .finally(() => setUserClientRelationLoading(false));
+    }, [clientId]);
 
     useEffect(() => {
         if (selectedClientId && clientId && selectedClientId !== clientId) {
@@ -182,6 +198,8 @@ const ClientDashboard: FC = () => {
             );
         }
     }, [clientId]);
+
+    useEffect(handleGetUserClientRelation, [clientId]);
 
     useEffect(() => {
         const observer = new ResizeObserver((entries) => {
@@ -206,7 +224,7 @@ const ClientDashboard: FC = () => {
     }, [sidebarRef]);
 
     const updateMenuMetadataItems = useCallback(() => {
-        if (clientId && userClientRelationResponseData?.response) {
+        if (clientId && userClientRelation) {
             setMenuMetadataItems(
                 [
                     {
@@ -235,11 +253,11 @@ const ClientDashboard: FC = () => {
                 ],
             );
         }
-    }, [clientId, userClientRelationResponseData]);
+    }, [clientId, userClientRelation]);
 
     useEffect(() => {
         updateMenuMetadataItems();
-    }, [clientId, userClientRelationResponseData]);
+    }, [clientId, userClientRelation]);
 
     return (
         <ClientDashboardContainer>
@@ -255,7 +273,7 @@ const ClientDashboard: FC = () => {
                                     condition,
                                 } = menuMetadataItem;
 
-                                if (_.isFunction(condition) && !condition(userClientRelationResponseData?.response)) {
+                                if (_.isFunction(condition) && !condition(userClientRelation)) {
                                     return null;
                                 }
 
@@ -300,8 +318,23 @@ const ClientDashboard: FC = () => {
                     </Box>
                 </SimpleBar>
             </Box>
-            <Box className="content-container">
-                <Outlet />
+            <Box
+                className={clsx('content-container', {
+                    'loading-wrapper': userClientRelationLoading,
+                    'exception-wrapper': userClientRelationError,
+                })}
+            >
+                {
+                    userClientRelationLoading
+                        ? <Loading />
+                        : userClientRelationError
+                            ? <Exception
+                                type="forbidden"
+                                title={getPageLocaleText('forbidden.title')}
+                                subTitle={getPageLocaleText('forbidden.subTitle')}
+                            />
+                            : <Outlet />
+                }
             </Box>
         </ClientDashboardContainer>
     );

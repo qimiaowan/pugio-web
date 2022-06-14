@@ -47,6 +47,12 @@
             "goBack": "Go Back",
             "createTab": "Create a Connection"
         },
+        "clientDashboard": {
+            "forbidden": {
+                "title": "You have no permission to access this client",
+                "subTitle": "Please contact the owner or one of admins of this client to grant you access"
+            }
+        },
         "clientMembers": {
             "tabs": {
                 "all": "All",

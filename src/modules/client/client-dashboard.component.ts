@@ -4,6 +4,8 @@ import { ClientMenuItemComponent } from '@modules/client/client-menu-item.compon
 import { LocaleService } from '@modules/locale/locale.service';
 import { StoreService } from '@modules/store/store.service';
 import { ClientService } from '@modules/client/client.service';
+import { LoadingComponent } from '@modules/brand/loading.component';
+import { ExceptionComponent } from '@modules/brand/exception.component';
 
 @Component({
     factory: (forwardRef) => {
@@ -16,6 +18,8 @@ import { ClientService } from '@modules/client/client.service';
         LocaleService,
         StoreService,
         ClientService,
+        LoadingComponent,
+        ExceptionComponent,
     ],
 })
 export class ClientDashboardComponent {}
