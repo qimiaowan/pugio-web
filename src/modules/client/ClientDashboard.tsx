@@ -127,21 +127,21 @@ const ClientDashboard: FC = () => {
     const {
         appNavbarHeight,
         windowInnerHeight,
+        selectedClientId,
         setSidebarWidth,
-        changeSelectedClientId,
     } = storeService.useStore((state) => {
         const {
             appNavbarHeight,
             windowInnerHeight,
+            selectedClientId,
             setClientSidebarWidth,
-            changeSelectedClientId,
         } = state;
 
         return {
             appNavbarHeight,
             windowInnerHeight,
+            selectedClientId,
             setSidebarWidth: setClientSidebarWidth,
-            changeSelectedClientId,
         };
     }, shallow);
     const {
@@ -160,6 +160,11 @@ const ClientDashboard: FC = () => {
     };
 
     useEffect(() => {
+        const pathname = window.location.hash.slice(1);
+        window.location.hash = pathname.replaceAll(clientId, selectedClientId);
+    }, [selectedClientId]);
+
+    useEffect(() => {
         if (clientId) {
             setFullWidthMenu(
                 JSON.parse(
@@ -169,9 +174,6 @@ const ClientDashboard: FC = () => {
                 ),
             );
         }
-
-        changeSelectedClientId(clientId || '');
-        localStorage.setItem('app.selectedClientId', clientId || '');
     }, [clientId]);
 
     useEffect(() => {

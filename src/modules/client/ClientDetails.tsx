@@ -427,7 +427,7 @@ const ClientDetails: FC = () => {
                                                                         clientId,
                                                                         owner: users[0].id,
                                                                     }).finally(() => {
-                                                                        window.location.hash = '#/clients/all';
+                                                                        window.location.hash = '/home/clients/all';
                                                                     });
                                                                 },
                                                             });

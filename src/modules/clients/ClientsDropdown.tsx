@@ -25,10 +25,6 @@ import {
 import { ClientsService } from '@modules/clients/clients.service';
 import { QueryClientsResponseDataItem } from '@modules/clients/clients.interface';
 import SimpleBar from 'simplebar-react';
-import {
-    useNavigate,
-    useParams,
-} from 'react-router-dom';
 import { LoadingComponent } from '@modules/brand/loading.component';
 import { ExceptionProps } from '@modules/brand/exception.interface';
 import { ExceptionComponent } from '@modules/brand/exception.component';
@@ -117,9 +113,7 @@ const PopoverContent = styled(Paper)(({ theme }) => {
     `;
 });
 
-const ClientsDropdown: FC<ClientsDropdownProps> = ({
-    onClientChange = _.noop,
-}) => {
+const ClientsDropdown: FC<ClientsDropdownProps> = () => {
     const container = getContainer(ClientsDropdown);
     const typographyProps: TypographyProps = {
         noWrap: true,
@@ -136,10 +130,8 @@ const ClientsDropdown: FC<ClientsDropdownProps> = ({
     const Loading = container.get<FC<BoxProps>>(LoadingComponent);
     const Exception = container.get<FC<ExceptionProps>>(ExceptionComponent);
 
-    const navigate = useNavigate();
     const [searchValue, setSearchValue] = useState<string>('');
     const debouncedSearchValue = useDebounce(searchValue, { wait: 500 });
-    const { client_id: selectedClientId } = useParams();
     const buttonRef = useRef<HTMLButtonElement>(null);
     const searchRef = useRef<HTMLInputElement>(null);
     const getLocaleText = localeService.useLocaleContext();
@@ -163,6 +155,28 @@ const ClientsDropdown: FC<ClientsDropdownProps> = ({
         },
     );
     const {
+        selectedClientId,
+        clientsDropdownOpen,
+        switchClientsDropdownVisibility,
+        changeSelectedClientId,
+    } = storeService.useStore(
+        (state) => {
+            const {
+                selectedClientId,
+                clientsDropdownOpen,
+                switchClientsDropdownVisibility,
+                changeSelectedClientId,
+            } = state;
+            return {
+                selectedClientId,
+                clientsDropdownOpen,
+                switchClientsDropdownVisibility,
+                changeSelectedClientId,
+            };
+        },
+        shallow,
+    );
+    const {
         data: getClientInformationResponseData,
     } = useRequest(
         () => {
@@ -174,26 +188,10 @@ const ClientsDropdown: FC<ClientsDropdownProps> = ({
             refreshDeps: [selectedClientId],
         },
     );
-    const {
-        clientsDropdownOpen,
-        switchClientsDropdownVisibility,
-    } = storeService.useStore(
-        (state) => {
-            const {
-                clientsDropdownOpen,
-                switchClientsDropdownVisibility,
-            } = state;
-            return {
-                clientsDropdownOpen,
-                switchClientsDropdownVisibility,
-            };
-        },
-        shallow,
-    );
 
     const handleSelectClient = (clientId: string) => {
-        navigate(`/client/${clientId}/workstation`);
-        onClientChange(clientId);
+        changeSelectedClientId(clientId || '');
+        localStorage.setItem('app.selectedClientId', clientId || '');
         switchClientsDropdownVisibility(false);
     };
 
@@ -283,7 +281,9 @@ const ClientsDropdown: FC<ClientsDropdownProps> = ({
                             size="small"
                             startIcon={<Icon className="icon-plus" />}
                             classes={{ root: 'create-button' }}
-                            onClick={() => navigate('/clients/create')}
+                            onClick={() => {
+                                window.location.hash = '/home/clients/create';
+                            }}
                         >{getComponentLocaleText('create')}</Button>
                     </Box>
                     {
@@ -302,7 +302,9 @@ const ClientsDropdown: FC<ClientsDropdownProps> = ({
                                         variant="text"
                                         color="primary"
                                         startIcon={<Icon className="icon-plus" />}
-                                        onClick={() => navigate('/clients/create')}
+                                        onClick={() => {
+                                            window.location.hash = '/home/clients/create';
+                                        }}
                                     >{getComponentLocaleText('create')}</Button>
                                 </Exception>
                                 : <SimpleBar autoHide={true} style={{ height: 360, width: '100%' }}>
@@ -361,7 +363,9 @@ const ClientsDropdown: FC<ClientsDropdownProps> = ({
                         <Button
                             classes={{ root: 'link-button view-all-button' }}
                             endIcon={<Icon className="icon icon-arrow-right" fontSize="small" />}
-                            onClick={() => navigate('/clients/list')}
+                            onClick={() => {
+                                window.location.hash = '/home/clients';
+                            }}
                         >{getComponentLocaleText('viewAll')}</Button>
                     </Box>
                 </PopoverContent>
