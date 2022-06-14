@@ -12,6 +12,7 @@ import { AppComponent as WebTerminalAppComponent } from '@builtin:web-terminal/a
 import { ChannelListComponent } from '@modules/channel/channel-list.component';
 import { ConfigService } from '@modules/config/config.service';
 import { PopoverComponent } from '@modules/common/popover.component';
+import { ContextMenuComponent } from '@modules/common/context-menu.component';
 
 @Component({
     factory: (forwardRef) => {
@@ -32,6 +33,7 @@ import { PopoverComponent } from '@modules/common/popover.component';
         ChannelListComponent,
         ConfigService,
         PopoverComponent,
+        ContextMenuComponent,
     ],
 })
 export class ClientWorkstationComponent {}
