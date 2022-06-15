@@ -88,8 +88,7 @@
             "dateRange": {
                 "halfHour": "Half an Hour",
                 "hour": "One Hour",
-                "day": "One Day",
-                "week": "One Week"
+                "twoHours": "2 Hours"
             },
             "chart": {
                 "memoryUsage": "Memory Usage",

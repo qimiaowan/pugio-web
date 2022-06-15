@@ -130,8 +130,8 @@ const ClientStatus: FC = () => {
             milliseconds: 60 * 60 * 1000,
         },
         {
-            title: 'dateRange.day',
-            milliseconds: 24 * 60 * 60 * 1000,
+            title: 'dateRange.twoHours',
+            milliseconds: 2 * 60 * 60 * 1000,
         },
     ];
 
